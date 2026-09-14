@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f4f1ea;
+  --color-ink: #141210;
+  --color-ink-soft: #6b6560;
+  --color-forest: #0f6b4c;
+  --color-forest-dark: #0b5139;
+  --color-brass: #c69214;
+  --color-night: #101820;
+  --color-night-card: #1a2430;
+  --color-night-line: #2c3a48;
+  --color-bone: #e8eef2;
+  --color-danger: #b42318;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), var(--font-viet), ui-sans-serif, system-ui, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.font-display {
+  font-family: var(--font-display), var(--font-display-vi), ui-serif, Georgia, serif;
+}
+
+details summary::-webkit-details-marker {
+  display: none;
+}
+
+.strings {
+  display: grid;
+  grid-template-rows: repeat(6, 1fr);
+  height: 14px;
+  width: 100%;
+}
+
+.strings span {
+  display: block;
+  border-top: 1px solid currentColor;
+  opacity: 0.35;
+}
+
+.strings span:nth-child(1) { opacity: 0.18; }
+.strings span:nth-child(2) { opacity: 0.26; }
+.strings span:nth-child(3) { opacity: 0.34; }
+.strings span:nth-child(4) { opacity: 0.42; }
+.strings span:nth-child(5) { opacity: 0.5; }
+.strings span:nth-child(6) { opacity: 0.58; }
+
+.teacher-shell {
+  background: var(--color-night);
+  color: var(--color-bone);
+  min-height: 100dvh;
+}
+
+input,
+textarea,
+select,
+button {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brass);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

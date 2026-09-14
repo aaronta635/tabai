@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+dist
+.DS_Store
+.env
+.env.local
+.env.*.local
+*.log
+.vercel
+.railway
+tmp
+/tmp
+coverage
+prisma/dev.db
+.cursor/hooks/state

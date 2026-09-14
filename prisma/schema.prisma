@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// --- v1 enums ---
+
+enum AgeBand {
+  under18
+  adult
+}
+
+enum ContactType {
+  zalo
+  messenger
+}
+
+enum DeliveryType {
+  zalo
+  messenger
+}
+
+enum VoiceSampleSource {
+  pasted
+  curated_from_reply
+}
+
+enum MediaKind {
+  video
+  audio
+  image
+  tab
+}
+
+enum SubmissionStatus {
+  new
+  drafted
+  answered
+  skipped
+}
+
+enum ReplySource {
+  approved_draft
+  edited_draft
+  manual
+}
+
+enum ActorType {
+  teacher
+  student
+  admin
+  system
+}
+
+enum JobType {
+  analyze
+  draft
+  perceive_audio
+  perceive_video
+}
+
+enum JobStatus {
+  pending
+  running
+  done
+  failed
+}
+
+enum SubmissionRoute {
+  teacher
+  ai_direct
+}
+
+// --- core ---
+
+model Teacher {
+  id             String        @id @default(cuid())
+  name           String
+  avatarUrl      String?
+  deliveryType   DeliveryType?
+  deliveryHandle String?
+  inviteToken    String        @unique
+  email          String?
+  authUserId     String?       @unique
+  createdAt      DateTime      @default(now())
+
+  voiceSamples VoiceSample[]
+  pieces       Piece[]
+  students     Student[]
+  replies      Reply[]
+  events       Event[]
+}
+
+model VoiceSample {
+  id        String            @id @default(cuid())
+  teacherId String
+  teacher   Teacher           @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  text      String
+  source    VoiceSampleSource
+  active    Boolean           @default(true)
+  createdAt DateTime          @default(now())
+
+  @@index([teacherId, active])
+}
+
+model Piece {
+  id                 String    @id @default(cuid())
+  teacherId          String
+  teacher            Teacher   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  code               String    @unique
+  title              String
+  note               String?
+  referenceMediaId   String?
+  referenceMedia     Media?    @relation("PieceReference", fields: [referenceMediaId], references: [id])
+  archived           Boolean   @default(false)
+  // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts
+  aiDirectUnlockedAt DateTime?
+  createdAt          DateTime  @default(now())
+
+  submissions Submission[]
+
+  @@index([teacherId, archived])
+}
+
+model Student {
+  id             String      @id @default(cuid())
+  teacherId      String
+  teacher        Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  name           String
+  ageBand        AgeBand
+  contactType    ContactType
+  contactHandle  String
+  token          String      @unique
+  consentAt      DateTime
+  consentVersion String
+  publicOk       Boolean     @default(false)
+  approvedAt     DateTime?
+  createdAt      DateTime    @default(now())
+
+  submissions Submission[]
+
+  @@index([teacherId, approvedAt])
+}
+
+model Media {
+  id          String    @id @default(cuid())
+  kind        MediaKind
+  storagePath String
+  durationS   Float?
+  sizeBytes   Int?
+  createdAt   DateTime  @default(now())
+
+  pieceReferences Piece[]       @relation("PieceReference")
+  submissions     Submission[]
+}
+
+model Submission {
+  id          String           @id @default(cuid())
+  pieceId     String
+  piece       Piece            @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  studentId   String
+  student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  mediaId     String
+  media       Media            @relation(fields: [mediaId], references: [id])
+  submittedAt DateTime         @default(now())
+  status         SubmissionStatus @default(new)
+  skipReason     String?
+  reviewOpenedAt DateTime?
+  teacherPick    Boolean          @default(false)
+  // v2 routing — default teacher queue; ai_direct when piece unlocked + confidence high
+  route       SubmissionRoute  @default(teacher)
+  confidence  Float?
+
+  analyses Analysis[]
+  drafts   Draft[]
+  replies  Reply[]
+  jobs     Job[]
+
+  @@index([pieceId, status, submittedAt])
+  @@index([studentId, submittedAt])
+  @@index([status, submittedAt])
+}
+
+model Analysis {
+  id               String     @id @default(cuid())
+  submissionId     String
+  submission       Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  pipelineVersion  String
+  metricsJson      Json
+  observationsJson Json?
+  costCents        Int?
+  latencyMs        Int?
+  createdAt        DateTime   @default(now())
+
+  @@index([submissionId])
+}
+
+model Draft {
+  id            String     @id @default(cuid())
+  submissionId  String
+  submission    Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  promptVersion String
+  model         String
+  text          String
+  createdAt     DateTime   @default(now())
+
+  @@index([submissionId, createdAt])
+}
+
+model Reply {
+  id           String      @id @default(cuid())
+  submissionId String
+  submission   Submission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  teacherId    String
+  teacher      Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  text         String
+  source       ReplySource
+  editDistance Int?
+  teacherPick  Boolean     @default(false)
+  openedAt     DateTime?
+  sentAt       DateTime
+  createdAt    DateTime    @default(now())
+
+  @@index([teacherId, sentAt])
+  @@index([submissionId, createdAt])
+}
+
+model Event {
+  id        String    @id @default(cuid())
+  actorType ActorType
+  actorId   String?
+  teacherId String?
+  teacher   Teacher?  @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  name      String
+  propsJson Json
+  createdAt DateTime  @default(now())
+
+  @@index([teacherId, name, createdAt])
+  @@index([name, createdAt])
+}
+
+model Job {
+  id           String     @id @default(cuid())
+  type         JobType
+  payload      Json
+  status       JobStatus  @default(pending)
+  attempts     Int        @default(0)
+  lastError    String?
+  submissionId String?
+  submission   Submission? @relation(fields: [submissionId], references: [id], onDelete: SetNull)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([status, createdAt])
+  @@index([type, status])
+}

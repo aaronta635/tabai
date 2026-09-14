@@ -1,45 +1,35 @@
 # Feedback Engine
 
-Next.js App Router (web + worker) for online guitar teachers. Students upload a take through a piece link; the teacher answers from a queue; week-two drafts speak in the teacher's voice.
+Next.js App Router for online guitar teachers. The demo is: **sign in → make a piece link → students upload at `/l/<code>`**.
 
-Vietnamese default, English toggle. Mobile-first. Facebook/Zalo WebView upload-first.
+## Keys
 
-## Stack
+| Variable | Required to | Where |
+|---|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Auth, landing | Supabase → API |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Auth (public) | Supabase → API → anon |
+| `DATABASE_URL` + `DIRECT_URL` | Prisma / creating links | Supabase → Database → URI |
+| `SESSION_SECRET` | Invite/admin cookies | Generate locally |
+| `SUPABASE_SERVICE_ROLE_KEY` | Reliable video Storage | Supabase → API → service_role |
+| `ANTHROPIC_API_KEY` | AI drafts | Optional |
 
-- Next.js 15 + TypeScript + Tailwind
-- Prisma → Supabase Postgres (Singapore)
-- Supabase Storage (direct signed uploads, max 60 MB)
-- Railway: one Docker image, two processes (`web`, `worker`)
-- ffmpeg + Python stdlib metrics on the worker
-- Anthropic for drafts (`prompts/draft_reply_vi.md`)
+Anon is not the database. Paste the **Postgres URI** (with password) into `DATABASE_URL`.
+
+Auth: `/auth` (email + password). After login, `/teacher/pieces` is the link generator.
+
+Student: open `/l/<code>` or type the code on the homepage.
 
 ## Setup
 
-1. Create a Supabase project in Singapore. Copy `DATABASE_URL` (pooler, port 6543, `?pgbouncer=true`) and `DIRECT_URL` (port 5432).
-2. Create a **private** Storage bucket named `media`.
-3. Copy `.env.example` to `.env` and fill secrets.
-4. `npm install`
-5. `npx prisma migrate deploy`
-6. `npm run db:seed`
-7. `npm run dev` and in another terminal `npm run worker`
+1. Copy `.env.example` → `.env.local` and fill the table above.
+2. Create a private Storage bucket `media`.
+3. In Auth settings, turn off “Confirm email” for local demo, or confirm via inbox.
+4. `npm install && npx prisma migrate deploy && npm run dev`
 
-Admin: open `/admin`, password is `ADMIN_SECRET`.
-Create a teacher, copy `/t/<inviteToken>`, paste voice samples on `/admin/voices`.
-Teacher posts `/l/<code>` in the group.
+## Video analysis
+
+See [`docs/video-analysis.md`](docs/video-analysis.md). v1 is ffmpeg + stdlib Python. Basic Pitch and MediaPipe wait until a teacher confirms flags.
 
 ## Railway
 
-Deploy the Dockerfile. Run two processes from the same image:
-
-- `web`: `npm start`
-- `worker`: `npm run worker`
-
-Health check: `GET /api/health`.
-
-## Never cut
-
-Timestamps, append-only drafts/replies, consent, deletion.
-
-## Out of v1
-
-Student subscriptions, live calls, marketplace, wall comments, Facebook group APIs, RLS (until teacher #3), pitch alignment, hand tracking.
+Same Docker image, two processes: `web` (`npm start`) and `worker` (`npm run worker`).

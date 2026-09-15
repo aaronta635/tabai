@@ -8,6 +8,24 @@ type Props = {
   needsProfile: boolean;
 };
 
+type JsonBag = {
+  error?: string;
+  signedUrl?: string;
+  mediaId?: string;
+  studentToken?: string;
+  page?: string;
+};
+
+async function readJson(res: Response): Promise<JsonBag> {
+  const text = await res.text();
+  if (!text) return { error: res.statusText || "empty response" };
+  try {
+    return JSON.parse(text) as JsonBag;
+  } catch {
+    return { error: text };
+  }
+}
+
 export function StudentUpload({ code, needsProfile }: Props) {
   const t = useTranslations("student");
   const fileRef = useRef<HTMLInputElement>(null);
@@ -82,7 +100,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
             consent: true,
           }),
         });
-        const registerJson = await register.json();
+        const registerJson = await readJson(register);
         if (!register.ok) throw new Error(registerJson.error ?? "register failed");
       }
 
@@ -94,8 +112,11 @@ export function StudentUpload({ code, needsProfile }: Props) {
           contentType: picked.type || "video/mp4",
         }),
       });
-      const signed = await sign.json();
+      const signed = await readJson(sign);
       if (!sign.ok) throw new Error(signed.error ?? "sign failed");
+      if (typeof signed.signedUrl !== "string" || typeof signed.mediaId !== "string") {
+        throw new Error("sign failed");
+      }
 
       const put = await fetch(signed.signedUrl, {
         method: "PUT",
@@ -109,12 +130,12 @@ export function StudentUpload({ code, needsProfile }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ mediaId: signed.mediaId }),
       });
-      const finished = await complete.json();
+      const finished = await readJson(complete);
       if (!complete.ok) throw new Error(finished.error ?? "complete failed");
-      if (finished.studentToken) {
+      if (typeof finished.studentToken === "string") {
         localStorage.setItem("student_token", finished.studentToken);
       }
-      if (finished.page) {
+      if (typeof finished.page === "string") {
         window.location.href = finished.page;
         return;
       }

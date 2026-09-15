@@ -1,6 +1,8 @@
+import { Prisma } from "@prisma/client";
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import { customAlphabet, nanoid } from "nanoid";
+import type { User } from "@supabase/supabase-js";
 import {
   ADMIN_COOKIE,
   STUDENT_COOKIE,
@@ -71,31 +73,48 @@ async function readSession(): Promise<SessionPayload | null> {
   }
 }
 
-export async function requireTeacher() {
+async function teacherFromAuthUser(user: User) {
+  const existing = await prisma.teacher.findUnique({
+    where: { authUserId: user.id },
+  });
+  if (existing) return existing;
+
   try {
-    const supabase = await createServerSupabase();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (user) {
-      const existing = await prisma.teacher.findUnique({
+    return await prisma.teacher.create({
+      data: {
+        name:
+          (user.user_metadata?.name as string | undefined) ??
+          user.email?.split("@")[0] ??
+          "Thầy",
+        email: user.email,
+        authUserId: user.id,
+        inviteToken: newInviteToken(),
+      },
+    });
+  } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      const raced = await prisma.teacher.findUnique({
         where: { authUserId: user.id },
       });
-      if (existing) return existing;
-      return prisma.teacher.create({
-        data: {
-          name:
-            (user.user_metadata?.name as string | undefined) ??
-            user.email?.split("@")[0] ??
-            "Thầy",
-          email: user.email,
-          authUserId: user.id,
-          inviteToken: newInviteToken(),
-        },
-      });
+      if (raced) return raced;
     }
+    throw error;
+  }
+}
+
+export async function requireTeacher() {
+  let user: User | null = null;
+  try {
+    const supabase = await createServerSupabase();
+    ({
+      data: { user },
+    } = await supabase.auth.getUser());
   } catch {
-    // Auth env or DB not ready — fall through to invite cookie.
+    // Auth env not ready — fall through to invite cookie.
+  }
+
+  if (user) {
+    return teacherFromAuthUser(user);
   }
 
   const session = await readSession();

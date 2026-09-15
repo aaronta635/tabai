@@ -11,6 +11,11 @@ export function supabaseAdmin() {
   if (!url || !key) {
     throw new Error("SUPABASE_URL and a Supabase key are required");
   }
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    console.warn(
+      "SUPABASE_SERVICE_ROLE_KEY is unset; Storage uses the anon key and RLS policies. Add the service_role key from Supabase → Project Settings → API.",
+    );
+  }
   cached = createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });

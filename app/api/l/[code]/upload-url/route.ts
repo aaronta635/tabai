@@ -36,16 +36,22 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   });
 
   const path = `teachers/${piece.teacherId}/pieces/${piece.id}/students/${student.id}/${media.id}`;
-  const signed = await createSignedUpload(path);
-  await prisma.media.update({
-    where: { id: media.id },
-    data: { storagePath: signed.path },
-  });
+  try {
+    const signed = await createSignedUpload(path);
+    await prisma.media.update({
+      where: { id: media.id },
+      data: { storagePath: signed.path },
+    });
 
-  return NextResponse.json({
-    mediaId: media.id,
-    path: signed.path,
-    signedUrl: signed.signedUrl,
-    token: signed.token,
-  });
+    return NextResponse.json({
+      mediaId: media.id,
+      path: signed.path,
+      signedUrl: signed.signedUrl,
+      token: signed.token,
+    });
+  } catch (error) {
+    await prisma.media.delete({ where: { id: media.id } }).catch(() => undefined);
+    const message = error instanceof Error ? error.message : "Could not create upload URL";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

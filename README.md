@@ -31,9 +31,11 @@ Prisma CLI reads `.env.local` through [`prisma.config.ts`](prisma.config.ts) (`D
 
 The worker (`npm run worker`) needs `SUPABASE_SERVICE_ROLE_KEY`. It also ships a `ws` fallback so Node 20 can run locally; Node 22+ (the Dockerfile) uses the native WebSocket.
 
+Drafts pull this teacher's past replies for the same song (SQL, not a vector DB). Restart the worker after pulling those changes.
+
 ## Video analysis
 
-See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md`](docs/score-model.md). v1 metrics are ffmpeg + stdlib Python. When a piece has sheet + tutorial, `npm run catalog:train` plus the worker saves a `PieceModel` and later takes are compared with Gemini. Teacher still sends the draft.
+See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md`](docs/score-model.md). v1 metrics are ffmpeg + stdlib Python. When a piece has sheet + tutorial, `npm run catalog:train` plus the worker saves a `PieceModel` and later takes are compared with Gemini. Teacher still sends the draft. Cost notes: [`docs/score-model.md`](docs/score-model.md) (RAG + hosting/token).
 
 ## Railway
 

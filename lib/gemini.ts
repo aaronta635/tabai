@@ -1,4 +1,10 @@
-import { createPartFromUri, createUserContent, GoogleGenAI, Type } from "@google/genai";
+import {
+  createPartFromUri,
+  createUserContent,
+  GoogleGenAI,
+  ThinkingLevel,
+  Type,
+} from "@google/genai";
 import { DEFAULT_GEMINI_MODEL_COMPARE, DEFAULT_GEMINI_MODEL_TRAIN } from "@/lib/constants";
 
 export type GeminiFileRef = {
@@ -24,6 +30,10 @@ export function geminiTrainModel() {
 
 export function geminiCompareModel() {
   return process.env.GEMINI_MODEL_COMPARE?.trim() || DEFAULT_GEMINI_MODEL_COMPARE;
+}
+
+export function geminiDraftModel() {
+  return process.env.GEMINI_MODEL_DRAFT?.trim() || geminiCompareModel();
 }
 
 export function geminiClient() {
@@ -179,6 +189,7 @@ export async function generateGeminiJson(input: {
   userText: string;
   files?: GeminiFileRef[];
   schema: object;
+  thinkingLevel?: ThinkingLevel;
 }): Promise<{ data: unknown; usage: GeminiUsage; model: string }> {
   const parts = [
     ...(input.files ?? []).map((file) => createPartFromUri(file.uri, file.mimeType)),
@@ -191,6 +202,7 @@ export async function generateGeminiJson(input: {
       systemInstruction: input.system,
       responseMimeType: "application/json",
       responseJsonSchema: input.schema,
+      thinkingConfig: { thinkingLevel: input.thinkingLevel ?? ThinkingLevel.LOW },
     },
   });
   const text = response.text?.trim();
@@ -213,7 +225,8 @@ export async function generateGeminiText(input: {
     contents: input.userText,
     config: {
       systemInstruction: input.system,
-      maxOutputTokens: 400,
+      maxOutputTokens: 2048,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
     },
   });
   const text = response.text?.trim();
@@ -221,7 +234,8 @@ export async function generateGeminiText(input: {
   return { text, usage: usageFrom(response), model: input.model };
 }
 
+/** Flash 3.5 list: $1.50 / 1M in, $9 / 1M out (thinking counted as output). */
 export function geminiCostCents(usage: GeminiUsage) {
-  const cents = (usage.inputTokens * 0.00015 + usage.outputTokens * 0.001) / 10;
+  const cents = usage.inputTokens * 0.00015 + usage.outputTokens * 0.0009;
   return Math.max(1, Math.round(cents));
 }

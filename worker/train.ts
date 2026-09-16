@@ -1,3 +1,4 @@
+import { ThinkingLevel } from "@google/genai";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
@@ -77,6 +78,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
       model: modelName,
       system,
       schema: TRAIN_RESPONSE_SCHEMA,
+      thinkingLevel: ThinkingLevel.HIGH,
       files: [sheetFile, tutorialFile],
       userText: [
         `Piece title: ${piece.title}`,

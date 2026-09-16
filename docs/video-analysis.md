@@ -10,7 +10,7 @@ Do not show red chips in the teacher queue until confidence is high. Wrong flags
 
 1. `train_piece` reads sheet + tutorial, extracts versioned `scoreJson` + `tutorialCuesJson`, stores them in Postgres. Gemini File API ids are not the model (they expire in ~48h).
 2. `analyze` uploads only the student video, plus the saved JSON, and writes `Analysis.observationsJson`.
-3. `draft` writes a Vietnamese queue reply. The teacher sends it.
+3. `draft` writes a Vietnamese queue reply from compare facts + retrieved teacher replies (SQL RAG). The teacher sends it.
 
 If there is no ready model, analyze behaves as audio-metrics-only.
 

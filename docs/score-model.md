@@ -27,9 +27,41 @@ Issue types: `timing | pitch | chord | technique | missing`.
 ## Queue / student UI (optional later)
 
 - Keep showing `Draft.text`. Teacher sends; nothing auto-sends to the student.
-- Optional chips from `observationsJson.issues` only when `confidence >= 0.6` and issue `confidence >= 0.6`.
+- Optional chips from `observationsJson.issues` only when overall `confidence >= 0.6` and issue `confidence >= 0.6`. Each chip seeks the take to `tStart`.
+- Drafts include clock times (`0:12`) from `tStart` / `tEnd`. Compare must fill `tStart` on every issue.
 - Student `/l/<code>` already plays `referenceMedia` — tutorial attach is enough.
+
+## RAG drafts (v1.1)
+
+Drafts pull: compare facts, matching score/tutorial bars, this student's last reply, up to 5 teacher replies on the same piece, and up to 3 replies with the same issue types. Teacher sends still teach the next draft. Fine-tuning waits until hundreds of sent replies exist.
+
+Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`.
+
+## Cost (paid Gemini API list, Sep 2026)
+
+No new host for RAG. Same Railway web + worker and Supabase Postgres/Storage. Retrieval is extra SQL on `Reply` / `PieceModel` you already store.
+
+Rates used: Gemini 3.5 Flash **$1.50 / 1M input, $9 / 1M output** (thinking billed as output). Gemini 3.1 Pro Preview **$2 / 1M input, $12 / 1M output** (prompts ≤ 200k). Video ~**300 tokens/s** at default resolution (~100/s if you later set low media resolution).
+
+| Step | Model | Typical size | Approx USD |
+|---|---|---|---|
+| Train one song (once) | 3.1 Pro | ~3 min tutorial + sheet, HIGH thinking | $0.12–$0.30 |
+| Compare one 60s take | 3.5 Flash | ~18k video tokens + short JSON | $0.03–$0.06 |
+| Draft + RAG | 3.5 Flash | ~2–4k text in, ~200 visible out | < $0.01 |
+
+**100 takes/month:** about **$4–$8** Gemini (compare is ~90% of that) + a few dollars the first time you train 3 songs. **1,000 takes/month:** about **$40–$70**. RAG examples add almost nothing versus video.
+
+### Hosting (unchanged architecture)
+
+| Piece | Typical | Notes |
+|---|---|---|
+| Railway `web` + `worker` | **$5–$20 / mo** | Two processes, same image. RAG adds no extra service. |
+| Supabase Postgres | **$0** on free until the DB grows | PieceModel JSON is tiny. |
+| Supabase Storage | **$0** then **~$25 Pro** | Videos dominate. ~100 takes × 20 MB ≈ 2 GB stored; free 1 GB fills fast. Pro is the realistic floor once students upload. |
+| Gemini | see table | Billed to the Google AI Studio / Cloud project, not Railway. |
+
+Fine-tunes later cost a training run plus hosted tokens; skip until the teacher has labelled hundreds–~1000 sends. Prices move; treat these as order-of-magnitude, not invoices.
 
 ## Env
 
-`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE`. Never commit the key.
+`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE` / `GEMINI_MODEL_DRAFT`. Never commit the key.

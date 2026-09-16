@@ -2,9 +2,15 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { MAX_ACTIVE_VOICE_SAMPLES, PROMPT_VERSION } from "../lib/constants";
-import { geminiClient, geminiCompareModel, geminiCostCents, generateGeminiText } from "../lib/gemini";
+import {
+  geminiClient,
+  geminiCostCents,
+  geminiDraftModel,
+  generateGeminiText,
+} from "../lib/gemini";
 import { routeSubmission } from "../lib/growth";
 import { prisma } from "../lib/prisma";
+import { observationOutline, retrieveDraftContext, type DraftRetrieval } from "../lib/rag";
 import { isCompareObservations, type CompareObservations } from "../lib/score-model";
 
 type Metrics = {
@@ -28,47 +34,47 @@ function softMetricNotes(metrics: Metrics | null) {
     notes.push("Bài quay khá ngắn.");
   }
   if (notes.length === 0) {
-    return "Số đo không chỉ ra vấn đề rõ. Đừng bịa lỗi. Khen một điểm cụ thể và nhắc đúng note của bài.";
+    return "Số đo không chỉ ra vấn đề rõ. Đừng bịa lỗi.";
   }
   return notes.join(" ");
 }
 
-function observationNotes(observations: CompareObservations | null) {
-  if (!observations) {
-    return "Không có đối chiếu bản nhạc. Không được nhận xét nốt, hợp âm, hoặc kỹ thuật video.";
-  }
-  if (observations.confidence < 0.45) {
-    return `Độ tin thấp (${observations.confidence}). Chỉ khen chung và nhắc note của bài. Không nêu nốt sai.`;
-  }
-  return `Dùng observationsJson làm nguồn duy nhất cho nốt/hợp âm/kỹ thuật. Confidence ${observations.confidence}.`;
+function formatExamples(rows: { source: string; text: string }[]) {
+  if (!rows.length) return "Chưa có nhận xét cũ trên bài này.";
+  return rows.map((row) => `- (${row.source}) ${row.text}`).join("\n");
 }
 
 async function loadSystemPrompt() {
-  const path = join(process.cwd(), "prompts/draft_reply_vi.md");
-  return readFile(path, "utf8");
+  return readFile(join(process.cwd(), "prompts/draft_reply_vi.md"), "utf8");
 }
 
 function buildUserPrompt(input: {
   title: string;
   note: string | null;
   studentName: string;
-  previousText: string | null;
   metrics: Metrics | null;
   observations: CompareObservations | null;
   samples: string[];
+  retrieval: DraftRetrieval;
 }) {
   return [
     `Bài: ${input.title}`,
     input.note ? `Note của thầy: ${input.note}` : "Không có note.",
     `Học viên: ${input.studentName}`,
-    input.previousText ? `Nhận xét lần trước (cùng bài): ${input.previousText}` : "Chưa có nhận xét trước.",
+    input.retrieval.previousText
+      ? `Nhận xét lần trước (cùng học viên, cùng bài): ${input.retrieval.previousText}`
+      : "Chưa có nhận xét trước cho học viên này.",
+    `Facts bắt buộc:\n${observationOutline(input.observations)}`,
     `Số đo: ${JSON.stringify(input.metrics)}`,
     `Cách dùng số đo: ${softMetricNotes(input.metrics)}`,
-    `Đối chiếu bản nhạc: ${JSON.stringify(input.observations)}`,
-    `Cách dùng đối chiếu: ${observationNotes(input.observations)}`,
+    input.retrieval.scoreHints.length
+      ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
+      : "Không có đoạn score gắn với lỗi.",
+    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(input.retrieval.pieceReplies)}`,
+    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(input.retrieval.similarReplies)}`,
     input.samples.length
       ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
-      : "Chưa có mẫu giọng. Viết ngắn, ấm, như thầy guitar Việt Nam nói chuyện với học viên.",
+      : "Chưa có mẫu giọng. Viết 50–110 chữ, ấm, cụ thể, kèm mốc giờ nếu facts có.",
   ].join("\n\n");
 }
 
@@ -79,7 +85,6 @@ export async function runDraft(submissionId: string) {
       student: true,
       piece: { include: { teacher: { include: { voiceSamples: { where: { active: true } } } } } },
       analyses: { orderBy: { createdAt: "desc" }, take: 1 },
-      replies: { orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
   if (!submission) throw new Error("submission not found");
@@ -90,26 +95,26 @@ export async function runDraft(submissionId: string) {
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
-  const previous = await prisma.reply.findFirst({
-    where: {
-      submission: { studentId: submission.studentId, pieceId: submission.pieceId },
-    },
-    orderBy: { sentAt: "desc" },
-  });
-
   const metrics = (submission.analyses[0]?.metricsJson ?? null) as Metrics | null;
   const observationsRaw = submission.analyses[0]?.observationsJson ?? null;
   const observations = isCompareObservations(observationsRaw) ? observationsRaw : null;
+  const retrieval = await retrieveDraftContext({
+    teacherId: submission.piece.teacherId,
+    pieceId: submission.pieceId,
+    studentId: submission.studentId,
+    submissionId,
+    observations,
+  });
   const started = Date.now();
   const system = await loadSystemPrompt();
   const user = buildUserPrompt({
     title: submission.piece.title,
     note: submission.piece.note,
     studentName: submission.student.name,
-    previousText: previous?.text ?? null,
     metrics,
     observations,
     samples,
+    retrieval,
   });
 
   let text: string;
@@ -118,7 +123,7 @@ export async function runDraft(submissionId: string) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
   if (gemini) {
-    usedModel = geminiCompareModel();
+    usedModel = geminiDraftModel();
     const response = await generateGeminiText({
       ai: gemini,
       model: usedModel,
@@ -140,6 +145,8 @@ export async function runDraft(submissionId: string) {
           costCents: geminiCostCents(response.usage),
           latencyMs: Date.now() - started,
           model: usedModel,
+          ragPieceReplies: retrieval.pieceReplies.length,
+          ragSimilar: retrieval.similarReplies.length,
         },
       },
     });
@@ -199,5 +206,5 @@ export async function runDraft(submissionId: string) {
 
 function fallbackDraft(name: string, title: string, note: string | null) {
   const focus = note?.trim() || "đúng nhịp và tiếng sạch";
-  return `Thầy đã nghe ${name} chơi ${title}. Giữ vững những gì đang ổn, lần sau tập trung ${focus}. Quay lại một take nữa rồi gửi thầy.`;
+  return `Thầy đã nghe ${name} chơi ${title}. Đoạn mở đầu ổn, giữ nhịp đó. Lần sau tập trung ${focus}, chơi chậm một nhịp rồi gửi lại một take.`;
 }

@@ -71,6 +71,7 @@ async function compareTake(input: {
         `Tutorial cues: ${JSON.stringify(input.tutorialCuesJson)}`,
         `Audio metrics: ${JSON.stringify(input.metrics)}`,
         "The attached file is the student take. Compare it to the saved model.",
+        "Every issue needs tStart in seconds on the student video. Report all distinct high-confidence problems, not only one.",
       ].join("\n\n"),
     });
     const observations = parseCompareObservations(result.data);

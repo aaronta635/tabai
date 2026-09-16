@@ -1,11 +1,11 @@
 export const CONSENT_VERSION = "2026-09-v1";
 export const PIPELINE_VERSION = "audio-metrics-v1";
 export const PIPELINE_VERSION_SCORE = "score-compare-v1";
-export const PROMPT_VERSION = "draft_reply_vi-v2";
+export const PROMPT_VERSION = "draft_reply_vi-v4";
 export const TRAIN_PROMPT_VERSION = "train_piece-v1";
-export const COMPARE_PROMPT_VERSION = "compare_take-v1";
-export const DEFAULT_GEMINI_MODEL_TRAIN = "gemini-2.5-pro";
-export const DEFAULT_GEMINI_MODEL_COMPARE = "gemini-2.5-flash";
+export const COMPARE_PROMPT_VERSION = "compare_take-v2";
+export const DEFAULT_GEMINI_MODEL_TRAIN = "gemini-3.1-pro-preview";
+export const DEFAULT_GEMINI_MODEL_COMPARE = "gemini-3.5-flash";
 export const MAX_VIDEO_BYTES = 60 * 1024 * 1024;
 export const MAX_SHEET_BYTES = 20 * 1024 * 1024;
 export const MAX_VIDEO_SECONDS = 90;

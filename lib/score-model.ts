@@ -167,3 +167,38 @@ export function isCompareObservations(value: unknown): value is CompareObservati
   const data = asRecord(value);
   return Boolean(data && typeof data.confidence === "number" && Array.isArray(data.issues));
 }
+
+export function formatClock(seconds: number) {
+  const total = Math.max(0, Math.round(seconds));
+  const m = Math.floor(total / 60);
+  const s = total % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+export function formatIssueWhere(issue: Pick<CompareIssue, "bar" | "tStart" | "tEnd">) {
+  const clock =
+    issue.tStart != null
+      ? issue.tEnd != null && issue.tEnd > issue.tStart
+        ? `${formatClock(issue.tStart)}–${formatClock(issue.tEnd)}`
+        : formatClock(issue.tStart)
+      : null;
+  const bar = issue.bar != null ? `bar ${issue.bar}` : null;
+  if (clock && bar) return `${clock} (${bar})`;
+  return clock ?? bar;
+}
+
+export type ObservationMarker = {
+  tStart: number;
+  label: string;
+};
+
+export function observationMarkers(value: unknown): ObservationMarker[] {
+  if (!isCompareObservations(value) || value.confidence < 0.6) return [];
+  return value.issues
+    .filter((issue) => issue.confidence >= 0.6 && issue.tStart != null)
+    .slice(0, 6)
+    .map((issue) => ({
+      tStart: issue.tStart as number,
+      label: `${formatClock(issue.tStart as number)} ${issue.type}`,
+    }));
+}

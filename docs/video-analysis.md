@@ -1,14 +1,20 @@
 # Video analysis — decided stack
 
-Do not add a note-transcription library until a teacher confirms flags on 20 stored videos. Wrong red chips kill trust faster than no chips.
+Do not show red chips in the teacher queue until confidence is high. Wrong flags kill trust faster than no chips.
 
-## Now (v1)
+## Now (score-model V1)
 
-**ffmpeg + `scripts/analyze.py` (Python stdlib).**
+**ffmpeg + `scripts/analyze.py` (Python stdlib)** still run on every approved take (duration, RMS, onsets, tempo stability, silence).
 
-Extract mono WAV, then duration, RMS envelope, energy onsets, tempo stability (IOI std), silence ratio. Target < 20s. This is already in the worker.
+**Gemini train/compare** is enabled when `GEMINI_API_KEY` is set and the piece has a `ready` PieceModel:
 
-Skip librosa until the stdlib onset detector is clearly wrong on real phone takes.
+1. `train_piece` reads sheet + tutorial, extracts versioned `scoreJson` + `tutorialCuesJson`, stores them in Postgres. Gemini File API ids are not the model (they expire in ~48h).
+2. `analyze` uploads only the student video, plus the saved JSON, and writes `Analysis.observationsJson`.
+3. `draft` writes a Vietnamese queue reply. The teacher sends it.
+
+If there is no ready model, analyze behaves as audio-metrics-only.
+
+This overrides the earlier “raw video must not leave our storage” rule for train (tutorial) and compare (student take). See [`docs/decisions.md`](decisions.md).
 
 ## Next, when 20 videos exist
 
@@ -16,9 +22,9 @@ Skip librosa until the stdlib onset detector is clearly wrong on real phone take
 
 ## After a teacher says the flags are true
 
-**Basic Pitch** (Spotify, `basic-pitch` Python) for note events, then DTW to a reference take *offline first*. Promote into the draft prompt only for high-confidence, audio-only observations.
+**Basic Pitch** (Spotify, `basic-pitch` Python) can fill the same `scoreJson` / `observationsJson` contract. Do not add it until a teacher confirms flags on stored videos.
 
-Do not use CREPE (monophonic, chords break it). Do not send video to the LLM.
+Do not use CREPE (monophonic, chords break it).
 
 ## Later (v3, gated)
 
@@ -29,6 +35,6 @@ Do not use CREPE (monophonic, chords break it). Do not send video to the LLM.
 | Library | Why not |
 |---|---|
 | CREPE / pitch-only | Guitar is polyphonic + buzz + room |
-| Cloud video APIs | Raw video must not leave our storage |
 | Browser MediaPipe | Unreliable in in-app WebViews |
 | Whisper | Speech, not guitar notes |
+| Custom fine-tune on 3 videos | Too little data; the saved artifact is PieceModel JSON |

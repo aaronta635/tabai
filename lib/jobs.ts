@@ -15,6 +15,10 @@ export async function enqueueJob(
   });
 }
 
+export async function enqueueTrainPiece(pieceId: string) {
+  return enqueueJob("train_piece", { pieceId });
+}
+
 export async function enqueueAnalyzeIfApproved(submissionId: string) {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },

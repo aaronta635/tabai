@@ -2,8 +2,10 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { MAX_ACTIVE_VOICE_SAMPLES, PROMPT_VERSION } from "../lib/constants";
+import { geminiClient, geminiCompareModel, geminiCostCents, generateGeminiText } from "../lib/gemini";
 import { routeSubmission } from "../lib/growth";
 import { prisma } from "../lib/prisma";
+import { isCompareObservations, type CompareObservations } from "../lib/score-model";
 
 type Metrics = {
   duration_s?: number;
@@ -31,9 +33,43 @@ function softMetricNotes(metrics: Metrics | null) {
   return notes.join(" ");
 }
 
+function observationNotes(observations: CompareObservations | null) {
+  if (!observations) {
+    return "Không có đối chiếu bản nhạc. Không được nhận xét nốt, hợp âm, hoặc kỹ thuật video.";
+  }
+  if (observations.confidence < 0.45) {
+    return `Độ tin thấp (${observations.confidence}). Chỉ khen chung và nhắc note của bài. Không nêu nốt sai.`;
+  }
+  return `Dùng observationsJson làm nguồn duy nhất cho nốt/hợp âm/kỹ thuật. Confidence ${observations.confidence}.`;
+}
+
 async function loadSystemPrompt() {
   const path = join(process.cwd(), "prompts/draft_reply_vi.md");
   return readFile(path, "utf8");
+}
+
+function buildUserPrompt(input: {
+  title: string;
+  note: string | null;
+  studentName: string;
+  previousText: string | null;
+  metrics: Metrics | null;
+  observations: CompareObservations | null;
+  samples: string[];
+}) {
+  return [
+    `Bài: ${input.title}`,
+    input.note ? `Note của thầy: ${input.note}` : "Không có note.",
+    `Học viên: ${input.studentName}`,
+    input.previousText ? `Nhận xét lần trước (cùng bài): ${input.previousText}` : "Chưa có nhận xét trước.",
+    `Số đo: ${JSON.stringify(input.metrics)}`,
+    `Cách dùng số đo: ${softMetricNotes(input.metrics)}`,
+    `Đối chiếu bản nhạc: ${JSON.stringify(input.observations)}`,
+    `Cách dùng đối chiếu: ${observationNotes(input.observations)}`,
+    input.samples.length
+      ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
+      : "Chưa có mẫu giọng. Viết ngắn, ấm, như thầy guitar Việt Nam nói chuyện với học viên.",
+  ].join("\n\n");
 }
 
 export async function runDraft(submissionId: string) {
@@ -62,43 +98,65 @@ export async function runDraft(submissionId: string) {
   });
 
   const metrics = (submission.analyses[0]?.metricsJson ?? null) as Metrics | null;
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const observationsRaw = submission.analyses[0]?.observationsJson ?? null;
+  const observations = isCompareObservations(observationsRaw) ? observationsRaw : null;
   const started = Date.now();
+  const system = await loadSystemPrompt();
+  const user = buildUserPrompt({
+    title: submission.piece.title,
+    note: submission.piece.note,
+    studentName: submission.student.name,
+    previousText: previous?.text ?? null,
+    metrics,
+    observations,
+    samples,
+  });
 
   let text: string;
-  let usedModel = model;
+  let usedModel = "context-only";
+  const gemini = geminiClient();
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-  if (!apiKey) {
-    usedModel = "context-only";
-    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
-  } else {
-    const anthropic = new Anthropic({ apiKey });
-    const system = await loadSystemPrompt();
-    const user = [
-      `Bài: ${submission.piece.title}`,
-      submission.piece.note ? `Note của thầy: ${submission.piece.note}` : "Không có note.",
-      `Học viên: ${submission.student.name}`,
-      previous ? `Nhận xét lần trước (cùng bài): ${previous.text}` : "Chưa có nhận xét trước.",
-      `Số đo: ${JSON.stringify(metrics)}`,
-      `Cách dùng số đo: ${softMetricNotes(metrics)}`,
-      samples.length
-        ? `Giọng thầy (mẫu):\n${samples.map((s) => `- ${s}`).join("\n")}`
-        : "Chưa có mẫu giọng. Viết ngắn, ấm, như thầy guitar Việt Nam nói chuyện với học viên.",
-    ].join("\n\n");
-
+  if (gemini) {
+    usedModel = geminiCompareModel();
+    const response = await generateGeminiText({
+      ai: gemini,
+      model: usedModel,
+      system,
+      userText: user,
+    });
+    text =
+      response.text ||
+      fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
+    usedModel = response.model;
+    await prisma.event.create({
+      data: {
+        actorType: "system",
+        name: "draft.cost",
+        teacherId: submission.piece.teacherId,
+        actorId: submissionId,
+        propsJson: {
+          ...response.usage,
+          costCents: geminiCostCents(response.usage),
+          latencyMs: Date.now() - started,
+          model: usedModel,
+        },
+      },
+    });
+  } else if (anthropicKey) {
+    usedModel = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
+    const anthropic = new Anthropic({ apiKey: anthropicKey });
     const response = await anthropic.messages.create({
-      model,
+      model: usedModel,
       max_tokens: 400,
       system,
       messages: [{ role: "user", content: user }],
     });
     const block = response.content.find((part) => part.type === "text");
-    text = block && block.type === "text" ? block.text.trim() : fallbackDraft(
-      submission.student.name,
-      submission.piece.title,
-      submission.piece.note,
-    );
+    text =
+      block && block.type === "text"
+        ? block.text.trim()
+        : fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
 
     const inputTokens = response.usage.input_tokens;
     const outputTokens = response.usage.output_tokens;
@@ -109,9 +167,11 @@ export async function runDraft(submissionId: string) {
         name: "draft.cost",
         teacherId: submission.piece.teacherId,
         actorId: submissionId,
-        propsJson: { inputTokens, outputTokens, costCents, latencyMs: Date.now() - started, model },
+        propsJson: { inputTokens, outputTokens, costCents, latencyMs: Date.now() - started, model: usedModel },
       },
     });
+  } else {
+    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
   }
 
   const route = routeSubmission({

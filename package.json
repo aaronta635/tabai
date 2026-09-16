@@ -14,13 +14,12 @@
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
-    "db:seed": "tsx prisma/seed.ts"
-  },
-  "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "catalog:train": "tsx scripts/ingest-catalog.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
+    "@google/genai": "^2.22.0",
     "@prisma/client": "^6.19.3",
     "@supabase/ssr": "^0.12.7",
     "@supabase/supabase-js": "^2.109.0",
@@ -41,6 +40,10 @@
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.13",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "ws": "^8.21.3"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1"
   }
 }

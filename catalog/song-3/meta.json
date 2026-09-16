@@ -1,0 +1,5 @@
+{
+  "title": "Bài dễ 3",
+  "code": "song3",
+  "note": "Chơi chậm, đúng nhịp. Drop sheet.pdf and tutorial.mp4 in this folder, then npm run catalog:train."
+}

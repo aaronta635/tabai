@@ -1,9 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import { nanoid } from "nanoid";
+import { loadLocalEnv } from "../lib/load-env";
 
-const prisma = new PrismaClient();
+loadLocalEnv();
+
+const prisma = new PrismaClient({
+  datasources: {
+    db: { url: process.env.DIRECT_URL || process.env.DATABASE_URL },
+  },
+});
 
 async function main() {
+  if (!process.env.DATABASE_URL && !process.env.DIRECT_URL) {
+    throw new Error("DATABASE_URL is missing. Put it in .env.local and re-run npm run db:seed.");
+  }
   const existing = await prisma.teacher.findFirst();
   if (existing) {
     console.log("seed skipped — teacher exists", existing.id);

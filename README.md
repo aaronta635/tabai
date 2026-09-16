@@ -10,8 +10,9 @@ Next.js App Router for online guitar teachers. The demo is: **sign in → make a
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Auth (public) | Supabase → API → anon |
 | `DATABASE_URL` + `DIRECT_URL` | Prisma / creating links | Supabase → Database → URI |
 | `SESSION_SECRET` | Invite/admin cookies | Generate locally |
-| `SUPABASE_SERVICE_ROLE_KEY` | Reliable video Storage | Supabase → API → service_role |
-| `ANTHROPIC_API_KEY` | AI drafts | Optional |
+| `SUPABASE_SERVICE_ROLE_KEY` | Worker + signed Storage (required) | Supabase → API → `service_role` |
+| `ANTHROPIC_API_KEY` | AI drafts (fallback) | Optional |
+| `GEMINI_API_KEY` | Score train/compare + preferred drafts | Optional |
 
 Anon is not the database. Paste the **Postgres URI** (with password) into `DATABASE_URL`.
 
@@ -26,9 +27,13 @@ Student: open `/l/<code>` or type the code on the homepage.
 3. In Auth settings, turn off “Confirm email” for local demo, or confirm via inbox.
 4. `npm install && npx prisma migrate deploy && npm run dev`
 
+Prisma CLI reads `.env.local` through [`prisma.config.ts`](prisma.config.ts) (`DATABASE_URL` + `DIRECT_URL` are required). `DIRECT_URL` is the direct (5432) URI; `DATABASE_URL` is the pooler (6543).
+
+The worker (`npm run worker`) needs `SUPABASE_SERVICE_ROLE_KEY`. It also ships a `ws` fallback so Node 20 can run locally; Node 22+ (the Dockerfile) uses the native WebSocket.
+
 ## Video analysis
 
-See [`docs/video-analysis.md`](docs/video-analysis.md). v1 is ffmpeg + stdlib Python. Basic Pitch and MediaPipe wait until a teacher confirms flags.
+See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md`](docs/score-model.md). v1 metrics are ffmpeg + stdlib Python. When a piece has sheet + tutorial, `npm run catalog:train` plus the worker saves a `PieceModel` and later takes are compared with Gemini. Teacher still sends the draft.
 
 ## Railway
 

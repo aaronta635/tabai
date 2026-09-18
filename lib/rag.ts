@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { getReadyPieceModel } from "@/lib/catalog";
 import { prisma } from "@/lib/prisma";
 import {
+  closeMatch,
   formatIssueWhere,
   isCompareObservations,
   type CompareObservations,
@@ -52,16 +53,24 @@ export function observationOutline(observations: CompareObservations | null) {
     ].join(" ");
   }
   const issues = observations.issues
-    .filter((issue) => issue.confidence >= 0.6)
+    .filter((issue) => issue.confidence >= 0.75)
     .slice(0, 4)
     .map((issue) => {
       const where = formatIssueWhere(issue) ?? "một đoạn";
       return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
     });
+  if (closeMatch(observations) || issues.length === 0) {
+    return [
+      `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
+      `Khen: ${observations.positives.slice(0, 3).join("; ") || "(khen một điểm cụ thể về nhịp hoặc tiếng sạch)"}`,
+      `Sửa: không có lỗi tin cậy — không bịa điểm sửa.`,
+      `Lần sau: giữ đúng cảm giác take này. Chỉ nhắc note của bài nếu có, không bịa lỗi mới.`,
+    ].join("\n");
+  }
   return [
     `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
     `Khen: ${observations.positives.slice(0, 2).join("; ") || "(không có khen cụ thể — khen nhịp hoặc tiếng sạch nếu số đo ổn)"}`,
-    `Sửa: ${issues.join(" | ") || "(không có lỗi tin cậy — chỉ khen và một hướng tập từ note bài)"}`,
+    `Sửa: ${issues.join(" | ")}`,
     `Lần sau: ${observations.nextPractice || "chơi chậm, đúng nhịp"}`,
   ].join("\n");
 }

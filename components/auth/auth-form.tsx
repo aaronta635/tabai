@@ -3,12 +3,15 @@
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import type { AccountRole } from "@/lib/onboarding";
 
 export function AuthForm({
   next,
+  role,
   labels,
 }: {
   next: string;
+  role: AccountRole;
   labels: {
     email: string;
     password: string;
@@ -32,6 +35,8 @@ export function AuthForm({
     const email = String(data.get("email") ?? "").trim();
     const password = String(data.get("password") ?? "");
     const supabase = createBrowserSupabase();
+    const after = `/onboarding`;
+    const redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(after)}&role=${role}`;
 
     try {
       if (mode === "signup") {
@@ -39,15 +44,34 @@ export function AuthForm({
           email,
           password,
           options: {
-            emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+            data: { role },
+            emailRedirectTo: redirectTo,
           },
         });
         if (signError) throw signError;
         setInfo(labels.checkEmail);
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (sessionData.session) {
+          const sessionRes = await fetch("/api/session", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ role }),
+          });
+          const json = (await sessionRes.json()) as { next?: string };
+          router.push(json.next ?? after);
+          router.refresh();
+        }
       } else {
         const { error: signError } = await supabase.auth.signInWithPassword({ email, password });
         if (signError) throw signError;
-        router.push(next);
+        const sessionRes = await fetch("/api/session", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role }),
+        });
+        const json = (await sessionRes.json()) as { next?: string; error?: string };
+        if (!sessionRes.ok) throw new Error(json.error ?? "session failed");
+        router.push(json.next ?? next);
         router.refresh();
       }
     } catch (err) {
@@ -66,7 +90,7 @@ export function AuthForm({
           type="email"
           name="email"
           autoComplete="email"
-          className="mt-1 w-full rounded-full border border-[#141210]/10 bg-white px-4 py-3"
+          className="mt-1 w-full rounded-full border border-ink/10 bg-white px-4 py-3"
         />
       </label>
       <label className="block text-sm">
@@ -77,21 +101,21 @@ export function AuthForm({
           name="password"
           minLength={6}
           autoComplete={mode === "signup" ? "new-password" : "current-password"}
-          className="mt-1 w-full rounded-full border border-[#141210]/10 bg-white px-4 py-3"
+          className="mt-1 w-full rounded-full border border-ink/10 bg-white px-4 py-3"
         />
       </label>
-      {error ? <p className="text-sm text-[#b42318]">{error}</p> : null}
-      {info ? <p className="text-sm text-[#6b6560]">{info}</p> : null}
+      {error ? <p className="text-sm text-danger">{error}</p> : null}
+      {info ? <p className="text-sm text-ink-soft">{info}</p> : null}
       <button
         type="submit"
         disabled={busy}
-        className="w-full rounded-full bg-[#141210] py-3 text-white disabled:opacity-60"
+        className="w-full rounded-full bg-beat py-3 text-white disabled:opacity-60"
       >
         {busy ? "…" : mode === "signup" ? labels.signUp : labels.signIn}
       </button>
       <button
         type="button"
-        className="w-full text-sm text-[#6b6560]"
+        className="w-full text-sm text-ink-soft"
         onClick={() => {
           setMode(mode === "signup" ? "signin" : "signup");
           setError(null);

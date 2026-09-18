@@ -18,14 +18,17 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-8">
-      <h1 className="font-display text-3xl">{t.teacher.settings}</h1>
-      <form action={updateDelivery} className="space-y-3 rounded-2xl bg-night-card p-4">
+      <div>
+        <p className="text-xs tracking-[0.18em] uppercase text-ink-soft">{t.teacher.settings}</p>
+        <h1 className="font-display mt-2 text-3xl">{t.teacher.settings}</h1>
+      </div>
+      <form action={updateDelivery} className="lms-card space-y-3 p-4">
         <label className="block text-sm">
           {t.teacher.delivery}
           <select
             name="deliveryType"
             defaultValue={teacher.deliveryType ?? ""}
-            className="mt-2 w-full rounded-xl bg-night px-3 py-3"
+            className="mt-2 w-full rounded-xl border border-ink/10 bg-white px-3 py-3"
           >
             <option value="">—</option>
             <option value="zalo">Zalo</option>
@@ -37,19 +40,19 @@ export default async function SettingsPage() {
           <input
             name="deliveryHandle"
             defaultValue={teacher.deliveryHandle ?? ""}
-            className="mt-2 w-full rounded-xl bg-night px-3 py-3"
+            className="mt-2 w-full rounded-xl border border-ink/10 bg-white px-3 py-3"
           />
         </label>
-        <button type="submit" className="rounded-xl bg-forest px-4 py-3 text-white">
+        <button type="submit" className="rounded-xl bg-beat px-4 py-3 text-white">
           OK
         </button>
       </form>
       <section>
-        <h2 className="font-display text-xl">Voice</h2>
-        <p className="mt-2 text-sm text-bone/60">{t.teacher.voicesReadOnly}</p>
+        <h2 className="font-display text-xl">{t.teacher.voices}</h2>
+        <p className="mt-2 text-sm text-ink-soft">{t.teacher.voicesReadOnly}</p>
         <ul className="mt-4 space-y-3">
           {samples.map((sample) => (
-            <li key={sample.id} className="rounded-xl bg-night-card p-3 text-sm leading-relaxed">
+            <li key={sample.id} className="lms-card p-3 text-sm leading-relaxed">
               {sample.text}
             </li>
           ))}

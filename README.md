@@ -35,7 +35,7 @@ Drafts pull this teacher's past replies for the same song (SQL, not a vector DB)
 
 ## Video analysis
 
-See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md`](docs/score-model.md). v1 metrics are ffmpeg + stdlib Python. When a piece has sheet + tutorial, `npm run catalog:train` plus the worker saves a `PieceModel` and later takes are compared with Gemini. Teacher still sends the draft. Cost notes: [`docs/score-model.md`](docs/score-model.md) (RAG + hosting/token).
+See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md`](docs/score-model.md). v1 metrics are ffmpeg + stdlib Python. When a piece has sheet + tutorial, `npm run catalog:train` plus the worker saves a `PieceModel` and later takes are compared with Gemini. Teacher still sends the draft. If cues are empty, `npm run catalog:train -- --retrain`. Worker models must be live (`gemini-3.1-pro-preview` / `gemini-3.5-flash`); `gemini-2.5-*` 404s. Cost notes: [`docs/score-model.md`](docs/score-model.md).
 
 ## Railway
 

@@ -6,9 +6,11 @@ import { useTransition } from "react";
 export function LocaleToggle({
   locale,
   className = "",
+  tone = "light",
 }: {
   locale: string;
   className?: string;
+  tone?: "light" | "dark";
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -24,13 +26,17 @@ export function LocaleToggle({
     });
   }
 
+  const shell = tone === "dark" ? "bg-white/10 text-[#fff7f2]" : "bg-white text-[#35242d]";
+  const active = tone === "dark" ? "bg-white text-[#35242d]" : "bg-[#35242d] text-white";
+  const idle = tone === "dark" ? "text-[#fff7f2]" : "text-[#35242d]";
+
   return (
-    <div className={`inline-flex overflow-hidden rounded-full bg-white text-xs font-medium ${className}`}>
+    <div className={`inline-flex overflow-hidden rounded-full text-xs font-medium ${shell} ${className}`}>
       <button
         type="button"
         disabled={pending}
         onClick={() => setLocale("vi")}
-        className={`px-3 py-2 ${locale === "vi" ? "bg-[#141210] text-white" : "text-[#141210]"}`}
+        className={`px-3 py-2 ${locale === "vi" ? active : idle}`}
       >
         VI
       </button>
@@ -38,7 +44,7 @@ export function LocaleToggle({
         type="button"
         disabled={pending}
         onClick={() => setLocale("en")}
-        className={`px-3 py-2 ${locale === "en" ? "bg-[#141210] text-white" : "text-[#141210]"}`}
+        className={`px-3 py-2 ${locale === "en" ? active : idle}`}
       >
         EN
       </button>

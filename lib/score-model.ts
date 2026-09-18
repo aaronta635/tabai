@@ -140,6 +140,53 @@ export function splitTrainExtract(extract: TrainExtract): {
   return { scoreJson, tutorialCuesJson: { cues: tutorialCues } };
 }
 
+const NOTE_SEMI: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+
+function toMidi(note: string) {
+  const match = note.trim().match(/^([A-Ga-g])([#b]?)(\d)$/);
+  if (!match) return null;
+  const letter = match[1].toUpperCase();
+  const base = NOTE_SEMI[letter];
+  if (base == null) return null;
+  let midi = base + Number(match[3]) * 12;
+  if (match[2] === "#") midi += 1;
+  if (match[2] === "b") midi -= 1;
+  return midi;
+}
+
+export function looksLikeScale(notes: string[]) {
+  if (notes.length < 6) return false;
+  const midi = notes.map(toMidi);
+  if (midi.some((value) => value == null)) return false;
+  let steps = 0;
+  for (let i = 1; i < midi.length; i++) {
+    const delta = (midi[i] as number) - (midi[i - 1] as number);
+    if (delta >= 1 && delta <= 2) steps += 1;
+  }
+  return steps / (midi.length - 1) >= 0.8;
+}
+
+export function isThinTrainExtract(extract: TrainExtract) {
+  const cues = extract.tutorialCues.filter((cue) => cue.instruction.trim().length > 8);
+  if (cues.length < 4) return true;
+  if (extract.techniqueFocus.length === 0 && extract.commonMistakes.length === 0) return true;
+  return extract.sections.some((section) => looksLikeScale(section.melodyNotes));
+}
+
+export function trainExtractRichness(extract: TrainExtract) {
+  const cues = extract.tutorialCues.filter((cue) => cue.instruction.trim().length > 8).length;
+  const labels = extract.techniqueFocus.length + extract.commonMistakes.length;
+  const melody = extract.sections.reduce((sum, section) => sum + section.melodyNotes.length, 0);
+  const scalePenalty = extract.sections.filter((section) => looksLikeScale(section.melodyNotes)).length * 8;
+  return cues * 4 + labels * 2 + Math.min(melody, 20) - scalePenalty;
+}
+
+export function closeMatch(observations: CompareObservations | null) {
+  if (!observations || observations.confidence < 0.45) return false;
+  const hardIssues = observations.issues.filter((issue) => issue.confidence >= 0.75);
+  return observations.overallFit >= 0.9 && hardIssues.length === 0;
+}
+
 export function parseCompareObservations(raw: unknown): CompareObservations {
   const data = asRecord(raw) ?? {};
   const issuesRaw = Array.isArray(data.issues) ? data.issues : [];
@@ -195,7 +242,7 @@ export type ObservationMarker = {
 export function observationMarkers(value: unknown): ObservationMarker[] {
   if (!isCompareObservations(value) || value.confidence < 0.6) return [];
   return value.issues
-    .filter((issue) => issue.confidence >= 0.6 && issue.tStart != null)
+    .filter((issue) => issue.confidence >= 0.75 && issue.tStart != null)
     .slice(0, 6)
     .map((issue) => ({
       tStart: issue.tStart as number,

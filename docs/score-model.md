@@ -27,7 +27,7 @@ Issue types: `timing | pitch | chord | technique | missing`.
 ## Queue / student UI (optional later)
 
 - Keep showing `Draft.text`. Teacher sends; nothing auto-sends to the student.
-- Optional chips from `observationsJson.issues` only when overall `confidence >= 0.6` and issue `confidence >= 0.6`. Each chip seeks the take to `tStart`.
+- Optional chips from `observationsJson.issues` only when overall `confidence >= 0.6` and issue `confidence >= 0.75`. Each chip seeks the take to `tStart`.
 - Drafts include clock times (`0:12`) from `tStart` / `tEnd`. Compare must fill `tStart` on every issue.
 - Student `/l/<code>` already plays `referenceMedia` — tutorial attach is enough.
 
@@ -35,7 +35,9 @@ Issue types: `timing | pitch | chord | technique | missing`.
 
 Drafts pull: compare facts, matching score/tutorial bars, this student's last reply, up to 5 teacher replies on the same piece, and up to 3 replies with the same issue types. Teacher sends still teach the next draft. Fine-tuning waits until hundreds of sent replies exist.
 
-Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`.
+Close takes (`overallFit >= 0.9` and no issue at `confidence >= 0.75`) get praise-only drafts. The same media as the tutorial is forced to `issues: []`. Metrics must not invent a timing problem on a close match.
+
+Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`. Retrain if `tutorialCues` is empty (`npm run catalog:train -- --retrain`).
 
 ## Cost (paid Gemini API list, Sep 2026)
 
@@ -64,4 +66,4 @@ Fine-tunes later cost a training run plus hosted tokens; skip until the teacher 
 
 ## Env
 
-`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE` / `GEMINI_MODEL_DRAFT`. Never commit the key.
+`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE` / `GEMINI_MODEL_DRAFT`. Defaults: **gemini-3.1-pro-preview** (train) and **gemini-3.5-flash** (compare + draft). If `.env.local` still names `gemini-2.5-*`, compare/draft 404 and the worker skips score compare. Never commit the key.

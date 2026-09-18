@@ -14,7 +14,7 @@ import {
   uploadGeminiFile,
 } from "../lib/gemini";
 import { prisma } from "../lib/prisma";
-import { parseTrainExtract, splitTrainExtract, type PieceModelSourceJson } from "../lib/score-model";
+import { parseTrainExtract, splitTrainExtract, isThinTrainExtract, trainExtractRichness, type PieceModelSourceJson } from "../lib/score-model";
 import { downloadMedia } from "../lib/storage";
 
 async function loadPrompt(name: string) {
@@ -73,22 +73,56 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
     uploaded.push(tutorialFile.name);
 
     const system = await loadPrompt("train_piece.md");
-    const result = await generateGeminiJson({
+    const baseUser = [
+      `Piece title: ${piece.title}`,
+      piece.note ? `Teacher note: ${piece.note}` : "No teacher note.",
+      "First file is the sheet. Second file is the tutorial video.",
+      "Extract the piece model JSON.",
+    ].join("\n");
+    const strictUser = [
+      baseUser,
+      "Previous extract was too thin. Retry:",
+      "- melodyNotes must be the written tune in order, never a scale.",
+      "- tutorialCues: at least four timestamped cues from the video.",
+      "- Fill techniqueFocus and commonMistakes from the tutor.",
+    ].join("\n");
+
+    const first = await generateGeminiJson({
       ai,
       model: modelName,
       system,
       schema: TRAIN_RESPONSE_SCHEMA,
       thinkingLevel: ThinkingLevel.HIGH,
       files: [sheetFile, tutorialFile],
-      userText: [
-        `Piece title: ${piece.title}`,
-        piece.note ? `Teacher note: ${piece.note}` : "No teacher note.",
-        "First file is the sheet. Second file is the tutorial video.",
-        "Extract the piece model JSON.",
-      ].join("\n"),
+      userText: baseUser,
     });
+    let extract = parseTrainExtract(first.data);
+    let usage = first.usage;
+    let usedModel = first.model;
+    let retried = false;
 
-    const extract = parseTrainExtract(result.data);
+    if (isThinTrainExtract(extract)) {
+      retried = true;
+      const second = await generateGeminiJson({
+        ai,
+        model: modelName,
+        system,
+        schema: TRAIN_RESPONSE_SCHEMA,
+        thinkingLevel: ThinkingLevel.HIGH,
+        files: [sheetFile, tutorialFile],
+        userText: strictUser,
+      });
+      usage = {
+        inputTokens: first.usage.inputTokens + second.usage.inputTokens,
+        outputTokens: first.usage.outputTokens + second.usage.outputTokens,
+      };
+      const retryExtract = parseTrainExtract(second.data);
+      if (trainExtractRichness(retryExtract) >= trainExtractRichness(extract)) {
+        extract = retryExtract;
+        usedModel = second.model;
+      }
+    }
+
     const { scoreJson, tutorialCuesJson } = splitTrainExtract(extract);
     sourceJson.sheetSha256 = sha256(sheetBytes);
     sourceJson.tutorialSha256 = sha256(tutorialBytes);
@@ -116,10 +150,11 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
         propsJson: {
           pieceModelId: row.id,
           version,
-          geminiModel: result.model,
-          ...result.usage,
-          costCents: geminiCostCents(result.usage),
+          geminiModel: usedModel,
+          ...usage,
+          costCents: geminiCostCents(usage),
           latencyMs: Date.now() - started,
+          retried,
         },
       },
     });

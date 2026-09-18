@@ -84,6 +84,17 @@ enum SubmissionRoute {
   ai_direct
 }
 
+enum TutorStage {
+  starting
+  collecting
+  running
+}
+
+enum StudentStage {
+  exploring
+  in_class
+}
+
 // --- core ---
 
 model Teacher {
@@ -95,6 +106,9 @@ model Teacher {
   inviteToken    String        @unique
   email          String?
   authUserId     String?       @unique
+  stage          TutorStage?
+  answersJson    Json?
+  onboardedAt    DateTime?
   createdAt      DateTime      @default(now())
 
   voiceSamples VoiceSample[]
@@ -141,19 +155,24 @@ model Piece {
 }
 
 model Student {
-  id             String      @id @default(cuid())
-  teacherId      String
-  teacher        Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  id             String        @id @default(cuid())
+  teacherId      String?
+  teacher        Teacher?      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   name           String
   ageBand        AgeBand
   contactType    ContactType
   contactHandle  String
-  token          String      @unique
+  token          String        @unique
+  email          String?
+  authUserId     String?       @unique
+  stage          StudentStage?
+  answersJson    Json?
+  onboardedAt    DateTime?
   consentAt      DateTime
   consentVersion String
-  publicOk       Boolean     @default(false)
+  publicOk       Boolean       @default(false)
   approvedAt     DateTime?
-  createdAt      DateTime    @default(now())
+  createdAt      DateTime      @default(now())
 
   submissions Submission[]
 

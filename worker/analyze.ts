@@ -45,6 +45,7 @@ async function compareTake(input: {
   metrics: Prisma.InputJsonValue;
   scoreJson: Prisma.JsonValue;
   tutorialCuesJson: Prisma.JsonValue;
+  sameAsTutorial: boolean;
 }) {
   const ai = geminiClient();
   if (!ai) return null;
@@ -70,11 +71,25 @@ async function compareTake(input: {
         `Saved score model: ${JSON.stringify(input.scoreJson)}`,
         `Tutorial cues: ${JSON.stringify(input.tutorialCuesJson)}`,
         `Audio metrics: ${JSON.stringify(input.metrics)}`,
-        "The attached file is the student take. Compare it to the saved model.",
-        "Every issue needs tStart in seconds on the student video. Report all distinct high-confidence problems, not only one.",
+        "The attached file is a student take. Compare it to the saved model.",
+        "Metrics are hints only. Do not treat high tempo_stability as an issue unless the video is clearly off the written meter.",
+        "Issues are deltas from the score/cues. Empty issues is correct when the take matches. Do not invent problems.",
+        "Every issue needs tStart in seconds on the student video.",
+        input.sameAsTutorial
+          ? "THIS TAKE IS THE PIECE TUTORIAL FILE (same media). overallFit must be ~1. issues must be []. Positives only — do not flag rubato, position shifts, or talking."
+          : "This is not the tutorial file. Only flag clear student errors.",
       ].join("\n\n"),
     });
-    const observations = parseCompareObservations(result.data);
+    let observations = parseCompareObservations(result.data);
+    if (input.sameAsTutorial) {
+      observations = {
+        ...observations,
+        overallFit: Math.max(observations.overallFit, 0.95),
+        confidence: Math.max(observations.confidence, 0.9),
+        issues: [],
+        nextPractice: observations.nextPractice || "Giữ đúng cảm giác take này.",
+      };
+    }
     return {
       observations,
       costCents: geminiCostCents(result.usage),
@@ -156,6 +171,9 @@ export async function runAnalyze(submissionId: string) {
           metrics,
           scoreJson: pieceModel.scoreJson,
           tutorialCuesJson: pieceModel.tutorialCuesJson,
+          sameAsTutorial: Boolean(
+            submission.piece.tutorialMediaId && submission.mediaId === submission.piece.tutorialMediaId,
+          ),
         });
         if (compared) {
           observations = compared.observations as unknown as Prisma.InputJsonValue;

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { MAX_VIDEO_BYTES } from "@/lib/constants";
-import { getStudentTokenFromCookie } from "@/lib/auth";
+import { studentForPiece } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedUpload } from "@/lib/storage";
 
@@ -11,15 +11,19 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     return NextResponse.json({ error: "piece not found" }, { status: 404 });
   }
 
-  const token = await getStudentTokenFromCookie();
-  if (!token) {
-    return NextResponse.json({ error: "register first" }, { status: 401 });
+  const bound = await studentForPiece(piece.teacherId);
+  if (bound.otherClass) {
+    return NextResponse.json({ error: "other class" }, { status: 409 });
   }
-  const student = await prisma.student.findFirst({
-    where: { token, teacherId: piece.teacherId },
-  });
+  let student = bound.student;
   if (!student) {
     return NextResponse.json({ error: "register first" }, { status: 401 });
+  }
+  if (!student.teacherId) {
+    student = await prisma.student.update({
+      where: { id: student.id },
+      data: { teacherId: piece.teacherId, stage: "in_class" },
+    });
   }
 
   const body = (await request.json()) as { size?: number; contentType?: string };

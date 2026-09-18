@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { FilePicker } from "@/components/file-picker";
 
 type Props = {
   code: string;
@@ -10,6 +11,7 @@ type Props = {
 
 type JsonBag = {
   error?: string;
+  fields?: { name?: boolean; contactHandle?: boolean };
   signedUrl?: string;
   mediaId?: string;
   studentToken?: string;
@@ -28,17 +30,17 @@ async function readJson(res: Response): Promise<JsonBag> {
 
 export function StudentUpload({ code, needsProfile }: Props) {
   const t = useTranslations("student");
-  const fileRef = useRef<HTMLInputElement>(null);
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
   const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [fieldError, setFieldError] = useState<{ name?: string; contactHandle?: string }>({});
   const [recordSupported, setRecordSupported] = useState(false);
   const [recording, setRecording] = useState(false);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const [recorded, setRecorded] = useState<File | null>(null);
+  const [video, setVideo] = useState<File | null>(null);
 
   useEffect(() => {
     setRecordSupported(typeof MediaRecorder !== "undefined");
@@ -55,7 +57,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "video/webm" });
-        setRecorded(new File([blob], "take.webm", { type: blob.type }));
+        setVideo(new File([blob], "take.webm", { type: blob.type }));
         setRecording(false);
       };
       recorderRef.current = recorder;
@@ -73,9 +75,10 @@ export function StudentUpload({ code, needsProfile }: Props) {
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setFieldError({});
     const form = event.currentTarget;
     const data = new FormData(form);
-    const picked = fileRef.current?.files?.[0] ?? recorded;
+    const picked = video;
     if (!picked) {
       setError(t("needFile"));
       return;
@@ -88,20 +91,42 @@ export function StudentUpload({ code, needsProfile }: Props) {
     setBusy(true);
     try {
       if (needsProfile) {
+        const nameRaw = String(data.get("name") ?? "");
+        const contactRaw = String(data.get("contactHandle") ?? "");
+        if (!nameRaw.trim() || !contactRaw.trim()) {
+          const next = {
+            name: !nameRaw.trim() ? t("nameRequired") : undefined,
+            contactHandle: !contactRaw.trim() ? t("contactRequired") : undefined,
+          };
+          setFieldError(next);
+          setError([next.name, next.contactHandle].filter(Boolean).join(" "));
+          setBusy(false);
+          return;
+        }
         const register = await fetch(`/api/l/${code}/register`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: data.get("name"),
+            name: nameRaw.trim(),
             ageBand,
             contactType,
-            contactHandle: data.get("contactHandle"),
+            contactHandle: contactRaw.trim(),
             publicOk: ageBand === "adult" && data.get("publicOk") === "on",
             consent: true,
           }),
         });
         const registerJson = await readJson(register);
-        if (!register.ok) throw new Error(registerJson.error ?? "register failed");
+        if (!register.ok) {
+          setFieldError({
+            name: registerJson.fields?.name ? t("nameRequired") : undefined,
+            contactHandle: registerJson.fields?.contactHandle ? t("contactRequired") : undefined,
+          });
+          throw new Error(
+            [registerJson.fields?.name ? t("nameRequired") : null, registerJson.fields?.contactHandle ? t("contactRequired") : null]
+              .filter(Boolean)
+              .join(" ") || registerJson.error || "register failed",
+          );
+        }
       }
 
       const sign = await fetch(`/api/l/${code}/upload-url`, {
@@ -148,7 +173,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
   }
 
   if (done) {
-    return <p className="rounded-2xl bg-forest px-5 py-6 text-lg text-white">{t("sent")}</p>;
+    return <p className="rounded-2xl bg-beat px-5 py-6 text-lg text-white">{t("sent")}</p>;
   }
 
   return (
@@ -158,6 +183,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
           <label className="block text-sm">
             {t("name")}
             <input required name="name" className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3" />
+            {fieldError.name ? <p className="mt-1 text-sm text-danger">{fieldError.name}</p> : null}
           </label>
           <fieldset className="text-sm">
             <legend>{t("age")}</legend>
@@ -208,6 +234,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
               placeholder={contactType === "zalo" ? t("zalo") : t("messenger")}
               className="mt-2 w-full rounded-xl border border-ink/15 bg-white px-3 py-3"
             />
+            {fieldError.contactHandle ? <p className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
           </fieldset>
           <p className="text-sm leading-relaxed text-ink-soft">{t("consent")}</p>
           <p className="text-sm text-ink-soft">{t("under18Line")}</p>
@@ -222,16 +249,18 @@ export function StudentUpload({ code, needsProfile }: Props) {
         </div>
       ) : null}
 
-      <label className="block">
-        <span className="mb-2 block text-sm font-medium">{t("upload")}</span>
-        <input
-          ref={fileRef}
-          type="file"
+      <div>
+        <p className="mb-2 text-sm font-medium">{t("upload")}</p>
+        <FilePicker
           accept="video/*"
           capture="environment"
-          className="block w-full rounded-2xl border border-dashed border-ink/25 bg-white px-4 py-8"
+          file={video}
+          onFile={setVideo}
+          buttonLabel={t("chooseFile")}
+          changeLabel={t("changeFile")}
+          size="lg"
         />
-      </label>
+      </div>
 
       {recordSupported ? (
         <button
@@ -242,14 +271,12 @@ export function StudentUpload({ code, needsProfile }: Props) {
           {recording ? "Stop" : t("record")}
         </button>
       ) : null}
-
-      {recorded ? <p className="text-sm text-forest">Recorded {Math.round(recorded.size / 1024)} KB</p> : null}
       {error ? <p className="text-sm text-danger">{error}</p> : null}
 
       <button
         type="submit"
         disabled={busy}
-        className="w-full rounded-2xl bg-forest px-4 py-4 text-lg font-medium text-white disabled:opacity-60"
+        className="w-full rounded-2xl bg-beat px-4 py-4 text-lg font-medium text-white disabled:opacity-60"
       >
         {busy ? "…" : t("submit")}
       </button>

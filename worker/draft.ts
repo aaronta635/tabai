@@ -11,7 +11,7 @@ import {
 import { routeSubmission } from "../lib/growth";
 import { prisma } from "../lib/prisma";
 import { observationOutline, retrieveDraftContext, type DraftRetrieval } from "../lib/rag";
-import { isCompareObservations, type CompareObservations } from "../lib/score-model";
+import { closeMatch, isCompareObservations, type CompareObservations } from "../lib/score-model";
 
 type Metrics = {
   duration_s?: number;
@@ -21,7 +21,10 @@ type Metrics = {
   skipped?: boolean;
 };
 
-function softMetricNotes(metrics: Metrics | null) {
+function softMetricNotes(metrics: Metrics | null, observations: CompareObservations | null) {
+  if (closeMatch(observations)) {
+    return "Take khớp bài. Cấm dùng tempo_stability hay số đo để bịa lỗi nhịp.";
+  }
   if (!metrics || metrics.skipped) return "Không có số đo âm thanh đáng tin. Đừng đoán kỹ thuật.";
   const notes: string[] = [];
   if (typeof metrics.tempo_stability === "number" && metrics.tempo_stability > 0.12) {
@@ -66,7 +69,7 @@ function buildUserPrompt(input: {
       : "Chưa có nhận xét trước cho học viên này.",
     `Facts bắt buộc:\n${observationOutline(input.observations)}`,
     `Số đo: ${JSON.stringify(input.metrics)}`,
-    `Cách dùng số đo: ${softMetricNotes(input.metrics)}`,
+    `Cách dùng số đo: ${softMetricNotes(input.metrics, input.observations)}`,
     input.retrieval.scoreHints.length
       ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
       : "Không có đoạn score gắn với lỗi.",

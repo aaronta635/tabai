@@ -2,7 +2,7 @@ import Link from "next/link";
 import { requireAdmin } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { LocaleToggle } from "@/components/locale-toggle";
-import { Strings } from "@/components/strings";
+import { BrandMark } from "@/components/landing/brand-mark";
 
 export const dynamic = "force-dynamic";
 
@@ -12,9 +12,11 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const ok = await requireAdmin();
 
   return (
-    <div className="teacher-shell">
+    <div className="admin-shell">
       <header className="border-b border-night-line px-4 py-3">
-        <Strings className="mb-3 text-bone" />
+        <Link href="/" aria-label={t.brand} className="mb-3 inline-flex">
+          <BrandMark light />
+        </Link>
         <div className="flex items-center justify-between">
           <p className="font-display text-lg">Admin</p>
           <LocaleToggle locale={locale} />

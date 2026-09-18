@@ -7,6 +7,17 @@ dist
 .env.local
 .env.*.local
 *.log
+catalog/**/*.pdf
+catalog/**/*.png
+catalog/**/*.jpg
+catalog/**/*.jpeg
+catalog/**/*.webp
+catalog/**/*.musicxml
+catalog/**/*.xml
+catalog/**/*.mp4
+catalog/**/*.webm
+catalog/**/*.mov
+catalog/**/*.m4v
 .vercel
 .railway
 tmp

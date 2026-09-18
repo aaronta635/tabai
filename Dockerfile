@@ -28,6 +28,7 @@ COPY --from=builder /app/prompts ./prompts
 COPY --from=builder /app/scripts ./scripts
 COPY --from=builder /app/worker ./worker
 COPY --from=builder /app/lib ./lib
+COPY --from=builder /app/catalog ./catalog
 COPY --from=builder /app/i18n ./i18n
 COPY --from=builder /app/tsconfig.json ./
 EXPOSE 3000

@@ -35,6 +35,7 @@ enum MediaKind {
   audio
   image
   tab
+  sheet
 }
 
 enum SubmissionStatus {
@@ -62,6 +63,13 @@ enum JobType {
   draft
   perceive_audio
   perceive_video
+  train_piece
+}
+
+enum PieceModelStatus {
+  training
+  ready
+  failed
 }
 
 enum JobStatus {
@@ -76,6 +84,17 @@ enum SubmissionRoute {
   ai_direct
 }
 
+enum TutorStage {
+  starting
+  collecting
+  running
+}
+
+enum StudentStage {
+  exploring
+  in_class
+}
+
 // --- core ---
 
 model Teacher {
@@ -87,6 +106,9 @@ model Teacher {
   inviteToken    String        @unique
   email          String?
   authUserId     String?       @unique
+  stage          TutorStage?
+  answersJson    Json?
+  onboardedAt    DateTime?
   createdAt      DateTime      @default(now())
 
   voiceSamples VoiceSample[]
@@ -117,30 +139,40 @@ model Piece {
   note               String?
   referenceMediaId   String?
   referenceMedia     Media?    @relation("PieceReference", fields: [referenceMediaId], references: [id])
+  sheetMediaId       String?
+  sheetMedia         Media?    @relation("PieceSheet", fields: [sheetMediaId], references: [id])
+  tutorialMediaId    String?
+  tutorialMedia      Media?    @relation("PieceTutorial", fields: [tutorialMediaId], references: [id])
   archived           Boolean   @default(false)
   // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts
   aiDirectUnlockedAt DateTime?
   createdAt          DateTime  @default(now())
 
   submissions Submission[]
+  models      PieceModel[]
 
   @@index([teacherId, archived])
 }
 
 model Student {
-  id             String      @id @default(cuid())
-  teacherId      String
-  teacher        Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  id             String        @id @default(cuid())
+  teacherId      String?
+  teacher        Teacher?      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   name           String
   ageBand        AgeBand
   contactType    ContactType
   contactHandle  String
-  token          String      @unique
+  token          String        @unique
+  email          String?
+  authUserId     String?       @unique
+  stage          StudentStage?
+  answersJson    Json?
+  onboardedAt    DateTime?
   consentAt      DateTime
   consentVersion String
-  publicOk       Boolean     @default(false)
+  publicOk       Boolean       @default(false)
   approvedAt     DateTime?
-  createdAt      DateTime    @default(now())
+  createdAt      DateTime      @default(now())
 
   submissions Submission[]
 
@@ -155,8 +187,29 @@ model Media {
   sizeBytes   Int?
   createdAt   DateTime  @default(now())
 
-  pieceReferences Piece[]       @relation("PieceReference")
+  pieceReferences Piece[] @relation("PieceReference")
+  pieceSheets     Piece[] @relation("PieceSheet")
+  pieceTutorials  Piece[] @relation("PieceTutorial")
   submissions     Submission[]
+}
+
+model PieceModel {
+  id               String           @id @default(cuid())
+  pieceId          String
+  piece            Piece            @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  version          Int
+  status           PieceModelStatus
+  scoreJson        Json
+  tutorialCuesJson Json
+  sourceJson       Json
+  geminiModel      String
+  promptVersion    String
+  error            String?
+  trainedAt        DateTime?
+  createdAt        DateTime         @default(now())
+
+  @@unique([pieceId, version])
+  @@index([pieceId, status, version])
 }
 
 model Submission {

@@ -1,37 +1,38 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireTeacher } from "@/lib/auth";
-import { LocaleToggle } from "@/components/locale-toggle";
+import { readTeacherSession } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { logoutTeacher } from "@/app/teacher/actions";
+import { TeacherAppShell } from "@/components/teacher/app-shell";
 
 export const dynamic = "force-dynamic";
 
 export default async function TeacherLayout({ children }: { children: React.ReactNode }) {
-  const teacher = await requireTeacher();
-  if (!teacher) redirect("/auth?next=/teacher/pieces");
+  const session = await readTeacherSession();
+  if (!session) redirect("/api/session?next=/teacher&role=tutor");
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: session.id },
+    select: { name: true, onboardedAt: true },
+  });
+  if (!teacher) redirect("/auth?role=tutor");
+  if (!teacher.onboardedAt) redirect("/onboarding");
   const locale = await getLocale();
   const t = await getMessages(locale);
 
   return (
-    <div className="teacher-shell">
-      <header className="border-b border-night-line px-4 py-3">
-        <div className="flex items-center justify-between gap-3">
-          <p className="font-display text-lg">{teacher.name}</p>
-          <LocaleToggle locale={locale} />
-        </div>
-        <nav className="mt-3 flex flex-wrap gap-4 text-sm">
-          <Link href="/teacher/pieces">{t.teacher.linkTitle}</Link>
-          <Link href="/teacher/queue">{t.teacher.queue}</Link>
-          <Link href="/teacher/settings">{t.teacher.settings}</Link>
-          <form action={logoutTeacher}>
-            <button type="submit" className="text-bone/60">
-              {t.auth.signOut}
-            </button>
-          </form>
-        </nav>
-      </header>
-      <div className="mx-auto max-w-3xl px-4 py-6">{children}</div>
-    </div>
+    <TeacherAppShell
+      teacherName={teacher.name}
+      locale={locale}
+      labels={{
+        dashboard: t.teacher.navDashboard,
+        invite: t.teacher.navInvite,
+        queue: t.teacher.navQueue,
+        settings: t.teacher.settings,
+        signOut: t.auth.signOut,
+        menu: t.teacher.menu,
+        close: t.teacher.close,
+      }}
+    >
+      {children}
+    </TeacherAppShell>
   );
 }

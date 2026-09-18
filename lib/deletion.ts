@@ -40,7 +40,7 @@ export async function deleteStudentData(studentId: string) {
   await logEvent({
     name: "student.deleted",
     actorType: "admin",
-    teacherId: student.teacherId,
+    teacherId: student.teacherId ?? undefined,
     actorId: studentId,
     props: { keptAnalyses: true },
   });

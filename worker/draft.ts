@@ -2,8 +2,16 @@ import Anthropic from "@anthropic-ai/sdk";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { MAX_ACTIVE_VOICE_SAMPLES, PROMPT_VERSION } from "../lib/constants";
+import {
+  geminiClient,
+  geminiCostCents,
+  geminiDraftModel,
+  generateGeminiText,
+} from "../lib/gemini";
 import { routeSubmission } from "../lib/growth";
 import { prisma } from "../lib/prisma";
+import { observationOutline, retrieveDraftContext, type DraftRetrieval } from "../lib/rag";
+import { closeMatch, isCompareObservations, type CompareObservations } from "../lib/score-model";
 
 type Metrics = {
   duration_s?: number;
@@ -13,7 +21,10 @@ type Metrics = {
   skipped?: boolean;
 };
 
-function softMetricNotes(metrics: Metrics | null) {
+function softMetricNotes(metrics: Metrics | null, observations: CompareObservations | null) {
+  if (closeMatch(observations)) {
+    return "Take khớp bài. Cấm dùng tempo_stability hay số đo để bịa lỗi nhịp.";
+  }
   if (!metrics || metrics.skipped) return "Không có số đo âm thanh đáng tin. Đừng đoán kỹ thuật.";
   const notes: string[] = [];
   if (typeof metrics.tempo_stability === "number" && metrics.tempo_stability > 0.12) {
@@ -26,14 +37,48 @@ function softMetricNotes(metrics: Metrics | null) {
     notes.push("Bài quay khá ngắn.");
   }
   if (notes.length === 0) {
-    return "Số đo không chỉ ra vấn đề rõ. Đừng bịa lỗi. Khen một điểm cụ thể và nhắc đúng note của bài.";
+    return "Số đo không chỉ ra vấn đề rõ. Đừng bịa lỗi.";
   }
   return notes.join(" ");
 }
 
+function formatExamples(rows: { source: string; text: string }[]) {
+  if (!rows.length) return "Chưa có nhận xét cũ trên bài này.";
+  return rows.map((row) => `- (${row.source}) ${row.text}`).join("\n");
+}
+
 async function loadSystemPrompt() {
-  const path = join(process.cwd(), "prompts/draft_reply_vi.md");
-  return readFile(path, "utf8");
+  return readFile(join(process.cwd(), "prompts/draft_reply_vi.md"), "utf8");
+}
+
+function buildUserPrompt(input: {
+  title: string;
+  note: string | null;
+  studentName: string;
+  metrics: Metrics | null;
+  observations: CompareObservations | null;
+  samples: string[];
+  retrieval: DraftRetrieval;
+}) {
+  return [
+    `Bài: ${input.title}`,
+    input.note ? `Note của thầy: ${input.note}` : "Không có note.",
+    `Học viên: ${input.studentName}`,
+    input.retrieval.previousText
+      ? `Nhận xét lần trước (cùng học viên, cùng bài): ${input.retrieval.previousText}`
+      : "Chưa có nhận xét trước cho học viên này.",
+    `Facts bắt buộc:\n${observationOutline(input.observations)}`,
+    `Số đo: ${JSON.stringify(input.metrics)}`,
+    `Cách dùng số đo: ${softMetricNotes(input.metrics, input.observations)}`,
+    input.retrieval.scoreHints.length
+      ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
+      : "Không có đoạn score gắn với lỗi.",
+    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(input.retrieval.pieceReplies)}`,
+    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(input.retrieval.similarReplies)}`,
+    input.samples.length
+      ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
+      : "Chưa có mẫu giọng. Viết 50–110 chữ, ấm, cụ thể, kèm mốc giờ nếu facts có.",
+  ].join("\n\n");
 }
 
 export async function runDraft(submissionId: string) {
@@ -43,7 +88,6 @@ export async function runDraft(submissionId: string) {
       student: true,
       piece: { include: { teacher: { include: { voiceSamples: { where: { active: true } } } } } },
       analyses: { orderBy: { createdAt: "desc" }, take: 1 },
-      replies: { orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
   if (!submission) throw new Error("submission not found");
@@ -54,51 +98,75 @@ export async function runDraft(submissionId: string) {
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
-  const previous = await prisma.reply.findFirst({
-    where: {
-      submission: { studentId: submission.studentId, pieceId: submission.pieceId },
-    },
-    orderBy: { sentAt: "desc" },
+  const metrics = (submission.analyses[0]?.metricsJson ?? null) as Metrics | null;
+  const observationsRaw = submission.analyses[0]?.observationsJson ?? null;
+  const observations = isCompareObservations(observationsRaw) ? observationsRaw : null;
+  const retrieval = await retrieveDraftContext({
+    teacherId: submission.piece.teacherId,
+    pieceId: submission.pieceId,
+    studentId: submission.studentId,
+    submissionId,
+    observations,
+  });
+  const started = Date.now();
+  const system = await loadSystemPrompt();
+  const user = buildUserPrompt({
+    title: submission.piece.title,
+    note: submission.piece.note,
+    studentName: submission.student.name,
+    metrics,
+    observations,
+    samples,
+    retrieval,
   });
 
-  const metrics = (submission.analyses[0]?.metricsJson ?? null) as Metrics | null;
-  const model = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  const started = Date.now();
-
   let text: string;
-  let usedModel = model;
+  let usedModel = "context-only";
+  const gemini = geminiClient();
+  const anthropicKey = process.env.ANTHROPIC_API_KEY;
 
-  if (!apiKey) {
-    usedModel = "context-only";
-    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
-  } else {
-    const anthropic = new Anthropic({ apiKey });
-    const system = await loadSystemPrompt();
-    const user = [
-      `Bài: ${submission.piece.title}`,
-      submission.piece.note ? `Note của thầy: ${submission.piece.note}` : "Không có note.",
-      `Học viên: ${submission.student.name}`,
-      previous ? `Nhận xét lần trước (cùng bài): ${previous.text}` : "Chưa có nhận xét trước.",
-      `Số đo: ${JSON.stringify(metrics)}`,
-      `Cách dùng số đo: ${softMetricNotes(metrics)}`,
-      samples.length
-        ? `Giọng thầy (mẫu):\n${samples.map((s) => `- ${s}`).join("\n")}`
-        : "Chưa có mẫu giọng. Viết ngắn, ấm, như thầy guitar Việt Nam nói chuyện với học viên.",
-    ].join("\n\n");
-
+  if (gemini) {
+    usedModel = geminiDraftModel();
+    const response = await generateGeminiText({
+      ai: gemini,
+      model: usedModel,
+      system,
+      userText: user,
+    });
+    text =
+      response.text ||
+      fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
+    usedModel = response.model;
+    await prisma.event.create({
+      data: {
+        actorType: "system",
+        name: "draft.cost",
+        teacherId: submission.piece.teacherId,
+        actorId: submissionId,
+        propsJson: {
+          ...response.usage,
+          costCents: geminiCostCents(response.usage),
+          latencyMs: Date.now() - started,
+          model: usedModel,
+          ragPieceReplies: retrieval.pieceReplies.length,
+          ragSimilar: retrieval.similarReplies.length,
+        },
+      },
+    });
+  } else if (anthropicKey) {
+    usedModel = process.env.ANTHROPIC_MODEL ?? "claude-sonnet-4-20250514";
+    const anthropic = new Anthropic({ apiKey: anthropicKey });
     const response = await anthropic.messages.create({
-      model,
+      model: usedModel,
       max_tokens: 400,
       system,
       messages: [{ role: "user", content: user }],
     });
     const block = response.content.find((part) => part.type === "text");
-    text = block && block.type === "text" ? block.text.trim() : fallbackDraft(
-      submission.student.name,
-      submission.piece.title,
-      submission.piece.note,
-    );
+    text =
+      block && block.type === "text"
+        ? block.text.trim()
+        : fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
 
     const inputTokens = response.usage.input_tokens;
     const outputTokens = response.usage.output_tokens;
@@ -109,9 +177,11 @@ export async function runDraft(submissionId: string) {
         name: "draft.cost",
         teacherId: submission.piece.teacherId,
         actorId: submissionId,
-        propsJson: { inputTokens, outputTokens, costCents, latencyMs: Date.now() - started, model },
+        propsJson: { inputTokens, outputTokens, costCents, latencyMs: Date.now() - started, model: usedModel },
       },
     });
+  } else {
+    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
   }
 
   const route = routeSubmission({
@@ -139,5 +209,5 @@ export async function runDraft(submissionId: string) {
 
 function fallbackDraft(name: string, title: string, note: string | null) {
   const focus = note?.trim() || "đúng nhịp và tiếng sạch";
-  return `Thầy đã nghe ${name} chơi ${title}. Giữ vững những gì đang ổn, lần sau tập trung ${focus}. Quay lại một take nữa rồi gửi thầy.`;
+  return `Thầy đã nghe ${name} chơi ${title}. Đoạn mở đầu ổn, giữ nhịp đó. Lần sau tập trung ${focus}, chơi chậm một nhịp rồi gửi lại một take.`;
 }

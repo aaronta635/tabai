@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CONSENT_VERSION } from "@/lib/constants";
-import { getStudentTokenFromCookie, newStudentToken, setStudentCookie } from "@/lib/auth";
+import {
+  newStudentToken,
+  setStudentAccountCookies,
+  setStudentCookie,
+  studentForPiece,
+} from "@/lib/auth";
 import { logEvent } from "@/lib/events";
 import { prisma } from "@/lib/prisma";
 
@@ -20,33 +25,71 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     consent?: boolean;
   };
 
-  if (!body.name?.trim() || !body.ageBand || !body.contactType || !body.contactHandle?.trim() || !body.consent) {
-    return NextResponse.json({ error: "missing fields" }, { status: 400 });
+  const nameTrim = body.name?.trim() ?? "";
+  const contactTrim = body.contactHandle?.trim() ?? "";
+
+  const bound = await studentForPiece(piece.teacherId);
+  if (bound.otherClass) {
+    return NextResponse.json({ error: "other class" }, { status: 409 });
   }
 
-  const existingToken = await getStudentTokenFromCookie();
-  if (existingToken) {
-    const existing = await prisma.student.findFirst({
-      where: { token: existingToken, teacherId: piece.teacherId },
+  if (bound.fromSession && bound.student) {
+    const current = bound.student;
+    const publicOk =
+      (body.ageBand ?? current.ageBand) === "under18" ? false : body.publicOk ?? current.publicOk;
+    const updated = await prisma.student.update({
+      where: { id: current.id },
+      data: {
+        teacherId: piece.teacherId,
+        stage: "in_class",
+        name: nameTrim || current.name,
+        ageBand: body.ageBand ?? current.ageBand,
+        contactType: body.contactType ?? current.contactType,
+        contactHandle: contactTrim || current.contactHandle,
+        publicOk,
+      },
     });
-    if (existing) {
-      return NextResponse.json({ studentId: existing.id, token: existing.token });
-    }
+    await setStudentAccountCookies(updated.id, updated.name, updated.token);
+    await logEvent({
+      name: "student.registered",
+      actorType: "student",
+      actorId: updated.id,
+      teacherId: piece.teacherId,
+      props: { consentVersion: CONSENT_VERSION, ageBand: updated.ageBand, attached: true },
+    });
+    return NextResponse.json({ studentId: updated.id, token: updated.token });
   }
 
-  const publicOk = body.ageBand === "under18" ? false : Boolean(body.publicOk);
+  if (bound.student) {
+    return NextResponse.json({ studentId: bound.student.id, token: bound.student.token });
+  }
+
+  const ageBand = body.ageBand;
+  const contactType = body.contactType;
+  if (!nameTrim || !ageBand || !contactType || !contactTrim || !body.consent) {
+    return NextResponse.json(
+      {
+        error: "missing fields",
+        fields: { name: !nameTrim, contactHandle: !contactTrim },
+      },
+      { status: 400 },
+    );
+  }
+
+  const publicOk = ageBand === "under18" ? false : Boolean(body.publicOk);
   const token = newStudentToken();
   const student = await prisma.student.create({
     data: {
       teacherId: piece.teacherId,
-      name: body.name.trim(),
-      ageBand: body.ageBand,
-      contactType: body.contactType,
-      contactHandle: body.contactHandle.trim(),
+      name: nameTrim,
+      ageBand,
+      contactType,
+      contactHandle: contactTrim,
       token,
       consentAt: new Date(),
       consentVersion: CONSENT_VERSION,
       publicOk,
+      stage: "in_class",
     },
   });
 
@@ -56,7 +99,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     actorType: "student",
     actorId: student.id,
     teacherId: piece.teacherId,
-    props: { consentVersion: CONSENT_VERSION, ageBand: body.ageBand },
+    props: { consentVersion: CONSENT_VERSION, ageBand },
   });
 
   return NextResponse.json({ studentId: student.id, token });

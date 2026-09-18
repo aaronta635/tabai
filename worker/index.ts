@@ -1,11 +1,29 @@
+import { loadLocalEnv } from "../lib/load-env";
 import { claimNextJob, failJob, finishJob } from "../lib/jobs";
+import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
 import { runDraft } from "./draft";
+import { runTrainPiece } from "./train";
+
+loadLocalEnv();
 
 const POLL_MS = 2000;
 
 async function handle(job: { id: string; type: string; payload: unknown }) {
-  const payload = job.payload as { submissionId?: string };
+  const payload = job.payload as {
+    submissionId?: string;
+    pieceId?: string;
+  } & Partial<PieceModelSourceJson>;
+
+  if (job.type === "train_piece") {
+    if (!payload.pieceId) throw new Error("job missing pieceId");
+    const extras = { ...payload };
+    delete extras.pieceId;
+    delete extras.submissionId;
+    await runTrainPiece(payload.pieceId, extras);
+    return;
+  }
+
   const submissionId = payload.submissionId;
   if (!submissionId) throw new Error("job missing submissionId");
 

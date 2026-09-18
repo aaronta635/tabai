@@ -5,7 +5,8 @@
  * v2 modules/cohorts: add Module, Cohort tables; Piece.moduleId; Student.cohortId
  * v2 wall: query Submission where teacherPick and Student.publicOk and ageBand=adult
  * v2 AI-direct: Piece.aiDirectUnlockedAt + Submission.route/confidence
- * v3 perception: JobType perceive_audio | perceive_video; Analysis.observationsJson
+ * v3 perception: JobType perceive_audio | perceive_video
+ * Score-model V1: JobType train_piece; PieceModel; Analysis.observationsJson from Gemini compare
  * v3 school: Org model; storage region on Org
  */
 

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ inv
     return NextResponse.redirect(new URL("/", origin));
   }
 
-  const token = await signTeacherSession(teacher.id);
+  const token = await signTeacherSession(teacher.id, teacher.name);
   await logEvent({
     name: "teacher.session",
     actorType: "teacher",
@@ -20,7 +20,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ inv
     teacherId: teacher.id,
   });
 
-  const response = NextResponse.redirect(new URL("/teacher/queue", origin));
+  const response = NextResponse.redirect(new URL("/teacher", origin));
   response.cookies.set(TEACHER_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",

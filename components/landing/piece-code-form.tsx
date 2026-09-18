@@ -7,10 +7,12 @@ export function PieceCodeForm({
   placeholder,
   submit,
   variant = "hero",
+  productOrigin = "",
 }: {
   placeholder: string;
   submit: string;
-  variant?: "hero" | "bar";
+  variant?: "hero" | "bar" | "studio";
+  productOrigin?: string;
 }) {
   const router = useRouter();
   const [code, setCode] = useState("");
@@ -19,13 +21,24 @@ export function PieceCodeForm({
     event.preventDefault();
     const next = code.trim().toLowerCase();
     if (!next) return;
-    router.push(`/l/${encodeURIComponent(next)}`);
+    const path = `/l/${encodeURIComponent(next)}`;
+    if (productOrigin) {
+      window.location.assign(`${productOrigin}${path}`);
+      return;
+    }
+    router.push(path);
   }
 
   const shell =
-    variant === "hero"
-      ? "bg-black/45 text-white backdrop-blur-md"
-      : "bg-[#8a8580] text-white";
+    variant === "studio"
+      ? "border border-[#a92e5d]/20 bg-white text-[#35242d]"
+      : variant === "hero"
+        ? "bg-black/45 text-white backdrop-blur-md"
+        : "bg-[#8a8580] text-white";
+  const button =
+    variant === "studio"
+      ? "bg-[#a92e5d] text-white"
+      : "bg-white text-[#141210]";
 
   return (
     <form
@@ -37,12 +50,9 @@ export function PieceCodeForm({
         onChange={(e) => setCode(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="min-w-0 flex-1 bg-transparent py-2 text-[15px] text-white outline-none placeholder:text-white/70"
+        className="min-w-0 flex-1 bg-transparent py-2 text-[15px] text-inherit outline-none placeholder:text-current/60"
       />
-      <button
-        type="submit"
-        className="shrink-0 rounded-full bg-white px-5 py-2.5 text-sm font-medium text-[#141210]"
-      >
+      <button type="submit" className={`shrink-0 rounded-full px-5 py-2.5 text-sm font-medium ${button}`}>
         {submit}
       </button>
     </form>

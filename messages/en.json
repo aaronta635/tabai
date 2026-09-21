@@ -53,7 +53,9 @@
     "signIn": "Sign in",
     "signUp": "Create account",
     "checkEmail": "Check your email to confirm the account if confirmation is on.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "wrongRoleTutor": "This email is a teacher account. Sign in as a teacher.",
+    "wrongRoleStudent": "This email is a student account. Sign in as a student."
   },
   "student": {
     "upload": "Upload video",

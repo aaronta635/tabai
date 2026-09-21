@@ -53,7 +53,9 @@
     "signIn": "Đăng nhập",
     "signUp": "Tạo tài khoản",
     "checkEmail": "Kiểm tra email để xác nhận tài khoản (nếu Supabase bật xác nhận).",
-    "signOut": "Đăng xuất"
+    "signOut": "Đăng xuất",
+    "wrongRoleTutor": "Email này là tài khoản giáo viên. Đăng nhập ở trang thầy.",
+    "wrongRoleStudent": "Email này là tài khoản học viên. Đăng nhập ở trang học viên."
   },
   "student": {
     "upload": "Tải video lên",

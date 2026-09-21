@@ -12,16 +12,18 @@ export const dynamic = "force-dynamic";
 export default async function AuthPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string; role?: string }>;
+  searchParams: Promise<{ next?: string; role?: string; error?: string }>;
 }) {
   const teacher = await getTeacherFromCookie();
   const student = await getStudentFromCookie();
-  const { next: nextParam, role: roleParam } = await searchParams;
+  const { next: nextParam, role: roleParam, error: errorParam } = await searchParams;
   const next = nextParam?.startsWith("/") ? nextParam : null;
   const role = parseRole(roleParam);
 
-  if (teacher) redirect(next && next.startsWith("/teacher") ? next : "/teacher");
-  if (student) redirect(next && next.startsWith("/student") ? next : "/student");
+  if (role === "tutor" && teacher) redirect(next && next.startsWith("/teacher") ? next : "/teacher");
+  if (role === "student" && student) redirect(next && next.startsWith("/student") ? next : "/student");
+  if (!role && teacher) redirect("/teacher");
+  if (!role && student) redirect("/student");
 
   const locale = await getLocale();
   const t = await getMessages(locale);
@@ -74,12 +76,21 @@ export default async function AuthPage({
             <AuthForm
               role={role}
               next={next ?? (role === "student" ? "/student" : "/teacher")}
+              initialError={
+                errorParam === "role_mismatch"
+                  ? role === "student"
+                    ? t.auth.wrongRoleTutor
+                    : t.auth.wrongRoleStudent
+                  : null
+              }
               labels={{
                 email: t.auth.email,
                 password: t.auth.password,
                 signIn: t.auth.signIn,
                 signUp: t.auth.signUp,
                 checkEmail: t.auth.checkEmail,
+                wrongRoleTutor: t.auth.wrongRoleTutor,
+                wrongRoleStudent: t.auth.wrongRoleStudent,
               }}
             />
           </div>

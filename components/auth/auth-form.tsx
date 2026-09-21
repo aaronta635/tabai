@@ -9,6 +9,7 @@ export function AuthForm({
   next,
   role,
   labels,
+  initialError,
 }: {
   next: string;
   role: AccountRole;
@@ -18,13 +19,39 @@ export function AuthForm({
     signIn: string;
     signUp: string;
     checkEmail: string;
+    wrongRoleTutor: string;
+    wrongRoleStudent: string;
   };
+  initialError?: string | null;
 }) {
   const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(initialError ?? null);
   const [info, setInfo] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+
+  async function bindLocalSession(
+    supabase: ReturnType<typeof createBrowserSupabase>,
+  ): Promise<string> {
+    const sessionRes = await fetch("/api/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role }),
+    });
+    const json = (await sessionRes.json()) as {
+      next?: string;
+      error?: string;
+      actual?: string;
+    };
+    if (!sessionRes.ok) {
+      if (json.error === "role_mismatch") {
+        await supabase.auth.signOut();
+        throw new Error(json.actual === "tutor" ? labels.wrongRoleTutor : labels.wrongRoleStudent);
+      }
+      throw new Error(json.error ?? "session failed");
+    }
+    return json.next ?? next;
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -52,26 +79,15 @@ export function AuthForm({
         setInfo(labels.checkEmail);
         const { data: sessionData } = await supabase.auth.getSession();
         if (sessionData.session) {
-          const sessionRes = await fetch("/api/session", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ role }),
-          });
-          const json = (await sessionRes.json()) as { next?: string };
-          router.push(json.next ?? after);
+          const dest = await bindLocalSession(supabase);
+          router.push(dest);
           router.refresh();
         }
       } else {
         const { error: signError } = await supabase.auth.signInWithPassword({ email, password });
         if (signError) throw signError;
-        const sessionRes = await fetch("/api/session", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ role }),
-        });
-        const json = (await sessionRes.json()) as { next?: string; error?: string };
-        if (!sessionRes.ok) throw new Error(json.error ?? "session failed");
-        router.push(json.next ?? next);
+        const dest = await bindLocalSession(supabase);
+        router.push(dest);
         router.refresh();
       }
     } catch (err) {

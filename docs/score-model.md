@@ -9,7 +9,7 @@ import { attachPieceAssets, enqueueTrainPiece, getReadyPieceModel } from "@/lib/
 ```
 
 - `attachPieceAssets({ pieceId, sheet?, tutorial? })` uploads to Storage, sets `Piece.sheetMediaId` / `Piece.tutorialMediaId`, and points `referenceMediaId` at the tutorial so `/l/<code>` can play it.
-- `enqueueTrainPiece(pieceId)` requires both assets. Worker job type `train_piece` (no `submissionId`).
+- `enqueueTrainPiece(pieceId)` requires a sheet **or** a tutorial (both is better, neither is not enough). Worker job type `train_piece` (no `submissionId`). Adding the other asset later trains a new version.
 - `getReadyPieceModel(pieceId)` returns the latest `status: ready` version.
 
 Catalog drop path (no UI): see [`catalog/README.md`](../catalog/README.md). `npm run catalog:train`.
@@ -37,7 +37,7 @@ Drafts pull: compare facts, matching score/tutorial bars, this student's last re
 
 Close takes (`overallFit >= 0.9` and no issue at `confidence >= 0.75`) get praise-only drafts. The same media as the tutorial is forced to `issues: []`. Metrics must not invent a timing problem on a close match.
 
-Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`. Retrain if `tutorialCues` is empty (`npm run catalog:train -- --retrain`).
+Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`. If a tutorial is attached and `tutorialCues` is empty, `npm run catalog:train -- --retrain`.
 
 ## Cost (paid Gemini API list, Sep 2026)
 

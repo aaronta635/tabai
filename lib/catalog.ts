@@ -292,8 +292,38 @@ export async function linkPieceAssets(input: {
 export async function enqueueTrainPiece(pieceId: string, extras?: Partial<PieceModelSourceJson>) {
   const piece = await prisma.piece.findUnique({ where: { id: pieceId } });
   if (!piece) throw new Error("piece not found");
-  if (!piece.sheetMediaId || !piece.tutorialMediaId) {
-    throw new Error("piece needs sheet and tutorial before train");
+  if (!piece.sheetMediaId && !piece.tutorialMediaId) {
+    throw new Error("piece needs a sheet or a tutorial before train");
   }
   return enqueueJob("train_piece", { pieceId, ...extras });
+}
+
+/** Enqueue train for pieces that have a sheet or tutorial but no ready model. */
+export async function enqueueTrainForPiecesWithoutReadyModel() {
+  const pieces = await prisma.piece.findMany({
+    where: {
+      archived: false,
+      OR: [{ sheetMediaId: { not: null } }, { tutorialMediaId: { not: null } }],
+      models: { none: { status: "ready" } },
+    },
+    select: { id: true, code: true, title: true },
+  });
+  const openJobs = await prisma.job.findMany({
+    where: { type: "train_piece", status: { in: ["pending", "running"] } },
+    select: { payload: true },
+  });
+  const openIds = new Set(
+    openJobs
+      .map((job) => {
+        const payload = job.payload as { pieceId?: string } | null;
+        return payload?.pieceId;
+      })
+      .filter((id): id is string => Boolean(id)),
+  );
+  const jobs = [];
+  for (const piece of pieces) {
+    if (openIds.has(piece.id)) continue;
+    jobs.push({ piece, job: await enqueueTrainPiece(piece.id) });
+  }
+  return jobs;
 }

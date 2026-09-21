@@ -16,7 +16,7 @@ import {
 } from "../lib/gemini";
 import { enqueueJob } from "../lib/jobs";
 import { prisma } from "../lib/prisma";
-import { parseCompareObservations } from "../lib/score-model";
+import { parseCompareObservations, type PieceModelSourceJson } from "../lib/score-model";
 import { downloadMedia, uploadMedia } from "../lib/storage";
 
 function runPython(script: string, args: string[]) {
@@ -46,6 +46,7 @@ async function compareTake(input: {
   scoreJson: Prisma.JsonValue;
   tutorialCuesJson: Prisma.JsonValue;
   sameAsTutorial: boolean;
+  hasSheet: boolean;
 }) {
   const ai = geminiClient();
   if (!ai) return null;
@@ -75,6 +76,9 @@ async function compareTake(input: {
         "Metrics are hints only. Do not treat high tempo_stability as an issue unless the video is clearly off the written meter.",
         "Issues are deltas from the score/cues. Empty issues is correct when the take matches. Do not invent problems.",
         "Every issue needs tStart in seconds on the student video.",
+        input.hasSheet
+          ? "The saved model includes a written sheet. Set bar when the score makes it obvious."
+          : "There was no sheet. Do not invent bar numbers. Compare to tutorial cues and what you hear.",
         input.sameAsTutorial
           ? "THIS TAKE IS THE PIECE TUTORIAL FILE (same media). overallFit must be ~1. issues must be []. Positives only — do not flag rubato, position shifts, or talking."
           : "This is not the tutorial file. Only flag clear student errors.",
@@ -164,6 +168,7 @@ export async function runAnalyze(submissionId: string) {
     const pieceModel = await getReadyPieceModel(submission.pieceId);
     if (pieceModel) {
       try {
+        const source = (pieceModel.sourceJson ?? null) as PieceModelSourceJson | null;
         const compared = await compareTake({
           videoBytes: bytes,
           pieceTitle: submission.piece.title,
@@ -174,6 +179,7 @@ export async function runAnalyze(submissionId: string) {
           sameAsTutorial: Boolean(
             submission.piece.tutorialMediaId && submission.mediaId === submission.piece.tutorialMediaId,
           ),
+          hasSheet: Boolean(source?.sheetMediaId || submission.piece.sheetMediaId),
         });
         if (compared) {
           observations = compared.observations as unknown as Prisma.InputJsonValue;

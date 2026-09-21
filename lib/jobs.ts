@@ -16,6 +16,14 @@ export async function enqueueJob(
 }
 
 export async function enqueueTrainPiece(pieceId: string) {
+  const piece = await prisma.piece.findUnique({
+    where: { id: pieceId },
+    select: { sheetMediaId: true, tutorialMediaId: true },
+  });
+  if (!piece) throw new Error("piece not found");
+  if (!piece.sheetMediaId && !piece.tutorialMediaId) {
+    throw new Error("piece needs a sheet or a tutorial before train");
+  }
   return enqueueJob("train_piece", { pieceId });
 }
 

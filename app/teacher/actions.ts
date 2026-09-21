@@ -129,9 +129,11 @@ export async function completePieceAssets(input: {
   const catalogSlug = await syncPieceToCatalog(updated.id);
 
   let trained = false;
-  if (updated.sheetMediaId && updated.tutorialMediaId) {
-    await enqueueTrainPiece(updated.id, { catalogSlug });
-    trained = true;
+  if (input.sheetMediaId || input.tutorialMediaId) {
+    if (updated.sheetMediaId || updated.tutorialMediaId) {
+      await enqueueTrainPiece(updated.id, { catalogSlug });
+      trained = true;
+    }
   }
 
   await logEvent({

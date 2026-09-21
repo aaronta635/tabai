@@ -27,16 +27,16 @@ async function ingestSlug(
   teacherId: string,
   meta: { title: string; code: string; note?: string; sheetName: string | null; tutorialName: string | null },
 ) {
-  if (!meta.sheetName || !meta.tutorialName) {
-    console.log("skip", slug, "— drop sheet.* and tutorial.* then re-run");
+  if (!meta.sheetName && !meta.tutorialName) {
+    console.log("skip", slug, "— drop sheet.* or tutorial.* then re-run");
     return;
   }
 
   const dir = join(CATALOG_DIR, slug);
-  const sheetBytes = await readFile(join(dir, meta.sheetName));
-  const tutorialBytes = await readFile(join(dir, meta.tutorialName));
-  const sheetSha = sha256(sheetBytes);
-  const tutorialSha = sha256(tutorialBytes);
+  const sheetBytes = meta.sheetName ? await readFile(join(dir, meta.sheetName)) : null;
+  const tutorialBytes = meta.tutorialName ? await readFile(join(dir, meta.tutorialName)) : null;
+  const sheetSha = sheetBytes ? sha256(sheetBytes) : undefined;
+  const tutorialSha = tutorialBytes ? sha256(tutorialBytes) : undefined;
 
   let piece = await prisma.piece.findUnique({ where: { code: meta.code } });
   if (!piece) {
@@ -59,7 +59,9 @@ async function ingestSlug(
   const ready = await getReadyPieceModel(piece.id);
   const source = (ready?.sourceJson ?? null) as PieceModelSourceJson | null;
   const unchanged =
-    source?.sheetSha256 === sheetSha && source?.tutorialSha256 === tutorialSha && Boolean(ready);
+    Boolean(ready) &&
+    (sheetSha ? source?.sheetSha256 === sheetSha : !source?.sheetSha256) &&
+    (tutorialSha ? source?.tutorialSha256 === tutorialSha : !source?.tutorialSha256);
   if (unchanged && !retrain) {
     console.log("skip train", slug, "— model already ready (pass --retrain to rebuild)");
     return;
@@ -67,8 +69,8 @@ async function ingestSlug(
 
   await attachPieceAssets({
     pieceId: piece.id,
-    sheet: { bytes: sheetBytes, filename: meta.sheetName },
-    tutorial: { bytes: tutorialBytes, filename: meta.tutorialName },
+    sheet: sheetBytes && meta.sheetName ? { bytes: sheetBytes, filename: meta.sheetName } : undefined,
+    tutorial: tutorialBytes && meta.tutorialName ? { bytes: tutorialBytes, filename: meta.tutorialName } : undefined,
     source: { catalogSlug: slug, sheetSha256: sheetSha, tutorialSha256: tutorialSha },
   });
 

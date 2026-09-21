@@ -8,7 +8,7 @@ Do not show red chips in the teacher queue until confidence is high. Wrong flags
 
 **Gemini train/compare** is enabled when `GEMINI_API_KEY` is set and the piece has a `ready` PieceModel:
 
-1. `train_piece` reads sheet + tutorial, extracts versioned `scoreJson` + `tutorialCuesJson`, stores them in Postgres. Gemini File API ids are not the model (they expire in ~48h).
+1. `train_piece` reads whichever of sheet / tutorial is attached (they are independent), extracts versioned `scoreJson` + `tutorialCuesJson`, stores them in Postgres. Gemini File API ids are not the model (they expire in ~48h). Tutorial-only models skip invented bars; sheet-only models skip invented video cues.
 2. `analyze` uploads only the student video, plus the saved JSON, and writes `Analysis.observationsJson`.
 3. `draft` writes a Vietnamese queue reply from compare facts + retrieved teacher replies (SQL RAG). Close matches are praise-only. The teacher sends it.
 

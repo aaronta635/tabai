@@ -34,8 +34,8 @@ export type TutorialCuesJson = {
 };
 
 export type PieceModelSourceJson = {
-  sheetMediaId: string;
-  tutorialMediaId: string;
+  sheetMediaId?: string;
+  tutorialMediaId?: string;
   sheetSha256?: string;
   tutorialSha256?: string;
   catalogSlug?: string;
@@ -166,11 +166,25 @@ export function looksLikeScale(notes: string[]) {
   return steps / (midi.length - 1) >= 0.8;
 }
 
-export function isThinTrainExtract(extract: TrainExtract) {
-  const cues = extract.tutorialCues.filter((cue) => cue.instruction.trim().length > 8);
-  if (cues.length < 4) return true;
-  if (extract.techniqueFocus.length === 0 && extract.commonMistakes.length === 0) return true;
-  return extract.sections.some((section) => looksLikeScale(section.melodyNotes));
+export type TrainAssets = {
+  sheet: boolean;
+  tutorial: boolean;
+};
+
+export function isThinTrainExtract(extract: TrainExtract, assets: TrainAssets = { sheet: true, tutorial: true }) {
+  if (assets.tutorial) {
+    const cues = extract.tutorialCues.filter((cue) => cue.instruction.trim().length > 8);
+    if (cues.length < 4) return true;
+    if (extract.techniqueFocus.length === 0 && extract.commonMistakes.length === 0) return true;
+  }
+  if (assets.sheet) {
+    if (extract.sections.some((section) => looksLikeScale(section.melodyNotes))) return true;
+    const hasScore = extract.sections.some(
+      (section) => section.melodyNotes.length > 0 || section.chords.length > 0,
+    );
+    if (!hasScore) return true;
+  }
+  return false;
 }
 
 export function trainExtractRichness(extract: TrainExtract) {

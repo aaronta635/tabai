@@ -231,6 +231,7 @@ export async function runAnalyze(submissionId: string) {
       });
     }
 
+    if (submission.kind === "practice") return;
     await enqueueJob("draft", { submissionId }, submissionId);
   } finally {
     await rm(dir, { recursive: true, force: true });

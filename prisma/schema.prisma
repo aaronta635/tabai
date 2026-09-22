@@ -1,5 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  // Lets a query with `include` come back as one SQL join instead of one round trip per relation.
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -84,6 +86,12 @@ enum SubmissionRoute {
   ai_direct
 }
 
+enum SubmissionKind {
+  take
+  practice
+  overdub
+}
+
 enum TutorStage {
   starting
   collecting
@@ -93,6 +101,13 @@ enum TutorStage {
 enum StudentStage {
   exploring
   in_class
+}
+
+enum AttendanceStatus {
+  present
+  absent
+  late
+  excused
 }
 
 // --- core ---
@@ -111,11 +126,13 @@ model Teacher {
   onboardedAt    DateTime?
   createdAt      DateTime      @default(now())
 
-  voiceSamples VoiceSample[]
-  pieces       Piece[]
-  students     Student[]
-  replies      Reply[]
-  events       Event[]
+  voiceSamples     VoiceSample[]
+  pieces           Piece[]
+  students         Student[]
+  replies          Reply[]
+  events           Event[]
+  classes          Class[]
+  curriculumParts  CurriculumPart[]
 }
 
 model VoiceSample {
@@ -143,15 +160,26 @@ model Piece {
   sheetMedia         Media?    @relation("PieceSheet", fields: [sheetMediaId], references: [id])
   tutorialMediaId    String?
   tutorialMedia      Media?    @relation("PieceTutorial", fields: [tutorialMediaId], references: [id])
+  clipMediaId        String?
+  clipMedia          Media?    @relation("PieceClip", fields: [clipMediaId], references: [id])
+  partId             String?
+  part               CurriculumPart? @relation(fields: [partId], references: [id], onDelete: SetNull)
+  description        String?
+  tips               String?
+  goal               String?
+  dueAt              DateTime?
   archived           Boolean   @default(false)
   // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts
   aiDirectUnlockedAt DateTime?
   createdAt          DateTime  @default(now())
 
-  submissions Submission[]
-  models      PieceModel[]
+  submissions      Submission[]
+  models           PieceModel[]
+  practiceSessions PracticeSession[]
+  assignments      Assignment[]
 
   @@index([teacherId, archived])
+  @@index([partId])
 }
 
 model Student {
@@ -174,7 +202,11 @@ model Student {
   approvedAt     DateTime?
   createdAt      DateTime      @default(now())
 
-  submissions Submission[]
+  submissions      Submission[]
+  practiceSessions PracticeSession[]
+  memberships      ClassMembership[]
+  assignments      Assignment[]
+  attendances      Attendance[]
 
   @@index([teacherId, approvedAt])
 }
@@ -190,6 +222,7 @@ model Media {
   pieceReferences Piece[] @relation("PieceReference")
   pieceSheets     Piece[] @relation("PieceSheet")
   pieceTutorials  Piece[] @relation("PieceTutorial")
+  pieceClips      Piece[] @relation("PieceClip")
   submissions     Submission[]
 }
 
@@ -220,6 +253,7 @@ model Submission {
   student     Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
   mediaId     String
   media       Media            @relation(fields: [mediaId], references: [id])
+  kind        SubmissionKind   @default(take)
   submittedAt DateTime         @default(now())
   status         SubmissionStatus @default(new)
   skipReason     String?
@@ -237,6 +271,110 @@ model Submission {
   @@index([pieceId, status, submittedAt])
   @@index([studentId, submittedAt])
   @@index([status, submittedAt])
+  @@index([pieceId, kind, submittedAt])
+}
+
+model Class {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  name      String
+  code      String   @unique
+  archived  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  memberships ClassMembership[]
+  assignments Assignment[]
+  sessions    ClassSession[]
+
+  @@index([teacherId, archived])
+}
+
+model ClassMembership {
+  id           String    @id @default(cuid())
+  classId      String
+  class        Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  studentId    String?
+  student      Student?  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  invitedEmail String?
+  approvedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  @@index([classId, studentId])
+  @@index([classId, invitedEmail])
+}
+
+model CurriculumPart {
+  id        String   @id @default(cuid())
+  teacherId String
+  teacher   Teacher  @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  name      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+
+  pieces      Piece[]
+  assignments Assignment[]
+
+  @@index([teacherId, sortOrder])
+}
+
+model Assignment {
+  id        String          @id @default(cuid())
+  pieceId   String?
+  piece     Piece?          @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  partId    String?
+  part      CurriculumPart? @relation(fields: [partId], references: [id], onDelete: Cascade)
+  classId   String?
+  class     Class?          @relation(fields: [classId], references: [id], onDelete: Cascade)
+  studentId String?
+  student   Student?        @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  dueAt     DateTime?
+  goal      String?
+  createdAt DateTime        @default(now())
+
+  @@index([classId, createdAt])
+  @@index([studentId, createdAt])
+  @@index([pieceId])
+}
+
+model ClassSession {
+  id        String    @id @default(cuid())
+  classId   String
+  class     Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
+  title     String?
+  startsAt  DateTime
+  endsAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  attendances Attendance[]
+
+  @@index([classId, startsAt])
+}
+
+model Attendance {
+  id        String           @id @default(cuid())
+  sessionId String
+  session   ClassSession     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student          @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  status    AttendanceStatus
+  createdAt DateTime         @default(now())
+
+  @@unique([sessionId, studentId])
+}
+
+model PracticeSession {
+  id        String   @id @default(cuid())
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  pieceId   String
+  piece     Piece    @relation(fields: [pieceId], references: [id], onDelete: Cascade)
+  seconds   Int
+  startedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@index([studentId, startedAt])
+  @@index([pieceId, startedAt])
 }
 
 model Analysis {

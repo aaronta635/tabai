@@ -23,16 +23,11 @@ export function JoinClassForm({
         if (result?.error === "otherClass") setError(otherClass);
         else if (result?.error) setError(badCode);
       }}
-      className="mt-4 space-y-2"
+      className="space-y-2"
     >
-      <div className="flex gap-2">
-        <input
-          name="code"
-          required
-          placeholder={placeholder}
-          className="min-w-0 flex-1 rounded-full border border-ink/10 bg-white px-4 py-3"
-        />
-        <button type="submit" className="rounded-full bg-beat px-4 py-3 text-sm text-white">
+      <div className="flex flex-wrap items-end gap-2">
+        <input name="code" required placeholder={placeholder} className="field min-w-0 flex-1" />
+        <button type="submit" className="btn">
           {submit}
         </button>
       </div>

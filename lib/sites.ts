@@ -44,7 +44,7 @@ export function isProductHost(host: string) {
   return hostsFor(productOrigin()).includes(host);
 }
 
-const PRODUCT_PREFIXES = ["/teacher", "/student", "/onboarding", "/auth", "/l/", "/s/", "/admin", "/t/", "/api/"];
+const PRODUCT_PREFIXES = ["/teacher", "/student", "/onboarding", "/auth", "/l/", "/c/", "/s/", "/admin", "/t/", "/api/"];
 const SHARED_API = ["/api/locale", "/api/health"];
 
 export function isProductPath(pathname: string) {

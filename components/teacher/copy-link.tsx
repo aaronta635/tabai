@@ -9,7 +9,7 @@ export function CopyLink({ url }: { url: string }) {
   return (
     <button
       type="button"
-      className="mt-3 rounded-full border border-ink/20 px-3 py-1 text-sm"
+      className="btn btn-quiet px-3 py-1.5 text-xs"
       onClick={async () => {
         await navigator.clipboard.writeText(url);
         setCopied(true);

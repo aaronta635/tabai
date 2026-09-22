@@ -21,7 +21,7 @@ export function PieceCodeForm({
     event.preventDefault();
     const next = code.trim().toLowerCase();
     if (!next) return;
-    const path = `/l/${encodeURIComponent(next)}`;
+    const path = `/c/${encodeURIComponent(next)}`;
     if (productOrigin) {
       window.location.assign(`${productOrigin}${path}`);
       return;
@@ -31,19 +31,19 @@ export function PieceCodeForm({
 
   const shell =
     variant === "studio"
-      ? "border border-[#a92e5d]/20 bg-white text-[#35242d]"
+      ? "text-[#35242d]"
       : variant === "hero"
         ? "bg-black/45 text-white backdrop-blur-md"
         : "bg-[#8a8580] text-white";
   const button =
     variant === "studio"
-      ? "bg-[#a92e5d] text-white"
+      ? "landing-cta landing-cta-compact"
       : "bg-white text-[#141210]";
 
   return (
     <form
       onSubmit={onSubmit}
-      className={`flex w-full items-center rounded-full py-1.5 pl-5 pr-1.5 ${shell}`}
+      className={`landing-code-form flex w-full items-center rounded-full py-1.5 pl-5 pr-1.5 ${shell}`}
     >
       <input
         value={code}

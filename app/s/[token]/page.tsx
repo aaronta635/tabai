@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { readStudentSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedReadUrl } from "@/lib/storage";
 import { BrandMark } from "@/components/landing/brand-mark";
@@ -24,6 +25,8 @@ export default async function StudentPage({ params }: { params: Promise<{ token:
     },
   });
   if (!student?.teacher) notFound();
+  const session = await readStudentSession();
+  if (session?.id === student.id) redirect("/student/takes");
 
   const locale = await getLocale();
   const t = await getMessages(locale);

@@ -2,13 +2,21 @@
 
 import { redirect } from "next/navigation";
 import { CONSENT_VERSION } from "@/lib/constants";
-import { requireStudentAccount, requireTeacher, setStudentAccountCookies, setTeacherCookie, signOutAccount } from "@/lib/auth";
+import {
+  newStudentToken,
+  requireStudentAccount,
+  requireTeacher,
+  setStudentAccountCookies,
+  setTeacherCookie,
+  signOutAccount,
+} from "@/lib/auth";
 import {
   studentStageFromAnswers,
   tutorStageFromAnswers,
   type StudentAnswers,
   type TutorAnswers,
 } from "@/lib/onboarding";
+import { bindStudentToClass } from "@/lib/lms";
 import { prisma } from "@/lib/prisma";
 
 function str(form: FormData, key: string) {
@@ -39,7 +47,7 @@ export async function saveTutorOnboarding(form: FormData) {
       deliveryType: videos === "zalo" ? "zalo" : teacher.deliveryType,
     },
   });
-  await setTeacherCookie(teacher.id, name);
+  await setTeacherCookie(teacher.id, name, true);
   redirect("/teacher");
 }
 
@@ -59,9 +67,9 @@ export async function saveStudentOnboarding(form: FormData) {
 
   let teacherId = student.teacherId;
   if (code) {
-    const piece = await prisma.piece.findUnique({ where: { code } });
-    if (!piece || piece.archived) return { error: "code" };
-    teacherId = piece.teacherId;
+    const joined = await bindStudentToClass(student.id, code);
+    if ("error" in joined) return { error: joined.error === "otherClass" ? "otherClass" : "code" };
+    teacherId = joined.class.teacherId;
   }
 
   const answers: StudentAnswers = { playing, work, code: code || undefined };
@@ -81,7 +89,7 @@ export async function saveStudentOnboarding(form: FormData) {
       consentVersion: student.consentVersion || CONSENT_VERSION,
     },
   });
-  await setStudentAccountCookies(updated.id, updated.name, updated.token);
+  await setStudentAccountCookies(updated.id, updated.name, updated.token, true);
   redirect("/student");
 }
 
@@ -90,14 +98,50 @@ export async function joinStudentClass(form: FormData) {
   if (!student) redirect("/auth?role=student");
   const code = str(form, "code").toLowerCase();
   if (!code) return { error: "code" };
-  const piece = await prisma.piece.findUnique({ where: { code } });
-  if (!piece || piece.archived) return { error: "code" };
-  if (student.teacherId && student.teacherId !== piece.teacherId) return { error: "otherClass" };
-  await prisma.student.update({
-    where: { id: student.id },
-    data: { teacherId: piece.teacherId, stage: "in_class" },
+  const joined = await bindStudentToClass(student.id, code);
+  if ("error" in joined) return { error: joined.error };
+  redirect("/student");
+}
+
+export async function guestJoinClass(form: FormData) {
+  const code = str(form, "code").toLowerCase();
+  const name = str(form, "name");
+  const contactHandle = str(form, "contactHandle");
+  const ageBand = str(form, "ageBand") === "under18" ? "under18" : "adult";
+  const contactType = str(form, "contactType") === "messenger" ? "messenger" : "zalo";
+  const consent = str(form, "consent") === "yes";
+  if (!code || !name || !contactHandle || !consent) return { error: "code" };
+
+  const existing = await requireStudentAccount();
+  if (existing) {
+    const joined = await bindStudentToClass(existing.id, code);
+    if ("error" in joined) return { error: joined.error };
+    redirect(existing.onboardedAt ? "/student" : "/onboarding");
+  }
+
+  const studioClass = await prisma.class.findUnique({ where: { code } });
+  if (!studioClass || studioClass.archived) return { error: "code" };
+
+  const token = newStudentToken();
+  const student = await prisma.student.create({
+    data: {
+      teacherId: studioClass.teacherId,
+      name,
+      ageBand,
+      contactType,
+      contactHandle,
+      token,
+      consentAt: new Date(),
+      consentVersion: CONSENT_VERSION,
+      publicOk: false,
+      stage: "in_class",
+      onboardedAt: new Date(),
+    },
   });
-  redirect(`/l/${piece.code}`);
+  const joined = await bindStudentToClass(student.id, code);
+  if ("error" in joined) return { error: joined.error };
+  await setStudentAccountCookies(student.id, student.name, token, true);
+  redirect("/student");
 }
 
 export async function logoutAccount() {

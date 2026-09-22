@@ -25,3 +25,7 @@ tmp
 coverage
 prisma/dev.db
 .cursor/hooks/state
+test-results
+playwright-report
+blob-report
+playwright/.cache

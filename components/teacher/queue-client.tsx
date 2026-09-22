@@ -11,11 +11,12 @@ import {
   togglePick,
 } from "@/app/teacher/actions";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
+import { requiredText } from "@/lib/forms";
 import type { ObservationMarker } from "@/lib/score-model";
 
 export type QueueItem = {
   id: string;
-  kind: "pending" | "unanswered" | "answered";
+  kind: "pending" | "unanswered" | "answered" | "practice";
   studentId: string;
   studentName: string;
   pieceTitle: string;
@@ -28,6 +29,7 @@ export type QueueItem = {
   nudgeUrl: string | null;
   submissionId: string | null;
   markers: ObservationMarker[];
+  submissionKind?: "take" | "practice" | "overdub" | null;
 };
 
 function waitLabel(ms: number) {
@@ -42,11 +44,13 @@ export function QueueClient({
   labels,
   counts,
   items,
+  hideTabs = false,
 }: {
-  tab: "unanswered" | "pending" | "answered";
-  labels: { unanswered: string; pending: string; answered: string };
-  counts: { unanswered: number; pending: number; answered: number };
+  tab: "unanswered" | "pending" | "answered" | "practice";
+  labels: { unanswered: string; pending: string; answered: string; practice: string };
+  counts: { unanswered: number; pending: number; answered: number; practice: number };
   items: QueueItem[];
+  hideTabs?: boolean;
 }) {
   const t = useTranslations("teacher");
   const [index, setIndex] = useState(0);
@@ -64,43 +68,12 @@ export function QueueClient({
   const item = items[index] ?? null;
 
   const submitReply = useCallback(async (submissionId: string, value: string) => {
-    const trimmed = value.trim();
-    if (!trimmed) {
-      // #region agent log
-      fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-        body: JSON.stringify({
-          sessionId: "32cab8",
-          runId: "teacher-verify",
-          hypothesisId: "H-Q06",
-          location: "components/teacher/queue-client.tsx:submitReply",
-          message: "client rejected empty reply",
-          data: { rawLen: value.length },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
+    if (!requiredText(value)) {
       setActionError(t("replyRequired"));
       return;
     }
     const result = await sendReply({ submissionId, text: value });
     if (result && "error" in result) {
-      // #region agent log
-      fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-        body: JSON.stringify({
-          sessionId: "32cab8",
-          runId: "teacher-verify",
-          hypothesisId: "H-Q12",
-          location: "components/teacher/queue-client.tsx:submitReply",
-          message: "server returned reply error",
-          data: { error: result.error },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       setActionError(result.error === "stale_item" ? t("staleReply") : t("replyRequired"));
       return;
     }
@@ -187,17 +160,27 @@ export function QueueClient({
 
   return (
     <div>
+      {hideTabs ? null : (
       <div className="flex gap-2 text-sm">
-        {(["unanswered", "pending", "answered"] as const).map((key) => (
+        {(["unanswered", "pending", "answered", "practice"] as const).map((key) => (
           <Link
             key={key}
-            href={`/teacher/queue?tab=${key}`}
+            href={
+              key === "practice"
+                ? "/teacher/submissions?kind=practice"
+                : key === "answered"
+                  ? "/teacher/submissions?status=answered"
+                  : key === "pending"
+                    ? "/teacher/classes"
+                    : "/teacher/submissions"
+            }
             className={`rounded-full px-3 py-1 ${tab === key ? "bg-beat text-white" : "bg-cream ring-1 ring-ink/10"}`}
           >
             {labels[key]} {counts[key]}
           </Link>
         ))}
       </div>
+      )}
 
       {tab === "unanswered" && grouped.size > 0 ? (
         <p className="mt-3 text-xs text-ink-soft">
@@ -213,7 +196,10 @@ export function QueueClient({
             <div>
               <p className="font-display text-2xl">{item.studentName}</p>
               <p className="text-sm text-ink-soft">
-                {item.pieceTitle} · {waitLabel(item.waitingMs)} {t("waiting")}
+                {item.pieceTitle}
+                {item.submissionKind === "overdub" ? ` · ${t("overdub")}` : item.submissionKind === "practice" ? ` · ${t("practice")}` : ""}
+                {" · "}
+                {waitLabel(item.waitingMs)} {t("waiting")}
               </p>
             </div>
             {item.teacherPick ? (

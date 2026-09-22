@@ -26,9 +26,11 @@ function secret() {
   return new TextEncoder().encode(value);
 }
 
-type TeacherPayload = { typ: "teacher"; teacherId: string; name: string };
-type StudentPayload = { typ: "student"; studentId: string; name: string };
+type TeacherPayload = { typ: "teacher"; teacherId: string; name: string; onboarded: boolean | null };
+type StudentPayload = { typ: "student"; studentId: string; name: string; onboarded: boolean | null };
 type AdminPayload = { typ: "admin" };
+
+export type StudioSession = { id: string; name: string; onboarded: boolean | null };
 
 export type BoundAccount =
   | {
@@ -65,16 +67,16 @@ export function newStudentToken() {
   return nanoid(24);
 }
 
-export async function signTeacherSession(teacherId: string, name: string) {
-  return new SignJWT({ typ: "teacher", teacherId, name } satisfies TeacherPayload)
+export async function signTeacherSession(teacherId: string, name: string, onboarded: boolean) {
+  return new SignJWT({ typ: "teacher", teacherId, name, onboarded } satisfies TeacherPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")
     .sign(secret());
 }
 
-export async function signStudentSession(studentId: string, name: string) {
-  return new SignJWT({ typ: "student", studentId, name } satisfies StudentPayload)
+export async function signStudentSession(studentId: string, name: string, onboarded: boolean) {
+  return new SignJWT({ typ: "student", studentId, name, onboarded } satisfies StudentPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")
@@ -100,6 +102,7 @@ async function readTeacherPayload(): Promise<TeacherPayload | null> {
         typ: "teacher",
         teacherId: payload.teacherId,
         name: typeof payload.name === "string" ? payload.name : "Thầy",
+        onboarded: typeof payload.onboarded === "boolean" ? payload.onboarded : null,
       };
     }
     return null;
@@ -119,6 +122,7 @@ async function readStudentPayload(): Promise<StudentPayload | null> {
         typ: "student",
         studentId: payload.studentId,
         name: typeof payload.name === "string" ? payload.name : "Học viên",
+        onboarded: typeof payload.onboarded === "boolean" ? payload.onboarded : null,
       };
     }
     return null;
@@ -210,39 +214,65 @@ async function createStudentFromUser(user: User) {
 }
 
 function boundTutor(teacher: { id: string; name: string; onboardedAt: Date | null }): BoundAccount {
-  const onboarded = Boolean(teacher.onboardedAt);
+  return boundTutorSession(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
+}
+
+function boundTutorSession(id: string, name: string, onboarded: boolean): BoundAccount {
   return {
     role: "tutor",
-    id: teacher.id,
-    name: teacher.name,
+    id,
+    name,
     onboarded,
     next: homeFor("tutor", onboarded),
   };
 }
 
 function boundStudent(student: { id: string; name: string; onboardedAt: Date | null }): BoundAccount {
-  const onboarded = Boolean(student.onboardedAt);
+  return boundStudentSession(student.id, student.name, Boolean(student.onboardedAt));
+}
+
+function boundStudentSession(id: string, name: string, onboarded: boolean): BoundAccount {
   return {
     role: "student",
-    id: student.id,
-    name: student.name,
+    id,
+    name,
     onboarded,
     next: homeFor("student", onboarded),
   };
 }
 
 /** Local JWT only — no database, no Supabase. */
-export const readTeacherSession = cache(async function readTeacherSession() {
+export const readTeacherSession = cache(async function readTeacherSession(): Promise<StudioSession | null> {
   const session = await readTeacherPayload();
   if (!session) return null;
-  return { id: session.teacherId, name: session.name };
+  return { id: session.teacherId, name: session.name, onboarded: session.onboarded };
 });
 
-export const readStudentSession = cache(async function readStudentSession() {
+export const readStudentSession = cache(async function readStudentSession(): Promise<StudioSession | null> {
   const session = await readStudentPayload();
   if (!session) return null;
-  return { id: session.studentId, name: session.name };
+  return { id: session.studentId, name: session.name, onboarded: session.onboarded };
 });
+
+const onboardedMemory = new Map<string, boolean>();
+
+function rememberOnboarded(role: "teacher" | "student", id: string, onboarded: boolean) {
+  onboardedMemory.set(`${role}:${id}`, onboarded);
+}
+
+/** JWT first, then this process's memory, then one Postgres hit for cookies minted before the flag existed. */
+export async function studioOnboarded(session: StudioSession, role: "teacher" | "student") {
+  if (session.onboarded != null) return session.onboarded;
+  const cached = onboardedMemory.get(`${role}:${session.id}`);
+  if (cached != null) return cached;
+  const row =
+    role === "teacher"
+      ? await prisma.teacher.findUnique({ where: { id: session.id }, select: { onboardedAt: true } })
+      : await prisma.student.findUnique({ where: { id: session.id }, select: { onboardedAt: true } });
+  const ok = Boolean(row?.onboardedAt);
+  rememberOnboarded(role, session.id, ok);
+  return ok;
+}
 
 /** Local JWT only. Hits Postgres only when the cookie is missing. */
 export async function getTeacherFromCookie() {
@@ -277,7 +307,7 @@ export const requireTeacher = cache(async function requireTeacher() {
   const teacher = await findTeacherByAuth(user.id);
   if (!teacher) return null;
   try {
-    await setTeacherCookie(teacher.id, teacher.name);
+    await setTeacherCookie(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
   } catch {
     // Server Components cannot always Set-Cookie; /api/session will.
   }
@@ -294,7 +324,7 @@ export const requireStudentAccount = cache(async function requireStudentAccount(
   const student = await findStudentByAuth(user.id);
   if (!student) return null;
   try {
-    await setStudentAccountCookies(student.id, student.name, student.token);
+    await setStudentAccountCookies(student.id, student.name, student.token, Boolean(student.onboardedAt));
   } catch {
     // /api/session will set cookies on the response path.
   }
@@ -321,21 +351,21 @@ export async function bindAuthSession(requested?: AccountRole | null): Promise<B
       return { error: "role_mismatch", actual: decision.actual };
     }
     if (decision.action === "use" && decision.role === "tutor" && teacher) {
-      await setTeacherCookie(teacher.id, teacher.name);
+      await setTeacherCookie(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
       return boundTutor(teacher);
     }
     if (decision.action === "use" && decision.role === "student" && student) {
-      await setStudentAccountCookies(student.id, student.name, student.token);
+      await setStudentAccountCookies(student.id, student.name, student.token, Boolean(student.onboardedAt));
       return boundStudent(student);
     }
     if (decision.action === "create" && decision.role === "student") {
       const created = await createStudentFromUser(user);
-      await setStudentAccountCookies(created.id, created.name, created.token);
+      await setStudentAccountCookies(created.id, created.name, created.token, Boolean(created.onboardedAt));
       return boundStudent(created);
     }
     if (decision.action === "create" && decision.role === "tutor") {
       const created = await createTeacherFromUser(user);
-      await setTeacherCookie(created.id, created.name);
+      await setTeacherCookie(created.id, created.name, Boolean(created.onboardedAt));
       return boundTutor(created);
     }
     return null;
@@ -344,9 +374,12 @@ export async function bindAuthSession(requested?: AccountRole | null): Promise<B
   if (requested !== "student") {
     const teacherJwt = await readTeacherSession();
     if (teacherJwt) {
+      if (teacherJwt.onboarded != null) {
+        return boundTutorSession(teacherJwt.id, teacherJwt.name, teacherJwt.onboarded);
+      }
       const teacher = await prisma.teacher.findUnique({ where: { id: teacherJwt.id } });
       if (teacher) {
-        await setTeacherCookie(teacher.id, teacher.name);
+        await setTeacherCookie(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
         return boundTutor(teacher);
       }
     }
@@ -354,9 +387,12 @@ export async function bindAuthSession(requested?: AccountRole | null): Promise<B
   if (requested !== "tutor") {
     const studentJwt = await readStudentSession();
     if (studentJwt) {
+      if (studentJwt.onboarded != null) {
+        return boundStudentSession(studentJwt.id, studentJwt.name, studentJwt.onboarded);
+      }
       const student = await prisma.student.findUnique({ where: { id: studentJwt.id } });
       if (student) {
-        await setStudentAccountCookies(student.id, student.name, student.token);
+        await setStudentAccountCookies(student.id, student.name, student.token, Boolean(student.onboardedAt));
         return boundStudent(student);
       }
     }
@@ -398,10 +434,11 @@ export async function studentForPiece(teacherId: string) {
   return { student, otherClass: false, fromSession: false as const };
 }
 
-export async function setTeacherCookie(teacherId: string, name: string) {
+export async function setTeacherCookie(teacherId: string, name: string, onboarded: boolean) {
+  rememberOnboarded("teacher", teacherId, onboarded);
   const jar = await cookies();
   jar.delete(STUDENT_SESSION_COOKIE);
-  jar.set(TEACHER_COOKIE, await signTeacherSession(teacherId, name), {
+  jar.set(TEACHER_COOKIE, await signTeacherSession(teacherId, name, onboarded), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",
@@ -432,10 +469,16 @@ export async function setStudentCookie(token: string) {
   });
 }
 
-export async function setStudentAccountCookies(studentId: string, name: string, token: string) {
+export async function setStudentAccountCookies(
+  studentId: string,
+  name: string,
+  token: string,
+  onboarded: boolean,
+) {
+  rememberOnboarded("student", studentId, onboarded);
   const jar = await cookies();
   jar.delete(TEACHER_COOKIE);
-  jar.set(STUDENT_SESSION_COOKIE, await signStudentSession(studentId, name), {
+  jar.set(STUDENT_SESSION_COOKIE, await signStudentSession(studentId, name, onboarded), {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

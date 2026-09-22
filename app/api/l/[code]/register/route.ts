@@ -7,6 +7,7 @@ import {
   studentForPiece,
 } from "@/lib/auth";
 import { logEvent } from "@/lib/events";
+import { registerFieldErrors } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
         publicOk,
       },
     });
-    await setStudentAccountCookies(updated.id, updated.name, updated.token);
+    await setStudentAccountCookies(updated.id, updated.name, updated.token, Boolean(updated.onboardedAt));
     await logEvent({
       name: "student.registered",
       actorType: "student",
@@ -64,27 +65,34 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     return NextResponse.json({ studentId: bound.student.id, token: bound.student.token });
   }
 
-  const ageBand = body.ageBand;
-  const contactType = body.contactType;
-  if (!nameTrim || !ageBand || !contactType || !contactTrim || !body.consent) {
+  const parsed = registerFieldErrors({
+    name: body.name,
+    contactHandle: body.contactHandle,
+    ageBand: body.ageBand,
+    contactType: body.contactType,
+    consent: body.consent,
+  });
+  if (parsed.missing) {
     return NextResponse.json(
       {
         error: "missing fields",
-        fields: { name: !nameTrim, contactHandle: !contactTrim },
+        fields: parsed.fields,
       },
       { status: 400 },
     );
   }
+  const ageBand = body.ageBand!;
+  const contactType = body.contactType!;
 
   const publicOk = ageBand === "under18" ? false : Boolean(body.publicOk);
   const token = newStudentToken();
   const student = await prisma.student.create({
     data: {
       teacherId: piece.teacherId,
-      name: nameTrim,
+      name: parsed.name,
       ageBand,
       contactType,
-      contactHandle: contactTrim,
+      contactHandle: parsed.contactHandle,
       token,
       consentAt: new Date(),
       consentVersion: CONSENT_VERSION,

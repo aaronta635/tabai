@@ -8,7 +8,7 @@ import {
   geminiDraftModel,
   generateGeminiText,
 } from "../lib/gemini";
-import { routeSubmission } from "../lib/growth";
+import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
 import { observationOutline, retrieveDraftContext, type DraftRetrieval } from "../lib/rag";
 import { closeMatch, isCompareObservations, type CompareObservations } from "../lib/score-model";
@@ -94,6 +94,7 @@ export async function runDraft(submissionId: string) {
   if (!submission.student.approvedAt) {
     throw new Error("student not approved — refusing draft");
   }
+  if (submission.kind === "practice") return;
 
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
@@ -205,6 +206,14 @@ export async function runDraft(submissionId: string) {
       route,
     },
   });
+
+  if (route === "ai_direct") {
+    await sendApprovedDraft({
+      submissionId,
+      teacherId: submission.piece.teacherId,
+      text,
+    });
+  }
 }
 
 function fallbackDraft(name: string, title: string, note: string | null) {

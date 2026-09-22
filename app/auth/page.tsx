@@ -27,52 +27,32 @@ export default async function AuthPage({
 
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const studio = role === "tutor";
 
   return (
-    <main className={`${studio ? "teacher-onboard" : "student-shell"} mx-auto flex min-h-dvh max-w-md flex-col justify-center px-6 py-16`}>
-      <div className="mb-8 flex items-center justify-between">
+    <main className="auth-stage">
+      <header className="auth-edge">
         <Link href="/" aria-label={t.brand}>
-          {studio ? <BrandMark light /> : <BrandMark priority />}
+          <BrandMark priority />
         </Link>
-        <LocaleToggle locale={locale} tone={studio ? "dark" : "light"} />
-      </div>
+        <LocaleToggle locale={locale} />
+      </header>
 
-      {!role ? (
-        <>
-          <h1 className="font-display text-4xl">{t.auth.pickTitle}</h1>
-          <p className="mt-3 text-ink-soft">{t.auth.pickBody}</p>
-          <div className="mt-8 grid gap-3">
-            <Link
-              href="/auth?role=tutor"
-              className="rounded-2xl border border-ink/10 bg-cream px-5 py-5 hover:border-beat"
-            >
-              <p className="text-xs tracking-[0.16em] uppercase text-ink-soft">{t.auth.tutorKicker}</p>
-              <p className="font-display mt-1 text-2xl">{t.auth.tutorTitle}</p>
-              <p className="mt-2 text-sm text-ink-soft">{t.auth.tutorBody}</p>
+      <div className="auth-bars">
+        {!role ? (
+          <>
+            <h1 className="auth-title">{t.auth.pickTitle}</h1>
+            <Link href="/auth?role=tutor" className="auth-bar">
+              <span>{t.auth.tutorTitle}</span>
             </Link>
-            <Link
-              href="/auth?role=student"
-              className="rounded-2xl border border-ink/10 bg-cream px-5 py-5 hover:border-beat"
-            >
-              <p className="text-xs tracking-[0.16em] uppercase text-ink-soft">{t.auth.studentKicker}</p>
-              <p className="font-display mt-1 text-2xl">{t.auth.studentTitle}</p>
-              <p className="mt-2 text-sm text-ink-soft">{t.auth.studentBody}</p>
+            <Link href="/auth?role=student" className="auth-bar">
+              <span>{t.auth.studentTitle}</span>
             </Link>
-          </div>
-        </>
-      ) : (
-        <>
-          <p className={`text-xs tracking-[0.18em] uppercase ${studio ? "text-white/55" : "text-ink-soft"}`}>
-            {role === "tutor" ? t.auth.tutorKicker : t.auth.studentKicker}
-          </p>
-          <h1 className={`font-display mt-2 text-4xl ${studio ? "text-paper" : ""}`}>
-            {role === "tutor" ? t.auth.tutorSignIn : t.auth.studentSignIn}
-          </h1>
-          <p className={`mt-3 ${studio ? "text-white/70" : "text-ink-soft"}`}>
-            {role === "tutor" ? t.auth.tutorFormBody : t.auth.studentFormBody}
-          </p>
-          <div className={`mt-8 ${studio ? "lms-card p-5 text-ink" : ""}`}>
+          </>
+        ) : (
+          <>
+            <h1 className="auth-title">
+              {role === "tutor" ? t.auth.tutorSignIn : t.auth.studentSignIn}
+            </h1>
             <AuthForm
               role={role}
               next={next ?? (role === "student" ? "/student" : "/teacher")}
@@ -91,14 +71,19 @@ export default async function AuthPage({
                 checkEmail: t.auth.checkEmail,
                 wrongRoleTutor: t.auth.wrongRoleTutor,
                 wrongRoleStudent: t.auth.wrongRoleStudent,
+                continueGoogle: t.auth.continueGoogle,
+                continueFacebook: t.auth.continueFacebook,
+                continueZalo: t.auth.continueZalo,
+                orEmail: t.auth.orEmail,
+                providerFailed: t.auth.providerFailed,
               }}
             />
-          </div>
-          <Link href="/auth" className={`mt-6 text-sm ${studio ? "text-white/70" : "text-ink-soft"}`}>
-            {t.auth.switchRole}
-          </Link>
-        </>
-      )}
+            <Link href="/auth" className="auth-switch">
+              {t.auth.switchRole}
+            </Link>
+          </>
+        )}
+      </div>
     </main>
   );
 }

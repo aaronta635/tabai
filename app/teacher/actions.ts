@@ -5,10 +5,12 @@ import { redirect } from "next/navigation";
 import { newPieceCode, requireTeacher, signOutTeacher } from "@/lib/auth";
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
-import { Prisma } from "@prisma/client";
+import { maybeUnlockAiDirect } from "@/lib/growth";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
-import { enqueueTrainPiece, linkPieceAssets, readCatalogSlot, syncPieceToCatalog } from "@/lib/catalog";
+import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult } from "@/lib/forms";
+import { parseDueAt } from "@/lib/practice";
+import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
 import { teacherSubmission } from "@/lib/scope";
 
 async function teacherOrThrow() {
@@ -23,85 +25,87 @@ export async function createPiece(formData: FormData) {
     note: String(formData.get("note") ?? ""),
   });
   if ("error" in piece) return;
-  redirect(`/teacher/pieces?created=${piece.code}`);
+  redirect(`/teacher/curriculum`);
 }
 
-export async function createPieceRecord(input: { title: string; note: string; catalogSlug?: string }) {
+export async function createPieceRecord(input: {
+  title: string;
+  note: string;
+  partId?: string;
+  description?: string;
+  tips?: string;
+}) {
   const teacher = await teacherOrThrow();
-  const title = input.title.trim();
-  const note = input.note.trim();
-  if (!title) {
-    // #region agent log
-    fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-      body: JSON.stringify({
-        sessionId: "32cab8",
-        runId: "teacher-verify",
-        hypothesisId: "H-E06",
-        location: "app/teacher/actions.ts:createPieceRecord",
-        message: "title rejected",
-        data: { rawLen: input.title.length, trimmedLen: title.length, result: "title_required" },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    return { error: "title_required" as const };
+  const titled = pieceTitleResult(input.title);
+  if ("error" in titled) return { error: "title_required" as const };
+  const title = titled.title;
+  const note = (input.description ?? input.note).trim();
+  const tips = input.tips?.trim() || null;
+  let partId = input.partId;
+  if (!partId) {
+    const { firstCurriculumPartId } = await import("@/lib/lms");
+    partId = await firstCurriculumPartId(teacher.id);
   }
 
-  const slot = input.catalogSlug ? await readCatalogSlot(input.catalogSlug) : null;
-  if (input.catalogSlug && !slot) throw new Error("catalog slot not found");
-
-  if (slot) {
-    const existing = await prisma.piece.findUnique({ where: { code: slot.code } });
-    if (existing && existing.teacherId !== teacher.id) {
-      throw new Error("catalog piece belongs to another teacher");
-    }
-    if (existing) {
-      const updated = await prisma.piece.update({
-        where: { id: existing.id },
-        data: { title, note: note || existing.note },
-      });
-      revalidatePath("/teacher");
-      revalidatePath("/teacher/pieces");
-      return { id: updated.id, code: updated.code };
-    }
-  }
-
-  try {
-    const piece = await prisma.piece.create({
-      data: {
-        teacherId: teacher.id,
-        code: slot?.code ?? newPieceCode(),
-        title,
-        note: note || null,
-      },
-    });
-    await logEvent({
-      name: "piece.created",
-      actorType: "teacher",
-      actorId: teacher.id,
+  const piece = await prisma.piece.create({
+    data: {
       teacherId: teacher.id,
-      props: { pieceId: piece.id, catalogSlug: slot?.slug ?? null },
-    });
-    revalidatePath("/teacher");
-    revalidatePath("/teacher/pieces");
-    return { id: piece.id, code: piece.code };
-  } catch (error) {
-    if (slot && error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      const existing = await prisma.piece.findUnique({ where: { code: slot.code } });
-      if (existing && existing.teacherId === teacher.id) {
-        return { id: existing.id, code: existing.code };
-      }
-    }
-    throw error;
-  }
+      code: newPieceCode(),
+      title,
+      note: note || null,
+      description: note || null,
+      tips,
+      partId,
+    },
+  });
+  await logEvent({
+    name: "piece.created",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: { pieceId: piece.id },
+  });
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/curriculum");
+  return { id: piece.id, code: piece.code };
+}
+
+export async function updatePieceAssignment(input: {
+  pieceId: string;
+  title?: string;
+  note?: string;
+  tips?: string;
+  goal?: string;
+  dueAt?: string | null;
+}) {
+  const teacher = await teacherOrThrow();
+  const piece = await prisma.piece.findFirst({
+    where: { id: input.pieceId, teacherId: teacher.id, archived: false },
+  });
+  if (!piece) throw new Error("not found");
+  const title = input.title?.trim();
+  if (input.title != null && !title) return { error: "title_required" as const };
+  const note = input.note?.trim() || null;
+  const updated = await prisma.piece.update({
+    where: { id: piece.id },
+    data: {
+      ...(title ? { title } : {}),
+      ...(input.note != null ? { note, description: note } : {}),
+      ...(input.tips != null ? { tips: input.tips.trim() || null } : {}),
+      ...(input.goal !== undefined ? { goal: input.goal?.trim() || null } : {}),
+      ...(input.dueAt !== undefined ? { dueAt: parseDueAt(input.dueAt) } : {}),
+    },
+  });
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/curriculum");
+  return { id: updated.id, code: updated.code };
 }
 
 export async function completePieceAssets(input: {
   pieceId: string;
   sheetMediaId?: string | null;
   tutorialMediaId?: string | null;
+  clipMediaId?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const piece = await prisma.piece.findFirst({
@@ -110,7 +114,7 @@ export async function completePieceAssets(input: {
   if (!piece) throw new Error("not found");
 
   const prefix = `teachers/${teacher.id}/pieces/${piece.id}/`;
-  async function owned(mediaId: string | null | undefined, folder: "sheet" | "tutorial") {
+  async function owned(mediaId: string | null | undefined, folder: "sheet" | "tutorial" | "clip") {
     if (!mediaId) return;
     const media = await prisma.media.findUnique({ where: { id: mediaId } });
     if (!media || media.storagePath === "pending") throw new Error("media not ready");
@@ -119,19 +123,19 @@ export async function completePieceAssets(input: {
 
   await owned(input.sheetMediaId, "sheet");
   await owned(input.tutorialMediaId, "tutorial");
+  await owned(input.clipMediaId, "clip");
 
   const updated = await linkPieceAssets({
     pieceId: piece.id,
     sheetMediaId: input.sheetMediaId ?? undefined,
     tutorialMediaId: input.tutorialMediaId ?? undefined,
+    clipMediaId: input.clipMediaId ?? undefined,
   });
-
-  const catalogSlug = await syncPieceToCatalog(updated.id);
 
   let trained = false;
   if (input.sheetMediaId || input.tutorialMediaId) {
     if (updated.sheetMediaId || updated.tutorialMediaId) {
-      await enqueueTrainPiece(updated.id, { catalogSlug });
+      await enqueueTrainPiece(updated.id);
       trained = true;
     }
   }
@@ -145,12 +149,12 @@ export async function completePieceAssets(input: {
       pieceId: piece.id,
       sheetMediaId: input.sheetMediaId ?? null,
       tutorialMediaId: input.tutorialMediaId ?? null,
-      catalogSlug,
+      clipMediaId: input.clipMediaId ?? null,
       trained,
     },
   });
   revalidatePath("/teacher");
-  revalidatePath("/teacher/pieces");
+  revalidatePath("/teacher/curriculum");
   return { code: updated.code, trained };
 }
 
@@ -182,7 +186,7 @@ export async function approveStudent(studentId: string) {
     props: { studentId },
   });
   revalidatePath("/teacher");
-  revalidatePath("/teacher/queue");
+  revalidatePath("/teacher/submissions");
 }
 
 export async function markOpened(submissionId: string) {
@@ -206,29 +210,13 @@ export async function sendReply(input: {
   const submission = await teacherSubmission(teacher.id, input.submissionId);
   if (!submission) throw new Error("not found");
 
-  const text = input.text.trim();
-  const existingReplyCount = submission.replies.length;
-  if (!text) {
-    // #region agent log
-    fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-      body: JSON.stringify({
-        sessionId: "32cab8",
-        runId: "teacher-verify",
-        hypothesisId: "H-Q06",
-        location: "app/teacher/actions.ts:sendReply",
-        message: "empty reply rejected",
-        data: { rawLen: input.text.length, trimmedLen: text.length, result: "empty_reply" },
-        timestamp: Date.now(),
-      }),
-    }).catch(() => {});
-    // #endregion
-    return { error: "empty_reply" as const };
-  }
-  if (submission.status === "answered" || submission.status === "skipped" || existingReplyCount > 0) {
-    return { error: "stale_item" as const };
-  }
+  const guarded = guardReply({
+    text: input.text,
+    status: submission.status,
+    existingReplyCount: submission.replies.length,
+  });
+  if ("error" in guarded) return guarded;
+  const text = guarded.text;
 
   const draft = submission.drafts[0]?.text ?? null;
   const { source, editDistance } = classifyReplySource(draft, text);
@@ -238,7 +226,7 @@ export async function sendReply(input: {
   try {
     await prisma.$transaction(async (tx) => {
       const claimed = await tx.submission.updateMany({
-        where: { id: submission.id, status: { in: ["new", "drafted"] } },
+        where: { id: submission.id, status: { in: [...CLAIMABLE_SUBMISSION_STATUSES] } },
         data: {
           status: "answered",
           teacherPick: input.pick ? true : submission.teacherPick,
@@ -262,21 +250,6 @@ export async function sendReply(input: {
     });
   } catch (error) {
     if (error instanceof Error && error.message === "STALE") {
-      // #region agent log
-      fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-        body: JSON.stringify({
-          sessionId: "32cab8",
-          runId: "teacher-verify",
-          hypothesisId: "H-Q12",
-          location: "app/teacher/actions.ts:sendReply",
-          message: "stale claim race",
-          data: { result: "stale_item", via: "updateMany" },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       return { error: "stale_item" as const };
     }
     throw error;
@@ -294,8 +267,9 @@ export async function sendReply(input: {
       timePerReplyMs: sentAt.getTime() - openedAt.getTime(),
     },
   });
+  await maybeUnlockAiDirect(submission.pieceId);
   revalidatePath("/teacher");
-  revalidatePath("/teacher/queue");
+  revalidatePath("/teacher/submissions");
   return { ok: true as const };
 }
 
@@ -315,7 +289,7 @@ export async function skipSubmission(submissionId: string, reason: string) {
     props: { submissionId, reason },
   });
   revalidatePath("/teacher");
-  revalidatePath("/teacher/queue");
+  revalidatePath("/teacher/submissions");
 }
 
 export async function togglePick(submissionId: string) {
@@ -335,7 +309,7 @@ export async function togglePick(submissionId: string) {
     });
   }
   revalidatePath("/teacher");
-  revalidatePath("/teacher/queue");
+  revalidatePath("/teacher/submissions");
 }
 
 export async function updateDelivery(formData: FormData) {

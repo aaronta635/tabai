@@ -1,5 +1,7 @@
+import { isPrismaConnectionError } from "../lib/db-errors";
 import { loadLocalEnv } from "../lib/load-env";
 import { claimNextJob, failJob, finishJob } from "../lib/jobs";
+import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
 import { runDraft } from "./draft";
@@ -8,6 +10,7 @@ import { runTrainPiece } from "./train";
 loadLocalEnv();
 
 const POLL_MS = 2000;
+const RECONNECT_WAIT_MS = 5000;
 
 async function handle(job: { id: string; type: string; payload: unknown }) {
   const payload = job.payload as {
@@ -57,10 +60,23 @@ async function loop() {
       } catch (error) {
         const message = error instanceof Error ? error.message : "unknown";
         console.error("job failed", job.id, message);
+        if (isPrismaConnectionError(error)) {
+          await reconnectPrisma();
+        }
         await failJob(job.id, message);
       }
     } catch (error) {
       console.error("worker loop", error);
+      if (isPrismaConnectionError(error)) {
+        try {
+          await reconnectPrisma();
+          console.log("prisma reconnected");
+        } catch (reconnectError) {
+          console.error("prisma reconnect failed", reconnectError);
+        }
+        await new Promise((r) => setTimeout(r, RECONNECT_WAIT_MS));
+        continue;
+      }
       await new Promise((r) => setTimeout(r, POLL_MS));
     }
   }

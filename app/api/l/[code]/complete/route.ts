@@ -3,6 +3,7 @@ import { studentForPiece } from "@/lib/auth";
 import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
+import { parseSubmissionKind } from "@/lib/practice";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
   const { code } = await context.params;
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     });
   }
 
-  const body = (await request.json()) as { mediaId?: string };
+  const body = (await request.json()) as { mediaId?: string; kind?: string };
   if (!body.mediaId) {
     return NextResponse.json({ error: "mediaId required" }, { status: 400 });
   }
@@ -36,11 +37,13 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     return NextResponse.json({ error: "media not ready" }, { status: 400 });
   }
 
+  const kind = parseSubmissionKind(body.kind);
   const submission = await prisma.submission.create({
     data: {
       pieceId: piece.id,
       studentId: student.id,
       mediaId: media.id,
+      kind,
     },
   });
 
@@ -49,7 +52,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     actorType: "student",
     actorId: student.id,
     teacherId: piece.teacherId,
-    props: { submissionId: submission.id, approved: Boolean(student.approvedAt) },
+    props: { submissionId: submission.id, approved: Boolean(student.approvedAt), kind },
   });
 
   await enqueueAnalyzeIfApproved(submission.id);
@@ -57,6 +60,6 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   return NextResponse.json({
     submissionId: submission.id,
     studentToken: student.token,
-    page: `/s/${student.token}`,
+    page: bound.fromSession ? "/student/takes" : `/s/${student.token}`,
   });
 }

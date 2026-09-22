@@ -31,12 +31,12 @@ export function LocaleToggle({
   const idle = tone === "dark" ? "text-[#fff7f2]" : "text-[#35242d]";
 
   return (
-    <div className={`inline-flex overflow-hidden rounded-full text-xs font-medium ${shell} ${className}`}>
+    <div className={`inline-flex rounded-full text-xs font-medium ${shell} ${className}`}>
       <button
         type="button"
         disabled={pending}
         onClick={() => setLocale("vi")}
-        className={`px-3 py-2 ${locale === "vi" ? active : idle}`}
+        className={`rounded-l-full px-3 py-2 ${locale === "vi" ? active : idle}`}
       >
         VI
       </button>
@@ -44,7 +44,7 @@ export function LocaleToggle({
         type="button"
         disabled={pending}
         onClick={() => setLocale("en")}
-        className={`px-3 py-2 ${locale === "en" ? active : idle}`}
+        className={`rounded-r-full px-3 py-2 ${locale === "en" ? active : idle}`}
       >
         EN
       </button>

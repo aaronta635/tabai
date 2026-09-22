@@ -17,3 +17,21 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
+
+let reconnecting: Promise<void> | null = null;
+
+/** Drop a dead engine socket and open a new one. Safe to call concurrently. */
+export async function reconnectPrisma() {
+  if (reconnecting) return reconnecting;
+  reconnecting = (async () => {
+    try {
+      await prisma.$disconnect();
+    } catch {
+      // already closed
+    }
+    await prisma.$connect();
+  })().finally(() => {
+    reconnecting = null;
+  });
+  return reconnecting;
+}

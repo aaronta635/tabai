@@ -3,16 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { completePieceAssets, createPieceRecord } from "@/app/teacher/actions";
+import { completePieceAssets, createPieceRecord, updatePieceAssignment } from "@/app/teacher/actions";
 import { FilePicker } from "@/components/file-picker";
-import { MAX_SHEET_BYTES, MAX_VIDEO_BYTES } from "@/lib/constants";
+import { MAX_CLIP_BYTES, MAX_CLIP_SECONDS, MAX_SHEET_BYTES, MAX_VIDEO_BYTES } from "@/lib/constants";
+import { requiredText } from "@/lib/forms";
 
 type Props = {
   pieceId?: string;
-  catalogSlug?: string;
+  partId?: string;
   defaultTitle?: string;
   defaultNote?: string;
+  defaultTips?: string;
   showMeta?: boolean;
+  hasClip?: boolean;
 };
 
 type SignJson = {
@@ -32,7 +35,23 @@ async function readJson(res: Response): Promise<SignJson> {
   }
 }
 
-async function uploadAsset(pieceId: string, kind: "sheet" | "tutorial", file: File) {
+async function mediaDuration(file: File) {
+  const url = URL.createObjectURL(file);
+  try {
+    const duration = await new Promise<number>((resolve, reject) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => resolve(video.duration || 0);
+      video.onerror = () => reject(new Error("duration"));
+      video.src = url;
+    });
+    return duration;
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+async function uploadAsset(pieceId: string, kind: "sheet" | "tutorial" | "clip", file: File) {
   const sign = await fetch(`/api/teacher/pieces/${pieceId}/upload-url`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -59,10 +78,12 @@ async function uploadAsset(pieceId: string, kind: "sheet" | "tutorial", file: Fi
 
 export function PieceForm({
   pieceId,
-  catalogSlug,
+  partId,
   defaultTitle,
   defaultNote,
+  defaultTips,
   showMeta = true,
+  hasClip = false,
 }: Props) {
   const t = useTranslations("teacher");
   const router = useRouter();
@@ -70,6 +91,7 @@ export function PieceForm({
   const [error, setError] = useState<string | null>(null);
   const [sheetFile, setSheetFile] = useState<File | null>(null);
   const [tutorialFile, setTutorialFile] = useState<File | null>(null);
+  const [clipFile, setClipFile] = useState<File | null>(null);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -77,24 +99,11 @@ export function PieceForm({
     const form = event.currentTarget;
     const data = new FormData(form);
     const titleRaw = String(data.get("title") ?? defaultTitle ?? "");
-    const titleTrim = titleRaw.trim();
+    const titleTrim = requiredText(titleRaw);
+    const description = String(data.get("note") ?? "");
+    const tips = String(data.get("tips") ?? "");
 
     if (!pieceId && !titleTrim) {
-      // #region agent log
-      fetch("http://127.0.0.1:7777/ingest/72b4f31c-651a-4621-bf28-9e2c74943a88", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "32cab8" },
-        body: JSON.stringify({
-          sessionId: "32cab8",
-          runId: "teacher-verify",
-          hypothesisId: "H-E06",
-          location: "components/teacher/piece-form.tsx:onSubmit",
-          message: "client rejected empty title",
-          data: { rawLen: titleRaw.length, trimmedLen: titleTrim.length },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
       setError(t("titleRequired"));
       return;
     }
@@ -107,9 +116,21 @@ export function PieceForm({
       setError(t("tooBig"));
       return;
     }
-    if (!sheetFile && !tutorialFile) {
-      setError(t("needFile"));
+    if (clipFile && clipFile.size > MAX_CLIP_BYTES) {
+      setError(t("tooBigClip"));
       return;
+    }
+    if (clipFile) {
+      try {
+        const duration = await mediaDuration(clipFile);
+        if (duration > MAX_CLIP_SECONDS) {
+          setError(t("tooBigClip"));
+          return;
+        }
+      } catch {
+        setError(t("tooBigClip"));
+        return;
+      }
     }
 
     setBusy(true);
@@ -119,8 +140,10 @@ export function PieceForm({
       if (!id) {
         const created = await createPieceRecord({
           title: titleRaw,
-          note: String(data.get("note") ?? defaultNote ?? ""),
-          catalogSlug,
+          note: description,
+          partId,
+          description,
+          tips,
         });
         if ("error" in created) {
           setError(t("titleRequired"));
@@ -128,26 +151,37 @@ export function PieceForm({
         }
         id = created.id;
         code = created.code;
+      } else {
+        const updated = await updatePieceAssignment({
+          pieceId: id,
+          title: showMeta ? titleRaw : undefined,
+          note: showMeta ? description : undefined,
+          tips: showMeta ? tips : undefined,
+        });
+        if (updated && "error" in updated) {
+          setError(t("titleRequired"));
+          return;
+        }
+        code = updated.code;
       }
 
       let sheetMediaId: string | undefined;
       let tutorialMediaId: string | undefined;
-      if (sheetFile) {
-        sheetMediaId = await uploadAsset(id, "sheet", sheetFile);
-        const done = await completePieceAssets({ pieceId: id, sheetMediaId });
-        code = done.code;
-      }
-      if (tutorialFile) {
-        tutorialMediaId = await uploadAsset(id, "tutorial", tutorialFile);
-        const done = await completePieceAssets({ pieceId: id, tutorialMediaId });
+      let clipMediaId: string | undefined;
+      if (sheetFile) sheetMediaId = await uploadAsset(id, "sheet", sheetFile);
+      if (tutorialFile) tutorialMediaId = await uploadAsset(id, "tutorial", tutorialFile);
+      if (clipFile) clipMediaId = await uploadAsset(id, "clip", clipFile);
+      if (sheetMediaId || tutorialMediaId || clipMediaId) {
+        const done = await completePieceAssets({ pieceId: id, sheetMediaId, tutorialMediaId, clipMediaId });
         code = done.code;
       }
 
       form.reset();
       setSheetFile(null);
       setTutorialFile(null);
+      setClipFile(null);
       if (code && !pieceId) {
-        router.push(`/teacher/pieces?created=${code}`);
+        router.push("/teacher/curriculum");
         router.refresh();
         return;
       }
@@ -160,27 +194,25 @@ export function PieceForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="lms-card space-y-3 p-4">
+    <form onSubmit={onSubmit} className="space-y-3">
       {showMeta ? (
         <>
-          <input
-            required
-            name="title"
-            defaultValue={defaultTitle}
-            placeholder={t("title")}
-            className="w-full rounded-xl border border-ink/10 bg-white px-3 py-3"
-          />
-          <textarea
-            name="note"
-            defaultValue={defaultNote}
-            placeholder={t("note")}
-            rows={2}
-            className="w-full rounded-xl border border-ink/10 bg-white px-3 py-3"
-          />
+          <label className="block">
+            <span className="field-label">{t("title")}</span>
+            <input required name="title" defaultValue={defaultTitle} className="field mt-1.5" />
+          </label>
+          <label className="block">
+            <span className="field-label">{t("description")}</span>
+            <textarea name="note" defaultValue={defaultNote} rows={2} className="field mt-1.5" />
+          </label>
+          <label className="block">
+            <span className="field-label">{t("tips")}</span>
+            <textarea name="tips" defaultValue={defaultTips} rows={2} className="field mt-1.5" />
+          </label>
         </>
       ) : null}
       <div className="text-sm">
-        <p className="mb-1 font-medium">{t("sheetLabel")}</p>
+        <p className="field-label mb-1.5">{t("sheetLabel")}</p>
         <FilePicker
           accept=".pdf,.png,.jpg,.jpeg,.webp,.musicxml,.xml,application/pdf,image/*"
           file={sheetFile}
@@ -191,7 +223,7 @@ export function PieceForm({
         />
       </div>
       <div className="text-sm">
-        <p className="mb-1 font-medium">{t("tutorialLabel")}</p>
+        <p className="field-label mb-1.5">{t("tutorialLabel")}</p>
         <FilePicker
           accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v"
           file={tutorialFile}
@@ -201,12 +233,19 @@ export function PieceForm({
           hint={t("tutorialHint")}
         />
       </div>
+      <div className="text-sm">
+        <p className="field-label mb-1.5">{t("clipLabel")}</p>
+        <FilePicker
+          accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v"
+          file={clipFile}
+          onFile={setClipFile}
+          buttonLabel={hasClip ? t("changeClip") : t("chooseClip")}
+          changeLabel={t("changeFile")}
+          hint={t("clipHint")}
+        />
+      </div>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <button
-        type="submit"
-        disabled={busy}
-        className="w-full rounded-xl bg-beat px-4 py-3 text-white disabled:opacity-60"
-      >
+      <button type="submit" disabled={busy} className="btn w-full disabled:opacity-60">
         {busy ? "…" : pieceId ? t("attachAssets") : t("createPiece")}
       </button>
     </form>

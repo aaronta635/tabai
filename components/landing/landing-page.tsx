@@ -29,8 +29,8 @@ export async function LandingPage() {
           <BrandMark priority />
         </Link>
         <div className="landing-nav-end">
-          <LocaleToggle locale={locale} />
-          <Link href={navHref} className="landing-nav-cta">
+          <LocaleToggle locale={locale} className="landing-locale" />
+          <Link href={navHref} className="landing-cta landing-nav-cta">
             {teacher || student ? t.navOpen : t.navCta}
           </Link>
         </div>
@@ -48,7 +48,7 @@ export async function LandingPage() {
             <Link href={tutorHref} className="landing-cta">
               {t.tutorCta}
             </Link>
-            <Link href={studentHref} className="landing-cta-secondary">
+            <Link href={studentHref} className="landing-cta">
               {t.studentCta}
             </Link>
             <p className="landing-hint">{t.demoHint}</p>

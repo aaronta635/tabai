@@ -11,6 +11,11 @@
     "start": "next start",
     "worker": "tsx worker/index.ts",
     "lint": "eslint .",
+    "test": "vitest run && PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "PLAYWRIGHT_BROWSERS_PATH=0 playwright test",
+    "playwright:install": "PLAYWRIGHT_BROWSERS_PATH=0 playwright install chromium",
     "postinstall": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
@@ -44,6 +49,13 @@
     "ws": "^8.21.3"
   },
   "devDependencies": {
-    "@types/ws": "^8.18.1"
+    "@playwright/test": "^1.55.1",
+    "@testing-library/jest-dom": "^6.8.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/ws": "^8.18.1",
+    "@vitejs/plugin-react": "^5.0.2",
+    "happy-dom": "^18.0.1",
+    "vitest": "^3.2.4"
   }
 }

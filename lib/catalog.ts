@@ -263,6 +263,7 @@ export async function linkPieceAssets(input: {
   pieceId: string;
   sheetMediaId?: string;
   tutorialMediaId?: string;
+  clipMediaId?: string;
 }) {
   const piece = await prisma.piece.findUnique({ where: { id: input.pieceId } });
   if (!piece) throw new Error("piece not found");
@@ -274,6 +275,9 @@ export async function linkPieceAssets(input: {
   if (input.tutorialMediaId) {
     data.tutorialMedia = { connect: { id: input.tutorialMediaId } };
     data.referenceMedia = { connect: { id: input.tutorialMediaId } };
+  }
+  if (input.clipMediaId) {
+    data.clipMedia = { connect: { id: input.clipMediaId } };
   }
   if (Object.keys(data).length === 0) {
     return prisma.piece.findUniqueOrThrow({

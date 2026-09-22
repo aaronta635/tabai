@@ -22,7 +22,7 @@ export default async function OnboardingPage() {
   return (
     <main className={teacher ? "teacher-onboard min-h-dvh" : "student-shell min-h-dvh"}>
       {teacher ? (
-        <header className="teacher-rail flex items-center justify-between px-6 py-4 text-white">
+        <header className="studio-rail flex items-center justify-between px-6 py-4 text-white">
           <Link href="/" aria-label={t.brand}>
             <BrandMark light />
           </Link>

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ inv
     return NextResponse.redirect(new URL("/", origin));
   }
 
-  const token = await signTeacherSession(teacher.id, teacher.name);
+  const token = await signTeacherSession(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
   await logEvent({
     name: "teacher.session",
     actorType: "teacher",

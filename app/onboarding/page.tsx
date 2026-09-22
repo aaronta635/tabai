@@ -4,6 +4,8 @@ import { requireStudentAccount, requireTeacher } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getTheme } from "@/lib/theme";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
 
 export const dynamic = "force-dynamic";
@@ -16,6 +18,7 @@ export default async function OnboardingPage() {
   if (student?.onboardedAt) redirect("/student");
 
   const locale = await getLocale();
+  const theme = await getTheme();
   const t = await getMessages(locale);
   const o = t.onboarding;
 
@@ -26,14 +29,20 @@ export default async function OnboardingPage() {
           <Link href="/" aria-label={t.brand}>
             <BrandMark light />
           </Link>
-          <LocaleToggle locale={locale} tone="dark" />
+          <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+            <LocaleToggle locale={locale} tone="dark" />
+          </div>
         </header>
       ) : (
         <div className="mx-auto flex max-w-md items-center justify-between px-6 pt-12">
           <Link href="/" aria-label={t.brand}>
             <BrandMark />
           </Link>
-          <LocaleToggle locale={locale} />
+          <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+            <LocaleToggle locale={locale} />
+          </div>
         </div>
       )}
       <div className="mx-auto max-w-md px-6 py-10">

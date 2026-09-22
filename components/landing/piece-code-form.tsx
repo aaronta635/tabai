@@ -31,7 +31,7 @@ export function PieceCodeForm({
 
   const shell =
     variant === "studio"
-      ? "text-[#35242d]"
+      ? "text-ink"
       : variant === "hero"
         ? "bg-black/45 text-white backdrop-blur-md"
         : "bg-[#8a8580] text-white";

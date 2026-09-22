@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { getTeacherFromCookie, getStudentFromCookie } from "@/lib/auth";
 import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getTheme } from "@/lib/theme";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { BeatBar } from "@/components/landing/beat-bar";
 import { TakePreview } from "@/components/landing/take-preview";
@@ -10,6 +12,7 @@ import { productOrigin } from "@/lib/sites";
 
 export async function LandingPage() {
   const locale = await getLocale();
+  const theme = await getTheme();
   const messages = await getMessages(locale);
   const t = messages.home;
   const teacher = await getTeacherFromCookie();
@@ -29,6 +32,11 @@ export async function LandingPage() {
           <BrandMark priority />
         </Link>
         <div className="landing-nav-end">
+          <ThemeToggle
+            theme={theme}
+            labels={{ light: messages.theme.light, dark: messages.theme.dark }}
+            className="landing-locale"
+          />
           <LocaleToggle locale={locale} className="landing-locale" />
           <Link href={navHref} className="landing-cta landing-nav-cta">
             {teacher || student ? t.navOpen : t.navCta}

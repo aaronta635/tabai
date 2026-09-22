@@ -4,6 +4,11 @@
     "vi": "VI",
     "en": "EN"
   },
+  "theme": {
+    "light": "Light mode",
+    "dark": "Dark mode",
+    "appearance": "Appearance"
+  },
   "home": {
     "eyebrow": "For guitar classes on Zalo and Facebook",
     "titleLead": "Hear the beat.",

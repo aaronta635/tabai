@@ -17,6 +17,7 @@ export const STUDENT_COOKIE = "student_token";
 export const STUDENT_SESSION_COOKIE = "student_session";
 export const ADMIN_COOKIE = "admin_session";
 export const LOCALE_COOKIE = "locale";
+export const THEME_COOKIE = "theme";
 export const MEDIA_BUCKET = process.env.SUPABASE_MEDIA_BUCKET ?? "media";
 
 export const CONSENT_LINE_VI =

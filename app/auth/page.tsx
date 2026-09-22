@@ -5,6 +5,8 @@ import { parseRole } from "@/lib/onboarding";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getTheme } from "@/lib/theme";
 import { AuthForm } from "@/components/auth/auth-form";
 
 export const dynamic = "force-dynamic";
@@ -26,6 +28,7 @@ export default async function AuthPage({
   if (!role && student) redirect("/student");
 
   const locale = await getLocale();
+  const theme = await getTheme();
   const t = await getMessages(locale);
 
   return (
@@ -34,7 +37,10 @@ export default async function AuthPage({
         <Link href="/" aria-label={t.brand}>
           <BrandMark priority />
         </Link>
-        <LocaleToggle locale={locale} />
+        <div className="flex items-center gap-2">
+          <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+          <LocaleToggle locale={locale} />
+        </div>
       </header>
 
       <div className="auth-bars">

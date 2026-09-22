@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Be_Vietnam_Pro, Charis_SIL } from "next/font/google";
 import { I18nProvider, getLocale } from "@/lib/i18n";
+import { getTheme } from "@/lib/theme";
 import "./globals.css";
 
 const serif = Charis_SIL({
@@ -25,8 +26,14 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
+  const theme = await getTheme();
   return (
-    <html lang={locale} className={`${serif.variable} ${ui.variable}`}>
+    <html
+      lang={locale}
+      data-theme={theme}
+      className={`${serif.variable} ${ui.variable}`}
+      suppressHydrationWarning
+    >
       <body className="antialiased">
         <I18nProvider>{children}</I18nProvider>
       </body>

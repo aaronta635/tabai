@@ -26,17 +26,15 @@ export function LocaleToggle({
     });
   }
 
-  const shell = tone === "dark" ? "bg-white/10 text-[#fff7f2]" : "bg-white text-[#35242d]";
-  const active = tone === "dark" ? "bg-white text-[#35242d]" : "bg-[#35242d] text-white";
-  const idle = tone === "dark" ? "text-[#fff7f2]" : "text-[#35242d]";
+  const toneClass = tone === "dark" ? "locale-toggle-on-dark" : "";
 
   return (
-    <div className={`inline-flex rounded-full text-xs font-medium ${shell} ${className}`}>
+    <div className={`locale-toggle inline-flex rounded-full text-xs font-medium ${toneClass} ${className}`}>
       <button
         type="button"
         disabled={pending}
         onClick={() => setLocale("vi")}
-        className={`rounded-l-full px-3 py-2 ${locale === "vi" ? active : idle}`}
+        className={`locale-toggle-btn rounded-l-full px-3 py-2 ${locale === "vi" ? "locale-toggle-active" : "locale-toggle-idle"}`}
       >
         VI
       </button>
@@ -44,7 +42,7 @@ export function LocaleToggle({
         type="button"
         disabled={pending}
         onClick={() => setLocale("en")}
-        className={`rounded-r-full px-3 py-2 ${locale === "en" ? active : idle}`}
+        className={`locale-toggle-btn rounded-r-full px-3 py-2 ${locale === "en" ? "locale-toggle-active" : "locale-toggle-idle"}`}
       >
         EN
       </button>

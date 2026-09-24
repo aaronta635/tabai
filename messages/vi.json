@@ -4,6 +4,11 @@
     "vi": "VI",
     "en": "EN"
   },
+  "theme": {
+    "light": "Sáng",
+    "dark": "Tối",
+    "appearance": "Giao diện"
+  },
   "home": {
     "eyebrow": "Cho lớp guitar trên Zalo và Facebook",
     "titleLead": "Nghe đúng nhịp.",

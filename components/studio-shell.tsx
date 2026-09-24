@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { initialsOf } from "@/lib/initials";
 
 export type NavItem = {
@@ -23,6 +24,7 @@ export type MenuLink = { href: string; label: string };
 export function StudioShell({
   name,
   locale,
+  theme,
   home,
   items,
   menuLinks,
@@ -32,11 +34,12 @@ export function StudioShell({
 }: {
   name: string;
   locale: string;
+  theme: "light" | "dark";
   home: string;
   items: NavItem[];
   menuLinks: MenuLink[];
   signOutAction: () => Promise<void>;
-  labels: { signOut: string; menu: string; close: string };
+  labels: { signOut: string; menu: string; close: string; themeLight: string; themeDark: string };
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -142,6 +145,7 @@ export function StudioShell({
         </div>
 
         <div className="studio-top-end">
+          <ThemeToggle theme={theme} labels={{ light: labels.themeLight, dark: labels.themeDark }} />
           <LocaleToggle locale={locale} />
           <div className="relative">
             <button

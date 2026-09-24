@@ -24,7 +24,7 @@ function Choices({
           <label
             key={option.value}
             className={`flex cursor-pointer items-center rounded-2xl border px-4 py-3 text-sm ${
-              on ? "border-beat bg-paper" : "border-ink/10 bg-white hover:border-ink/25"
+              on ? "border-beat bg-paper" : "border-ink/10 bg-cream hover:border-ink/25"
             }`}
           >
             <input

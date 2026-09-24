@@ -12,16 +12,20 @@ type Labels = {
   signOut: string;
   menu: string;
   close: string;
+  themeLight: string;
+  themeDark: string;
 };
 
 export function TeacherAppShell({
   teacherName,
   locale,
+  theme,
   labels,
   children,
 }: {
   teacherName: string;
   locale: string;
+  theme: "light" | "dark";
   labels: Labels;
   children: React.ReactNode;
 }) {
@@ -29,6 +33,7 @@ export function TeacherAppShell({
     <StudioShell
       name={teacherName}
       locale={locale}
+      theme={theme}
       home="/teacher"
       items={[
         { href: "/teacher", label: labels.general, exact: true },
@@ -42,7 +47,13 @@ export function TeacherAppShell({
         { href: "/teacher/settings", label: labels.settings },
       ]}
       signOutAction={logoutTeacher}
-      labels={{ signOut: labels.signOut, menu: labels.menu, close: labels.close }}
+      labels={{
+        signOut: labels.signOut,
+        menu: labels.menu,
+        close: labels.close,
+        themeLight: labels.themeLight,
+        themeDark: labels.themeDark,
+      }}
     >
       {children}
     </StudioShell>

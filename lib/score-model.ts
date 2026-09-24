@@ -148,10 +148,23 @@ function toMidi(note: string) {
   const letter = match[1].toUpperCase();
   const base = NOTE_SEMI[letter];
   if (base == null) return null;
-  let midi = base + Number(match[3]) * 12;
+  let midi = base + (Number(match[3]) + 1) * 12;
   if (match[2] === "#") midi += 1;
   if (match[2] === "b") midi -= 1;
   return midi;
+}
+
+export function midiFromNote(note: string) {
+  return toMidi(note);
+}
+
+const MIDI_LETTER = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+
+export function noteFromMidi(midi: number) {
+  const rounded = Math.round(midi);
+  const octave = Math.floor(rounded / 12) - 1;
+  const letter = MIDI_LETTER[((rounded % 12) + 12) % 12];
+  return `${letter}${octave}`;
 }
 
 export function looksLikeScale(notes: string[]) {

@@ -36,13 +36,33 @@ function overlappingBars(observations: CompareObservations | null): number[] {
     .filter((bar): bar is number => typeof bar === "number");
 }
 
+export type DraftMetrics = {
+  duration_s?: number;
+  silence_ratio?: number;
+  tempo_stability?: number | null;
+  tempo_bpm?: number | null;
+  skipped?: boolean;
+};
+
+/** Loudness numbers must never become teaching claims unless compare already listed the same issue. */
+export function metricGuidance(metrics: DraftMetrics | null, observations: CompareObservations | null) {
+  if (!observations) {
+    return "Không có đối chiếu. Cấm dùng silence_ratio, tempo_stability, hay tiếng đàn để bịa lỗi. Không viết draft nếu worker gọi nhầm.";
+  }
+  if (closeMatch(observations)) {
+    return "Take khớp bài. Cấm dùng tempo_stability hay số đo để bịa lỗi nhịp.";
+  }
+  if (!metrics || metrics.skipped) return "Không có số đo âm thanh đáng tin. Đừng đoán kỹ thuật.";
+  return "Số đo chỉ là gợi ý. Chỉ nhắc nhịp/khoảng lặng nếu facts compare đã ghi cùng một chỗ (có tStart). Đừng bịa thêm.";
+}
+
 export function observationOutline(observations: CompareObservations | null) {
   if (!observations) {
     return [
-      "Không có đối chiếu bản nhạc cho take này.",
-      "Cấm nhận xét nốt, hợp âm, ngón, hoặc tư thế.",
-      "Chỉ được nói nhịp/khoảng lặng/độ dài nếu số đo thật sự kém.",
-      "Cấm câu một dòng kiểu 'hay quá' / 'I like your guitar sound'.",
+      "Không có đối chiếu bài (chưa có PieceModel / compare).",
+      "Cấm nhận xét nốt, hợp âm, ngón, tư thế, khoảng lặng, nhịp không đều, hay cảm xúc tiếng đàn.",
+      "Cấm bịa lỗi từ silence_ratio hoặc tempo_stability.",
+      "Không viết thư dài. Không khen 'có hồn' / 'tròn trịa'.",
     ].join(" ");
   }
   if (observations.confidence < 0.45) {

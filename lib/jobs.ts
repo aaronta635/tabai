@@ -1,4 +1,5 @@
 import type { JobType, Prisma } from "@prisma/client";
+import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 
 export async function enqueueJob(
@@ -35,6 +36,62 @@ export async function enqueueAnalyzeIfApproved(submissionId: string) {
   if (!submission) return null;
   if (!submission.student.approvedAt) return null;
   return enqueueJob("analyze", { submissionId }, submissionId);
+}
+
+/** After a PieceModel is ready, re-run takes that never got score-compare observations. */
+export async function enqueueTakesNeedingCompare(pieceId: string) {
+  const takes = await prisma.submission.findMany({
+    where: {
+      pieceId,
+      kind: { in: ["take", "overdub"] },
+      student: { approvedAt: { not: null } },
+    },
+    select: {
+      id: true,
+      analyses: {
+        orderBy: { createdAt: "desc" },
+        take: 1,
+        select: { pipelineVersion: true, observationsJson: true },
+      },
+    },
+  });
+  const open = await prisma.job.findMany({
+    where: {
+      type: "analyze",
+      status: { in: ["pending", "running"] },
+      submissionId: { in: takes.map((take) => take.id) },
+    },
+    select: { submissionId: true },
+  });
+  const openIds = new Set(open.map((job) => job.submissionId).filter((id): id is string => Boolean(id)));
+  const jobs = [];
+  for (const take of takes) {
+    if (openIds.has(take.id)) continue;
+    const latest = take.analyses[0];
+    const compared =
+      latest?.pipelineVersion === PIPELINE_VERSION_SCORE && latest.observationsJson != null;
+    if (compared) continue;
+    const job = await enqueueAnalyzeIfApproved(take.id);
+    if (job) jobs.push(job);
+  }
+  return jobs;
+}
+
+/** Re-analyze takes that never got a score compare after a piece model became ready. */
+export async function enqueueAllTakesNeedingCompare() {
+  const pieces = await prisma.piece.findMany({
+    where: {
+      archived: false,
+      models: { some: { status: "ready" } },
+    },
+    select: { id: true, code: true },
+  });
+  const queued = [];
+  for (const piece of pieces) {
+    const jobs = await enqueueTakesNeedingCompare(piece.id);
+    if (jobs.length) queued.push({ code: piece.code, count: jobs.length });
+  }
+  return queued;
 }
 
 export async function claimNextJob() {

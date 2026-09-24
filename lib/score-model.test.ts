@@ -4,6 +4,8 @@ import {
   formatClock,
   formatIssueWhere,
   isThinTrainExtract,
+  midiFromNote,
+  noteFromMidi,
   observationMarkers,
   parseCompareObservations,
   parseTrainExtract,
@@ -57,6 +59,11 @@ describe("score-model parsers", () => {
       ],
     });
     expect(markers).toEqual([{ tStart: 4, label: "0:04 timing" }]);
+  });
+
+  it("maps C4 to MIDI 60", () => {
+    expect(midiFromNote("C4")).toBe(60);
+    expect(noteFromMidi(64)).toBe("E4");
   });
 
   it("treats tutorial-only extracts as thin without cues, but not for missing bars", () => {

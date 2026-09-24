@@ -10,37 +10,8 @@ import {
 } from "../lib/gemini";
 import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
-import { observationOutline, retrieveDraftContext, type DraftRetrieval } from "../lib/rag";
-import { closeMatch, isCompareObservations, type CompareObservations } from "../lib/score-model";
-
-type Metrics = {
-  duration_s?: number;
-  silence_ratio?: number;
-  tempo_stability?: number | null;
-  tempo_bpm?: number | null;
-  skipped?: boolean;
-};
-
-function softMetricNotes(metrics: Metrics | null, observations: CompareObservations | null) {
-  if (closeMatch(observations)) {
-    return "Take khớp bài. Cấm dùng tempo_stability hay số đo để bịa lỗi nhịp.";
-  }
-  if (!metrics || metrics.skipped) return "Không có số đo âm thanh đáng tin. Đừng đoán kỹ thuật.";
-  const notes: string[] = [];
-  if (typeof metrics.tempo_stability === "number" && metrics.tempo_stability > 0.12) {
-    notes.push("Nhịp có vẻ không đều (tempo_stability cao). Chỉ nói nếu thật sự rõ.");
-  }
-  if (typeof metrics.silence_ratio === "number" && metrics.silence_ratio > 0.45) {
-    notes.push("Nhiều khoảng lặng.");
-  }
-  if (typeof metrics.duration_s === "number" && metrics.duration_s < 15) {
-    notes.push("Bài quay khá ngắn.");
-  }
-  if (notes.length === 0) {
-    return "Số đo không chỉ ra vấn đề rõ. Đừng bịa lỗi.";
-  }
-  return notes.join(" ");
-}
+import { metricGuidance, observationOutline, retrieveDraftContext, type DraftMetrics, type DraftRetrieval } from "../lib/rag";
+import { isCompareObservations, type CompareObservations } from "../lib/score-model";
 
 function formatExamples(rows: { source: string; text: string }[]) {
   if (!rows.length) return "Chưa có nhận xét cũ trên bài này.";
@@ -55,7 +26,7 @@ function buildUserPrompt(input: {
   title: string;
   note: string | null;
   studentName: string;
-  metrics: Metrics | null;
+  metrics: DraftMetrics | null;
   observations: CompareObservations | null;
   samples: string[];
   retrieval: DraftRetrieval;
@@ -69,7 +40,7 @@ function buildUserPrompt(input: {
       : "Chưa có nhận xét trước cho học viên này.",
     `Facts bắt buộc:\n${observationOutline(input.observations)}`,
     `Số đo: ${JSON.stringify(input.metrics)}`,
-    `Cách dùng số đo: ${softMetricNotes(input.metrics, input.observations)}`,
+    `Cách dùng số đo: ${metricGuidance(input.metrics, input.observations)}`,
     input.retrieval.scoreHints.length
       ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
       : "Không có đoạn score gắn với lỗi.",
@@ -99,9 +70,10 @@ export async function runDraft(submissionId: string) {
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
-  const metrics = (submission.analyses[0]?.metricsJson ?? null) as Metrics | null;
+  const metrics = (submission.analyses[0]?.metricsJson ?? null) as DraftMetrics | null;
   const observationsRaw = submission.analyses[0]?.observationsJson ?? null;
   const observations = isCompareObservations(observationsRaw) ? observationsRaw : null;
+  if (!observations) return;
   const retrieval = await retrieveDraftContext({
     teacherId: submission.piece.teacherId,
     pieceId: submission.pieceId,

@@ -302,6 +302,27 @@ export async function enqueueTrainPiece(pieceId: string, extras?: Partial<PieceM
   return enqueueJob("train_piece", { pieceId, ...extras });
 }
 
+/** Train this piece if it has a sheet or tutorial, no ready model, and no train job already open. */
+export async function enqueueTrainIfIdle(pieceId: string) {
+  const piece = await prisma.piece.findUnique({
+    where: { id: pieceId },
+    select: { sheetMediaId: true, tutorialMediaId: true },
+  });
+  if (!piece) return null;
+  if (!piece.sheetMediaId && !piece.tutorialMediaId) return null;
+  if (await getReadyPieceModel(pieceId)) return null;
+  const openJobs = await prisma.job.findMany({
+    where: { type: "train_piece", status: { in: ["pending", "running"] } },
+    select: { payload: true },
+  });
+  const alreadyQueued = openJobs.some((job) => {
+    const payload = job.payload as { pieceId?: string } | null;
+    return payload?.pieceId === pieceId;
+  });
+  if (alreadyQueued) return null;
+  return enqueueTrainPiece(pieceId);
+}
+
 /** Enqueue train for pieces that have a sheet or tutorial but no ready model. */
 export async function enqueueTrainForPiecesWithoutReadyModel() {
   const pieces = await prisma.piece.findMany({

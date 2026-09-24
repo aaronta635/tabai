@@ -20,6 +20,7 @@ catalog/**/*.mov
 catalog/**/*.m4v
 .vercel
 .railway
+deploy/secrets.env
 tmp
 /tmp
 coverage

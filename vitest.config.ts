@@ -8,7 +8,13 @@ export default defineConfig({
     environment: "node",
     globals: false,
     setupFiles: ["./test/setup.ts"],
-    include: ["lib/**/*.test.ts", "components/**/*.test.tsx", "test/**/*.test.ts", "test/**/*.test.tsx"],
+    include: [
+      "lib/**/*.test.ts",
+      "worker/**/*.test.ts",
+      "components/**/*.test.tsx",
+      "test/**/*.test.ts",
+      "test/**/*.test.tsx",
+    ],
     exclude: ["node_modules", ".next", "e2e"],
   },
   resolve: {

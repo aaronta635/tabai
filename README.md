@@ -40,3 +40,7 @@ See [`docs/video-analysis.md`](docs/video-analysis.md) and [`docs/score-model.md
 ## Railway
 
 Same Docker image, two processes: `web` (`npm start`) and `worker` (`npm run worker`).
+
+## Google Cloud Run (Tokyo)
+
+Production lift: Cloud Run in `asia-northeast1`, still on Supabase. See [`docs/gcp.md`](docs/gcp.md). Worker listens on `$PORT` at `/healthz`.

@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
 import { COMPARE_PROMPT_VERSION, PIPELINE_VERSION, PIPELINE_VERSION_SCORE } from "../lib/constants";
-import { getReadyPieceModel, sniffMime } from "../lib/catalog";
+import { enqueueTrainIfIdle, getReadyPieceModel, sniffMime } from "../lib/catalog";
 import {
   COMPARE_RESPONSE_SCHEMA,
   deleteGeminiFile,
@@ -16,8 +16,13 @@ import {
 } from "../lib/gemini";
 import { enqueueJob } from "../lib/jobs";
 import { prisma } from "../lib/prisma";
-import { parseCompareObservations, type PieceModelSourceJson } from "../lib/score-model";
+import { overlayPitchIssues, type HeardPitchNote } from "../lib/pitch-overlay";
+import { parseCompareObservations, type PieceModelSourceJson, type ScoreJson } from "../lib/score-model";
 import { downloadMedia, uploadMedia } from "../lib/storage";
+
+function pitchEnabled() {
+  return process.env.BASIC_PITCH === "1";
+}
 
 function runPython(script: string, args: string[]) {
   return new Promise<string>((resolve, reject) => {
@@ -147,8 +152,8 @@ export async function runAnalyze(submissionId: string) {
     });
 
     const audioPath = `derived/${submission.id}/audio.wav`;
+    const wavOut = join(dir, "audio.wav");
     try {
-      const wavOut = join(dir, "audio.wav");
       spawnSync(
         "ffmpeg",
         ["-y", "-i", videoPath, "-vn", "-ac", "1", "-ar", "22050", wavOut],
@@ -160,12 +165,31 @@ export async function runAnalyze(submissionId: string) {
       // derivative is best-effort
     }
 
+    let heardNotes: HeardPitchNote[] = [];
+    if (pitchEnabled()) {
+      try {
+        const raw = await runPython(join(process.cwd(), "scripts/basic_pitch_notes.py"), [wavOut]);
+        const parsed = JSON.parse(raw) as { notes?: HeardPitchNote[] };
+        heardNotes = Array.isArray(parsed.notes) ? parsed.notes : [];
+        metrics = { ...(metrics as object), pitch_notes: heardNotes, pitch_backend: "basic-pitch" };
+      } catch (error) {
+        metrics = {
+          ...(metrics as object),
+          pitch_backend: "basic-pitch",
+          pitch_error: error instanceof Error ? error.message : "pitch failed",
+        };
+      }
+    }
+
     let observations: Prisma.InputJsonValue | undefined;
     let pipelineVersion = PIPELINE_VERSION;
     let costCents = 0;
     let confidence: number | null = null;
 
     const pieceModel = await getReadyPieceModel(submission.pieceId);
+    if (!pieceModel) {
+      await enqueueTrainIfIdle(submission.pieceId);
+    }
     if (pieceModel) {
       try {
         const source = (pieceModel.sourceJson ?? null) as PieceModelSourceJson | null;
@@ -182,10 +206,18 @@ export async function runAnalyze(submissionId: string) {
           hasSheet: Boolean(source?.sheetMediaId || submission.piece.sheetMediaId),
         });
         if (compared) {
-          observations = compared.observations as unknown as Prisma.InputJsonValue;
+          let observationsParsed = compared.observations;
+          if (pitchEnabled() && heardNotes.length > 0) {
+            observationsParsed = overlayPitchIssues(
+              observationsParsed,
+              heardNotes,
+              pieceModel.scoreJson as ScoreJson,
+            );
+          }
+          observations = observationsParsed as unknown as Prisma.InputJsonValue;
           pipelineVersion = PIPELINE_VERSION_SCORE;
           costCents = compared.costCents;
-          confidence = compared.observations.confidence;
+          confidence = observationsParsed.confidence;
           await prisma.event.create({
             data: {
               actorType: "system",
@@ -232,6 +264,7 @@ export async function runAnalyze(submissionId: string) {
     }
 
     if (submission.kind === "practice") return;
+    if (!observations) return;
     await enqueueJob("draft", { submissionId }, submissionId);
   } finally {
     await rm(dir, { recursive: true, force: true });

@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
 import { TRAIN_PROMPT_VERSION } from "../lib/constants";
 import { sha256, sniffMime } from "../lib/catalog";
+import { enqueueTakesNeedingCompare } from "../lib/jobs";
 import {
   TRAIN_RESPONSE_SCHEMA,
   deleteGeminiFile,
@@ -203,6 +204,8 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
         },
       },
     });
+
+    await enqueueTakesNeedingCompare(pieceId);
   } catch (error) {
     const message = error instanceof Error ? error.message : "train failed";
     await prisma.pieceModel.update({

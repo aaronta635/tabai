@@ -1,7 +1,7 @@
 export const CONSENT_VERSION = "2026-09-v1";
 export const PIPELINE_VERSION = "audio-metrics-v1";
 export const PIPELINE_VERSION_SCORE = "score-compare-v1";
-export const PROMPT_VERSION = "draft_reply_vi-v5";
+export const PROMPT_VERSION = "draft_reply_vi-v6";
 export const TRAIN_PROMPT_VERSION = "train_piece-v3";
 export const COMPARE_PROMPT_VERSION = "compare_take-v4";
 export const DEFAULT_GEMINI_MODEL_TRAIN = "gemini-3.1-pro-preview";

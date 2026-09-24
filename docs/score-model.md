@@ -37,6 +37,8 @@ Drafts pull: compare facts, matching score/tutorial bars, this student's last re
 
 Close takes (`overallFit >= 0.9` and no issue at `confidence >= 0.75`) get praise-only drafts. The same media as the tutorial is forced to `issues: []`. Metrics must not invent a timing problem on a close match.
 
+Without a ready PieceModel, do not draft from `silence_ratio` / `tempo_stability`. Prompt `draft_reply_vi-v6` forbids khoảng lặng / nhịp / cảm xúc padding. Analyze enqueues train if a sheet or tutorial is present, then train re-enqueues those takes for compare.
+
 Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`. If a tutorial is attached and `tutorialCues` is empty, `npm run catalog:train -- --retrain`.
 
 ## Cost (paid Gemini API list, Sep 2026)

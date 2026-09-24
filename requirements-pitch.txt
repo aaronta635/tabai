@@ -1,0 +1,3 @@
+# Optional. Worker image: docker build --build-arg INSTALL_BASIC_PITCH=true
+# Enable at runtime with BASIC_PITCH=1 only after a teacher confirms chips.
+basic-pitch==0.4.0

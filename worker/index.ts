@@ -1,10 +1,12 @@
+import { enqueueTrainForPiecesWithoutReadyModel } from "../lib/catalog";
 import { isPrismaConnectionError } from "../lib/db-errors";
 import { loadLocalEnv } from "../lib/load-env";
-import { claimNextJob, failJob, finishJob } from "../lib/jobs";
+import { claimNextJob, enqueueAllTakesNeedingCompare, failJob, finishJob } from "../lib/jobs";
 import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
 import { runDraft } from "./draft";
+import { listenHealthz } from "./healthz";
 import { runTrainPiece } from "./train";
 
 loadLocalEnv();
@@ -46,6 +48,21 @@ async function handle(job: { id: string; type: string; payload: unknown }) {
 
 async function loop() {
   console.log("worker listening");
+  try {
+    const queued = await enqueueTrainForPiecesWithoutReadyModel();
+    if (queued.length) {
+      console.log(
+        "queued train for",
+        queued.map((row) => row.piece.code).join(", "),
+      );
+    }
+    const compares = await enqueueAllTakesNeedingCompare();
+    for (const row of compares) {
+      console.log("queued compare for", row.code, row.count);
+    }
+  } catch (error) {
+    console.error("startup job enqueue", error);
+  }
   for (;;) {
     try {
       const job = await claimNextJob();
@@ -54,6 +71,7 @@ async function loop() {
         continue;
       }
       try {
+        console.log("job start", job.type, job.id);
         await handle(job);
         await finishJob(job.id);
         console.log("job done", job.type, job.id);
@@ -82,4 +100,5 @@ async function loop() {
   }
 }
 
+listenHealthz();
 void loop();

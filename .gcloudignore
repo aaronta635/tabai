@@ -4,12 +4,10 @@ node_modules
 .env
 .env.local
 deploy/secrets.env
-coverage
-test-results
-playwright-report
 catalog/**/*.mp4
 catalog/**/*.webm
 catalog/**/*.mov
 catalog/**/*.pdf
-*.md
-!README.md
+coverage
+test-results
+playwright-report

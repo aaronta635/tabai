@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro, Charis_SIL } from "next/font/google";
+import { Charis_SIL, Inter } from "next/font/google";
 import { I18nProvider, getLocale } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import "./globals.css";
@@ -12,11 +12,11 @@ const serif = Charis_SIL({
   display: "swap",
 });
 
-const ui = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
-  variable: "--font-ui",
+const inter = Inter({
+  subsets: ["latin", "latin-ext", "vietnamese"],
   display: "swap",
+  variable: "--font-inter",
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -31,7 +31,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={locale}
       data-theme={theme}
-      className={`${serif.variable} ${ui.variable}`}
+      className={`${serif.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased">

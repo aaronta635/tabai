@@ -254,6 +254,7 @@ model Submission {
   mediaId     String
   media       Media            @relation(fields: [mediaId], references: [id])
   kind        SubmissionKind   @default(take)
+  studentNote String?
   submittedAt DateTime         @default(now())
   status         SubmissionStatus @default(new)
   skipReason     String?
@@ -341,14 +342,18 @@ model ClassSession {
   id        String    @id @default(cuid())
   classId   String
   class     Class     @relation(fields: [classId], references: [id], onDelete: Cascade)
-  title     String?
-  startsAt  DateTime
-  endsAt    DateTime?
-  createdAt DateTime  @default(now())
+  title            String?
+  startsAt         DateTime
+  endsAt           DateTime?
+  meetingProvider  String?
+  meetingUrl       String?
+  seriesId         String?
+  createdAt        DateTime  @default(now())
 
   attendances Attendance[]
 
   @@index([classId, startsAt])
+  @@index([seriesId])
 }
 
 model Attendance {
@@ -410,6 +415,7 @@ model Reply {
   teacherId    String
   teacher      Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   text         String
+  grade        String?
   source       ReplySource
   editDistance Int?
   teacherPick  Boolean     @default(false)

@@ -1,18 +1,19 @@
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { assignmentsForStudent } from "@/lib/lms";
+import { assignmentsWhereForStudent } from "@/lib/lms";
 import { activityStreak, heatmapCounts } from "@/lib/practice";
 import { practiceMinutes } from "@/lib/student-view";
 import { PracticeHeatmap } from "@/components/student/practice-heatmap";
 
 export default async function StudentProgressPage() {
   const student = await readStudentSession();
-  if (!student) redirect("/auth?role=student");
+  if (!student) redirect(signInPath("student", "/student"));
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const [takes, practices, replyCount, assigned] = await Promise.all([
+  const [takes, practices, replyCount, assignedCount] = await Promise.all([
     prisma.submission.findMany({
       where: { studentId: student.id },
       select: { submittedAt: true, kind: true },
@@ -22,7 +23,7 @@ export default async function StudentProgressPage() {
       select: { startedAt: true, seconds: true },
     }),
     prisma.reply.count({ where: { submission: { studentId: student.id } } }),
-    assignmentsForStudent(student.id),
+    prisma.assignment.count({ where: assignmentsWhereForStudent(student.id) }),
   ]);
 
   const activity = [...takes.map((row) => row.submittedAt), ...practices.map((row) => row.startedAt)];
@@ -31,25 +32,31 @@ export default async function StudentProgressPage() {
     { label: t.student.takesSent, value: takes.filter((row) => row.kind !== "practice").length },
     { label: t.student.repliesGot, value: replyCount },
     { label: t.student.minutesPractised, value: practiceMinutes(practices) },
-    { label: t.student.piecesAssigned, value: assigned.filter((row) => row.piece).length },
+    { label: t.student.piecesAssigned, value: assignedCount },
   ];
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display text-3xl">{t.student.progressTitle}</h1>
+      <header>
+        <h1 className="font-display">{t.student.progressTitle}</h1>
+        <p className="page-meta">{t.student.streak.replace("{n}", String(streak))}</p>
+      </header>
 
-      <p className="text-ink-soft">{t.student.streak.replace("{n}", String(streak))}</p>
+      <section className="studio-panel">
+        <table className="studio-table">
+          <tbody>
+            {stats.map((stat) => (
+              <tr key={stat.label}>
+                <td>{stat.label}</td>
+                <td className="text-right font-semibold tabular">{stat.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.label} className="tile">
-            <p className="eyebrow">{stat.label}</p>
-            <p className="font-display tabular mt-2 text-3xl">{stat.value}</p>
-          </div>
-        ))}
-      </div>
-
-      <section className="tile">
+      <section className="studio-panel">
+        <h2>{t.student.heatmapLong}</h2>
         <PracticeHeatmap days={heatmapCounts(activity, 28)} label={t.student.heatmapLong} />
       </section>
     </div>

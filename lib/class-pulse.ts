@@ -1,5 +1,8 @@
 import { prisma } from "@/lib/prisma";
 import { parseCompareObservations, type CompareIssue } from "@/lib/score-model";
+import { cachedById, teacherPulseTag } from "@/lib/teacher-cache";
+
+export const PULSE_TAKE_CAP = 40;
 
 export type ClassPulse = {
   takes: number;
@@ -57,11 +60,14 @@ export async function classPulseForTeacher(teacherId: string, locale: string): P
       submittedAt: { gte: since },
       student: { approvedAt: { not: null } },
     },
+    orderBy: { submittedAt: "desc" },
+    take: PULSE_TAKE_CAP,
     select: {
       studentId: true,
       replies: { select: { id: true }, orderBy: { sentAt: "desc" }, take: 1 },
       analyses: { select: { observationsJson: true }, orderBy: { createdAt: "desc" }, take: 1 },
     },
+    relationLoadStrategy: "join",
   });
   if (rows.length === 0) return null;
 
@@ -86,4 +92,10 @@ export async function classPulseForTeacher(teacherId: string, locale: string): P
     }),
     bars,
   };
+}
+
+export function cachedClassPulseForTeacher(teacherId: string, locale: string) {
+  return cachedById("teacher-pulse", teacherId, [locale], [teacherPulseTag(teacherId)], 60, () =>
+    classPulseForTeacher(teacherId, locale),
+  );
 }

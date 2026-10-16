@@ -23,4 +23,4 @@ Lift web + worker to Cloud Run in `asia-northeast1`. Keep Supabase for Postgres,
 ## Audio flags
 
 - `ANALYZE_BACKEND=librosa` (Cloud Run worker default). `stdlib` forces the old RMS onsets.
-- `BASIC_PITCH=1` only after a teacher confirms chips. Rebuild with `--build-arg INSTALL_BASIC_PITCH=true`.
+- `BASIC_PITCH=1` on the worker for measured pitch issues. Train runs Basic Pitch on the tutorial; analyze runs it on the take. Rebuild with `--build-arg INSTALL_BASIC_PITCH=true`.

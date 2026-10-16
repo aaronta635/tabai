@@ -15,6 +15,8 @@ type Props = {
   defaultNote?: string;
   defaultTips?: string;
   showMeta?: boolean;
+  hasSheet?: boolean;
+  hasTutorial?: boolean;
   hasClip?: boolean;
 };
 
@@ -83,6 +85,8 @@ export function PieceForm({
   defaultNote,
   defaultTips,
   showMeta = true,
+  hasSheet = false,
+  hasTutorial = false,
   hasClip = false,
 }: Props) {
   const t = useTranslations("teacher");
@@ -217,9 +221,9 @@ export function PieceForm({
           accept=".pdf,.png,.jpg,.jpeg,.webp,.musicxml,.xml,application/pdf,image/*"
           file={sheetFile}
           onFile={setSheetFile}
-          buttonLabel={t("chooseSheet")}
+          buttonLabel={hasSheet ? t("changeFile") : t("chooseSheet")}
           changeLabel={t("changeFile")}
-          hint={t("sheetHint")}
+          hint={hasSheet ? t("replaceHint") : t("sheetHint")}
         />
       </div>
       <div className="text-sm">
@@ -228,9 +232,9 @@ export function PieceForm({
           accept="video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov,.m4v"
           file={tutorialFile}
           onFile={setTutorialFile}
-          buttonLabel={t("chooseTutorial")}
+          buttonLabel={hasTutorial ? t("changeFile") : t("chooseTutorial")}
           changeLabel={t("changeFile")}
-          hint={t("tutorialHint")}
+          hint={hasTutorial ? t("replaceHint") : t("tutorialHint")}
         />
       </div>
       <div className="text-sm">

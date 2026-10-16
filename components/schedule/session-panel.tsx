@@ -23,6 +23,9 @@ type Draft = {
   title: string;
   startsAt: string;
   endsAt: string;
+  repeatWeeks: number;
+  meetingProvider: "" | "google_meet" | "zoom";
+  meetingUrl: string;
 };
 
 export function TeacherSessionPanel({
@@ -43,22 +46,28 @@ export function TeacherSessionPanel({
   const t = useTranslations("teacher");
   const router = useRouter();
   const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
 
   useEffect(() => {
     if (!open) {
       setDraft(null);
+      setError(false);
       return;
     }
     if (event) {
       const start = new Date(event.startsAt);
       const end = event.endsAt ? new Date(event.endsAt) : defaultEndsAt(start);
+      const provider = event.meetingProvider === "google_meet" || event.meetingProvider === "zoom" ? event.meetingProvider : "";
       setDraft({
         id: event.id,
         classId: event.classId ?? classes[0]?.id ?? "",
         title: event.title ?? "",
         startsAt: toDatetimeLocalValue(start),
         endsAt: toDatetimeLocalValue(end),
+        repeatWeeks: 1,
+        meetingProvider: provider,
+        meetingUrl: event.meetingUrl ?? "",
       });
       return;
     }
@@ -70,6 +79,9 @@ export function TeacherSessionPanel({
         title: "",
         startsAt: toDatetimeLocalValue(start),
         endsAt: toDatetimeLocalValue(end),
+        repeatWeeks: 1,
+        meetingProvider: "",
+        meetingUrl: "",
       });
     }
   }, [open, event, draftStartsAt, classes]);
@@ -93,14 +105,22 @@ export function TeacherSessionPanel({
           onSubmit={async (e) => {
             e.preventDefault();
             setBusy(true);
-            await saveClassSession({
+            setError(false);
+            const result = await saveClassSession({
               id: draft.id,
               classId: draft.classId,
               title: draft.title,
               startsAt: draft.startsAt,
               endsAt: draft.endsAt,
+              repeatWeeks: draft.id ? 1 : draft.repeatWeeks,
+              meetingProvider: draft.meetingProvider,
+              meetingUrl: draft.meetingUrl,
             });
             setBusy(false);
+            if (result && "error" in result) {
+              setError(true);
+              return;
+            }
             onClose();
             router.refresh();
           }}
@@ -152,6 +172,55 @@ export function TeacherSessionPanel({
               onChange={(e) => setDraft({ ...draft, endsAt: e.target.value })}
             />
           </label>
+          {saved ? null : (
+            <label>
+              <span className="field-label">{t("repeatLabel")}</span>
+              <select
+                className="field mt-1.5"
+                value={draft.repeatWeeks}
+                onChange={(e) => setDraft({ ...draft, repeatWeeks: Number(e.target.value) })}
+              >
+                <option value={1}>{t("repeatOnce")}</option>
+                {[4, 8, 12].map((weeks) => (
+                  <option key={weeks} value={weeks}>
+                    {t("repeatWeekly", { n: weeks })}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+          <label>
+            <span className="field-label">{t("meetingRoom")}</span>
+            <select
+              className="field mt-1.5"
+              value={draft.meetingProvider}
+              onChange={(e) =>
+                setDraft({
+                  ...draft,
+                  meetingProvider: e.target.value === "google_meet" || e.target.value === "zoom" ? e.target.value : "",
+                })
+              }
+            >
+              <option value="">{t("meetingNone")}</option>
+              <option value="google_meet">{t("meetingMeet")}</option>
+              <option value="zoom">{t("meetingZoom")}</option>
+            </select>
+          </label>
+          {draft.meetingProvider ? (
+            <label className="sm:col-span-2">
+              <span className="field-label">{t("meetingLink")}</span>
+              <input
+                type="url"
+                required
+                className="field mt-1.5"
+                value={draft.meetingUrl}
+                placeholder={draft.meetingProvider === "zoom" ? "https://zoom.us/j/…" : "https://meet.google.com/…"}
+                onChange={(e) => setDraft({ ...draft, meetingUrl: e.target.value })}
+              />
+              <p className="mt-1.5 text-xs text-ink-soft">{t("meetingHint")}</p>
+            </label>
+          ) : null}
+          {error ? <p className="text-sm text-danger sm:col-span-2">{t("meetingInvalid")}</p> : null}
           <button type="submit" disabled={busy || !draft.classId} className="btn sm:col-span-2 sm:justify-self-start">
             {saved ? t("saveSession") : t("createSession")}
           </button>
@@ -238,6 +307,16 @@ export function StudentSessionPanel({
             <div>
               <dt className="field-label">{tTeacher("endsAt")}</dt>
               <dd className="mt-1 tabular">{formatWhen(new Date(event.endsAt), locale)}</dd>
+            </div>
+          ) : null}
+          {event.meetingUrl ? (
+            <div>
+              <dt className="field-label">{event.meetingProvider === "zoom" ? tTeacher("meetingZoom") : tTeacher("meetingMeet")}</dt>
+              <dd className="mt-1">
+                <a href={event.meetingUrl} className="btn" target="_blank" rel="noreferrer">
+                  {t("joinLesson")}
+                </a>
+              </dd>
             </div>
           ) : null}
           <div>

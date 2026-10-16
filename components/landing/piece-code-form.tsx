@@ -21,7 +21,7 @@ export function PieceCodeForm({
     event.preventDefault();
     const next = code.trim().toLowerCase();
     if (!next) return;
-    const path = `/c/${encodeURIComponent(next)}`;
+    const path = `/join/${encodeURIComponent(next)}`;
     if (productOrigin) {
       window.location.assign(`${productOrigin}${path}`);
       return;

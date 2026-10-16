@@ -1,7 +1,8 @@
 import { enqueueTrainForPiecesWithoutReadyModel } from "../lib/catalog";
 import { isPrismaConnectionError } from "../lib/db-errors";
+import { PITCH_OVERLAY_VERSION } from "../lib/constants";
 import { loadLocalEnv } from "../lib/load-env";
-import { claimNextJob, enqueueAllTakesNeedingCompare, failJob, finishJob } from "../lib/jobs";
+import { claimNextJob, enqueueAllTakesNeedingCompare, failJob, finishJob, reclaimStaleJobs } from "../lib/jobs";
 import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
@@ -48,7 +49,14 @@ async function handle(job: { id: string; type: string; payload: unknown }) {
 
 async function loop() {
   console.log("worker listening");
+  if (process.env.BASIC_PITCH === "1") {
+    console.log("pitch overlay", PITCH_OVERLAY_VERSION);
+  } else {
+    console.log("BASIC_PITCH is off — restart will not rewrite pitch drafts");
+  }
   try {
+    const reclaimed = await reclaimStaleJobs();
+    if (reclaimed) console.log("reclaimed stale jobs", reclaimed);
     const queued = await enqueueTrainForPiecesWithoutReadyModel();
     if (queued.length) {
       console.log(
@@ -71,7 +79,8 @@ async function loop() {
         continue;
       }
       try {
-        console.log("job start", job.type, job.id);
+        const payload = (job.payload ?? {}) as { submissionId?: string; pieceId?: string };
+        console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
         await handle(job);
         await finishJob(job.id);
         console.log("job done", job.type, job.id);

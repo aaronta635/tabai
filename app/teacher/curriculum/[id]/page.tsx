@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
@@ -9,10 +10,13 @@ import { CopyLink } from "@/components/teacher/copy-link";
 import { SectionPanel } from "@/components/disclosure";
 import { PieceForm } from "@/components/teacher/piece-form";
 import { AssignDialog } from "@/components/teacher/assign-dialog";
+import { PieceModelPanel } from "@/components/teacher/piece-model-panel";
+import { PieceMedia } from "@/components/student/piece-media";
+import { mediaStoragePath, sheetView, signedMediaUrl } from "@/lib/media-view";
 
 export default async function PiecePage({ params }: { params: Promise<{ id: string }> }) {
   const teacher = await readTeacherSession();
-  if (!teacher) redirect("/auth?next=/teacher/curriculum");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const { id } = await params;
   const [piece, classes, students] = await Promise.all([
     prisma.piece.findFirst({
@@ -23,6 +27,10 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
           include: { class: { select: { id: true, name: true } }, student: { select: { name: true } } },
           orderBy: { createdAt: "desc" },
         },
+        models: { orderBy: { version: "desc" }, take: 1 },
+        sheetMedia: { select: { storagePath: true } },
+        tutorialMedia: { select: { storagePath: true } },
+        clipMedia: { select: { storagePath: true } },
       },
     }),
     prisma.class.findMany({
@@ -41,6 +49,14 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
   const t = await getMessages(locale);
   const origin = await appOrigin();
   const studentUrl = `${origin}/l/${piece.code}`;
+  const tutorialPath = mediaStoragePath(piece.tutorialMedia);
+  const sheetPath = mediaStoragePath(piece.sheetMedia);
+  const clipPath = mediaStoragePath(piece.clipMedia);
+  const [tutorialUrl, sheetUrl, clipUrl] = await Promise.all([
+    signedMediaUrl(tutorialPath),
+    signedMediaUrl(sheetPath),
+    signedMediaUrl(clipPath),
+  ]);
   const files = [
     piece.sheetMediaId ? t.teacher.hasSheet : null,
     piece.tutorialMediaId ? t.teacher.hasTutorial : null,
@@ -60,10 +76,35 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
         </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <span className="code-chip">/l/{piece.code}</span>
-          <CopyLink url={studentUrl} />
+          <CopyLink url={studentUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
           <AssignDialog pieceId={piece.id} classes={classes} students={students} />
         </div>
       </header>
+
+      <PieceModelPanel
+        model={piece.models[0] ?? null}
+        hasSheet={Boolean(piece.sheetMediaId)}
+        hasTutorial={Boolean(piece.tutorialMediaId)}
+        locale={locale}
+        copy={{
+          title: t.teacher.pieceModel,
+          ready: t.teacher.modelReady,
+          training: t.teacher.modelTraining,
+          failed: t.teacher.modelFailed,
+          needAssets: t.teacher.modelNeedAssets,
+          none: t.teacher.modelNone,
+          chords: t.teacher.modelChords,
+          noChords: t.teacher.modelNoChords,
+          cues: t.teacher.modelCues,
+          fromTutorial: t.teacher.hasTutorial,
+          fromSheet: t.teacher.hasSheet,
+          raw: t.teacher.modelRaw,
+          help: t.teacher.modelHelp,
+          tutorialNotes: t.teacher.tutorialNotes,
+          heardNotesNone: t.teacher.heardNotesNone,
+          heardNotesError: t.teacher.heardNotesError,
+        }}
+      />
 
       {piece.description || piece.tips ? (
         <section className="tile space-y-3">
@@ -105,16 +146,35 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
         )}
       </SectionPanel>
 
-      <SectionPanel title={t.teacher.edit}>
-        <PieceForm
-          pieceId={piece.id}
-          partId={piece.partId ?? undefined}
-          defaultTitle={piece.title}
-          defaultNote={piece.description ?? ""}
-          defaultTips={piece.tips ?? ""}
-          hasClip={Boolean(piece.clipMediaId)}
-        />
-      </SectionPanel>
+      <PieceMedia
+        tutorialUrl={tutorialUrl}
+        clipUrl={clipUrl}
+        sheetUrl={sheetUrl}
+        sheetKind={sheetView(sheetPath ?? "")}
+        labels={{
+          reference: t.teacher.tutorialLabel,
+          clip: t.teacher.clipLabel,
+          sheet: t.teacher.sheetLabel,
+          openSheet: t.teacher.hasSheet,
+        }}
+      />
+
+      <section className="tile piece-edit">
+        <h2 className="font-display text-xl">{t.teacher.edit}</h2>
+        <p className="mt-1 text-sm text-ink-soft">{t.teacher.replaceHint}</p>
+        <div className="mt-4">
+          <PieceForm
+            pieceId={piece.id}
+            partId={piece.partId ?? undefined}
+            defaultTitle={piece.title}
+            defaultNote={piece.description ?? ""}
+            defaultTips={piece.tips ?? ""}
+            hasSheet={Boolean(sheetUrl)}
+            hasTutorial={Boolean(tutorialUrl)}
+            hasClip={Boolean(clipUrl)}
+          />
+        </div>
+      </section>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { createSignedReadUrl } from "@/lib/storage";
+import { signedMediaUrl } from "@/lib/media-view";
 
 export async function GET(request: NextRequest) {
   const teacher = await requireTeacher();
@@ -23,11 +23,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "not found" }, { status: 404 });
   }
 
-  try {
-    const url = await createSignedReadUrl(media.storagePath);
-    return NextResponse.json({ url });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "sign failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+  const url = await signedMediaUrl(media.storagePath);
+  if (!url) {
+    return NextResponse.json({ error: "sign failed" }, { status: 500 });
   }
+  return NextResponse.json({ url });
 }

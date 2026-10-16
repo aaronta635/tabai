@@ -1,46 +1,56 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bindAuthSession, isRoleMismatch, signOutAccount, type BindAuthResult } from "@/lib/auth";
 import { parseRole, type AccountRole } from "@/lib/onboarding";
+import { destinationAfterAuth, safeReturn, signInPath } from "@/lib/return-path";
 
 function safePath(value: string | null) {
   return value?.startsWith("/") ? value : null;
 }
 
-async function bindForRequest(role: AccountRole | null): Promise<BindAuthResult | null> {
-  const bound = await bindAuthSession(role);
+async function bindForRequest(role: AccountRole | null, next: string | null): Promise<BindAuthResult | null> {
+  const bound = await bindAuthSession(role, next);
   if (isRoleMismatch(bound)) {
     return bindAuthSession(bound.actual);
   }
   return bound;
 }
 
+function afterBind(bound: Exclude<BindAuthResult, { error: string }>, requested: string | null) {
+  return destinationAfterAuth({
+    role: bound.role,
+    onboarded: bound.onboarded,
+    requested,
+    home: bound.next,
+  });
+}
+
 export async function GET(request: NextRequest) {
   const requested = safePath(request.nextUrl.searchParams.get("next"));
   const role = parseRole(request.nextUrl.searchParams.get("role"));
   const origin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
-  const bound = await bindForRequest(role);
+  const bound = await bindForRequest(role, requested);
   if (!bound || isRoleMismatch(bound)) {
-    const auth = new URL("/auth", origin);
-    if (requested) auth.searchParams.set("next", requested);
-    if (role) auth.searchParams.set("role", role);
+    const auth = new URL(role ? signInPath(role, requested) : "/login", origin);
     return NextResponse.redirect(auth);
   }
-  const dest = bound.role === "student" || !bound.onboarded ? bound.next : (requested ?? bound.next);
-  return NextResponse.redirect(new URL(dest, origin));
+  return NextResponse.redirect(new URL(afterBind(bound, requested), origin));
 }
 
 export async function POST(request: NextRequest) {
   let role = parseRole(request.nextUrl.searchParams.get("role"));
+  let next = safePath(request.nextUrl.searchParams.get("next"));
   const contentType = request.headers.get("content-type") ?? "";
   if (contentType.includes("application/json")) {
     try {
-      const body = (await request.json()) as { role?: string };
+      const body = (await request.json()) as { role?: string; next?: string };
       role = parseRole(body.role) ?? role;
+      if (typeof body.next === "string") next = safePath(body.next);
     } catch {
       // empty or invalid JSON
     }
   }
-  const bound = await bindAuthSession(role);
+  const carried = role ? safeReturn(role, next) : null;
+  const bound = await bindAuthSession(role, carried);
   if (!bound) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
@@ -52,6 +62,6 @@ export async function POST(request: NextRequest) {
     ok: true,
     role: bound.role,
     onboarded: bound.onboarded,
-    next: bound.next,
+    next: afterBind(bound, carried),
   });
 }

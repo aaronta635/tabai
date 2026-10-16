@@ -18,8 +18,10 @@ Catalog drop path (no UI): see [`catalog/README.md`](../catalog/README.md). `npm
 
 - `PieceModel.status`: `training | ready | failed`
 - `PieceModel.scoreJson`: `{ title, key, tempoBpm, timeSignature, barCount, sections[], techniqueFocus[], commonMistakes[] }`
-- `PieceModel.tutorialCuesJson`: `{ cues: [{ tStart, tEnd, topic, instruction, bar }] }`
-- `Analysis.observationsJson`: `{ overallFit, confidence, positives[], issues[], nextPractice }`
+- `PieceModel.tutorialCuesJson`: `{ cues: [...], pitch_notes?: Basic Pitch events from the tutorial }`
+- `Analysis.observationsJson`: `{ overallFit, confidence, positives[], issues[], nextPractice, pitchJudge? }`. `pitchJudge: "weak"` means the pitch path refused to judge the take.
+- `Analysis.metricsJson.heard_extract`: same shape as a train extract (`score` fields + `tutorialCues`) — a **chart of this take’s video**, not a listen log. Prompt `extract_take-v2` writes chord symbols as `topic`, not “Heard …”.
+- `Analysis.metricsJson.pitch_notes`: Basic Pitch events `{ tStart, tEnd, midi, name, fret?, visible? }` from **this take**. Tutorial notes on `tutorialCuesJson.pitch_notes` can carry the same fret fields. When `BASIC_PITCH=1`, a lick is aligned with pitch-class DTW, then a bar is created only when the expected pitch is missing from a ±0.5s window. A 1-semitone miss stays quiet. A constant shift becomes one key/capo bar. A fret is read only for a note that still mismatches, and the bar adds `ngăn` when the frame is clear. Chord changes are detected when they are stable; otherwise the cue is split into equal slices after a count-in is dropped. A different root can be named (G instead of Am). Am versus A7 still needs G. Too few notes, a pitch error, or a failed alignment sets `pitchJudge` to `weak` and makes no pitch bars. Overlay version `pitch-overlay-v7`.
 - `Analysis.pipelineVersion`: `audio-metrics-v1` or `score-compare-v1`
 
 Issue types: `timing | pitch | chord | technique | missing`.
@@ -27,9 +29,13 @@ Issue types: `timing | pitch | chord | technique | missing`.
 ## Queue / student UI (optional later)
 
 - Keep showing `Draft.text`. Teacher sends; nothing auto-sends to the student.
-- Optional chips from `observationsJson.issues` only when overall `confidence >= 0.6` and issue `confidence >= 0.75`. Each chip seeks the take to `tStart`.
+- Take page fact bars: every issue with `tStart` is a seek button (`0:05 · Am vs C#`) plus true/false. Verdicts write `issues[].verdict` / `verdictAt` on `observationsJson` (no new table). The letter stays hidden until every bar is marked. Draft then uses only `verdict: true` issues (false drops out). Analyze does not draft while bars are still unmarked.
 - Drafts include clock times (`0:12`) from `tStart` / `tEnd`. Compare must fill `tStart` on every issue.
 - Student `/l/<code>` already plays `referenceMedia` — tutorial attach is enough.
+
+## Next PR — JSON adjudicator (not built yet)
+
+After overlay, before draft: Gemini 3.1 Pro (`GEMINI_MODEL_VERIFY`, default train model) reviews overlay issues + a short pitch-note window + chord list. **No second video upload.** Per issue: `keep` / `drop` / `uncertain`. Dropped issues never become bars or draft facts. Then librosa onset overlay for `type: timing`, same pattern as Basic Pitch for pitch.
 
 ## RAG drafts (v1.1)
 
@@ -37,7 +43,7 @@ Drafts pull: compare facts, matching score/tutorial bars, this student's last re
 
 Close takes (`overallFit >= 0.9` and no issue at `confidence >= 0.75`) get praise-only drafts. The same media as the tutorial is forced to `issues: []`. Metrics must not invent a timing problem on a close match.
 
-Without a ready PieceModel, do not draft from `silence_ratio` / `tempo_stability`. Prompt `draft_reply_vi-v6` forbids khoảng lặng / nhịp / cảm xúc padding. Analyze enqueues train if a sheet or tutorial is present, then train re-enqueues those takes for compare.
+Without a ready PieceModel, do not draft from `silence_ratio` / `tempo_stability`. Prompt `draft_reply_vi-v8` forbids khoảng lặng / nhịp / cảm xúc padding. A true chord fact is written as the chord name. A true lick fact keeps the note name and adds the fret only when the frame read had it. Analyze enqueues train if a sheet or tutorial is present, then train re-enqueues those takes for compare. Analyze does not enqueue draft while timed facts still need Đúng/Sai.
 
 Gemini thinking on drafts is `MINIMAL` so the visible reply is not eaten by hidden reasoning tokens. Compare uses `LOW`. Train (once per song) uses `HIGH`. If a tutorial is attached and `tutorialCues` is empty, `npm run catalog:train -- --retrain`.
 
@@ -68,4 +74,4 @@ Fine-tunes later cost a training run plus hosted tokens; skip until the teacher 
 
 ## Env
 
-`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE` / `GEMINI_MODEL_DRAFT`. Defaults: **gemini-3.1-pro-preview** (train) and **gemini-3.5-flash** (compare + draft). If `.env.local` still names `gemini-2.5-*`, compare/draft 404 and the worker skips score compare. Never commit the key.
+`GEMINI_API_KEY`, optional `GEMINI_MODEL_TRAIN` / `GEMINI_MODEL_COMPARE` / `GEMINI_MODEL_DRAFT` / `GEMINI_MODEL_VERIFY`. Defaults: **gemini-3.1-pro-preview** (train) and **gemini-3.5-flash** (compare + draft). Verify is the next-PR JSON adjudicator (no video). If `.env.local` still names `gemini-2.5-*`, compare/draft 404 and the worker skips score compare. Never commit the key.

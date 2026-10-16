@@ -58,6 +58,15 @@ export function parseDatetimeLocal(value: string) {
   return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
+/** Weekly copies of one lesson. One week stays a single session. */
+export function sessionOccurrences(startsAt: Date, endsAt: Date | null, weeks: number) {
+  const count = Math.min(16, Math.max(1, Math.floor(weeks) || 1));
+  return Array.from({ length: count }, (_, index) => ({
+    startsAt: addUtcDays(startsAt, index * 7),
+    endsAt: endsAt ? addUtcDays(endsAt, index * 7) : null,
+  }));
+}
+
 export function defaultEndsAt(startsAt: Date) {
   return new Date(startsAt.getTime() + DEFAULT_SESSION_MINUTES * 60 * 1000);
 }

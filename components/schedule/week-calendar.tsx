@@ -18,6 +18,8 @@ export type CalendarEvent = {
   startsAt: string;
   endsAt: string | null;
   classId?: string;
+  meetingProvider?: string | null;
+  meetingUrl?: string | null;
 };
 
 type Props = {

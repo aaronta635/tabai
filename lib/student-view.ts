@@ -14,7 +14,12 @@ export function studentClasses(studentId: string) {
           name: true,
           code: true,
           teacher: { select: { name: true } },
-          _count: { select: { memberships: true, assignments: true } },
+          _count: {
+            select: {
+              memberships: { where: { studentId: { not: null } } },
+              assignments: true,
+            },
+          },
         },
       },
     },
@@ -42,7 +47,7 @@ export function studentClass(studentId: string, classId: string) {
             take: 5,
             select: { id: true, title: true, startsAt: true },
           },
-          _count: { select: { memberships: true } },
+          _count: { select: { memberships: { where: { studentId: { not: null } } } } },
         },
       },
     },

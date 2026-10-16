@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { setAttendance } from "@/app/teacher/lms-actions";
 
@@ -17,7 +17,12 @@ export function AttendanceChips({
 }) {
   const t = useTranslations("teacher");
   const [status, setStatus] = useState<(typeof STATUSES)[number] | null>(initial);
-  const [busy, setBusy] = useState(false);
+  const ticket = useRef(0);
+  const queue = useRef(Promise.resolve());
+
+  useEffect(() => {
+    setStatus(initial);
+  }, [sessionId, studentId, initial]);
 
   return (
     <div className="flex flex-wrap gap-1">
@@ -25,12 +30,18 @@ export function AttendanceChips({
         <button
           key={value}
           type="button"
-          disabled={busy}
-          onClick={async () => {
-            setBusy(true);
-            await setAttendance({ sessionId, studentId, status: value });
+          aria-pressed={status === value}
+          onClick={() => {
+            const mine = ++ticket.current;
+            const previous = status;
             setStatus(value);
-            setBusy(false);
+            queue.current = queue.current.then(async () => {
+              try {
+                await setAttendance({ sessionId, studentId, status: value });
+              } catch {
+                if (ticket.current === mine) setStatus(previous);
+              }
+            });
           }}
           className={`rounded-full px-3 py-1 text-xs ${
             status === value ? "bg-beat text-white" : "border border-ink/20"

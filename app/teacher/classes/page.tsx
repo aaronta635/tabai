@@ -1,27 +1,39 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { createClass } from "@/app/teacher/lms-actions";
 import { AddPanel } from "@/components/disclosure";
+import { GroupCard, meterWidth } from "@/components/studio/group-card";
 
 export default async function ClassesPage() {
   const teacher = await readTeacherSession();
-  if (!teacher) redirect("/auth?next=/teacher/classes");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const locale = await getLocale();
   const t = await getMessages(locale);
   const classes = await prisma.class.findMany({
     where: { teacherId: teacher.id, archived: false },
     orderBy: { createdAt: "desc" },
     include: {
-      _count: { select: { memberships: true, assignments: true } },
+      _count: {
+        select: {
+          memberships: { where: { studentId: { not: null } } },
+          assignments: true,
+        },
+      },
     },
   });
+  const fullest = Math.max(0, ...classes.map((row) => row._count.memberships));
 
   return (
-    <div className="space-y-7">
-      <h1 className="font-display text-3xl">{t.teacher.classesTitle}</h1>
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-display">{t.teacher.classesTitle}</h1>
+        <p className="page-meta">
+          {t.teacher.activeCount.replace("{n}", String(classes.length))}
+        </p>
+      </header>
 
       <AddPanel label={t.teacher.createClass} open={classes.length === 0}>
         <form action={createClass} className="flex flex-wrap items-end gap-2">
@@ -39,28 +51,26 @@ export default async function ClassesPage() {
       {classes.length === 0 ? (
         <p className="text-ink-soft">{t.teacher.classesEmpty}</p>
       ) : (
-        <div className="tile-grid">
-          {classes.map((row) => (
-            <Link key={row.id} href={`/teacher/classes/${row.id}`} className="tile">
-              <span className="seat-row" aria-hidden>
-                {Array.from({ length: Math.min(row._count.memberships, 8) }).map((_, seat) => (
-                  <i key={seat} className="seat-taken" />
-                ))}
-                {row._count.memberships === 0 ? <i className="seat-free" /> : null}
-              </span>
-              <p className="tile-title pr-20">{row.name}</p>
-              <p className="tile-meta">
-                <span className="tabular">
-                  {t.teacher.countStudents.replace("{n}", String(row._count.memberships))}
-                </span>
-                <span className="tabular">
-                  {t.teacher.countAssigned.replace("{n}", String(row._count.assignments))}
-                </span>
-              </p>
-              <span className="code-chip mt-4">/c/{row.code}</span>
-            </Link>
-          ))}
-        </div>
+        <section className="space-y-3">
+          <h2 className="font-display text-base">{t.teacher.groupsHeading}</h2>
+          <div className="group-grid">
+            {classes.map((row) => (
+              <GroupCard
+                key={row.id}
+                href={`/teacher/classes/${row.id}`}
+                title={row.name}
+                chip={t.teacher.openGroup}
+                meterLabel={t.teacher.enrolment}
+                meterValue={String(row._count.memberships)}
+                meterWidth={meterWidth(row._count.memberships, fullest)}
+                actions={[
+                  { href: "/teacher/schedule", label: t.teacher.attendance },
+                  { href: `/teacher/classes/${row.id}`, label: t.teacher.assignedWork },
+                ]}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

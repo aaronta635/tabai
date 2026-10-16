@@ -24,6 +24,39 @@ describe("observationOutline", () => {
     expect(text).toMatch(/không bịa điểm sửa/);
     expect(text).toMatch(/Steady Am at 0:04/);
   });
+
+  it("lists only teacher-true issues after verdicts", () => {
+    const text = observationOutline({
+      overallFit: 0.5,
+      confidence: 0.8,
+      positives: ["clean run at 0:01"],
+      nextPractice: "",
+      issues: [
+        {
+          type: "pitch",
+          bar: null,
+          tStart: 5,
+          tEnd: null,
+          expected: "G#4",
+          observed: "A#4",
+          confidence: 0.9,
+          verdict: "true",
+        },
+        {
+          type: "technique",
+          bar: null,
+          tStart: 12,
+          tEnd: null,
+          expected: "pressure",
+          observed: "choke",
+          confidence: 0.4,
+          verdict: "false",
+        },
+      ],
+    });
+    expect(text).toMatch(/G#4/);
+    expect(text).not.toMatch(/choke/);
+  });
 });
 
 describe("metricGuidance", () => {

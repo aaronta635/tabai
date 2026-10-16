@@ -38,7 +38,10 @@ export async function createSignedUpload(path: string) {
   return data;
 }
 
-export async function createSignedReadUrl(path: string, expiresIn = 60 * 60) {
+export const SIGNED_READ_TTL_SECONDS = 60 * 60;
+export const SIGNED_URL_CACHE_SECONDS = 45 * 60;
+
+export async function createSignedReadUrl(path: string, expiresIn = SIGNED_READ_TTL_SECONDS) {
   const { data, error } = await supabaseAdmin()
     .storage.from(MEDIA_BUCKET)
     .createSignedUrl(path, expiresIn);

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDueLabel } from "@/lib/practice";
@@ -11,7 +12,7 @@ import { SectionPanel } from "@/components/disclosure";
 
 export default async function StudentClassPage({ params }: { params: Promise<{ id: string }> }) {
   const student = await readStudentSession();
-  if (!student) redirect("/auth?role=student");
+  if (!student) redirect(signInPath("student", "/student"));
   const { id } = await params;
   const membership = await studentClass(student.id, id);
   if (!membership) notFound();
@@ -26,16 +27,16 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
         <Link href="/student/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.student.navClasses}
         </Link>
-        <h1 className="font-display mt-3 text-3xl">{studioClass.name}</h1>
-        <p className="tile-meta mt-2">
+        <h1 className="font-display mt-3">{studioClass.name}</h1>
+        <p className="page-meta">
           {t.student.teacherLabel}: {studioClass.teacher.name}
         </p>
       </header>
 
       {pieces[0] ? (
-        <section className="tile">
-          <p className="eyebrow text-beat">{t.student.thisWeek}</p>
-          <h2 className="font-display mt-2 text-2xl">{pieces[0].piece!.title}</h2>
+        <section className="studio-panel">
+          <p className="page-meta">{t.student.thisWeek}</p>
+          <h2 className="mt-1">{pieces[0].piece!.title}</h2>
           {pieces[0].piece!.description || pieces[0].piece!.note ? (
             <p className="mt-3 leading-relaxed text-ink-soft">
               {pieces[0].piece!.description || pieces[0].piece!.note}
@@ -59,24 +60,32 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
         {studioClass.assignments.length === 0 ? (
           <p className="text-sm text-ink-soft">{t.student.noWork}</p>
         ) : (
-          <ul className="flex flex-wrap gap-2">
-            {studioClass.assignments.map((row) => (
-              <li key={row.id}>
-                {row.piece ? (
-                  <Link href={`/student/work/${row.piece.code}`} className="chip chip-link">
-                    <span>{row.piece.title}</span>
-                    {row.dueAt ? (
-                      <span className="tabular text-ink-soft">{formatDueLabel(row.dueAt, locale)}</span>
-                    ) : null}
-                  </Link>
-                ) : (
-                  <span className="chip">
-                    <span>{row.part?.name ?? t.student.thisPiece}</span>
-                  </span>
-                )}
-              </li>
-            ))}
-          </ul>
+          <table className="studio-table">
+            <thead>
+              <tr>
+                <th>{t.student.thisPiece}</th>
+                <th>{t.student.due}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {studioClass.assignments.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    {row.piece ? (
+                      <Link href={`/student/work/${row.piece.code}`} className="font-semibold">
+                        {row.piece.title}
+                      </Link>
+                    ) : (
+                      <span>{row.part?.name ?? t.student.thisPiece}</span>
+                    )}
+                  </td>
+                  <td className="text-sm text-ink-soft">
+                    {row.dueAt ? formatDueLabel(row.dueAt, locale) : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </SectionPanel>
 

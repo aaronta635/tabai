@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { signTeacherSession } from "@/lib/auth";
-import { TEACHER_COOKIE } from "@/lib/constants";
-import { logEvent } from "@/lib/events";
+import { signInPath } from "@/lib/return-path";
 
 export async function GET(request: NextRequest, context: { params: Promise<{ invite: string }> }) {
   const { invite } = await context.params;
@@ -11,22 +9,8 @@ export async function GET(request: NextRequest, context: { params: Promise<{ inv
   if (!teacher) {
     return NextResponse.redirect(new URL("/", origin));
   }
-
-  const token = await signTeacherSession(teacher.id, teacher.name, Boolean(teacher.onboardedAt));
-  await logEvent({
-    name: "teacher.session",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
-  });
-
-  const response = NextResponse.redirect(new URL("/teacher", origin));
-  response.cookies.set(TEACHER_COOKIE, token, {
-    httpOnly: true,
-    sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
-    path: "/",
-    maxAge: 60 * 60 * 24 * 30,
-  });
-  return response;
+  if (teacher.authUserId) {
+    return NextResponse.redirect(new URL("/login/teacher", origin));
+  }
+  return NextResponse.redirect(new URL(signInPath("tutor", `/t/${invite}`), origin));
 }

@@ -1,13 +1,16 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidateTeacherHotPath } from "@/lib/teacher-cache";
 import { redirect } from "next/navigation";
 import { requireTeacher } from "@/lib/auth";
 import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { ensureDefaultCurriculum, newClassCode } from "@/lib/lms";
 import { parseDueAt } from "@/lib/practice";
-import { parseDatetimeLocal } from "@/lib/schedule";
+import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
+import { meetingLink } from "@/lib/meeting";
+import { parseDatetimeLocal, sessionOccurrences } from "@/lib/schedule";
 import { prisma } from "@/lib/prisma";
 
 async function teacherOrThrow() {
@@ -16,13 +19,15 @@ async function teacherOrThrow() {
   return teacher;
 }
 
-function revalidateLms() {
+function revalidateLms(teacherId: string) {
+  revalidateTeacherHotPath(teacherId);
   revalidatePath("/teacher");
   revalidatePath("/teacher/classes");
   revalidatePath("/teacher/curriculum");
   revalidatePath("/teacher/submissions");
   revalidatePath("/teacher/schedule");
   revalidatePath("/student");
+  revalidatePath("/student/schedule");
 }
 
 export async function createClass(formData: FormData) {
@@ -39,7 +44,7 @@ export async function createClass(formData: FormData) {
     teacherId: teacher.id,
     props: { classId: row.id },
   });
-  revalidateLms();
+  revalidateLms(teacher.id);
   redirect(`/teacher/classes/${row.id}`);
 }
 
@@ -51,7 +56,7 @@ export async function renameClass(formData: FormData) {
   const existing = await prisma.class.findFirst({ where: { id, teacherId: teacher.id } });
   if (!existing) throw new Error("not found");
   await prisma.class.update({ where: { id }, data: { name } });
-  revalidateLms();
+  revalidateLms(teacher.id);
 }
 
 export async function inviteByEmail(formData: FormData) {
@@ -69,7 +74,7 @@ export async function inviteByEmail(formData: FormData) {
       data: { classId, invitedEmail: email },
     });
   }
-  revalidateLms();
+  revalidateLms(teacher.id);
 }
 
 export async function approveMembershipForm(formData: FormData) {
@@ -101,33 +106,46 @@ export async function approveMembership(membershipId: string) {
       await enqueueAnalyzeIfApproved(row.id);
     }
   }
-  revalidateLms();
+  revalidateLms(teacher.id);
 }
 
-export async function createCurriculumPart(formData: FormData) {
+export async function createCurriculumPart(name: string) {
   const teacher = await teacherOrThrow();
   await ensureDefaultCurriculum(teacher.id);
-  const name = String(formData.get("name") ?? "").trim();
-  if (!name) return;
+  const title = name.trim();
+  if (!title) return null;
   const last = await prisma.curriculumPart.findFirst({
     where: { teacherId: teacher.id },
     orderBy: { sortOrder: "desc" },
   });
-  await prisma.curriculumPart.create({
-    data: { teacherId: teacher.id, name, sortOrder: (last?.sortOrder ?? -1) + 1 },
+  const part = await prisma.curriculumPart.create({
+    data: { teacherId: teacher.id, name: title, sortOrder: (last?.sortOrder ?? -1) + 1 },
+    select: { id: true, name: true },
   });
-  revalidateLms();
+  return part;
 }
 
-export async function renameCurriculumPart(formData: FormData) {
+export async function renameCurriculumPart(input: { partId: string; name: string }) {
   const teacher = await teacherOrThrow();
-  const id = String(formData.get("partId") ?? "");
-  const name = String(formData.get("name") ?? "").trim();
+  const name = input.name.trim();
   if (!name) return;
-  const part = await prisma.curriculumPart.findFirst({ where: { id, teacherId: teacher.id } });
+  const part = await prisma.curriculumPart.findFirst({ where: { id: input.partId, teacherId: teacher.id } });
   if (!part) throw new Error("not found");
-  await prisma.curriculumPart.update({ where: { id }, data: { name } });
-  revalidateLms();
+  await prisma.curriculumPart.update({ where: { id: part.id }, data: { name } });
+}
+
+export async function placePieceOnShelf(input: { pieceId: string; partId: string }) {
+  const teacher = await teacherOrThrow();
+  const piece = await prisma.piece.findFirst({
+    where: { id: input.pieceId, teacherId: teacher.id, archived: false },
+    select: { id: true },
+  });
+  const part = await prisma.curriculumPart.findFirst({
+    where: { id: input.partId, teacherId: teacher.id },
+    select: { id: true },
+  });
+  if (!piece || !part) throw new Error("not found");
+  await prisma.piece.update({ where: { id: piece.id }, data: { partId: part.id } });
 }
 
 export async function createCurriculumPiece(input: {
@@ -155,7 +173,7 @@ export async function createCurriculumPiece(input: {
       tips: input.tips?.trim() || null,
     },
   });
-  revalidateLms();
+  revalidateLms(teacher.id);
   return { id: piece.id, code: piece.code };
 }
 
@@ -190,7 +208,7 @@ export async function updateCurriculumPiece(input: {
       ...(input.partId ? { partId: input.partId } : {}),
     },
   });
-  revalidateLms();
+  revalidateLms(teacher.id);
   return { ok: true as const };
 }
 
@@ -254,26 +272,24 @@ export async function assignWork(input: {
       },
     });
   }
-  revalidateLms();
+  revalidateLms(teacher.id);
   return { ok: true as const, count: pieceIds.length };
 }
 
-export async function moveCurriculumPart(formData: FormData) {
+export async function moveCurriculumPart(input: { partId: string; dir: "up" | "down" }) {
   const teacher = await teacherOrThrow();
-  const id = String(formData.get("partId") ?? "");
-  const dir = String(formData.get("dir") ?? "") === "up" ? -1 : 1;
+  const dir = input.dir === "up" ? -1 : 1;
   const parts = await prisma.curriculumPart.findMany({
     where: { teacherId: teacher.id },
     orderBy: { sortOrder: "asc" },
   });
-  const index = parts.findIndex((part) => part.id === id);
+  const index = parts.findIndex((part) => part.id === input.partId);
   const swap = index >= 0 ? parts[index + dir] : undefined;
   if (!swap || index < 0) return;
   await prisma.$transaction([
-    prisma.curriculumPart.update({ where: { id }, data: { sortOrder: swap.sortOrder } }),
+    prisma.curriculumPart.update({ where: { id: input.partId }, data: { sortOrder: swap.sortOrder } }),
     prisma.curriculumPart.update({ where: { id: swap.id }, data: { sortOrder: parts[index].sortOrder } }),
   ]);
-  revalidateLms();
 }
 
 export async function createClassSession(formData: FormData) {
@@ -288,7 +304,7 @@ export async function createClassSession(formData: FormData) {
   const session = await prisma.classSession.create({
     data: { classId, title, startsAt },
   });
-  revalidateLms();
+  revalidateLms(teacher.id);
   redirect(`/teacher/schedule/${session.id}`);
 }
 
@@ -298,28 +314,43 @@ export async function saveClassSession(input: {
   title: string;
   startsAt: string;
   endsAt: string;
+  repeatWeeks?: number;
+  meetingProvider?: string;
+  meetingUrl?: string;
 }) {
   const teacher = await teacherOrThrow();
   const classId = input.classId.trim();
   const title = input.title.trim() || null;
   const startsAt = parseDatetimeLocal(input.startsAt);
   const endsAt = parseDatetimeLocal(input.endsAt);
-  if (!startsAt || !classId) return { error: "invalid" as const };
+  const meeting = meetingLink(input.meetingProvider, input.meetingUrl);
+  if (!startsAt || !classId || meeting === undefined) return { error: "invalid" as const };
   const studioClass = await prisma.class.findFirst({ where: { id: classId, teacherId: teacher.id } });
   if (!studioClass) throw new Error("not found");
+  const room = meeting
+    ? { meetingProvider: meeting.provider, meetingUrl: meeting.url }
+    : { meetingProvider: null, meetingUrl: null };
 
   if (input.id) {
     const updated = await prisma.classSession.updateMany({
       where: { id: input.id, class: { teacherId: teacher.id } },
-      data: { classId, title, startsAt, endsAt },
+      data: { classId, title, startsAt, endsAt, ...room },
     });
     if (updated.count === 0) throw new Error("not found");
   } else {
-    await prisma.classSession.create({
-      data: { classId, title, startsAt, endsAt },
+    const seriesId = (input.repeatWeeks ?? 1) > 1 ? crypto.randomUUID() : null;
+    await prisma.classSession.createMany({
+      data: sessionOccurrences(startsAt, endsAt, input.repeatWeeks ?? 1).map((when) => ({
+        classId,
+        title,
+        startsAt: when.startsAt,
+        endsAt: when.endsAt,
+        seriesId,
+        ...room,
+      })),
     });
   }
-  revalidateLms();
+  revalidateLms(teacher.id);
   return { ok: true as const };
 }
 
@@ -338,16 +369,32 @@ export async function setAttendance(input: {
     create: { sessionId: input.sessionId, studentId: input.studentId, status: input.status },
     update: { status: input.status },
   });
-  revalidatePath("/teacher/schedule");
-  revalidatePath(`/teacher/schedule/${input.sessionId}`);
-  revalidatePath("/student/schedule");
 }
 
 export async function updateTeacherProfile(formData: FormData) {
   const teacher = await teacherOrThrow();
   const name = String(formData.get("name") ?? "").trim();
   if (!name) return;
-  await prisma.teacher.update({ where: { id: teacher.id }, data: { name } });
+  const current = await prisma.teacher.findUnique({
+    where: { id: teacher.id },
+    select: { answersJson: true },
+  });
+  const previous =
+    current?.answersJson && typeof current.answersJson === "object" && !Array.isArray(current.answersJson)
+      ? current.answersJson
+      : {};
+  await prisma.teacher.update({
+    where: { id: teacher.id },
+    data: {
+      name,
+      answersJson: {
+        ...previous,
+        teaching: oneOf(String(formData.get("teaching") ?? ""), TEACHING_SPAN, "some"),
+        skills: allowList(formData.getAll("skills"), SKILLS),
+        weaknesses: allowList(formData.getAll("weaknesses"), WEAKNESSES),
+      },
+    },
+  });
   const { setTeacherCookie } = await import("@/lib/auth");
   await setTeacherCookie(teacher.id, name, true);
   revalidatePath("/teacher");

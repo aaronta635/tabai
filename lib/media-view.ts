@@ -1,4 +1,5 @@
-import { createSignedReadUrl } from "@/lib/storage";
+import { createSignedReadUrl, SIGNED_URL_CACHE_SECONDS } from "@/lib/storage";
+import { cachedById } from "@/lib/teacher-cache";
 
 type StoredMedia = { storagePath: string };
 
@@ -16,10 +17,16 @@ export function mediaStoragePath(media: unknown): string | null {
   return typeof path === "string" ? path : null;
 }
 
+export function signedMediaTag(path: string) {
+  return `media:${path}`;
+}
+
 export async function signedMediaUrl(path: string | null) {
   if (!path || path === "pending") return null;
   try {
-    return await createSignedReadUrl(path);
+    return await cachedById("signed-media", path, [], [signedMediaTag(path)], SIGNED_URL_CACHE_SECONDS, () =>
+      createSignedReadUrl(path),
+    );
   } catch {
     return null;
   }

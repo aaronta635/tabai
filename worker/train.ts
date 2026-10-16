@@ -1,5 +1,6 @@
 import { ThinkingLevel } from "@google/genai";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
 import { TRAIN_PROMPT_VERSION } from "../lib/constants";
@@ -24,6 +25,7 @@ import {
   type PieceModelSourceJson,
 } from "../lib/score-model";
 import { downloadMedia } from "../lib/storage";
+import { extractPitchFromVideo, pitchEnabled } from "./pitch";
 
 async function loadPrompt(name: string) {
   return readFile(join(process.cwd(), "prompts", name), "utf8");
@@ -112,6 +114,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
   const uploaded: string[] = [];
   const files: GeminiFileRef[] = [];
   const started = Date.now();
+  let tutorialBytes: Buffer | null = null;
   try {
     if (piece.sheetMedia) {
       const sheetBytes = await downloadMedia(piece.sheetMedia.storagePath);
@@ -123,7 +126,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
       sourceJson.sheetMime = sheetMime;
     }
     if (piece.tutorialMedia) {
-      const tutorialBytes = await downloadMedia(piece.tutorialMedia.storagePath);
+      tutorialBytes = await downloadMedia(piece.tutorialMedia.storagePath);
       const tutorialMime = sniffMime(tutorialBytes, "video/mp4");
       const tutorialFile = await uploadGeminiFile(ai, tutorialBytes, tutorialMime, `${piece.code}-tutorial`);
       uploaded.push(tutorialFile.name);
@@ -173,13 +176,38 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
     }
 
     const { scoreJson, tutorialCuesJson } = splitTrainExtract(extract);
+    let cuesJson: Record<string, unknown> = { ...tutorialCuesJson };
+
+    if (pitchEnabled() && tutorialBytes) {
+      const dir = await mkdtemp(join(tmpdir(), "train-pitch-"));
+      try {
+        const tutorialPath = join(dir, "tutorial.bin");
+        await writeFile(tutorialPath, tutorialBytes);
+        const pitched = await extractPitchFromVideo(tutorialPath, join(dir, "tutorial.wav"));
+        cuesJson = {
+          ...cuesJson,
+          pitch_notes: pitched.notes,
+          pitch_backend: "basic-pitch",
+          ...(pitched.error ? { pitch_error: pitched.error } : {}),
+        };
+      } catch (error) {
+        cuesJson = {
+          ...cuesJson,
+          pitch_notes: [],
+          pitch_backend: "basic-pitch",
+          pitch_error: error instanceof Error ? error.message : "pitch failed",
+        };
+      } finally {
+        await rm(dir, { recursive: true, force: true });
+      }
+    }
 
     await prisma.pieceModel.update({
       where: { id: row.id },
       data: {
         status: "ready",
         scoreJson: scoreJson as unknown as Prisma.InputJsonValue,
-        tutorialCuesJson: tutorialCuesJson as unknown as Prisma.InputJsonValue,
+        tutorialCuesJson: cuesJson as Prisma.InputJsonValue,
         sourceJson: sourceJson as unknown as Prisma.InputJsonValue,
         trainedAt: new Date(),
         error: null,

@@ -14,7 +14,10 @@ describe("sites", () => {
 
   it("treats /teacher as a product path and locale as shared", () => {
     expect(isProductPath("/teacher/submissions")).toBe(true);
+    expect(isProductPath("/join/abc")).toBe(true);
     expect(isProductPath("/c/abc")).toBe(true);
+    expect(isProductPath("/login")).toBe(true);
+    expect(isProductPath("/signup")).toBe(true);
     expect(isProductPath("/api/locale")).toBe(false);
     expect(isProductPath("/")).toBe(false);
   });

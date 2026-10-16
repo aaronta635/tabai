@@ -22,6 +22,8 @@ type SessionRow = {
   title: string | null;
   startsAt: string;
   endsAt: string | null;
+  meetingProvider: string | null;
+  meetingUrl: string | null;
   attendances: { studentId: string; status: string }[];
 };
 
@@ -55,6 +57,8 @@ export function TeacherSchedule({
         title: row.title,
         startsAt: row.startsAt,
         endsAt: row.endsAt,
+        meetingProvider: row.meetingProvider,
+        meetingUrl: row.meetingUrl,
       })),
     [sessions],
   );

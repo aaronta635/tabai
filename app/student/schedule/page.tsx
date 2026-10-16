@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { parseWeekParam, weekRangeUtc } from "@/lib/schedule";
@@ -11,7 +12,7 @@ export default async function StudentSchedulePage({
   searchParams: Promise<{ w?: string }>;
 }) {
   const student = await readStudentSession();
-  if (!student) redirect("/api/session?next=/student/schedule&role=student");
+  if (!student) redirect(signInPath("student", "/student"));
   const { w } = await searchParams;
   const locale = await getLocale();
   const t = await getMessages(locale);
@@ -25,12 +26,17 @@ export default async function StudentSchedulePage({
     title: row.title,
     startsAt: row.startsAt.toISOString(),
     endsAt: row.endsAt?.toISOString() ?? null,
+    meetingProvider: row.meetingProvider,
+    meetingUrl: row.meetingUrl,
     attendance: row.attendances[0]?.status ?? null,
   }));
 
   return (
     <div className="space-y-7">
-      <h1 className="font-display text-3xl">{t.student.scheduleTitle}</h1>
+      <header>
+        <h1 className="font-display">{t.student.scheduleTitle}</h1>
+        <p className="page-meta">{t.student.countSessions.replace("{n}", String(sessions.length))}</p>
+      </header>
       <StudentSchedule locale={locale} weekStartIso={start.toISOString()} sessions={sessions} />
     </div>
   );

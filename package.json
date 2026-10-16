@@ -20,7 +20,8 @@
     "db:migrate": "prisma migrate dev",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
-    "catalog:train": "tsx scripts/ingest-catalog.ts"
+    "catalog:train": "tsx scripts/ingest-catalog.ts",
+    "bars:report": "tsx scripts/false-bars.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",

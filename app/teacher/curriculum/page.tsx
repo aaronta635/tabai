@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { ensureDefaultCurriculum } from "@/lib/lms";
-import { createCurriculumPart } from "@/app/teacher/lms-actions";
-import { CurriculumBoard } from "@/components/teacher/curriculum-board";
+import { formatWhen } from "@/lib/when";
+import { CurriculumBoard, type PieceStat } from "@/components/teacher/curriculum-board";
 import { ClassDropList } from "@/components/teacher/class-drop-list";
-import { AddPanel } from "@/components/disclosure";
 
 export default async function CurriculumPage() {
   const teacher = await readTeacherSession();
-  if (!teacher) redirect("/auth?next=/teacher/curriculum");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   await ensureDefaultCurriculum(teacher.id);
   const locale = await getLocale();
   const t = await getMessages(locale);
@@ -19,7 +19,19 @@ export default async function CurriculumPage() {
       where: { teacherId: teacher.id },
       orderBy: { sortOrder: "asc" },
       include: {
-        pieces: { where: { archived: false }, orderBy: { createdAt: "desc" } },
+        pieces: {
+          where: { archived: false },
+          orderBy: { createdAt: "desc" },
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            tips: true,
+            sheetMediaId: true,
+            tutorialMediaId: true,
+            clipMediaId: true,
+          },
+        },
       },
     }),
     prisma.class.findMany({
@@ -34,24 +46,45 @@ export default async function CurriculumPage() {
     }),
   ]);
 
+  const pieceIds = parts.flatMap((part) => part.pieces.map((piece) => piece.id));
+  const stats: Record<string, PieceStat> = {};
+  if (pieceIds.length > 0) {
+    const [counts, dues] = await Promise.all([
+      prisma.submission.groupBy({
+        by: ["pieceId", "status"],
+        where: { pieceId: { in: pieceIds }, kind: { in: ["take", "overdub"] } },
+        _count: { _all: true },
+      }),
+      prisma.assignment.findMany({
+        where: { pieceId: { in: pieceIds } },
+        orderBy: { dueAt: "asc" },
+        select: { pieceId: true, dueAt: true, class: { select: { name: true } } },
+      }),
+    ]);
+    for (const row of counts) {
+      const stat = stats[row.pieceId] ?? { reviewed: 0, total: 0, due: null, className: null };
+      stat.total += row._count._all;
+      if (row.status === "answered") stat.reviewed += row._count._all;
+      stats[row.pieceId] = stat;
+    }
+    for (const row of dues) {
+      if (!row.pieceId) continue;
+      const stat = stats[row.pieceId] ?? { reviewed: 0, total: 0, due: null, className: null };
+      if (!stat.className && row.class?.name) stat.className = row.class.name;
+      if (!stat.due && row.dueAt) stat.due = formatWhen(row.dueAt, locale);
+      stats[row.pieceId] = stat;
+    }
+  }
+  const pieceCount = pieceIds.length;
+
   return (
-    <div className="space-y-7">
-      <h1 className="font-display text-3xl">{t.teacher.curriculumTitle}</h1>
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-display">{t.teacher.curriculumTitle}</h1>
+        <p className="page-meta">{t.teacher.countPieces.replace("{n}", String(pieceCount))}</p>
+      </header>
 
-      <AddPanel label={t.teacher.addPart}>
-        <form action={createCurriculumPart} className="flex flex-wrap items-end gap-2">
-          <label className="min-w-0 flex-1">
-            <span className="field-label">{t.teacher.partName}</span>
-            <input name="name" required className="field mt-1.5" />
-          </label>
-          <button type="submit" className="btn">
-            {t.teacher.addPart}
-          </button>
-        </form>
-        <p className="mt-3 text-sm text-ink-soft">{t.teacher.curriculumHelp}</p>
-      </AddPanel>
-
-      <CurriculumBoard parts={parts} classes={classes} students={students} />
+      <CurriculumBoard parts={parts} classes={classes} students={students} stats={stats} />
 
       {classes.length > 0 ? (
         <div className="space-y-2">

@@ -6,9 +6,12 @@ type Labels = {
   classes: string;
   curriculum: string;
   submissions: string;
+  roster: string;
   schedule: string;
   settings: string;
+  search: string;
   profile: string;
+  kicker: string;
   signOut: string;
   menu: string;
   close: string;
@@ -18,35 +21,30 @@ type Labels = {
 
 export function TeacherAppShell({
   teacherName,
-  locale,
-  theme,
   labels,
   children,
 }: {
   teacherName: string;
-  locale: string;
-  theme: "light" | "dark";
   labels: Labels;
   children: React.ReactNode;
 }) {
   return (
     <StudioShell
       name={teacherName}
-      locale={locale}
-      theme={theme}
       home="/teacher"
+      kicker={labels.kicker}
       items={[
         { href: "/teacher", label: labels.general, exact: true },
+        { href: "/teacher/schedule", label: labels.schedule },
         { href: "/teacher/classes", label: labels.classes },
         { href: "/teacher/curriculum", label: labels.curriculum },
-        { href: "/teacher/submissions", label: labels.submissions, countsUrl: "/api/teacher/counts" },
-        { href: "/teacher/schedule", label: labels.schedule },
-      ]}
-      menuLinks={[
-        { href: "/teacher/profile", label: labels.profile },
+        { href: "/teacher/submissions", label: labels.submissions },
+        { href: "/teacher/roster", label: labels.roster },
         { href: "/teacher/settings", label: labels.settings },
       ]}
+      menuLinks={[{ href: "/teacher/profile", label: labels.profile }]}
       signOutAction={logoutTeacher}
+      search={{ action: "/teacher/search", placeholder: labels.search }}
       labels={{
         signOut: labels.signOut,
         menu: labels.menu,

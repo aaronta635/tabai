@@ -14,7 +14,10 @@ import {
 import { resolveAuthBind } from "@/lib/auth-bind";
 import { homeFor, parseRole, type AccountRole } from "@/lib/onboarding";
 import { prisma } from "@/lib/prisma";
+import { inviteTokenFromReturn } from "@/lib/return-path";
 import { createServerSupabase } from "@/lib/supabase/server";
+
+export const TEACHER_SESSION_VERSION = 2;
 
 const pieceCode = customAlphabet("abcdefghijkmnopqrstuvwxyz23456789", 8);
 
@@ -26,7 +29,17 @@ function secret() {
   return new TextEncoder().encode(value);
 }
 
-type TeacherPayload = { typ: "teacher"; teacherId: string; name: string; onboarded: boolean | null };
+type TeacherPayload = {
+  typ: "teacher";
+  teacherId: string;
+  name: string;
+  onboarded: boolean | null;
+  sv: number;
+};
+
+export function currentTeacherSession(sv: unknown) {
+  return sv === TEACHER_SESSION_VERSION;
+}
 type StudentPayload = { typ: "student"; studentId: string; name: string; onboarded: boolean | null };
 type AdminPayload = { typ: "admin" };
 
@@ -68,7 +81,13 @@ export function newStudentToken() {
 }
 
 export async function signTeacherSession(teacherId: string, name: string, onboarded: boolean) {
-  return new SignJWT({ typ: "teacher", teacherId, name, onboarded } satisfies TeacherPayload)
+  return new SignJWT({
+    typ: "teacher",
+    teacherId,
+    name,
+    onboarded,
+    sv: TEACHER_SESSION_VERSION,
+  } satisfies TeacherPayload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setExpirationTime("30d")
@@ -97,12 +116,17 @@ async function readTeacherPayload(): Promise<TeacherPayload | null> {
   if (!token) return null;
   try {
     const { payload } = await jwtVerify(token, secret());
-    if (payload.typ === "teacher" && typeof payload.teacherId === "string") {
+    if (
+      payload.typ === "teacher" &&
+      typeof payload.teacherId === "string" &&
+      currentTeacherSession(payload.sv)
+    ) {
       return {
         typ: "teacher",
         teacherId: payload.teacherId,
         name: typeof payload.name === "string" ? payload.name : "Thầy",
         onboarded: typeof payload.onboarded === "boolean" ? payload.onboarded : null,
+        sv: TEACHER_SESSION_VERSION,
       };
     }
     return null;
@@ -331,12 +355,34 @@ export const requireStudentAccount = cache(async function requireStudentAccount(
   return student;
 });
 
+async function claimTeacherInvite(user: User, next: string | null | undefined) {
+  const token = inviteTokenFromReturn(next);
+  if (!token) return null;
+  const row = await prisma.teacher.findUnique({ where: { inviteToken: token } });
+  if (!row || row.authUserId) return null;
+  const rotated = newInviteToken();
+  const claimed = await prisma.teacher.updateMany({
+    where: { id: row.id, authUserId: null, inviteToken: token },
+    data: {
+      authUserId: user.id,
+      inviteToken: rotated,
+      ...(row.email || !user.email ? {} : { email: user.email }),
+    },
+  });
+  if (claimed.count !== 1) return null;
+  return prisma.teacher.findUnique({ where: { id: row.id } });
+}
+
 /**
  * Bind a local session after Supabase sign-in.
  * The sign-in screen's role wins: a tutor email on student login is a mismatch,
  * not a silent teacher session.
+ * An invite return claims that unclaimed teacher instead of opening a new studio.
  */
-export async function bindAuthSession(requested?: AccountRole | null): Promise<BindAuthResult | null> {
+export async function bindAuthSession(
+  requested?: AccountRole | null,
+  next?: string | null,
+): Promise<BindAuthResult | null> {
   const user = await supabaseUser();
   if (user) {
     const teacher = await findTeacherByAuth(user.id);
@@ -364,7 +410,8 @@ export async function bindAuthSession(requested?: AccountRole | null): Promise<B
       return boundStudent(created);
     }
     if (decision.action === "create" && decision.role === "tutor") {
-      const created = await createTeacherFromUser(user);
+      const claimed = await claimTeacherInvite(user, next);
+      const created = claimed ?? (await createTeacherFromUser(user));
       await setTeacherCookie(created.id, created.name, Boolean(created.onboardedAt));
       return boundTutor(created);
     }

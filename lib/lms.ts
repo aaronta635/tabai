@@ -1,19 +1,24 @@
 import { newPieceCode } from "@/lib/auth";
+import { DEFAULT_PARTS } from "@/lib/curriculum";
 import { prisma } from "@/lib/prisma";
 
-export const DEFAULT_PARTS = [
-  { name: "Beginner", vi: "Cơ bản", sortOrder: 0 },
-  { name: "Mid", vi: "Trung cấp", sortOrder: 1 },
-  { name: "Advanced", vi: "Nâng cao", sortOrder: 2 },
-] as const;
+export { DEFAULT_PARTS, shelfName } from "@/lib/curriculum";
 
 export function newClassCode() {
   return newPieceCode();
 }
 
+export function classJoinPath(code: string) {
+  return `/join/${code}`;
+}
+
 // Seeding is a one-time job per teacher, but it used to run on every studio page load.
 // Remembering who is already seeded keeps navigation down to the queries a page actually needs.
 const seededTeachers = new Set<string>();
+
+export function shouldBackfillOrphanPieces(unassignedCount: number) {
+  return unassignedCount > 0;
+}
 
 export async function ensureDefaultCurriculum(teacherId: string) {
   if (seededTeachers.has(teacherId)) return;
@@ -36,10 +41,15 @@ export async function ensureDefaultCurriculum(teacherId: string) {
   }
   const home = parts[0];
   if (home) {
-    await prisma.piece.updateMany({
+    const unassigned = await prisma.piece.count({
       where: { teacherId, archived: false, partId: null },
-      data: { partId: home.id },
     });
+    if (shouldBackfillOrphanPieces(unassigned)) {
+      await prisma.piece.updateMany({
+        where: { teacherId, archived: false, partId: null },
+        data: { partId: home.id },
+      });
+    }
   }
   seededTeachers.add(teacherId);
 }

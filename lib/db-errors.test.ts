@@ -22,4 +22,14 @@ describe("isPrismaConnectionError", () => {
   it("matches closed-socket messages", () => {
     expect(isPrismaConnectionError(new Error("Error { kind: Closed, cause: None }"))).toBe(true);
   });
+
+  it("matches a full session-pooler client", () => {
+    expect(
+      isPrismaConnectionError(
+        new Error(
+          "Invalid `prisma.reply.findMany()` invocation\nError in connector: FATAL: (EMAXCONNSESSION) max clients reached in session mode",
+        ),
+      ),
+    ).toBe(true);
+  });
 });

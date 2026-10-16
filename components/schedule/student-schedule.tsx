@@ -15,6 +15,8 @@ type SessionRow = {
   title: string | null;
   startsAt: string;
   endsAt: string | null;
+  meetingProvider: string | null;
+  meetingUrl: string | null;
   attendance: string | null;
 };
 
@@ -43,6 +45,8 @@ export function StudentSchedule({
         title: row.title,
         startsAt: row.startsAt,
         endsAt: row.endsAt,
+        meetingProvider: row.meetingProvider,
+        meetingUrl: row.meetingUrl,
       })),
     [sessions],
   );

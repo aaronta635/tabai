@@ -21,6 +21,6 @@ describe("PieceCodeForm", () => {
 
     await user.type(screen.getByLabelText("Class code"), "  SONG1 ");
     await user.click(screen.getByRole("button", { name: "Join" }));
-    expect(mockRouter.push).toHaveBeenCalledWith("/c/song1");
+    expect(mockRouter.push).toHaveBeenCalledWith("/join/song1");
   });
 });

@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
@@ -11,7 +12,7 @@ export default async function SchedulePage({
   searchParams: Promise<{ w?: string; session?: string }>;
 }) {
   const teacher = await readTeacherSession();
-  if (!teacher) redirect("/auth?next=/teacher/schedule");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const { w, session: sessionId } = await searchParams;
   const locale = await getLocale();
   const t = await getMessages(locale);
@@ -67,12 +68,17 @@ export default async function SchedulePage({
     title: row.title,
     startsAt: row.startsAt.toISOString(),
     endsAt: row.endsAt?.toISOString() ?? null,
+    meetingProvider: row.meetingProvider,
+    meetingUrl: row.meetingUrl,
     attendances: row.attendances.map((a) => ({ studentId: a.studentId, status: a.status })),
   }));
 
   return (
     <div className="space-y-7">
-      <h1 className="font-display text-3xl">{t.teacher.scheduleTitle}</h1>
+      <header>
+        <h1 className="font-display">{t.teacher.scheduleTitle}</h1>
+        <p className="page-meta">{t.teacher.countSessions.replace("{n}", String(sessions.length))}</p>
+      </header>
       <TeacherSchedule
         locale={locale}
         weekStartIso={start.toISOString()}

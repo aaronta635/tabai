@@ -58,6 +58,28 @@ describe("StudentUpload", () => {
     expect(screen.getByText("Enter a Zalo number or Messenger link.")).toBeInTheDocument();
   });
 
+  it("shows the piece brief and waits for a video before sending", () => {
+    renderWithIntl(
+      <StudentUpload
+        code="song1"
+        needsProfile={false}
+        desk={{
+          pieceTitle: "Easy 1",
+          teacherName: "Lan",
+          brief: "Bars 1–8, slowly.",
+          tips: null,
+          meta: "Due Friday",
+        }}
+      />,
+      ["student"],
+    );
+
+    expect(screen.getByRole("button", { name: "Send to teacher" })).toBeDisabled();
+    expect(screen.getByText("Bars 1–8, slowly.")).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Note to teacher" })).toBeInTheDocument();
+    expect(screen.getByText("Drop a recording here")).toBeInTheDocument();
+  });
+
   it("tells a take from a practice take", async () => {
     const user = userEvent.setup();
     renderWithIntl(<StudentUpload code="song1" needsProfile={false} />, ["student"]);

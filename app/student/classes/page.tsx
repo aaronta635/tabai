@@ -1,21 +1,26 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { studentClasses } from "@/lib/student-view";
 import { JoinClassForm } from "@/components/student/join-class-form";
 import { AddPanel } from "@/components/disclosure";
+import { GroupCard, meterWidth } from "@/components/studio/group-card";
 
 export default async function StudentClassesPage() {
   const student = await readStudentSession();
-  if (!student) redirect("/auth?role=student");
+  if (!student) redirect(signInPath("student", "/student"));
   const locale = await getLocale();
   const t = await getMessages(locale);
   const classes = await studentClasses(student.id);
+  const fullest = Math.max(0, ...classes.map((row) => row.class._count.memberships));
 
   return (
-    <div className="space-y-7">
-      <h1 className="font-display text-3xl">{t.student.classesTitle}</h1>
+    <div className="space-y-6">
+      <header>
+        <h1 className="font-display">{t.student.classesTitle}</h1>
+        <p className="page-meta">{t.student.activeCount.replace("{n}", String(classes.length))}</p>
+      </header>
 
       <AddPanel label={t.student.joinClass} open={classes.length === 0}>
         <JoinClassForm
@@ -30,30 +35,27 @@ export default async function StudentClassesPage() {
       {classes.length === 0 ? (
         <p className="text-ink-soft">{t.student.stageExploringHelp}</p>
       ) : (
-        <div className="tile-grid">
-          {classes.map((row) => (
-            <Link key={row.id} href={`/student/classes/${row.class.id}`} className="tile">
-              <span className="seat-row" aria-hidden>
-                {Array.from({ length: Math.min(row.class._count.memberships, 8) }).map((_, seat) => (
-                  <i key={seat} className="seat-taken" />
-                ))}
-                {row.class._count.memberships === 0 ? <i className="seat-free" /> : null}
-              </span>
-              <p className="tile-title">{row.class.name}</p>
-              <p className="tile-meta">
-                {t.student.teacherLabel}: {row.class.teacher.name}
-              </p>
-              <p className="tile-meta">
-                <span className="tabular">
-                  {t.student.countClassmates.replace("{n}", String(row.class._count.memberships))}
-                </span>
-                <span className="tabular">
-                  {t.student.countAssigned.replace("{n}", String(row.class._count.assignments))}
-                </span>
-              </p>
-            </Link>
-          ))}
-        </div>
+        <section className="space-y-3">
+          <h2 className="font-display text-base">{t.student.groupsHeading}</h2>
+          <div className="group-grid">
+            {classes.map((row) => (
+              <GroupCard
+                key={row.id}
+                href={`/student/classes/${row.class.id}`}
+                title={row.class.name}
+                meta={`${t.student.teacherLabel}: ${row.class.teacher.name}`}
+                chip={t.student.openGroup}
+                meterLabel={t.student.countClassmates.replace("{n}", "").trim()}
+                meterValue={String(row.class._count.memberships)}
+                meterWidth={meterWidth(row.class._count.memberships, fullest)}
+                actions={[
+                  { href: "/student/schedule", label: t.student.navSchedule },
+                  { href: "/student/work", label: t.student.workTitle },
+                ]}
+              />
+            ))}
+          </div>
+        </section>
       )}
     </div>
   );

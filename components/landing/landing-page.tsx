@@ -18,9 +18,9 @@ export async function LandingPage() {
   const teacher = await getTeacherFromCookie();
   const student = await getStudentFromCookie();
   const app = productOrigin();
-  const signedInPath = teacher ? "/teacher" : student ? "/student" : "/auth";
-  const tutorPath = teacher ? "/teacher" : "/auth?role=tutor";
-  const studentPath = student ? "/student" : "/auth?role=student";
+  const signedInPath = teacher ? "/teacher" : student ? "/student" : "/login";
+  const tutorPath = teacher ? "/teacher" : "/login/teacher";
+  const studentPath = student ? "/student" : "/login/student";
   const navHref = app ? `${app}${signedInPath}` : signedInPath;
   const tutorHref = app ? `${app}${tutorPath}` : tutorPath;
   const studentHref = app ? `${app}${studentPath}` : studentPath;

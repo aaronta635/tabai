@@ -43,6 +43,8 @@ export type PieceModelSourceJson = {
   tutorialMime?: string;
 };
 
+export type FactVerdict = "true" | "false" | null;
+
 export type CompareIssue = {
   type: IssueType;
   bar: number | null;
@@ -51,6 +53,8 @@ export type CompareIssue = {
   expected: string;
   observed: string;
   confidence: number;
+  verdict?: FactVerdict;
+  verdictAt?: string | null;
 };
 
 export type CompareObservations = {
@@ -59,6 +63,8 @@ export type CompareObservations = {
   positives: string[];
   issues: CompareIssue[];
   nextPractice: string;
+  /** weak: the pitch path refused to judge this take. */
+  pitchJudge?: "ok" | "weak";
 };
 
 export type TrainExtract = ScoreJson & {
@@ -93,6 +99,10 @@ function asIssueType(value: unknown): IssueType {
     return value as IssueType;
   }
   return "technique";
+}
+
+function asVerdict(value: unknown): FactVerdict {
+  return value === "true" || value === "false" ? value : null;
 }
 
 export function parseTrainExtract(raw: unknown): TrainExtract {
@@ -138,6 +148,23 @@ export function splitTrainExtract(extract: TrainExtract): {
 } {
   const { tutorialCues, ...scoreJson } = extract;
   return { scoreJson, tutorialCuesJson: { cues: tutorialCues } };
+}
+
+export function chordsFromScore(score: ScoreJson) {
+  return [...new Set(score.sections.flatMap((section) => section.chords))];
+}
+
+export function heardExtractFromMetrics(metrics: unknown) {
+  if (!metrics || typeof metrics !== "object" || Array.isArray(metrics)) return null;
+  const heard = (metrics as { heard_extract?: unknown }).heard_extract;
+  return heard ?? null;
+}
+
+export function chordSequenceDelta(expected: string[], heard: string[]) {
+  return {
+    onlyExpected: expected.filter((chord) => !heard.includes(chord)),
+    onlyHeard: heard.filter((chord) => !expected.includes(chord)),
+  };
 }
 
 const NOTE_SEMI: Record<string, number> = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
@@ -209,7 +236,7 @@ export function trainExtractRichness(extract: TrainExtract) {
 }
 
 export function closeMatch(observations: CompareObservations | null) {
-  if (!observations || observations.confidence < 0.45) return false;
+  if (!observations || observations.pitchJudge === "weak" || observations.confidence < 0.45) return false;
   const hardIssues = observations.issues.filter((issue) => issue.confidence >= 0.75);
   return observations.overallFit >= 0.9 && hardIssues.length === 0;
 }
@@ -222,6 +249,7 @@ export function parseCompareObservations(raw: unknown): CompareObservations {
     confidence: clamp01(asNumber(data.confidence) ?? 0),
     positives: asStringArray(data.positives),
     nextPractice: asString(data.nextPractice),
+    pitchJudge: data.pitchJudge === "weak" ? "weak" : "ok",
     issues: issuesRaw.map((item) => {
       const issue = asRecord(item) ?? {};
       return {
@@ -232,6 +260,8 @@ export function parseCompareObservations(raw: unknown): CompareObservations {
         expected: asString(issue.expected),
         observed: asString(issue.observed),
         confidence: clamp01(asNumber(issue.confidence) ?? 0),
+        verdict: asVerdict(issue.verdict),
+        verdictAt: asString(issue.verdictAt) || null,
       };
     }),
   };
@@ -250,29 +280,127 @@ export function formatClock(seconds: number) {
 }
 
 export function formatIssueWhere(issue: Pick<CompareIssue, "bar" | "tStart" | "tEnd">) {
-  const clock =
-    issue.tStart != null
-      ? issue.tEnd != null && issue.tEnd > issue.tStart
-        ? `${formatClock(issue.tStart)}–${formatClock(issue.tEnd)}`
-        : formatClock(issue.tStart)
-      : null;
+  let clock: string | null = null;
+  if (issue.tStart != null) {
+    const start = formatClock(issue.tStart);
+    const end = issue.tEnd != null && issue.tEnd > issue.tStart ? formatClock(issue.tEnd) : null;
+    clock = end && end !== start ? `${start}–${end}` : start;
+  }
   const bar = issue.bar != null ? `bar ${issue.bar}` : null;
   if (clock && bar) return `${clock} (${bar})`;
   return clock ?? bar;
 }
 
 export type ObservationMarker = {
+  index: number;
   tStart: number;
+  type: IssueType;
   label: string;
+  expected: string;
+  observed: string;
+  verdict: FactVerdict;
+  verdictAt: string | null;
 };
 
+export function factBarLabel(issue: Pick<CompareIssue, "tStart" | "type" | "expected" | "observed">) {
+  const clock = issue.tStart != null ? formatClock(issue.tStart) : null;
+  const vs =
+    issue.expected.trim() && issue.observed.trim()
+      ? `${issue.expected} vs ${issue.observed}`
+      : issue.expected.trim() || issue.observed.trim() || issue.type;
+  return clock ? `${clock} · ${vs}` : vs;
+}
+
 export function observationMarkers(value: unknown): ObservationMarker[] {
-  if (!isCompareObservations(value) || value.confidence < 0.6) return [];
-  return value.issues
-    .filter((issue) => issue.confidence >= 0.75 && issue.tStart != null)
-    .slice(0, 6)
-    .map((issue) => ({
+  if (!isCompareObservations(value)) return [];
+  const observations = parseCompareObservations(value);
+  return observations.issues
+    .map((issue, index) => ({ issue, index }))
+    .filter((row) => row.issue.tStart != null)
+    .slice(0, 12)
+    .map(({ issue, index }) => ({
+      index,
       tStart: issue.tStart as number,
-      label: `${formatClock(issue.tStart as number)} ${issue.type}`,
+      type: issue.type,
+      label: factBarLabel(issue),
+      expected: issue.expected,
+      observed: issue.observed,
+      verdict: issue.verdict ?? null,
+      verdictAt: issue.verdictAt ?? null,
     }));
+}
+
+export function observationPositives(value: unknown): string[] {
+  if (!isCompareObservations(value)) return [];
+  return parseCompareObservations(value)
+    .positives.filter((line) => line.trim())
+    .slice(0, 4);
+}
+
+export function applyIssueVerdict(
+  observations: CompareObservations,
+  issueIndex: number,
+  verdict: FactVerdict,
+  at = new Date().toISOString(),
+): CompareObservations | null {
+  if (issueIndex < 0 || issueIndex >= observations.issues.length) return null;
+  return {
+    ...observations,
+    issues: observations.issues.map((issue, index) =>
+      index === issueIndex
+        ? { ...issue, verdict, verdictAt: verdict ? at : null }
+        : issue,
+    ),
+  };
+}
+
+/** Timed fact bars the tutor sees. Untimed issues are not gated. */
+export function factVerdictsComplete(observations: CompareObservations): boolean {
+  return observations.issues
+    .filter((issue) => issue.tStart != null)
+    .every((issue) => issue.verdict === "true" || issue.verdict === "false");
+}
+
+export function whyDraftNotReady(input: {
+  kind: string;
+  status: string;
+  approved: boolean;
+  observations: unknown;
+}): string | null {
+  if (input.kind === "practice") return "practice";
+  if (!input.approved) return "student_unapproved";
+  if (input.status !== "new" && input.status !== "drafted") return `status_${input.status}`;
+  if (!isCompareObservations(input.observations)) return "no_compare";
+  const parsed = parseCompareObservations(input.observations);
+  const timed = parsed.issues.filter((issue) => issue.tStart != null);
+  const open = timed.filter((issue) => issue.verdict !== "true" && issue.verdict !== "false");
+  if (open.length) return `facts_open ${open.length}/${timed.length}`;
+  return null;
+}
+
+/** Letter facts: only issues the tutor marked true. Incomplete bars return null. */
+export function observationsForDraft(observations: CompareObservations): CompareObservations | null {
+  if (!factVerdictsComplete(observations)) return null;
+  const dropped = observations.issues.some((issue) => issue.verdict === "false");
+  return {
+    ...observations,
+    issues: observations.issues.filter((issue) => issue.verdict === "true"),
+    nextPractice: dropped ? "" : observations.nextPractice,
+  };
+}
+
+export function latestFactVerdictAt(markers: Pick<ObservationMarker, "verdictAt">[]): string | null {
+  const times = markers.map((marker) => marker.verdictAt).filter((at): at is string => Boolean(at));
+  if (times.length === 0) return null;
+  return times.reduce((latest, at) => (at > latest ? at : latest));
+}
+
+export function draftCoversFactVerdicts(
+  draftAt: string | null | undefined,
+  latestVerdictAt: string | null,
+  markerCount: number,
+) {
+  if (markerCount === 0) return true;
+  if (!draftAt || !latestVerdictAt) return false;
+  return draftAt >= latestVerdictAt;
 }

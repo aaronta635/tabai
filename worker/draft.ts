@@ -11,7 +11,12 @@ import {
 import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
 import { metricGuidance, observationOutline, retrieveDraftContext, type DraftMetrics, type DraftRetrieval } from "../lib/rag";
-import { isCompareObservations, type CompareObservations } from "../lib/score-model";
+import {
+  observationsForDraft,
+  parseCompareObservations,
+  whyDraftNotReady,
+  type CompareObservations,
+} from "../lib/score-model";
 
 function formatExamples(rows: { source: string; text: string }[]) {
   if (!rows.length) return "Chưa có nhận xét cũ trên bài này.";
@@ -66,14 +71,32 @@ export async function runDraft(submissionId: string) {
     throw new Error("student not approved — refusing draft");
   }
   if (submission.kind === "practice") return;
-
+  const skip = whyDraftNotReady({
+    kind: submission.kind,
+    status: submission.status,
+    approved: Boolean(submission.student.approvedAt),
+    observations: submission.analyses[0]?.observationsJson,
+  });
+  if (skip) {
+    console.log("draft skip", submissionId, skip);
+    throw new Error(`draft skip: ${skip}`);
+  }
+  const parsed = parseCompareObservations(submission.analyses[0]?.observationsJson);
+  const observations = observationsForDraft(parsed);
+  if (!observations) {
+    console.log("draft skip", submissionId, "no_kept_facts");
+    throw new Error("draft skip: no_kept_facts");
+  }
+  console.log(
+    "draft begin",
+    submissionId,
+    submission.piece.title,
+    `kept ${observations.issues.length}/${parsed.issues.length}`,
+  );
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
   const metrics = (submission.analyses[0]?.metricsJson ?? null) as DraftMetrics | null;
-  const observationsRaw = submission.analyses[0]?.observationsJson ?? null;
-  const observations = isCompareObservations(observationsRaw) ? observationsRaw : null;
-  if (!observations) return;
   const retrieval = await retrieveDraftContext({
     teacherId: submission.piece.teacherId,
     pieceId: submission.pieceId,
@@ -170,6 +193,7 @@ export async function runDraft(submissionId: string) {
       text,
     },
   });
+  console.log("draft wrote", submissionId, usedModel, `${text.length} chars`);
 
   await prisma.submission.update({
     where: { id: submissionId },

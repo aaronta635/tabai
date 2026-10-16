@@ -3,14 +3,17 @@
 
 from __future__ import annotations
 
+import io
 import json
 import sys
+from contextlib import redirect_stderr, redirect_stdout
 
 
 def midi_name(midi: float) -> str:
     names = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
     rounded = int(round(midi))
-    return f"{names[rounded % 12]}{rounded // 12}"
+    # MIDI 60 = C4
+    return f"{names[rounded % 12]}{(rounded // 12) - 1}"
 
 
 def main() -> int:
@@ -24,17 +27,35 @@ def main() -> int:
         print(json.dumps({"error": "basic-pitch not installed", "notes": []}))
         return 0
 
-    _model_output, _midi, note_events = predict(wav_path)
+    try:
+        sink = io.StringIO()
+        with redirect_stdout(sink), redirect_stderr(sink):
+            _model_output, _midi, note_events = predict(wav_path)
+    except Exception as exc:  # noqa: BLE001 — return JSON so the worker can keep compare
+        print(json.dumps({"error": str(exc), "notes": []}))
+        return 0
+
     notes = []
     for event in note_events or []:
+        amplitude = 1.0
         if isinstance(event, dict):
             start = float(event.get("start_time_s") or event.get("start") or 0)
             end = float(event.get("end_time_s") or event.get("end") or start)
             pitch = float(event.get("pitch_midi") or event.get("pitch") or 0)
+            amplitude = float(event.get("amplitude") or event.get("velocity") or 1)
         else:
             start = float(event[0])
             end = float(event[1]) if len(event) > 1 else start
             pitch = float(event[2]) if len(event) > 2 else 0.0
+            if len(event) > 3:
+                try:
+                    amplitude = float(event[3])
+                except (TypeError, ValueError):
+                    amplitude = 1.0
+        if end - start < 0.08:
+            continue
+        if amplitude < 0.25:
+            continue
         notes.append(
             {
                 "tStart": round(start, 3),
@@ -44,7 +65,7 @@ def main() -> int:
             }
         )
     notes.sort(key=lambda row: row["tStart"])
-    print(json.dumps({"notes": notes[:64]}, ensure_ascii=True))
+    print(json.dumps({"notes": notes[:96], "backend": "basic-pitch"}, ensure_ascii=True))
     return 0
 
 

@@ -1,22 +1,35 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { revalidateTeacherHotPath } from "@/lib/teacher-cache";
+import { revalidateStudentHotPath } from "@/lib/student-cache";
 import { redirect } from "next/navigation";
+import type { Prisma } from "@prisma/client";
 import { newPieceCode, requireTeacher, signOutTeacher } from "@/lib/auth";
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
 import { maybeUnlockAiDirect } from "@/lib/growth";
-import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
+import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
-import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult } from "@/lib/forms";
+import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
+import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
 import { teacherSubmission } from "@/lib/scope";
+import { deleteTeacherTake as removeTeacherTake } from "@/lib/deletion";
+import { applyIssueVerdict, latestFactVerdictAt, observationMarkers, parseCompareObservations } from "@/lib/score-model";
 
 async function teacherOrThrow() {
   const teacher = await requireTeacher();
   if (!teacher) throw new Error("unauthorized");
   return teacher;
+}
+
+function revalidateTeacherQueue(teacherId: string, studentId?: string) {
+  revalidateTeacherHotPath(teacherId);
+  if (studentId) revalidateStudentHotPath(studentId);
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/submissions");
 }
 
 export async function createPiece(formData: FormData) {
@@ -185,8 +198,7 @@ export async function approveStudent(studentId: string) {
     teacherId: teacher.id,
     props: { studentId },
   });
-  revalidatePath("/teacher");
-  revalidatePath("/teacher/submissions");
+  revalidateTeacherQueue(teacher.id);
 }
 
 export async function markOpened(submissionId: string) {
@@ -205,10 +217,13 @@ export async function sendReply(input: {
   submissionId: string;
   text: string;
   pick?: boolean;
+  grade?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const submission = await teacherSubmission(teacher.id, input.submissionId);
   if (!submission) throw new Error("not found");
+  const grade = replyGrade(input.grade);
+  if (grade === undefined) return { error: "bad_grade" as const };
 
   const guarded = guardReply({
     text: input.text,
@@ -240,6 +255,7 @@ export async function sendReply(input: {
           submissionId: submission.id,
           teacherId: teacher.id,
           text,
+          grade,
           source,
           editDistance,
           teacherPick: Boolean(input.pick),
@@ -268,9 +284,130 @@ export async function sendReply(input: {
     },
   });
   await maybeUnlockAiDirect(submission.pieceId);
-  revalidatePath("/teacher");
-  revalidatePath("/teacher/submissions");
+  revalidateTeacherQueue(teacher.id, submission.studentId);
   return { ok: true as const };
+}
+
+export async function revertReply(submissionId: string) {
+  const teacher = await teacherOrThrow();
+  const submission = await teacherSubmission(teacher.id, submissionId);
+  if (!submission) throw new Error("not found");
+  const reply = submission.replies[0];
+  if (submission.status !== "answered" || !reply) return { error: "stale_item" as const };
+
+  const nextStatus = statusAfterRevert(submission.drafts.length > 0);
+  try {
+    await prisma.$transaction(async (tx) => {
+      const removed = await tx.reply.deleteMany({
+        where: { id: reply.id, teacherId: teacher.id, submissionId: submission.id },
+      });
+      if (removed.count !== 1) throw new Error("STALE");
+      const restored = await tx.submission.updateMany({
+        where: { id: submission.id, status: "answered" },
+        data: { status: nextStatus },
+      });
+      if (restored.count !== 1) throw new Error("STALE");
+    });
+  } catch (error) {
+    if (error instanceof Error && error.message === "STALE") {
+      return { error: "stale_item" as const };
+    }
+    throw error;
+  }
+
+  await logEvent({
+    name: "reply.reverted",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: { submissionId: submission.id },
+  });
+  revalidateTeacherQueue(teacher.id, submission.studentId);
+  revalidatePath(`/teacher/submissions/${submission.id}`);
+  revalidatePath("/student/takes");
+  revalidatePath(`/student/takes/${submission.id}`);
+  return { ok: true as const };
+}
+
+export async function setIssueVerdict(input: {
+  submissionId: string;
+  issueIndex: number;
+  verdict: "true" | "false" | null;
+}) {
+  const teacher = await teacherOrThrow();
+  const submission = await teacherSubmission(teacher.id, input.submissionId);
+  if (!submission) throw new Error("not found");
+  const analysis = submission.analyses[0];
+  if (!analysis?.observationsJson) return { error: "no_facts" as const };
+  const next = await prisma.$transaction(async (tx) => {
+    await tx.$queryRaw`SELECT id FROM "Analysis" WHERE id = ${analysis.id} FOR UPDATE`;
+    const locked = await tx.analysis.findUnique({ where: { id: analysis.id } });
+    if (!locked?.observationsJson) return null;
+    const applied = applyIssueVerdict(
+      parseCompareObservations(locked.observationsJson),
+      input.issueIndex,
+      input.verdict,
+    );
+    if (!applied) return null;
+    await tx.analysis.update({
+      where: { id: analysis.id },
+      data: { observationsJson: applied as unknown as Prisma.InputJsonValue },
+    });
+    return applied;
+  });
+  if (!next) return { error: "no_facts" as const };
+  const job = await enqueueDraftWhenReady(submission.id);
+  const issue = next.issues[input.issueIndex];
+  const metrics = analysis.metricsJson;
+  const overlayVersion =
+    metrics && typeof metrics === "object" && !Array.isArray(metrics)
+      ? (metrics as { pitch_overlay_version?: unknown }).pitch_overlay_version
+      : null;
+  await logEvent({
+    name: "fact.verdict",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: {
+      submissionId: submission.id,
+      pieceId: submission.pieceId,
+      issueIndex: input.issueIndex,
+      type: issue?.type ?? "unknown",
+      expected: issue?.expected ?? "",
+      observed: issue?.observed ?? "",
+      verdict: input.verdict ?? "none",
+      pitchOverlayVersion: typeof overlayVersion === "string" ? overlayVersion : null,
+      draftQueued: Boolean(job),
+    },
+  });
+  return {
+    ok: true as const,
+    draftQueued: Boolean(job),
+    latestVerdictAt: latestFactVerdictAt(observationMarkers(next)),
+  };
+}
+
+export async function requestDraft(submissionId: string) {
+  const teacher = await teacherOrThrow();
+  const submission = await teacherSubmission(teacher.id, submissionId);
+  if (!submission) throw new Error("not found");
+  const job = await enqueueDraftWhenReady(submission.id);
+  return { ok: true as const, draftQueued: Boolean(job) };
+}
+
+export async function peekDraft(submissionId: string) {
+  const teacher = await teacherOrThrow();
+  const submission = await teacherSubmission(teacher.id, submissionId);
+  if (!submission) throw new Error("not found");
+  const draft = await prisma.draft.findFirst({
+    where: { submissionId },
+    orderBy: { createdAt: "desc" },
+    select: { text: true, createdAt: true },
+  });
+  return {
+    text: draft?.text ?? null,
+    createdAt: draft?.createdAt.toISOString() ?? null,
+  };
 }
 
 export async function skipSubmission(submissionId: string, reason: string) {
@@ -288,8 +425,16 @@ export async function skipSubmission(submissionId: string, reason: string) {
     teacherId: teacher.id,
     props: { submissionId, reason },
   });
-  revalidatePath("/teacher");
-  revalidatePath("/teacher/submissions");
+  revalidateTeacherQueue(teacher.id, submission.studentId);
+}
+
+export async function deleteTeacherTake(submissionId: string) {
+  const teacher = await teacherOrThrow();
+  const submission = await teacherSubmission(teacher.id, submissionId);
+  if (!submission) throw new Error("not found");
+  await removeTeacherTake({ teacherId: teacher.id, submissionId });
+  revalidateTeacherQueue(teacher.id, submission.studentId);
+  revalidatePath(`/teacher/submissions/${submissionId}`);
 }
 
 export async function togglePick(submissionId: string) {
@@ -322,6 +467,57 @@ export async function updateDelivery(formData: FormData) {
       deliveryType: deliveryType === "zalo" || deliveryType === "messenger" ? deliveryType : null,
       deliveryHandle: deliveryHandle || null,
     },
+  });
+  revalidatePath("/teacher/settings");
+}
+
+export async function addVoiceSamples(formData: FormData) {
+  const teacher = await teacherOrThrow();
+  const lines = String(formData.get("samples") ?? "")
+    .split(/\n+/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return;
+
+  await prisma.voiceSample.createMany({
+    data: lines.map((text) => ({
+      teacherId: teacher.id,
+      text,
+      source: "pasted" as const,
+      active: true,
+    })),
+  });
+
+  const active = await prisma.voiceSample.findMany({
+    where: { teacherId: teacher.id, active: true },
+    orderBy: { createdAt: "desc" },
+    select: { id: true },
+  });
+  if (active.length > MAX_ACTIVE_VOICE_SAMPLES) {
+    const extra = active.slice(MAX_ACTIVE_VOICE_SAMPLES);
+    await prisma.voiceSample.updateMany({
+      where: { id: { in: extra.map((row) => row.id) } },
+      data: { active: false },
+    });
+  }
+
+  await logEvent({
+    name: "voice.pasted",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: { count: lines.length },
+  });
+  revalidatePath("/teacher/settings");
+}
+
+export async function retireVoice(formData: FormData) {
+  const teacher = await teacherOrThrow();
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+  await prisma.voiceSample.updateMany({
+    where: { id, teacherId: teacher.id, active: true },
+    data: { active: false },
   });
   revalidatePath("/teacher/settings");
 }

@@ -7,15 +7,24 @@ import { LocaleToggle } from "@/components/locale-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getTheme } from "@/lib/theme";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
+import { studioReturn } from "@/lib/return-path";
 
 export const dynamic = "force-dynamic";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next: nextParam } = await searchParams;
   const teacher = await requireTeacher();
   const student = teacher ? null : await requireStudentAccount();
-  if (!teacher && !student) redirect("/auth");
-  if (teacher?.onboardedAt) redirect("/teacher");
-  if (student?.onboardedAt) redirect("/student");
+  if (!teacher && !student) redirect("/login");
+  const back = teacher
+    ? studioReturn("tutor", nextParam)
+    : studioReturn("student", nextParam);
+  if (teacher?.onboardedAt) redirect(back ?? "/teacher");
+  if (student?.onboardedAt) redirect(back ?? "/student");
 
   const locale = await getLocale();
   const theme = await getTheme();
@@ -59,6 +68,7 @@ export default async function OnboardingPage() {
           {teacher ? (
             <TutorOnboardingForm
               defaultName={teacher.name}
+              returnTo={back ?? undefined}
               labels={{
                 name: o.name,
                 q1: o.tutorQ1,
@@ -80,6 +90,7 @@ export default async function OnboardingPage() {
           ) : student ? (
             <StudentOnboardingForm
               defaultName={student.name}
+              returnTo={back ?? undefined}
               labels={{
                 name: o.name,
                 age: t.student.age,

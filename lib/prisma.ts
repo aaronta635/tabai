@@ -1,18 +1,40 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { loadLocalEnv } from "./load-env";
+import { runtimeDatasourceUrl } from "./prisma-pool";
 
 loadLocalEnv();
 
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
+function retryConnection(error: unknown) {
+  if (error instanceof Prisma.PrismaClientInitializationError) return true;
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    return error.code === "P1001" || error.code === "P1002" || error.code === "P1017";
+  }
+  return false;
+}
 
-const datasourceUrl = process.env.DIRECT_URL || process.env.DATABASE_URL;
+const globalForPrisma = globalThis as unknown as { prisma?: ReturnType<typeof createPrisma> };
 
-export const prisma =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrisma() {
+  const datasourceUrl = runtimeDatasourceUrl();
+  const base = new PrismaClient({
     log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"],
     ...(datasourceUrl ? { datasources: { db: { url: datasourceUrl } } } : {}),
   });
+  return base.$extends({
+    query: {
+      async $allOperations({ args, query }) {
+        try {
+          return await query(args);
+        } catch (error) {
+          if (!retryConnection(error)) throw error;
+          return query(args);
+        }
+      },
+    },
+  });
+}
+
+export const prisma = globalForPrisma.prisma ?? createPrisma();
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;

@@ -6,12 +6,17 @@ export type TutorAnswers = {
   videos: "zalo" | "in_person" | "none";
   size: "few" | "class" | "many";
   focus: "beat" | "notes" | "both";
+  teaching?: "new" | "some" | "long";
+  skills?: string[];
+  weaknesses?: string[];
 };
 
 export type StudentAnswers = {
   playing: "weeks" | "months" | "years";
   work: "chords" | "song" | "exam";
   code?: string;
+  skills?: string[];
+  weaknesses?: string[];
 };
 
 export function parseRole(value: string | null | undefined): AccountRole | null {

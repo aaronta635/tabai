@@ -1,26 +1,40 @@
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { requireTeacher } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { updateDelivery } from "@/app/teacher/actions";
+import { addVoiceSamples, retireVoice, updateDelivery } from "@/app/teacher/actions";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { getTheme } from "@/lib/theme";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { SectionPanel } from "@/components/disclosure";
+import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function SettingsPage() {
   const teacher = await requireTeacher();
-  if (!teacher) redirect("/");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const locale = await getLocale();
+  const theme = await getTheme();
   const t = await getMessages(locale);
   const samples = await prisma.voiceSample.findMany({
     where: { teacherId: teacher.id, active: true },
     orderBy: { createdAt: "desc" },
-    take: MAX_ACTIVE_VOICE_SAMPLES,
   });
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display text-3xl">{t.teacher.settings}</h1>
-      <form action={updateDelivery} className="tile space-y-3">
+      <h1 className="font-display">{t.teacher.settings}</h1>
+      <section className="studio-panel space-y-4 pb-4">
+        <h2>{t.theme.appearance}</h2>
+        <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <div>
+          <p className="field-label">{t.theme.language}</p>
+          <div className="mt-1.5">
+            <LocaleToggle locale={locale} />
+          </div>
+        </div>
+      </section>
+      <form action={updateDelivery} className="studio-panel space-y-3 pb-4">
         <label className="block">
           <span className="field-label">{t.teacher.delivery}</span>
           <select name="deliveryType" defaultValue={teacher.deliveryType ?? ""} className="field mt-1.5">
@@ -37,12 +51,26 @@ export default async function SettingsPage() {
           OK
         </button>
       </form>
-      <SectionPanel title={t.teacher.voices} count={samples.length}>
-        <p className="text-sm text-ink-soft">{t.teacher.voicesReadOnly}</p>
-        <ul className="mt-3 space-y-2">
+      <SectionPanel title={t.teacher.voices} count={samples.length} open>
+        <form action={addVoiceSamples} className="space-y-2">
+          <p className="text-sm text-ink-soft">
+            {t.teacher.voicesHint.replace("{n}", String(MAX_ACTIVE_VOICE_SAMPLES))}
+          </p>
+          <textarea name="samples" rows={4} className="field" placeholder={t.teacher.voicesAdd} />
+          <button type="submit" className="btn">
+            {t.teacher.voicesAdd}
+          </button>
+        </form>
+        <ul className="mt-4 space-y-2">
           {samples.map((sample) => (
-            <li key={sample.id} className="piece-row text-sm leading-relaxed">
-              {sample.text}
+            <li key={sample.id} className="piece-row flex items-start justify-between gap-3 text-sm leading-relaxed">
+              <span>{sample.text}</span>
+              <form action={retireVoice}>
+                <input type="hidden" name="id" value={sample.id} />
+                <button type="submit" className="btn-quiet shrink-0">
+                  {t.teacher.voicesRetire}
+                </button>
+              </form>
             </li>
           ))}
         </ul>

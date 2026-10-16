@@ -1,0 +1,1 @@
+ALTER TABLE "Reply" ADD COLUMN "grade" TEXT;

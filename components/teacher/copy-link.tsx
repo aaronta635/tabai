@@ -1,22 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 
-export function CopyLink({ url }: { url: string }) {
-  const t = useTranslations("teacher");
-  const [copied, setCopied] = useState(false);
+export function CopyLink({ url, copy, copied }: { url: string; copy: string; copied: string }) {
+  const [done, setDone] = useState(false);
   return (
     <button
       type="button"
       className="btn btn-quiet px-3 py-1.5 text-xs"
       onClick={async () => {
         await navigator.clipboard.writeText(url);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
+        setDone(true);
+        setTimeout(() => setDone(false), 1500);
       }}
     >
-      {copied ? t("linkCopied") : t("copyLink")}
+      {done ? copied : copy}
     </button>
   );
 }

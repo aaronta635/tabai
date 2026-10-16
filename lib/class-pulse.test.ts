@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classPulseHeadline, topIssueBars } from "@/lib/class-pulse";
+import { classPulseHeadline, PULSE_TAKE_CAP, topIssueBars } from "@/lib/class-pulse";
 
 describe("topIssueBars", () => {
   it("counts unique students per bar and ignores weak issues", () => {
@@ -29,5 +29,17 @@ describe("classPulseHeadline", () => {
     expect(classPulseHeadline({ locale: "en", takes: 4, students: 3, topBar: null })).toBe(
       "4 takes from 3 students this week. No shared bar yet.",
     );
+  });
+
+  it("still writes a headline from the newest capped slice", () => {
+    expect(PULSE_TAKE_CAP).toBe(40);
+    expect(
+      classPulseHeadline({
+        locale: "en",
+        takes: PULSE_TAKE_CAP,
+        students: 8,
+        topBar: { bar: 2, count: 3 },
+      }),
+    ).toBe("3/8 students late at bar 2 this week.");
   });
 });

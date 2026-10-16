@@ -65,7 +65,15 @@ export function observationOutline(observations: CompareObservations | null) {
       "Không viết thư dài. Không khen 'có hồn' / 'tròn trịa'.",
     ].join(" ");
   }
-  if (observations.confidence < 0.45) {
+  const teacherKept = observations.issues.some((issue) => issue.verdict === "true" || issue.verdict === "false");
+  if (observations.pitchJudge === "weak" && !teacherKept) {
+    return [
+      "Không phân tích được nốt trên take này.",
+      "Đừng khen là khớp bài. Đừng bịa nốt sai hoặc hợp âm sai.",
+      "Có thể khen một điểm về nhịp hoặc tiếng nếu facts khác đã ghi, không thì chỉ nói chưa nghe rõ.",
+    ].join(" ");
+  }
+  if (observations.confidence < 0.45 && !teacherKept) {
     return [
       `Độ tin đối chiếu thấp (${observations.confidence}).`,
       "Không nêu nốt sai. Khen một điểm cụ thể về nhịp hoặc tiếng, rồi nhắc note của bài.",
@@ -73,26 +81,34 @@ export function observationOutline(observations: CompareObservations | null) {
     ].join(" ");
   }
   const issues = observations.issues
-    .filter((issue) => issue.confidence >= 0.75)
-    .slice(0, 4)
+    .filter((issue) => (teacherKept ? issue.verdict === "true" : issue.confidence >= 0.75))
+    .slice(0, teacherKept ? 8 : 4)
     .map((issue) => {
       const where = formatIssueWhere(issue) ?? "một đoạn";
       return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
     });
+  const unjudged =
+    observations.pitchJudge === "weak" ? "Nốt và hợp âm không phân tích được. Đừng khen là khớp nốt." : "";
   if (closeMatch(observations) || issues.length === 0) {
     return [
       `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
       `Khen: ${observations.positives.slice(0, 3).join("; ") || "(khen một điểm cụ thể về nhịp hoặc tiếng sạch)"}`,
       `Sửa: không có lỗi tin cậy — không bịa điểm sửa.`,
+      unjudged,
       `Lần sau: giữ đúng cảm giác take này. Chỉ nhắc note của bài nếu có, không bịa lỗi mới.`,
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
   return [
     `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
+    unjudged,
     `Khen: ${observations.positives.slice(0, 2).join("; ") || "(không có khen cụ thể — khen nhịp hoặc tiếng sạch nếu số đo ổn)"}`,
     `Sửa: ${issues.join(" | ")}`,
     `Lần sau: ${observations.nextPractice || "chơi chậm, đúng nhịp"}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export async function retrieveDraftContext(input: {

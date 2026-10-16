@@ -1,7 +1,8 @@
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
+import { cachedById, teacherCountsTag } from "@/lib/teacher-cache";
 
-export const teacherNavCounts = cache(async function teacherNavCounts(teacherId: string) {
+export async function loadTeacherNavCounts(teacherId: string) {
   const rows = await prisma.$queryRaw<
     [{ unanswered: number | bigint; pending: number | bigint; answered: number | bigint; practice: number | bigint }]
   >`
@@ -47,4 +48,10 @@ export const teacherNavCounts = cache(async function teacherNavCounts(teacherId:
     answered: Number(row.answered),
     practice: Number(row.practice),
   };
+}
+
+export const teacherNavCounts = cache(async function teacherNavCounts(teacherId: string) {
+  return cachedById("teacher-nav-counts", teacherId, [], [teacherCountsTag(teacherId)], 30, () =>
+    loadTeacherNavCounts(teacherId),
+  );
 });

@@ -15,3 +15,17 @@ export function formatTime(value: Date, locale: string) {
 export function formatWhen(value: Date, locale: string) {
   return `${formatDay(value, locale)} · ${formatTime(value, locale)}`;
 }
+
+export function formatDuration(seconds: number | null | undefined) {
+  if (seconds == null || !Number.isFinite(seconds) || seconds <= 0) return null;
+  const total = Math.round(seconds);
+  const minutes = Math.floor(total / 60);
+  const rest = total % 60;
+  return `${minutes}:${String(rest).padStart(2, "0")}`;
+}
+
+export function formatWait(from: Date, now = new Date()) {
+  const hours = Math.max(1, Math.round((now.getTime() - from.getTime()) / 36e5));
+  if (hours < 48) return { unit: "hours" as const, n: hours };
+  return { unit: "days" as const, n: Math.round(hours / 24) };
+}

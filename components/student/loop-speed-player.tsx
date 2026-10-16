@@ -9,9 +9,10 @@ type Props = {
   src: string;
   label?: string;
   videoRef?: RefObject<HTMLVideoElement | null>;
+  compact?: boolean;
 };
 
-export function LoopSpeedPlayer({ src, label, videoRef }: Props) {
+export function LoopSpeedPlayer({ src, label, videoRef, compact = false }: Props) {
   const t = useTranslations("student");
   const innerRef = useRef<HTMLVideoElement>(null);
   const nodeRef = videoRef ?? innerRef;
@@ -46,7 +47,7 @@ export function LoopSpeedPlayer({ src, label, videoRef }: Props) {
         src={src}
         controls
         playsInline
-        className="w-full rounded-2xl bg-black"
+        className={compact ? "piece-video-sm" : "w-full rounded-2xl bg-black"}
         onLoadedMetadata={(event) => {
           const next = event.currentTarget.duration || 0;
           setDuration(next);
@@ -54,6 +55,7 @@ export function LoopSpeedPlayer({ src, label, videoRef }: Props) {
           event.currentTarget.playbackRate = speed;
         }}
       />
+      {compact ? null : (
       <div className="mt-3 space-y-2 text-sm">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-ink-soft">{t("playbackSpeed")}</span>
@@ -116,6 +118,7 @@ export function LoopSpeedPlayer({ src, label, videoRef }: Props) {
           </div>
         ) : null}
       </div>
+      )}
     </div>
   );
 }

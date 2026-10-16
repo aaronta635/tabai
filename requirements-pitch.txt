@@ -1,3 +1,4 @@
-# Optional. Worker image: docker build --build-arg INSTALL_BASIC_PITCH=true
-# Enable at runtime with BASIC_PITCH=1 only after a teacher confirms chips.
+# Worker: python3.11 -m pip install -r requirements-pitch.txt
+# Runtime: BASIC_PITCH=1  Image: docker build --build-arg INSTALL_BASIC_PITCH=true
+# TensorFlow / basic-pitch do not support Homebrew Python 3.14.
 basic-pitch==0.4.0

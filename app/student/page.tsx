@@ -1,53 +1,107 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsForStudent } from "@/lib/lms";
-import { activityStreak, formatDueLabel, pickAssignedPiece } from "@/lib/practice";
+import { formatDueLabel } from "@/lib/practice";
 import { studentClasses } from "@/lib/student-view";
+import { classColor } from "@/lib/class-color";
+import { weekParam, weekRangeUtc } from "@/lib/schedule";
+import { weekPractice } from "@/lib/practice-week";
+import { formatTime, formatWhen } from "@/lib/when";
+import { prisma } from "@/lib/prisma";
 import { JoinClassForm } from "@/components/student/join-class-form";
-import { AssignmentMeta } from "@/components/student/assignment-meta";
-import { AddPanel, SectionPanel } from "@/components/disclosure";
+import { AddPanel } from "@/components/disclosure";
+import {
+  AssignmentList,
+  ClassChips,
+  LessonCard,
+  PracticeLog,
+  ReviewTable,
+  SideNote,
+  StudioTitle,
+  weekDayLabels,
+} from "@/components/home/feed";
 
 export default async function StudentHomePage() {
   const student = await readStudentSession();
-  if (!student) redirect("/auth?role=student");
+  if (!student) redirect(signInPath("student", "/student"));
 
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const [classes, assigned, takes, practices, replies] = await Promise.all([
+  const now = new Date();
+  const { start, end } = weekRangeUtc(now);
+  const [classes, assigned, replies, nextLesson, takes, sentPieces, practiceRows] = await Promise.all([
     studentClasses(student.id),
     assignmentsForStudent(student.id),
-    prisma.submission.findMany({
-      where: { studentId: student.id },
-      select: { submittedAt: true, status: true, kind: true },
-    }),
-    prisma.practiceSession.findMany({
-      where: { studentId: student.id },
-      select: { startedAt: true },
-    }),
     prisma.reply.findMany({
       where: { submission: { studentId: student.id } },
       orderBy: { sentAt: "desc" },
       take: 3,
-      select: { id: true, text: true, submission: { select: { piece: { select: { title: true } } } } },
+      select: {
+        id: true,
+        text: true,
+        submission: { select: { id: true, piece: { select: { title: true, code: true } } } },
+      },
+    }),
+    prisma.classSession.findFirst({
+      where: {
+        startsAt: { gte: now },
+        class: { archived: false, memberships: { some: { studentId: student.id } } },
+      },
+      orderBy: { startsAt: "asc" },
+      select: {
+        id: true,
+        title: true,
+        startsAt: true,
+        class: { select: { id: true, name: true, teacher: { select: { name: true } } } },
+      },
+    }),
+    prisma.submission.findMany({
+      where: { studentId: student.id },
+      orderBy: { submittedAt: "desc" },
+      take: 4,
+      select: {
+        id: true,
+        kind: true,
+        submittedAt: true,
+        piece: { select: { title: true, code: true } },
+        replies: { take: 1, select: { id: true } },
+      },
+    }),
+    prisma.submission.findMany({
+      where: { studentId: student.id, kind: { in: ["take", "overdub"] } },
+      select: { pieceId: true },
+      distinct: ["pieceId"],
+    }),
+    prisma.practiceSession.findMany({
+      where: { studentId: student.id, startedAt: { gte: start, lt: end } },
+      select: { seconds: true, startedAt: true },
     }),
   ]);
 
   const pieces = assigned.filter((row) => row.piece);
-  const featured = pickAssignedPiece(pieces);
-  const waiting = takes.filter(
-    (row) => row.kind !== "practice" && (row.status === "new" || row.status === "drafted"),
-  ).length;
-  const streak = activityStreak([
-    ...takes.map((row) => row.submittedAt),
-    ...practices.map((row) => row.startedAt),
-  ]);
+  const sentPieceIds = new Set(sentPieces.map((row) => row.pieceId));
+  const nextPiece =
+    pieces.find((row) => row.piece && !sentPieceIds.has(row.piece.id))?.piece ?? pieces.find((row) => row.piece)?.piece;
+  const submitHref = nextPiece ? `/student/work/${nextPiece.code}` : "/student/work";
+  const practice = weekPractice(practiceRows, now);
+  const latestReply = replies[0];
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl">{t.student.homeHello.replace("{name}", student.name)}</h1>
+      <StudioTitle
+        title={t.student.homeHello.replace("{name}", student.name)}
+        meta={nextLesson ? `${nextLesson.class.name} · ${formatWhen(nextLesson.startsAt, locale)}` : undefined}
+        action={
+          classes.length > 0 ? (
+            <Link href={submitHref} className="btn submit-jump">
+              {t.student.submitVideo}
+            </Link>
+          ) : undefined
+        }
+      />
 
       {classes.length === 0 ? (
         <section className="tile">
@@ -63,99 +117,108 @@ export default async function StudentHomePage() {
           </div>
         </section>
       ) : (
-        <>
-          {featured?.piece ? (
-            <section className="tile">
-              <p className="eyebrow text-beat">{t.student.thisWeek}</p>
-              <h2 className="font-display mt-2 text-2xl">{featured.piece.title}</h2>
-              <p className="tile-meta">
-                {[featured.piece.teacher?.name, featured.class?.name].filter(Boolean).join(" · ")}
-              </p>
-              {featured.piece.description || featured.piece.note ? (
-                <p className="mt-3 leading-relaxed text-ink-soft">
-                  {featured.piece.description || featured.piece.note}
-                </p>
-              ) : null}
-              <div className="mt-3">
-                <AssignmentMeta
-                  goal={featured.goal}
-                  dueLabel={featured.dueAt ? formatDueLabel(featured.dueAt, locale) : null}
-                  goalLabel={t.student.goal}
-                  duePrefix={t.student.due}
-                />
-              </div>
-              <Link href={`/student/work/${featured.piece.code}`} className="btn mt-4">
-                {t.student.openPiece}
-              </Link>
-            </section>
-          ) : (
-            <section className="tile">
-              <p className="tile-title">{t.student.noWork}</p>
-              <p className="mt-2 text-ink-soft">{t.student.stageInClassHelp}</p>
-            </section>
-          )}
-
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Link href="/student/work" className="tile">
-              <p className="eyebrow">{t.student.piecesAssigned}</p>
-              <p className="font-display tabular mt-2 text-3xl">{pieces.length}</p>
-            </Link>
-            <Link href="/student/takes" className="tile">
-              <p className="eyebrow">{t.student.waitingReply}</p>
-              <p className="font-display tabular mt-2 text-3xl">{waiting}</p>
-            </Link>
-            <Link href="/student/progress" className="tile">
-              <p className="eyebrow">{t.student.streak.replace("{n}", String(streak))}</p>
-              <p className="font-display tabular mt-2 text-3xl">{streak}</p>
-            </Link>
-          </div>
-
-          <div className="tile-grid">
-            {classes.map((row) => (
-              <Link key={row.id} href={`/student/classes/${row.class.id}`} className="tile">
-                <span className="seat-row" aria-hidden>
-                  {Array.from({ length: Math.min(row.class._count.memberships, 8) }).map((_, seat) => (
-                    <i key={seat} className="seat-taken" />
-                  ))}
-                </span>
-                <p className="tile-title">{row.class.name}</p>
-                <p className="tile-meta">
-                  {t.student.teacherLabel}: {row.class.teacher.name}
-                </p>
-                <p className="tile-meta">
-                  <span className="tabular">
-                    {t.student.countClassmates.replace("{n}", String(row.class._count.memberships))}
-                  </span>
-                  <span className="tabular">
-                    {t.student.countAssigned.replace("{n}", String(row.class._count.assignments))}
-                  </span>
-                </p>
-              </Link>
-            ))}
-          </div>
-
-          <AddPanel label={t.student.joinAnother}>
-            <JoinClassForm
-              placeholder={t.home.codePlaceholder}
-              submit={t.student.joinClass}
-              badCode={t.onboarding.badCode}
-              otherClass={t.student.otherClass}
+        <div className="dash">
+          <div className="space-y-6">
+            <ClassChips
+              label={t.student.navClasses}
+              chips={classes.map((row) => ({
+                id: row.class.id,
+                name: row.class.name,
+                href: `/student/classes/${row.class.id}`,
+                color: classColor(row.class.id),
+              }))}
             />
-          </AddPanel>
 
-          {replies.length > 0 ? (
-            <SectionPanel title={t.student.lastReplies} count={replies.length}>
-              <ul className="space-y-3">
-                {replies.map((reply) => (
-                  <li key={reply.id}>
-                    <p className="eyebrow">{reply.submission.piece.title}</p>
-                    <p className="mt-1 leading-relaxed">{reply.text}</p>
-                  </li>
-                ))}
-              </ul>
-            </SectionPanel>
-          ) : null}
-        </>
+            <section className="space-y-3">
+              <h2 className="font-display text-base">{t.student.nextLesson}</h2>
+              {nextLesson ? (
+                <div className="lesson-card-row">
+                  <LessonCard
+                    href={`/student/schedule?w=${weekParam(nextLesson.startsAt)}`}
+                    time={formatTime(nextLesson.startsAt, locale)}
+                    title={nextLesson.title || nextLesson.class.name}
+                    meta={`${nextLesson.class.name} · ${nextLesson.class.teacher.name}`}
+                    status={t.student.upcoming}
+                    next
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-ink-soft">{t.student.noLessonYet}</p>
+              )}
+            </section>
+
+            <AssignmentList
+              title={t.student.assignedPieces}
+              empty={t.student.noWork}
+              track
+              rows={pieces.slice(0, 5).flatMap((row) =>
+                row.piece
+                  ? [
+                      {
+                        href: `/student/work/${row.piece.code}`,
+                        title: row.piece.title,
+                        meta: [row.class?.name, row.goal].filter(Boolean).join(" · "),
+                        status: row.dueAt ? formatDueLabel(row.dueAt, locale) : t.student.due,
+                        progress: sentPieceIds.has(row.piece.id) ? 1 : 0,
+                        fraction: sentPieceIds.has(row.piece.id) ? "1/1" : "0/1",
+                      },
+                    ]
+                  : [],
+              )}
+            />
+
+            <ReviewTable
+              title={t.student.practiceVideos}
+              empty={t.student.noTakes}
+              columns={[t.student.thisPiece, t.student.colWhen, t.student.colStatus]}
+              rows={takes.map((row) => ({
+                href: `/student/takes/${row.id}`,
+                title: row.piece.title,
+                meta: row.kind === "practice" ? t.student.kindPractice : t.student.kindTake,
+                when: formatWhen(row.submittedAt, locale),
+                status: row.replies[0] ? t.student.replied : t.student.waitingReply,
+              }))}
+            />
+
+            <AddPanel label={t.student.joinAnother}>
+              <JoinClassForm
+                placeholder={t.home.codePlaceholder}
+                submit={t.student.joinClass}
+                badCode={t.onboarding.badCode}
+                otherClass={t.student.otherClass}
+              />
+            </AddPanel>
+          </div>
+          <aside className="space-y-3">
+            <SideNote
+              kicker={t.student.nextLesson}
+              title={nextLesson ? nextLesson.title || nextLesson.class.name : t.student.noLessonYet}
+              meta={
+                nextLesson
+                  ? `${nextLesson.class.teacher.name} · ${formatTime(nextLesson.startsAt, locale)}`
+                  : undefined
+              }
+              href={nextLesson ? `/student/schedule?w=${weekParam(nextLesson.startsAt)}` : "/student/schedule"}
+            />
+            <SideNote
+              kicker={t.student.recentFeedback}
+              title={latestReply ? latestReply.submission.piece.title : t.student.noFeedback}
+              href={latestReply ? `/student/takes/${latestReply.submission.id}` : undefined}
+            >
+              {latestReply ? <p className="line-clamp line-clamp-3">{latestReply.text}</p> : null}
+            </SideNote>
+            <PracticeLog
+              title={t.studio.practiceLog}
+              caption={
+                practice.totalMinutes > 0
+                  ? t.studio.practiceMinutes.replace("{n}", String(practice.totalMinutes))
+                  : t.studio.practiceLogEmpty
+              }
+              days={weekDayLabels(locale)}
+              heights={practice.heights}
+            />
+          </aside>
+        </div>
       )}
     </div>
   );

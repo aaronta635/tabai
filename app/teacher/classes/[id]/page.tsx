@@ -1,28 +1,35 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { mailtoInvite } from "@/lib/lms";
+import { classJoinPath, mailtoInvite } from "@/lib/lms";
 import { formatWhen } from "@/lib/when";
 import { CopyLink } from "@/components/teacher/copy-link";
 import { AddPanel, SectionPanel } from "@/components/disclosure";
 import { approveMembershipForm, inviteByEmail, renameClass } from "@/app/teacher/lms-actions";
 
+const CLASS_ASSIGNMENT_CAP = 40;
+
 export default async function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const teacher = await readTeacherSession();
-  if (!teacher) redirect("/auth?next=/teacher/classes");
+  if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const { id } = await params;
   const studioClass = await prisma.class.findFirst({
     where: { id, teacherId: teacher.id, archived: false },
     // One SQL join beats four round trips to Tokyo.
     relationLoadStrategy: "join",
     include: {
-      memberships: { include: { student: true }, orderBy: { createdAt: "asc" } },
+      memberships: {
+        include: { student: { select: { id: true, name: true, email: true } } },
+        orderBy: { createdAt: "asc" },
+      },
       assignments: {
-        include: { piece: true, part: true },
+        include: { piece: { select: { id: true, title: true } }, part: { select: { id: true, name: true } } },
         orderBy: { createdAt: "desc" },
+        take: CLASS_ASSIGNMENT_CAP,
       },
       sessions: { orderBy: { startsAt: "asc" }, take: 5 },
     },
@@ -31,7 +38,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
   const locale = await getLocale();
   const t = await getMessages(locale);
   const origin = await appOrigin();
-  const joinUrl = `${origin}/c/${studioClass.code}`;
+  const joinUrl = `${origin}${classJoinPath(studioClass.code)}`;
   const roster = studioClass.memberships.filter((row) => row.student);
   const pendingInvites = studioClass.memberships.filter((row) => row.invitedEmail && !row.studentId);
 
@@ -41,10 +48,15 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
         <Link href="/teacher/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.teacher.navClasses}
         </Link>
-        <h1 className="font-display mt-3 text-3xl">{studioClass.name}</h1>
+        <h1 className="font-display mt-3">{studioClass.name}</h1>
+        <p className="page-meta">
+          {t.teacher.countStudents.replace("{n}", String(roster.length))}
+          {" · "}
+          {t.teacher.countAssigned.replace("{n}", String(studioClass.assignments.length))}
+        </p>
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="code-chip">/c/{studioClass.code}</span>
-          <CopyLink url={joinUrl} />
+          <p className="break-all text-sm">{joinUrl}</p>
+          <CopyLink url={joinUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
         </div>
       </header>
 
@@ -116,21 +128,29 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
         {studioClass.assignments.length === 0 ? (
           <p className="text-sm text-ink-soft">{t.teacher.assignedEmpty}</p>
         ) : (
-          <ul className="flex flex-wrap gap-2">
-            {studioClass.assignments.map((row) => (
-              <li key={row.id}>
-                <Link
-                  href={row.pieceId ? `/teacher/curriculum/${row.pieceId}` : "/teacher/curriculum"}
-                  className="chip chip-link"
-                >
-                  <span>{row.piece?.title ?? row.part?.name}</span>
-                  {row.dueAt ? (
-                    <span className="tabular text-ink-soft">{formatWhen(row.dueAt, locale)}</span>
-                  ) : null}
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <table className="studio-table">
+            <thead>
+              <tr>
+                <th>{t.teacher.colPiece}</th>
+                <th>{t.teacher.due}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {studioClass.assignments.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <Link
+                      href={row.pieceId ? `/teacher/curriculum/${row.pieceId}` : "/teacher/curriculum"}
+                      className="font-semibold"
+                    >
+                      {row.piece?.title ?? row.part?.name}
+                    </Link>
+                  </td>
+                  <td className="text-sm text-ink-soft">{row.dueAt ? formatWhen(row.dueAt, locale) : "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </SectionPanel>
 

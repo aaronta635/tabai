@@ -172,6 +172,45 @@ describe("QueueClient", () => {
     expect(screen.queryByDisplayValue(/Old letter/)).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Send" })).not.toBeInTheDocument();
     expect(screen.getByText("Mark every bar true or false, then the letter is written.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Write it yourself" })).toBeInTheDocument();
+  });
+
+  it("opens the letter when the teacher writes it without the fact bars", async () => {
+    const user = userEvent.setup();
+    sendReply.mockResolvedValue({ ok: true });
+    renderWithIntl(
+      <QueueClient
+        tab="unanswered"
+        labels={labels}
+        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        items={[
+          {
+            ...item,
+            markers: [
+              {
+                index: 0,
+                tStart: 5.05,
+                type: "pitch",
+                label: "0:05 · G#4 vs A#4",
+                expected: "G#4",
+                observed: "A#4",
+                verdict: null,
+                verdictAt: null,
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Write it yourself" }));
+    await user.type(screen.getByRole("textbox"), "Keep the chorus quieter.");
+    await user.click(screen.getByRole("button", { name: "Send" }));
+    expect(sendReply).toHaveBeenCalledWith({
+      submissionId: "sub-1",
+      text: "Keep the chorus quieter.",
+      grade: null,
+    });
   });
 
   it("takes back a sent reply after confirm", async () => {

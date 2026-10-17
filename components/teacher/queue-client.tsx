@@ -88,6 +88,7 @@ export function QueueClient({
   const [minDraftAt, setMinDraftAt] = useState<string | null>(null);
   const [waitStarted, setWaitStarted] = useState<number | null>(null);
   const [nowTick, setNowTick] = useState(0);
+  const [ownLetter, setOwnLetter] = useState(false);
 
   const item = items[index] ?? null;
 
@@ -110,6 +111,7 @@ export function QueueClient({
   const letterLocked = Boolean(
     item && item.kind === "unanswered" && item.markers.length > 0 && (!factsReady || (!hasFreshDraft && !timedOut)),
   );
+  const letterOpen = !letterLocked || ownLetter;
   const letterText = polledDraft?.text ?? (hasFreshDraft ? item?.draft ?? "" : "");
 
   const submitReply = useCallback(async (submissionId: string, value: string, mark: string) => {
@@ -142,6 +144,7 @@ export function QueueClient({
     setMinDraftAt(null);
     setWaitStarted(null);
     setEditing(false);
+    setOwnLetter(false);
     setGrade("");
     setActionError(null);
     if (item.submissionId && item.kind === "unanswered") {
@@ -151,13 +154,14 @@ export function QueueClient({
 
   useEffect(() => {
     if (!item) return;
-    if (letterLocked) {
+    if (!letterOpen) {
       setText("");
       return;
     }
+    if (ownLetter && letterLocked) return;
     if (editing) return;
     setText(letterText || item.reply || "");
-  }, [item?.id, letterLocked, letterText, item?.reply, editing]);
+  }, [item?.id, letterOpen, letterLocked, ownLetter, letterText, item?.reply, editing]);
 
   useEffect(() => {
     if (waitingForDraft && waitStarted == null) setWaitStarted(Date.now());
@@ -233,14 +237,14 @@ export function QueueClient({
         if (video.paused) void video.play();
         else video.pause();
       }
-      if (event.key === "e" && !inField && !letterLocked) {
+      if (event.key === "e" && !inField && letterOpen) {
         event.preventDefault();
         setEditing(true);
         queueMicrotask(() => boxRef.current?.focus());
       }
       if (event.key === "Enter" && !event.shiftKey) {
         if (inField && !event.metaKey && !event.ctrlKey) return;
-        if (letterLocked) return;
+        if (!letterOpen) return;
         if (item?.kind === "unanswered" && item.submissionId) {
           event.preventDefault();
           start(async () => {
@@ -251,7 +255,7 @@ export function QueueClient({
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [item, text, grade, submitReply, letterLocked]);
+  }, [item, text, grade, submitReply, letterOpen]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, number>();
@@ -399,7 +403,7 @@ export function QueueClient({
 
           {item.kind === "unanswered" ? (
             <div className="mt-5 space-y-3">
-              {letterLocked ? (
+              {!letterOpen ? (
                 <p className="fact-draft-wait">
                   {factsReady ? t("factDraftWait") : t("factDraftGate")}
                 </p>
@@ -420,7 +424,20 @@ export function QueueClient({
                 </>
               )}
               {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
-              {letterLocked ? null : (
+              {!letterOpen ? (
+                <button
+                  type="button"
+                  className="desk-action"
+                  onClick={() => {
+                    setOwnLetter(true);
+                    setEditing(true);
+                    setText("");
+                    queueMicrotask(() => boxRef.current?.focus());
+                  }}
+                >
+                  {t("writeYourself")}
+                </button>
+              ) : (
               <>
               <label className="block">
                 <span className="field-label">{t("grade")}</span>
@@ -486,7 +503,7 @@ export function QueueClient({
           ) : null}
 
           <div className="desk-actions">
-            {item.kind === "unanswered" && !letterLocked ? (
+            {item.kind === "unanswered" && letterOpen ? (
               <>
                 <button
                   type="button"

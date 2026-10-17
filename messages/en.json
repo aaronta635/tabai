@@ -400,6 +400,7 @@
     "factDraftGate": "Mark every bar true or false, then the letter is written.",
     "factDraftWait": "Writing the letter from the true bars…",
     "factDraftTimeout": "The letter is still coming. You can write it yourself.",
+    "writeYourself": "Write it yourself",
     "nudge": "Message student",
     "skipReason": "Skip reason",
     "delivery": "Where to nudge students",
@@ -518,6 +519,9 @@
     "profileTitle": "Profile",
     "profileEmail": "Email",
     "saveProfile": "Save",
+    "parentReport": "Parent report",
+    "paymentUrl": "Payment link",
+    "paymentHint": "Paste a link and it appears on the parent report. Leave it empty to hide the button.",
     "createClassCta": "Create a class",
     "classCount": "Classes",
     "nextSession": "Next session",
@@ -552,5 +556,19 @@
     "timePerReply": "Time per reply",
     "untouched": "Approve untouched",
     "cost": "Cost / submission"
+  },
+  "report": {
+    "week": "Week",
+    "song": "Song",
+    "takes": "Videos sent",
+    "streak": "Streak",
+    "streakDays": "{n} days",
+    "letter": "From the teacher",
+    "noLetter": "No letter this week.",
+    "noSong": "No song this week.",
+    "pay": "Pay for lessons",
+    "milestoneFirstTake": "First video sent.",
+    "milestoneFirstReply": "First note from the teacher.",
+    "milestoneStreak": "Practised 3 days in a row."
   }
 }

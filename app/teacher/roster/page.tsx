@@ -4,13 +4,16 @@ import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { prisma } from "@/lib/prisma";
+import { appOrigin } from "@/lib/origin";
+import { ensureReportToken } from "@/lib/weekly-report";
+import { CopyLink } from "@/components/teacher/copy-link";
 
 export default async function TeacherRosterPage() {
   const teacher = await readTeacherSession();
   if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const students = await prisma.student.findMany({
+  const rows = await prisma.student.findMany({
     where: { teacherId: teacher.id, approvedAt: { not: null } },
     orderBy: { name: "asc" },
     select: {
@@ -22,6 +25,13 @@ export default async function TeacherRosterPage() {
       },
     },
   });
+  const origin = await appOrigin();
+  const students = await Promise.all(
+    rows.map(async (student) => ({
+      ...student,
+      reportUrl: await ensureReportToken(student.id).then((token) => (token ? `${origin}/r/${token}` : null)),
+    })),
+  );
 
   return (
     <div className="space-y-6">
@@ -38,6 +48,7 @@ export default async function TeacherRosterPage() {
               <tr>
                 <th>{t.teacher.navProfile}</th>
                 <th>{t.teacher.navClasses}</th>
+                <th>{t.teacher.parentReport}</th>
               </tr>
             </thead>
             <tbody>
@@ -52,6 +63,13 @@ export default async function TeacherRosterPage() {
                             {row.class.name}
                           </Link>
                         ))}
+                  </td>
+                  <td>
+                    {student.reportUrl ? (
+                      <CopyLink url={student.reportUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
+                    ) : (
+                      "—"
+                    )}
                   </td>
                 </tr>
               ))}

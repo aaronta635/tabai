@@ -19,7 +19,8 @@ export function TeacherProfileForm({
   skills,
   weaknesses,
   email,
-}: Shared & { teaching: string; email: string | null }) {
+  paymentUrl,
+}: Shared & { teaching: string; email: string | null; paymentUrl: string }) {
   const t = useTranslations("onboarding");
   const teacher = useTranslations("teacher");
   const [saved, setSaved] = useState(false);
@@ -47,6 +48,11 @@ export function TeacherProfileForm({
         ]}
       />
       <SkillPicks skills={skills} weaknesses={weaknesses} />
+      <label className="block">
+        <span className="field-label">{teacher("paymentUrl")}</span>
+        <input name="paymentUrl" defaultValue={paymentUrl} placeholder="https://" className="field mt-1.5" />
+        <p className="mt-1.5 text-sm text-ink-soft">{teacher("paymentHint")}</p>
+      </label>
       <p className="text-sm text-ink-soft">
         {teacher("profileEmail")}: {email || "—"}
       </p>

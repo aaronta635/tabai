@@ -20,6 +20,7 @@ import {
 import { bindStudentToClass } from "@/lib/lms";
 import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
+import { newReportToken } from "@/lib/report";
 import { signInPath, studioReturn } from "@/lib/return-path";
 
 function str(form: FormData, key: string) {
@@ -183,6 +184,7 @@ export async function guestJoinClass(form: FormData) {
       contactType,
       contactHandle,
       token,
+      reportToken: newReportToken(),
       consentAt: new Date(),
       consentVersion: CONSENT_VERSION,
       publicOk: false,

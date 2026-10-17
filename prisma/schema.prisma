@@ -124,6 +124,7 @@ model Teacher {
   stage          TutorStage?
   answersJson    Json?
   onboardedAt    DateTime?
+  paymentUrl     String?
   createdAt      DateTime      @default(now())
 
   voiceSamples     VoiceSample[]
@@ -191,6 +192,7 @@ model Student {
   contactType    ContactType
   contactHandle  String
   token          String        @unique
+  reportToken    String?       @unique
   email          String?
   authUserId     String?       @unique
   stage          StudentStage?

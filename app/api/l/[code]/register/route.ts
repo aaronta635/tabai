@@ -9,6 +9,7 @@ import {
 import { logEvent } from "@/lib/events";
 import { registerFieldErrors } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
+import { newReportToken } from "@/lib/report";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
   const { code } = await context.params;
@@ -94,6 +95,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
       contactType,
       contactHandle: parsed.contactHandle,
       token,
+      reportToken: newReportToken(),
       consentAt: new Date(),
       consentVersion: CONSENT_VERSION,
       publicOk,

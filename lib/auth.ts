@@ -14,6 +14,7 @@ import {
 import { resolveAuthBind } from "@/lib/auth-bind";
 import { homeFor, parseRole, type AccountRole } from "@/lib/onboarding";
 import { prisma } from "@/lib/prisma";
+import { newReportToken } from "@/lib/report";
 import { inviteTokenFromReturn } from "@/lib/return-path";
 import { createServerSupabase } from "@/lib/supabase/server";
 
@@ -222,6 +223,7 @@ async function createStudentFromUser(user: User) {
         contactType: "zalo",
         contactHandle: user.email ?? "",
         token: newStudentToken(),
+        reportToken: newReportToken(),
         consentAt: new Date(),
         consentVersion: CONSENT_VERSION,
         publicOk: false,

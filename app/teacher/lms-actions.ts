@@ -9,6 +9,7 @@ import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { ensureDefaultCurriculum, newClassCode } from "@/lib/lms";
 import { parseDueAt } from "@/lib/practice";
 import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
+import { safePaymentUrl } from "@/lib/report";
 import { meetingLink } from "@/lib/meeting";
 import { parseDatetimeLocal, sessionOccurrences } from "@/lib/schedule";
 import { prisma } from "@/lib/prisma";
@@ -383,10 +384,13 @@ export async function updateTeacherProfile(formData: FormData) {
     current?.answersJson && typeof current.answersJson === "object" && !Array.isArray(current.answersJson)
       ? current.answersJson
       : {};
+  const payRaw = String(formData.get("paymentUrl") ?? "");
+  const pay = payRaw.trim() === "" ? null : safePaymentUrl(payRaw);
   await prisma.teacher.update({
     where: { id: teacher.id },
     data: {
       name,
+      ...(pay !== null || payRaw.trim() === "" ? { paymentUrl: pay } : {}),
       answersJson: {
         ...previous,
         teaching: oneOf(String(formData.get("teaching") ?? ""), TEACHING_SPAN, "some"),

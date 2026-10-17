@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsWhereForStudent } from "@/lib/lms";
 import { activityStreak, heatmapCounts } from "@/lib/practice";
+import { milestoneOf, milestoneText } from "@/lib/report";
 import { practiceMinutes } from "@/lib/student-view";
 import { PracticeHeatmap } from "@/components/student/practice-heatmap";
 
@@ -28,8 +29,10 @@ export default async function StudentProgressPage() {
 
   const activity = [...takes.map((row) => row.submittedAt), ...practices.map((row) => row.startedAt)];
   const streak = activityStreak(activity);
+  const sent = takes.filter((row) => row.kind !== "practice").length;
+  const milestone = milestoneOf({ takes: sent, replies: replyCount, streak });
   const stats = [
-    { label: t.student.takesSent, value: takes.filter((row) => row.kind !== "practice").length },
+    { label: t.student.takesSent, value: sent },
     { label: t.student.repliesGot, value: replyCount },
     { label: t.student.minutesPractised, value: practiceMinutes(practices) },
     { label: t.student.piecesAssigned, value: assignedCount },
@@ -40,6 +43,7 @@ export default async function StudentProgressPage() {
       <header>
         <h1 className="font-display">{t.student.progressTitle}</h1>
         <p className="page-meta">{t.student.streak.replace("{n}", String(streak))}</p>
+        {milestone ? <p className="text-ink-soft">{milestoneText(milestone, t.report)}</p> : null}
       </header>
 
       <section className="studio-panel">

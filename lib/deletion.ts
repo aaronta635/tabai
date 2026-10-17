@@ -52,6 +52,7 @@ export async function deleteStudentData(studentId: string) {
       name: "anonymised",
       contactHandle: "",
       token: `deleted_${studentId}`,
+      reportToken: null,
       publicOk: false,
       approvedAt: null,
     },

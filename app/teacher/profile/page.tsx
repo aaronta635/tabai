@@ -11,7 +11,7 @@ export default async function TeacherProfilePage() {
   if (!session) redirect(signInPath("tutor", "/teacher"));
   const teacher = await prisma.teacher.findUnique({
     where: { id: session.id },
-    select: { name: true, email: true, answersJson: true },
+    select: { name: true, email: true, answersJson: true, paymentUrl: true },
   });
   if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const answers =
@@ -36,6 +36,7 @@ export default async function TeacherProfilePage() {
         teaching={teaching}
         skills={stringList(answers.skills, SKILLS)}
         weaknesses={stringList(answers.weaknesses, WEAKNESSES)}
+        paymentUrl={teacher.paymentUrl ?? ""}
       />
     </div>
   );

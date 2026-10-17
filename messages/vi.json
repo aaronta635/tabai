@@ -400,6 +400,7 @@
     "factDraftGate": "Đánh Đúng hoặc Sai hết các mục rồi thư mới viết.",
     "factDraftWait": "Đang viết thư từ các mục Đúng…",
     "factDraftTimeout": "Chưa viết xong. Thầy có thể viết tay.",
+    "writeYourself": "Viết tay",
     "nudge": "Nhắn học viên",
     "skipReason": "Lý do bỏ qua",
     "delivery": "Nơi nhắn học viên",
@@ -518,6 +519,9 @@
     "profileTitle": "Hồ sơ",
     "profileEmail": "Email",
     "saveProfile": "Lưu",
+    "parentReport": "Báo cáo phụ huynh",
+    "paymentUrl": "Link thanh toán",
+    "paymentHint": "Dán link thì nút hiện trên báo cáo phụ huynh. Để trống thì không có nút.",
     "createClassCta": "Tạo lớp",
     "classCount": "Lớp",
     "nextSession": "Buổi tới",
@@ -552,5 +556,19 @@
     "timePerReply": "Thời gian mỗi câu",
     "untouched": "Duyệt không sửa",
     "cost": "Chi phí / bài"
+  },
+  "report": {
+    "week": "Tuần",
+    "song": "Bài",
+    "takes": "Video đã gửi",
+    "streak": "Chuỗi ngày",
+    "streakDays": "{n} ngày",
+    "letter": "Thư của giáo viên",
+    "noLetter": "Tuần này chưa có thư.",
+    "noSong": "Tuần này chưa có bài.",
+    "pay": "Đóng học phí",
+    "milestoneFirstTake": "Đã gửi video đầu tiên.",
+    "milestoneFirstReply": "Đã có nhận xét đầu tiên.",
+    "milestoneStreak": "Luyện 3 ngày liên tiếp."
   }
 }

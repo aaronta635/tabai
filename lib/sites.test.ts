@@ -18,6 +18,7 @@ describe("sites", () => {
     expect(isProductPath("/c/abc")).toBe(true);
     expect(isProductPath("/login")).toBe(true);
     expect(isProductPath("/signup")).toBe(true);
+    expect(isProductPath("/r/abc")).toBe(true);
     expect(isProductPath("/api/locale")).toBe(false);
     expect(isProductPath("/")).toBe(false);
   });

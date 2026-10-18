@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { bindAuthSession, isRoleMismatch, signOutAccount, type BindAuthResult } from "@/lib/auth";
 import { parseRole, type AccountRole } from "@/lib/onboarding";
+import { originFromRequest } from "@/lib/app-origin";
 import { destinationAfterAuth, safeReturn, signInPath } from "@/lib/return-path";
 
 function safePath(value: string | null) {
@@ -27,7 +28,7 @@ function afterBind(bound: Exclude<BindAuthResult, { error: string }>, requested:
 export async function GET(request: NextRequest) {
   const requested = safePath(request.nextUrl.searchParams.get("next"));
   const role = parseRole(request.nextUrl.searchParams.get("role"));
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+  const origin = originFromRequest(request);
   const bound = await bindForRequest(role, requested);
   if (!bound || isRoleMismatch(bound)) {
     const auth = new URL(role ? signInPath(role, requested) : "/login", origin);

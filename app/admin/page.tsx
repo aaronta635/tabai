@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { teacherMetrics } from "@/lib/metrics-data";
 import { createTeacher, deleteStudent } from "@/app/admin/actions";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { appOrigin } from "@/lib/origin";
 
 export default async function AdminHome() {
   const ok = await requireAdmin();
@@ -27,7 +28,7 @@ export default async function AdminHome() {
   }
 
   const teachers = await prisma.teacher.findMany({ orderBy: { createdAt: "asc" } });
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "";
+  const origin = await appOrigin();
   const rows = await Promise.all(
     teachers.map(async (teacher) => ({
       teacher,

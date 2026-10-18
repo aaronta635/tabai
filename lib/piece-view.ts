@@ -36,10 +36,7 @@ export async function loadPieceClassroom(code: string) {
           pieceId: piece.id,
         })
       : null;
-  const member =
-    student && !bound.otherClass
-      ? Boolean(assigned) || student.teacherId === piece.teacherId
-      : false;
+  const member = student && !bound.otherClass ? Boolean(assigned) : false;
   const needsProfile = !student;
   const canSubmit = !bound.otherClass && (needsProfile || member);
 

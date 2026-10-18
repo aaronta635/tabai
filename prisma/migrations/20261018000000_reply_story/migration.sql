@@ -1,0 +1,4 @@
+ALTER TABLE "Reply" ADD COLUMN "highlightStartS" DOUBLE PRECISION;
+ALTER TABLE "Reply" ADD COLUMN "progressNote" TEXT;
+ALTER TABLE "Reply" ADD COLUMN "keyPoint" TEXT;
+ALTER TABLE "Reply" ADD COLUMN "nextStep" TEXT;

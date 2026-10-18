@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
+import { originFromRequest } from "@/lib/app-origin";
 import { prisma } from "@/lib/prisma";
 import { signInPath } from "@/lib/return-path";
 
 export async function GET(request: NextRequest, context: { params: Promise<{ invite: string }> }) {
   const { invite } = await context.params;
   const teacher = await prisma.teacher.findUnique({ where: { inviteToken: invite } });
-  const origin = process.env.NEXT_PUBLIC_APP_URL ?? request.nextUrl.origin;
+  const origin = originFromRequest(request);
   if (!teacher) {
     return NextResponse.redirect(new URL("/", origin));
   }

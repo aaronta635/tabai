@@ -1,9 +1,13 @@
 import { headers } from "next/headers";
+import { isLocalhostOrigin, resolveAppOrigin } from "@/lib/app-origin";
+
+export { originFromRequest, PRODUCTION_APP_ORIGIN, resolveAppOrigin } from "@/lib/app-origin";
 
 export async function appOrigin() {
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  return host ? `${proto}://${host}` : "http://localhost:3000";
+  const proto =
+    h.get("x-forwarded-proto") ?? (host && isLocalhostOrigin(`http://${host}`) ? "http" : "https");
+  const fromHeaders = host ? `${proto}://${host.split(",")[0]!.trim()}` : "";
+  return resolveAppOrigin(fromHeaders);
 }

@@ -51,7 +51,13 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
         publicOk,
       },
     });
-    await setStudentAccountCookies(updated.id, updated.name, updated.token, Boolean(updated.onboardedAt));
+    await setStudentAccountCookies(
+      updated.id,
+      updated.name,
+      updated.token,
+      Boolean(updated.onboardedAt),
+      updated.authUserId,
+    );
     await logEvent({
       name: "student.registered",
       actorType: "student",

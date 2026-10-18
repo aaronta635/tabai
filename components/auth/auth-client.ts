@@ -1,4 +1,5 @@
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { resolveAppOrigin } from "@/lib/app-origin";
 import type { AccountRole } from "@/lib/onboarding";
 import { authPath } from "@/lib/return-path";
 
@@ -8,7 +9,7 @@ export function oauthReturn(role: AccountRole, next: string) {
   const params = new URLSearchParams();
   params.set("role", role);
   if (next) params.set("next", next);
-  return `${window.location.origin}/auth/callback?${params}`;
+  return `${resolveAppOrigin(window.location.origin)}/auth/callback?${params}`;
 }
 
 export function authHref(path: "login" | "signup", role: AccountRole, next: string) {
@@ -40,6 +41,11 @@ export async function bindLocalSession(input: {
     throw new Error(json.error ?? "session failed");
   }
   return json.next ?? input.next;
+}
+
+/** Full load so a previous student's cached studio page cannot paint after account switch. */
+export function enterStudio(dest: string) {
+  window.location.assign(dest);
 }
 
 export async function startSocial(provider: Social, role: AccountRole, next: string) {

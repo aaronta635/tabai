@@ -12,6 +12,7 @@ import { maybeUnlockAiDirect } from "@/lib/growth";
 import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
+import { highlightStart, joinStoryLetter } from "@/lib/report";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
@@ -215,18 +216,26 @@ export async function markOpened(submissionId: string) {
 
 export async function sendReply(input: {
   submissionId: string;
-  text: string;
+  text?: string;
   pick?: boolean;
   grade?: string | null;
+  highlightStartS?: number | null;
+  progressNote?: string | null;
+  keyPoint?: string | null;
+  nextStep?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const submission = await teacherSubmission(teacher.id, input.submissionId);
   if (!submission) throw new Error("not found");
   const grade = replyGrade(input.grade);
   if (grade === undefined) return { error: "bad_grade" as const };
+  const progressNote = (input.progressNote ?? "").trim() || null;
+  const keyPoint = (input.keyPoint ?? "").trim() || null;
+  const nextStep = (input.nextStep ?? "").trim() || null;
+  const story = joinStoryLetter({ progress: progressNote, keyPoint, nextStep });
 
   const guarded = guardReply({
-    text: input.text,
+    text: story || input.text || "",
     status: submission.status,
     existingReplyCount: submission.replies.length,
   });
@@ -255,6 +264,10 @@ export async function sendReply(input: {
           submissionId: submission.id,
           teacherId: teacher.id,
           text,
+          highlightStartS: highlightStart(input.highlightStartS),
+          progressNote,
+          keyPoint,
+          nextStep,
           grade,
           source,
           editDistance,

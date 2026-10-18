@@ -1,14 +1,22 @@
 import type { Metadata } from "next";
-import { Be_Vietnam_Pro } from "next/font/google";
+import { Charis_SIL, Inter } from "next/font/google";
 import { I18nProvider, getLocale } from "@/lib/i18n";
+import { getTheme } from "@/lib/theme";
 import "./globals.css";
 
-const sans = Be_Vietnam_Pro({
-  subsets: ["latin", "vietnamese"],
-  weight: ["400", "500", "600"],
+const serif = Charis_SIL({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["400", "700"],
   style: ["normal", "italic"],
-  variable: "--font-sans",
+  variable: "--font-serif",
   display: "swap",
+});
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  display: "swap",
+  variable: "--font-inter",
+  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
@@ -18,9 +26,15 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();
+  const theme = await getTheme();
   return (
-    <html lang={locale} className={sans.variable}>
-      <body className={`${sans.className} antialiased`}>
+    <html
+      lang={locale}
+      data-theme={theme}
+      className={`${serif.variable} ${inter.variable}`}
+      suppressHydrationWarning
+    >
+      <body className="antialiased">
         <I18nProvider>{children}</I18nProvider>
       </body>
     </html>

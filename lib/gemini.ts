@@ -1,4 +1,5 @@
 import {
+  createPartFromBase64,
   createPartFromUri,
   createUserContent,
   GoogleGenAI,
@@ -30,6 +31,10 @@ export function geminiTrainModel() {
 
 export function geminiCompareModel() {
   return process.env.GEMINI_MODEL_COMPARE?.trim() || DEFAULT_GEMINI_MODEL_COMPARE;
+}
+
+export function geminiExtractModel() {
+  return process.env.GEMINI_MODEL_EXTRACT?.trim() || geminiCompareModel();
 }
 
 export function geminiDraftModel() {
@@ -203,6 +208,46 @@ export async function generateGeminiJson(input: {
       responseMimeType: "application/json",
       responseJsonSchema: input.schema,
       thinkingConfig: { thinkingLevel: input.thinkingLevel ?? ThinkingLevel.LOW },
+    },
+  });
+  const text = response.text?.trim();
+  if (!text) throw new Error("Gemini returned an empty response");
+  return {
+    data: parseJsonText(text),
+    usage: usageFrom(response),
+    model: input.model,
+  };
+}
+
+export const FRET_RESPONSE_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    fret: { type: Type.NUMBER },
+    visible: { type: Type.BOOLEAN },
+  },
+  required: ["fret", "visible"],
+};
+
+export async function generateGeminiImageJson(input: {
+  ai: GoogleGenAI;
+  model: string;
+  system: string;
+  userText: string;
+  imageBase64: string;
+  mimeType: string;
+  schema: object;
+}): Promise<{ data: unknown; usage: GeminiUsage; model: string }> {
+  const response = await input.ai.models.generateContent({
+    model: input.model,
+    contents: createUserContent([
+      createPartFromBase64(input.imageBase64, input.mimeType),
+      input.userText,
+    ]),
+    config: {
+      systemInstruction: input.system,
+      responseMimeType: "application/json",
+      responseJsonSchema: input.schema,
+      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
     },
   });
   const text = response.text?.trim();

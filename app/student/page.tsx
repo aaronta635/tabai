@@ -1,66 +1,224 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireStudentAccount } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
+import { signInPath } from "@/lib/return-path";
+import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { assignmentsForStudent } from "@/lib/lms";
+import { formatDueLabel } from "@/lib/practice";
+import { studentClasses } from "@/lib/student-view";
+import { classColor } from "@/lib/class-color";
+import { weekParam, weekRangeUtc } from "@/lib/schedule";
+import { weekPractice } from "@/lib/practice-week";
+import { formatTime, formatWhen } from "@/lib/when";
+import { prisma } from "@/lib/prisma";
 import { JoinClassForm } from "@/components/student/join-class-form";
-
-export const dynamic = "force-dynamic";
+import { AddPanel } from "@/components/disclosure";
+import {
+  AssignmentList,
+  ClassChips,
+  LessonCard,
+  PracticeLog,
+  ReviewTable,
+  SideNote,
+  StudioTitle,
+  weekDayLabels,
+} from "@/components/home/feed";
 
 export default async function StudentHomePage() {
-  const student = await requireStudentAccount();
-  if (!student) redirect("/auth?role=student");
-  if (!student.onboardedAt) redirect("/onboarding");
+  const student = await readStudentSession();
+  if (!student) redirect(signInPath("student", "/student"));
 
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const piece = student.teacherId
-    ? await prisma.piece.findFirst({
-        where: { teacherId: student.teacherId, archived: false },
-        orderBy: { createdAt: "desc" },
-        include: { teacher: { select: { name: true } } },
-      })
-    : null;
+  const now = new Date();
+  const { start, end } = weekRangeUtc(now);
+  const [classes, assigned, replies, nextLesson, takes, sentPieces, practiceRows] = await Promise.all([
+    studentClasses(student.id),
+    assignmentsForStudent(student.id),
+    prisma.reply.findMany({
+      where: { submission: { studentId: student.id } },
+      orderBy: { sentAt: "desc" },
+      take: 3,
+      select: {
+        id: true,
+        text: true,
+        submission: { select: { id: true, piece: { select: { title: true, code: true } } } },
+      },
+    }),
+    prisma.classSession.findFirst({
+      where: {
+        startsAt: { gte: now },
+        class: { archived: false, memberships: { some: { studentId: student.id } } },
+      },
+      orderBy: { startsAt: "asc" },
+      select: {
+        id: true,
+        title: true,
+        startsAt: true,
+        class: { select: { id: true, name: true, teacher: { select: { name: true } } } },
+      },
+    }),
+    prisma.submission.findMany({
+      where: { studentId: student.id },
+      orderBy: { submittedAt: "desc" },
+      take: 4,
+      select: {
+        id: true,
+        kind: true,
+        submittedAt: true,
+        piece: { select: { title: true, code: true } },
+        replies: { take: 1, select: { id: true } },
+      },
+    }),
+    prisma.submission.findMany({
+      where: { studentId: student.id, kind: { in: ["take", "overdub"] } },
+      select: { pieceId: true },
+      distinct: ["pieceId"],
+    }),
+    prisma.practiceSession.findMany({
+      where: { studentId: student.id, startedAt: { gte: start, lt: end } },
+      select: { seconds: true, startedAt: true },
+    }),
+  ]);
 
-  const stageKey =
-    student.stage === "in_class" ? t.student.stageInClass : t.student.stageExploring;
-  const stageHelp =
-    student.stage === "in_class" ? t.student.stageInClassHelp : t.student.stageExploringHelp;
+  const pieces = assigned.filter((row) => row.piece);
+  const sentPieceIds = new Set(sentPieces.map((row) => row.pieceId));
+  const nextPiece =
+    pieces.find((row) => row.piece && !sentPieceIds.has(row.piece.id))?.piece ?? pieces.find((row) => row.piece)?.piece;
+  const submitHref = nextPiece ? `/student/work/${nextPiece.code}` : "/student/work";
+  const practice = weekPractice(practiceRows, now);
+  const latestReply = replies[0];
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs tracking-[0.18em] uppercase text-ink-soft">{t.auth.studentKicker}</p>
-        <h1 className="font-display mt-2 text-3xl">{t.student.homeHello.replace("{name}", student.name)}</h1>
-        <p className="mt-2 rounded-2xl bg-cream px-4 py-3 text-sm">{stageKey}</p>
-        <p className="mt-2 text-ink-soft">{stageHelp}</p>
-      </div>
+      <StudioTitle
+        title={t.student.homeHello.replace("{name}", student.name)}
+        meta={nextLesson ? `${nextLesson.class.name} · ${formatWhen(nextLesson.startsAt, locale)}` : undefined}
+        action={
+          classes.length > 0 ? (
+            <Link href={submitHref} className="btn submit-jump">
+              {t.student.submitVideo}
+            </Link>
+          ) : undefined
+        }
+      />
 
-      {piece ? (
-        <section className="lms-card space-y-3 p-5">
-          <p className="text-xs tracking-[0.16em] uppercase text-beat">{piece.teacher?.name}</p>
-          <h2 className="font-display text-2xl">{piece.title}</h2>
-          {piece.note ? <p className="text-ink-soft">{piece.note}</p> : null}
-          <div className="flex flex-wrap gap-2">
-            <Link href={`/l/${piece.code}`} className="rounded-full bg-beat px-4 py-2 text-sm text-white">
-              {t.student.openPiece}
-            </Link>
-            <Link href={`/s/${student.token}`} className="rounded-full border border-ink/15 px-4 py-2 text-sm">
-              {t.student.yourPage}
-            </Link>
+      {classes.length === 0 ? (
+        <section className="tile">
+          <p className="tile-title">{t.student.joinTitle}</p>
+          <p className="mt-2 text-ink-soft">{t.student.stageExploringHelp}</p>
+          <div className="mt-4">
+            <JoinClassForm
+              placeholder={t.home.codePlaceholder}
+              submit={t.student.joinClass}
+              badCode={t.onboarding.badCode}
+              otherClass={t.student.otherClass}
+            />
           </div>
         </section>
       ) : (
-        <section className="lms-card p-5">
-          <h2 className="font-display text-xl">{t.student.joinTitle}</h2>
-          <p className="mt-2 text-sm text-ink-soft">{t.student.joinHelp}</p>
-          <JoinClassForm
-            placeholder={t.home.codePlaceholder}
-            submit={t.home.openPiece}
-            badCode={t.onboarding.badCode}
-            otherClass={t.student.otherClass}
-          />
-        </section>
+        <div className="dash">
+          <div className="space-y-6">
+            <ClassChips
+              label={t.student.navClasses}
+              chips={classes.map((row) => ({
+                id: row.class.id,
+                name: row.class.name,
+                href: `/student/classes/${row.class.id}`,
+                color: classColor(row.class.id),
+              }))}
+            />
+
+            <section className="space-y-3">
+              <h2 className="font-display text-base">{t.student.nextLesson}</h2>
+              {nextLesson ? (
+                <div className="lesson-card-row">
+                  <LessonCard
+                    href={`/student/schedule?w=${weekParam(nextLesson.startsAt)}`}
+                    time={formatTime(nextLesson.startsAt, locale)}
+                    title={nextLesson.title || nextLesson.class.name}
+                    meta={`${nextLesson.class.name} · ${nextLesson.class.teacher.name}`}
+                    status={t.student.upcoming}
+                    next
+                  />
+                </div>
+              ) : (
+                <p className="text-sm text-ink-soft">{t.student.noLessonYet}</p>
+              )}
+            </section>
+
+            <AssignmentList
+              title={t.student.assignedPieces}
+              empty={t.student.noWork}
+              track
+              rows={pieces.slice(0, 5).flatMap((row) =>
+                row.piece
+                  ? [
+                      {
+                        href: `/student/work/${row.piece.code}`,
+                        title: row.piece.title,
+                        meta: [row.class?.name, row.goal].filter(Boolean).join(" · "),
+                        status: row.dueAt ? formatDueLabel(row.dueAt, locale) : t.student.due,
+                        progress: sentPieceIds.has(row.piece.id) ? 1 : 0,
+                        fraction: sentPieceIds.has(row.piece.id) ? "1/1" : "0/1",
+                      },
+                    ]
+                  : [],
+              )}
+            />
+
+            <ReviewTable
+              title={t.student.practiceVideos}
+              empty={t.student.noTakes}
+              columns={[t.student.thisPiece, t.student.colWhen, t.student.colStatus]}
+              rows={takes.map((row) => ({
+                href: `/student/takes/${row.id}`,
+                title: row.piece.title,
+                meta: row.kind === "practice" ? t.student.kindPractice : t.student.kindTake,
+                when: formatWhen(row.submittedAt, locale),
+                status: row.replies[0] ? t.student.replied : t.student.waitingReply,
+              }))}
+            />
+
+            <AddPanel label={t.student.joinAnother}>
+              <JoinClassForm
+                placeholder={t.home.codePlaceholder}
+                submit={t.student.joinClass}
+                badCode={t.onboarding.badCode}
+                otherClass={t.student.otherClass}
+              />
+            </AddPanel>
+          </div>
+          <aside className="space-y-3">
+            <SideNote
+              kicker={t.student.nextLesson}
+              title={nextLesson ? nextLesson.title || nextLesson.class.name : t.student.noLessonYet}
+              meta={
+                nextLesson
+                  ? `${nextLesson.class.teacher.name} · ${formatTime(nextLesson.startsAt, locale)}`
+                  : undefined
+              }
+              href={nextLesson ? `/student/schedule?w=${weekParam(nextLesson.startsAt)}` : "/student/schedule"}
+            />
+            <SideNote
+              kicker={t.student.recentFeedback}
+              title={latestReply ? latestReply.submission.piece.title : t.student.noFeedback}
+              href={latestReply ? `/student/takes/${latestReply.submission.id}` : undefined}
+            >
+              {latestReply ? <p className="line-clamp line-clamp-3">{latestReply.text}</p> : null}
+            </SideNote>
+            <PracticeLog
+              title={t.studio.practiceLog}
+              caption={
+                practice.totalMinutes > 0
+                  ? t.studio.practiceMinutes.replace("{n}", String(practice.totalMinutes))
+                  : t.studio.practiceLogEmpty
+              }
+              days={weekDayLabels(locale)}
+              heights={practice.heights}
+            />
+          </aside>
+        </div>
       )}
     </div>
   );

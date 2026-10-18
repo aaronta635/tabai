@@ -14,7 +14,7 @@ Median is computed separately for `source = manual` and `source in (approved_dra
 
 Share of replies with `source = approved_draft` (edit_distance = 0 against the latest draft).
 
-Unlock AI-direct (v2, per teacher per piece): ≥100 replies on the piece **and** approve-untouched ≥80% over the last 50.
+Unlock AI-direct (per piece): ≥100 replies on the piece **and** approve-untouched ≥80% over the last 50. Practice submissions do not count. After unlock, high-confidence drafts (`confidence ≥ 0.8`) auto-send. If override rate on recent AI-direct replies rises above 30%, clear `Piece.aiDirectUnlockedAt`.
 
 ## Override rate (v2)
 
@@ -26,4 +26,4 @@ Sum of `Event name=draft.cost` `propsJson.costCents` plus analyze `costCents` (0
 
 ## Weekly active students
 
-Distinct `Student` with a `Submission.submittedAt` in the last 7 days, per teacher.
+Distinct `Student` with a take, overdub, or timed `PracticeSession` on an assigned Piece in the last 7 days, per teacher. Games played and minutes-in-call are not metrics.

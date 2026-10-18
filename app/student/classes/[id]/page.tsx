@@ -1,0 +1,115 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import { signInPath } from "@/lib/return-path";
+import { readStudentSession } from "@/lib/auth";
+import { getLocale, getMessages } from "@/lib/i18n";
+import { formatDueLabel } from "@/lib/practice";
+import { formatWhen } from "@/lib/when";
+import { weekParam } from "@/lib/schedule";
+import { studentClass } from "@/lib/student-view";
+import { AssignmentMeta } from "@/components/student/assignment-meta";
+import { SectionPanel } from "@/components/disclosure";
+
+export default async function StudentClassPage({ params }: { params: Promise<{ id: string }> }) {
+  const student = await readStudentSession();
+  if (!student) redirect(signInPath("student", "/student"));
+  const { id } = await params;
+  const membership = await studentClass(student.id, id);
+  if (!membership) notFound();
+  const locale = await getLocale();
+  const t = await getMessages(locale);
+  const studioClass = membership.class;
+  const pieces = studioClass.assignments.filter((row) => row.piece);
+
+  return (
+    <div className="space-y-5">
+      <header>
+        <Link href="/student/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
+          ← {t.student.navClasses}
+        </Link>
+        <h1 className="font-display mt-3">{studioClass.name}</h1>
+        <p className="page-meta">
+          {t.student.teacherLabel}: {studioClass.teacher.name}
+        </p>
+      </header>
+
+      {pieces[0] ? (
+        <section className="studio-panel">
+          <p className="page-meta">{t.student.thisWeek}</p>
+          <h2 className="mt-1">{pieces[0].piece!.title}</h2>
+          {pieces[0].piece!.description || pieces[0].piece!.note ? (
+            <p className="mt-3 leading-relaxed text-ink-soft">
+              {pieces[0].piece!.description || pieces[0].piece!.note}
+            </p>
+          ) : null}
+          <div className="mt-3">
+            <AssignmentMeta
+              goal={pieces[0].goal}
+              dueLabel={pieces[0].dueAt ? formatDueLabel(pieces[0].dueAt, locale) : null}
+              goalLabel={t.student.goal}
+              duePrefix={t.student.due}
+            />
+          </div>
+          <Link href={`/student/work/${pieces[0].piece!.code}`} className="btn mt-4">
+            {t.student.openPiece}
+          </Link>
+        </section>
+      ) : null}
+
+      <SectionPanel title={t.student.assignedPieces} count={studioClass.assignments.length}>
+        {studioClass.assignments.length === 0 ? (
+          <p className="text-sm text-ink-soft">{t.student.noWork}</p>
+        ) : (
+          <table className="studio-table">
+            <thead>
+              <tr>
+                <th>{t.student.thisPiece}</th>
+                <th>{t.student.due}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {studioClass.assignments.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    {row.piece ? (
+                      <Link href={`/student/work/${row.piece.code}`} className="font-semibold">
+                        {row.piece.title}
+                      </Link>
+                    ) : (
+                      <span>{row.part?.name ?? t.student.thisPiece}</span>
+                    )}
+                  </td>
+                  <td className="text-sm text-ink-soft">
+                    {row.dueAt ? formatDueLabel(row.dueAt, locale) : "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </SectionPanel>
+
+      <SectionPanel title={t.student.nextLesson} count={studioClass.sessions.length}>
+        {studioClass.sessions.length === 0 ? (
+          <p className="text-sm text-ink-soft">{t.student.noLessonYet}</p>
+        ) : (
+          <ul className="divide-y divide-ink/10">
+            {studioClass.sessions.map((session) => (
+              <li key={session.id}>
+                <Link
+                  href={`/student/schedule?w=${weekParam(session.startsAt)}`}
+                  className="flex items-center justify-between gap-3 py-2.5"
+                >
+                  <span>{session.title || t.student.nextLesson}</span>
+                  <span className="font-ui tabular text-xs text-ink-soft">
+                    {formatWhen(session.startsAt, locale)}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </SectionPanel>
+    </div>
+  );
+}

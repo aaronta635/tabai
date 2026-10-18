@@ -3,6 +3,9 @@ import { studentForPiece } from "@/lib/auth";
 import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
+import { submissionNote } from "@/lib/forms";
+import { parseSubmissionKind } from "@/lib/practice";
+import { revalidateStudentHotPath } from "@/lib/student-cache";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
   const { code } = await context.params;
@@ -26,9 +29,13 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     });
   }
 
-  const body = (await request.json()) as { mediaId?: string };
+  const body = (await request.json()) as { mediaId?: string; kind?: string; note?: unknown };
   if (!body.mediaId) {
     return NextResponse.json({ error: "mediaId required" }, { status: 400 });
+  }
+  const note = submissionNote(body.note);
+  if (note === undefined) {
+    return NextResponse.json({ error: "note too long" }, { status: 400 });
   }
 
   const media = await prisma.media.findUnique({ where: { id: body.mediaId } });
@@ -36,11 +43,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     return NextResponse.json({ error: "media not ready" }, { status: 400 });
   }
 
+  const kind = parseSubmissionKind(body.kind);
   const submission = await prisma.submission.create({
     data: {
       pieceId: piece.id,
       studentId: student.id,
       mediaId: media.id,
+      kind,
+      studentNote: note,
     },
   });
 
@@ -49,14 +59,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     actorType: "student",
     actorId: student.id,
     teacherId: piece.teacherId,
-    props: { submissionId: submission.id, approved: Boolean(student.approvedAt) },
+    props: { submissionId: submission.id, approved: Boolean(student.approvedAt), kind },
   });
 
   await enqueueAnalyzeIfApproved(submission.id);
+  revalidateStudentHotPath(student.id);
 
   return NextResponse.json({
     submissionId: submission.id,
-    studentToken: student.token,
-    page: `/s/${student.token}`,
+    ...(bound.fromSession ? { page: `/student/takes/${submission.id}` } : {}),
   });
 }

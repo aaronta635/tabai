@@ -2,7 +2,14 @@ node_modules
 .next
 .git
 .env
-.env.*
-!.env.example
+.env.local
+deploy/secrets.env
+coverage
+test-results
+playwright-report
+catalog/**/*.mp4
+catalog/**/*.webm
+catalog/**/*.mov
+catalog/**/*.pdf
 *.md
-.cursor
+!README.md

@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { saveStudentOnboarding, saveTutorOnboarding } from "@/app/onboarding/actions";
+import { PickMany, PickOne } from "@/components/profile/picks";
 
 type Choice = { value: string; label: string };
 
@@ -24,7 +26,7 @@ function Choices({
           <label
             key={option.value}
             className={`flex cursor-pointer items-center rounded-2xl border px-4 py-3 text-sm ${
-              on ? "border-beat bg-paper" : "border-ink/10 bg-white hover:border-ink/25"
+              on ? "border-beat bg-paper" : "border-ink/10 bg-cream hover:border-ink/25"
             }`}
           >
             <input
@@ -45,9 +47,11 @@ function Choices({
 
 export function TutorOnboardingForm({
   defaultName,
+  returnTo,
   labels,
 }: {
   defaultName: string;
+  returnTo?: string;
   labels: {
     name: string;
     q1: string;
@@ -66,6 +70,7 @@ export function TutorOnboardingForm({
     incomplete: string;
   };
 }) {
+  const t = useTranslations("onboarding");
   const [videos, setVideos] = useState("");
   const [size, setSize] = useState("");
   const [focus, setFocus] = useState("");
@@ -79,6 +84,7 @@ export function TutorOnboardingForm({
       }}
       className="space-y-6"
     >
+      {returnTo ? <input type="hidden" name="next" value={returnTo} /> : null}
       <label className="block text-sm">
         {labels.name}
         <input
@@ -127,6 +133,17 @@ export function TutorOnboardingForm({
           ]}
         />
       </fieldset>
+      <PickOne
+        name="teaching"
+        legend={t("timeTeaching")}
+        initial="some"
+        options={[
+          { value: "new", label: t("teachingNew") },
+          { value: "some", label: t("teachingSome") },
+          { value: "long", label: t("teachingLong") },
+        ]}
+      />
+      <SkillPicks />
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       <button type="submit" className="w-full rounded-2xl bg-beat px-4 py-3 text-white">
         {labels.continue}
@@ -137,9 +154,11 @@ export function TutorOnboardingForm({
 
 export function StudentOnboardingForm({
   defaultName,
+  returnTo,
   labels,
 }: {
   defaultName: string;
+  returnTo?: string;
   labels: {
     name: string;
     age: string;
@@ -177,6 +196,7 @@ export function StudentOnboardingForm({
       }}
       className="space-y-6"
     >
+      {returnTo ? <input type="hidden" name="next" value={returnTo} /> : null}
       <label className="block text-sm">
         {labels.name}
         <input
@@ -232,6 +252,7 @@ export function StudentOnboardingForm({
           ]}
         />
       </fieldset>
+      <SkillPicks />
       <label className="block text-sm">
         {labels.contact}
         <input
@@ -246,5 +267,42 @@ export function StudentOnboardingForm({
         {labels.continue}
       </button>
     </form>
+  );
+}
+
+export function SkillPicks({
+  skills = [],
+  weaknesses = [],
+}: {
+  skills?: string[];
+  weaknesses?: string[];
+}) {
+  const t = useTranslations("onboarding");
+  return (
+    <>
+      <PickMany
+        name="skills"
+        legend={t("skills")}
+        initial={skills}
+        options={[
+          { value: "rhythm", label: t("skillRhythm") },
+          { value: "chords", label: t("skillChords") },
+          { value: "fingerstyle", label: t("skillFingerstyle") },
+          { value: "reading", label: t("skillReading") },
+          { value: "singing", label: t("skillSinging") },
+        ]}
+      />
+      <PickMany
+        name="weaknesses"
+        legend={t("weakness")}
+        initial={weaknesses}
+        options={[
+          { value: "timing", label: t("weakTiming") },
+          { value: "chords", label: t("weakChords") },
+          { value: "notes", label: t("weakNotes") },
+          { value: "confidence", label: t("weakConfidence") },
+        ]}
+      />
+    </>
   );
 }

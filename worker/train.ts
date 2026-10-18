@@ -1,9 +1,11 @@
 import { ThinkingLevel } from "@google/genai";
-import { readFile } from "node:fs/promises";
+import { mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
 import { TRAIN_PROMPT_VERSION } from "../lib/constants";
 import { sha256, sniffMime } from "../lib/catalog";
+import { enqueueTakesNeedingCompare } from "../lib/jobs";
 import {
   TRAIN_RESPONSE_SCHEMA,
   deleteGeminiFile,
@@ -12,13 +14,62 @@ import {
   geminiTrainModel,
   generateGeminiJson,
   uploadGeminiFile,
+  type GeminiFileRef,
 } from "../lib/gemini";
 import { prisma } from "../lib/prisma";
-import { parseTrainExtract, splitTrainExtract, isThinTrainExtract, trainExtractRichness, type PieceModelSourceJson } from "../lib/score-model";
+import {
+  parseTrainExtract,
+  splitTrainExtract,
+  isThinTrainExtract,
+  trainExtractRichness,
+  type PieceModelSourceJson,
+} from "../lib/score-model";
 import { downloadMedia } from "../lib/storage";
+import { extractPitchFromVideo, pitchEnabled } from "./pitch";
 
 async function loadPrompt(name: string) {
   return readFile(join(process.cwd(), "prompts", name), "utf8");
+}
+
+function trainUserText(input: {
+  title: string;
+  note: string | null;
+  sheet: boolean;
+  tutorial: boolean;
+  strict?: boolean;
+}) {
+  const attached =
+    input.sheet && input.tutorial
+      ? "First file is the sheet. Second file is the tutorial video."
+      : input.sheet
+        ? "The attached file is the sheet. There is no tutorial video."
+        : "The attached file is the tutorial video. There is no sheet.";
+  const rules = [
+    input.sheet
+      ? "Fill the written score (key, time signature, bars, melodyNotes, chords) from the sheet. Do not invent bars that are not on the page."
+      : "There is no sheet. Do not invent a full written score. barCount may be 0. sections may be empty or a rough outline only if the melody is clearly heard. Never dump a scale. Do not guess bar numbers.",
+    input.tutorial
+      ? "Fill tutorialCues (at least four timestamped cues), techniqueFocus, and commonMistakes from the tutor."
+      : "There is no tutorial. tutorialCues may be []. Leave techniqueFocus and commonMistakes empty unless marked on the sheet.",
+  ].join(" ");
+  const lines = [
+    `Piece title: ${input.title}`,
+    input.note ? `Teacher note: ${input.note}` : "No teacher note.",
+    attached,
+    rules,
+    "Extract the piece model JSON.",
+  ];
+  if (input.strict) {
+    lines.push("Previous extract was too thin. Retry:");
+    if (input.sheet) lines.push("- melodyNotes must be the written tune in order, never a scale. Fill sections from the page.");
+    if (input.tutorial) {
+      lines.push("- tutorialCues: at least four timestamped cues from the video.");
+      lines.push("- Fill techniqueFocus and commonMistakes from the tutor.");
+    }
+    if (!input.sheet) lines.push("- Do not invent bars or a full score. Empty sections are OK.");
+    if (!input.tutorial) lines.push("- Empty tutorialCues is OK. Do not invent video timestamps.");
+  }
+  return lines.join("\n");
 }
 
 export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModelSourceJson>) {
@@ -27,10 +78,11 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
     include: { sheetMedia: true, tutorialMedia: true },
   });
   if (!piece) throw new Error("piece not found");
-  if (!piece.sheetMedia || !piece.tutorialMedia) {
-    throw new Error("piece needs sheet and tutorial before train");
+  if (!piece.sheetMedia && !piece.tutorialMedia) {
+    throw new Error("piece needs a sheet or a tutorial before train");
   }
 
+  const assets = { sheet: Boolean(piece.sheetMedia), tutorial: Boolean(piece.tutorialMedia) };
   const ai = geminiClient();
   if (!ai) throw new Error("GEMINI_API_KEY is not set");
 
@@ -41,8 +93,8 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
   const version = (last?.version ?? 0) + 1;
   const modelName = geminiTrainModel();
   const sourceJson: PieceModelSourceJson = {
-    sheetMediaId: piece.sheetMedia.id,
-    tutorialMediaId: piece.tutorialMedia.id,
+    ...(piece.sheetMedia ? { sheetMediaId: piece.sheetMedia.id } : {}),
+    ...(piece.tutorialMedia ? { tutorialMediaId: piece.tutorialMedia.id } : {}),
     ...extras,
   };
 
@@ -60,32 +112,32 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
   });
 
   const uploaded: string[] = [];
+  const files: GeminiFileRef[] = [];
   const started = Date.now();
+  let tutorialBytes: Buffer | null = null;
   try {
-    const sheetBytes = await downloadMedia(piece.sheetMedia.storagePath);
-    const tutorialBytes = await downloadMedia(piece.tutorialMedia.storagePath);
-    const sheetMime = sniffMime(sheetBytes, "application/pdf");
-    const tutorialMime = sniffMime(tutorialBytes, "video/mp4");
-
-    const sheetFile = await uploadGeminiFile(ai, sheetBytes, sheetMime, `${piece.code}-sheet`);
-    uploaded.push(sheetFile.name);
-    const tutorialFile = await uploadGeminiFile(ai, tutorialBytes, tutorialMime, `${piece.code}-tutorial`);
-    uploaded.push(tutorialFile.name);
+    if (piece.sheetMedia) {
+      const sheetBytes = await downloadMedia(piece.sheetMedia.storagePath);
+      const sheetMime = sniffMime(sheetBytes, "application/pdf");
+      const sheetFile = await uploadGeminiFile(ai, sheetBytes, sheetMime, `${piece.code}-sheet`);
+      uploaded.push(sheetFile.name);
+      files.push(sheetFile);
+      sourceJson.sheetSha256 = sha256(sheetBytes);
+      sourceJson.sheetMime = sheetMime;
+    }
+    if (piece.tutorialMedia) {
+      tutorialBytes = await downloadMedia(piece.tutorialMedia.storagePath);
+      const tutorialMime = sniffMime(tutorialBytes, "video/mp4");
+      const tutorialFile = await uploadGeminiFile(ai, tutorialBytes, tutorialMime, `${piece.code}-tutorial`);
+      uploaded.push(tutorialFile.name);
+      files.push(tutorialFile);
+      sourceJson.tutorialSha256 = sha256(tutorialBytes);
+      sourceJson.tutorialMime = tutorialMime;
+    }
 
     const system = await loadPrompt("train_piece.md");
-    const baseUser = [
-      `Piece title: ${piece.title}`,
-      piece.note ? `Teacher note: ${piece.note}` : "No teacher note.",
-      "First file is the sheet. Second file is the tutorial video.",
-      "Extract the piece model JSON.",
-    ].join("\n");
-    const strictUser = [
-      baseUser,
-      "Previous extract was too thin. Retry:",
-      "- melodyNotes must be the written tune in order, never a scale.",
-      "- tutorialCues: at least four timestamped cues from the video.",
-      "- Fill techniqueFocus and commonMistakes from the tutor.",
-    ].join("\n");
+    const baseUser = trainUserText({ title: piece.title, note: piece.note, ...assets });
+    const strictUser = trainUserText({ title: piece.title, note: piece.note, ...assets, strict: true });
 
     const first = await generateGeminiJson({
       ai,
@@ -93,7 +145,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
       system,
       schema: TRAIN_RESPONSE_SCHEMA,
       thinkingLevel: ThinkingLevel.HIGH,
-      files: [sheetFile, tutorialFile],
+      files,
       userText: baseUser,
     });
     let extract = parseTrainExtract(first.data);
@@ -101,7 +153,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
     let usedModel = first.model;
     let retried = false;
 
-    if (isThinTrainExtract(extract)) {
+    if (isThinTrainExtract(extract, assets)) {
       retried = true;
       const second = await generateGeminiJson({
         ai,
@@ -109,7 +161,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
         system,
         schema: TRAIN_RESPONSE_SCHEMA,
         thinkingLevel: ThinkingLevel.HIGH,
-        files: [sheetFile, tutorialFile],
+        files,
         userText: strictUser,
       });
       usage = {
@@ -124,17 +176,38 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
     }
 
     const { scoreJson, tutorialCuesJson } = splitTrainExtract(extract);
-    sourceJson.sheetSha256 = sha256(sheetBytes);
-    sourceJson.tutorialSha256 = sha256(tutorialBytes);
-    sourceJson.sheetMime = sheetMime;
-    sourceJson.tutorialMime = tutorialMime;
+    let cuesJson: Record<string, unknown> = { ...tutorialCuesJson };
+
+    if (pitchEnabled() && tutorialBytes) {
+      const dir = await mkdtemp(join(tmpdir(), "train-pitch-"));
+      try {
+        const tutorialPath = join(dir, "tutorial.bin");
+        await writeFile(tutorialPath, tutorialBytes);
+        const pitched = await extractPitchFromVideo(tutorialPath, join(dir, "tutorial.wav"));
+        cuesJson = {
+          ...cuesJson,
+          pitch_notes: pitched.notes,
+          pitch_backend: "basic-pitch",
+          ...(pitched.error ? { pitch_error: pitched.error } : {}),
+        };
+      } catch (error) {
+        cuesJson = {
+          ...cuesJson,
+          pitch_notes: [],
+          pitch_backend: "basic-pitch",
+          pitch_error: error instanceof Error ? error.message : "pitch failed",
+        };
+      } finally {
+        await rm(dir, { recursive: true, force: true });
+      }
+    }
 
     await prisma.pieceModel.update({
       where: { id: row.id },
       data: {
         status: "ready",
         scoreJson: scoreJson as unknown as Prisma.InputJsonValue,
-        tutorialCuesJson: tutorialCuesJson as unknown as Prisma.InputJsonValue,
+        tutorialCuesJson: cuesJson as Prisma.InputJsonValue,
         sourceJson: sourceJson as unknown as Prisma.InputJsonValue,
         trainedAt: new Date(),
         error: null,
@@ -151,6 +224,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
           pieceModelId: row.id,
           version,
           geminiModel: usedModel,
+          assets,
           ...usage,
           costCents: geminiCostCents(usage),
           latencyMs: Date.now() - started,
@@ -158,6 +232,8 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
         },
       },
     });
+
+    await enqueueTakesNeedingCompare(pieceId);
   } catch (error) {
     const message = error instanceof Error ? error.message : "train failed";
     await prisma.pieceModel.update({

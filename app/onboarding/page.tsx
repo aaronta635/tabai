@@ -4,36 +4,54 @@ import { requireStudentAccount, requireTeacher } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { LocaleToggle } from "@/components/locale-toggle";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { getTheme } from "@/lib/theme";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
+import { studioReturn } from "@/lib/return-path";
 
 export const dynamic = "force-dynamic";
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ next?: string }>;
+}) {
+  const { next: nextParam } = await searchParams;
   const teacher = await requireTeacher();
   const student = teacher ? null : await requireStudentAccount();
-  if (!teacher && !student) redirect("/auth");
-  if (teacher?.onboardedAt) redirect("/teacher");
-  if (student?.onboardedAt) redirect("/student");
+  if (!teacher && !student) redirect("/login");
+  const back = teacher
+    ? studioReturn("tutor", nextParam)
+    : studioReturn("student", nextParam);
+  if (teacher?.onboardedAt) redirect(back ?? "/teacher");
+  if (student?.onboardedAt) redirect(back ?? "/student");
 
   const locale = await getLocale();
+  const theme = await getTheme();
   const t = await getMessages(locale);
   const o = t.onboarding;
 
   return (
     <main className={teacher ? "teacher-onboard min-h-dvh" : "student-shell min-h-dvh"}>
       {teacher ? (
-        <header className="teacher-rail flex items-center justify-between px-6 py-4 text-white">
+        <header className="studio-rail flex items-center justify-between px-6 py-4 text-white">
           <Link href="/" aria-label={t.brand}>
             <BrandMark light />
           </Link>
-          <LocaleToggle locale={locale} tone="dark" />
+          <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+            <LocaleToggle locale={locale} tone="dark" />
+          </div>
         </header>
       ) : (
         <div className="mx-auto flex max-w-md items-center justify-between px-6 pt-12">
           <Link href="/" aria-label={t.brand}>
             <BrandMark />
           </Link>
-          <LocaleToggle locale={locale} />
+          <div className="flex items-center gap-2">
+            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+            <LocaleToggle locale={locale} />
+          </div>
         </div>
       )}
       <div className="mx-auto max-w-md px-6 py-10">
@@ -50,6 +68,7 @@ export default async function OnboardingPage() {
           {teacher ? (
             <TutorOnboardingForm
               defaultName={teacher.name}
+              returnTo={back ?? undefined}
               labels={{
                 name: o.name,
                 q1: o.tutorQ1,
@@ -71,6 +90,7 @@ export default async function OnboardingPage() {
           ) : student ? (
             <StudentOnboardingForm
               defaultName={student.name}
+              returnTo={back ?? undefined}
               labels={{
                 name: o.name,
                 age: t.student.age,

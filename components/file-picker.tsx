@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState, type DragEvent } from "react";
 
 type Props = {
   accept: string;
@@ -12,6 +12,8 @@ type Props = {
   hint?: string;
   capture?: "user" | "environment";
   size?: "md" | "lg";
+  dropTitle?: string;
+  dropHint?: string;
 };
 
 function formatBytes(n: number) {
@@ -30,13 +32,35 @@ export function FilePicker({
   hint,
   capture,
   size = "md",
+  dropTitle,
+  dropHint,
 }: Props) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [over, setOver] = useState(false);
+  const drop = Boolean(dropTitle);
 
   useEffect(() => {
     if (!file && inputRef.current) inputRef.current.value = "";
   }, [file]);
+
+  function takeDrop(event: DragEvent) {
+    event.preventDefault();
+    setOver(false);
+    const next = event.dataTransfer.files?.[0];
+    if (next) onFile(next);
+  }
+
+  const dropEvents = drop
+    ? {
+        onDragOver: (event: DragEvent) => {
+          event.preventDefault();
+          setOver(true);
+        },
+        onDragLeave: () => setOver(false),
+        onDrop: takeDrop,
+      }
+    : {};
 
   return (
     <div>
@@ -47,12 +71,21 @@ export function FilePicker({
         type="file"
         accept={accept}
         capture={capture}
+        aria-label={drop ? buttonLabel : undefined}
         className="sr-only"
         onChange={(event) => {
           onFile(event.target.files?.[0] ?? null);
         }}
       />
-      {file ? (
+      {file && drop ? (
+        <div className={`submit-drop${over ? " is-over" : ""}`} {...dropEvents}>
+          <p className="submit-drop-title">{file.name}</p>
+          <p className="submit-drop-hint">{formatBytes(file.size)}</p>
+          <label htmlFor={id} className="btn btn-quiet">
+            {changeLabel}
+          </label>
+        </div>
+      ) : file ? (
         <div className="flex items-center gap-3 rounded-2xl border border-ink/15 bg-white px-4 py-3">
           <div className="min-w-0 flex-1">
             <p className="truncate font-medium">{file.name}</p>
@@ -65,6 +98,15 @@ export function FilePicker({
             {changeLabel}
           </label>
         </div>
+      ) : drop ? (
+        <label htmlFor={id} className={`submit-drop${over ? " is-over" : ""}`} {...dropEvents}>
+          <span className="submit-drop-mark" aria-hidden>
+            ↑
+          </span>
+          <span className="submit-drop-title">{dropTitle}</span>
+          {dropHint ? <span className="submit-drop-hint">{dropHint}</span> : null}
+          <span className="btn btn-quiet">{buttonLabel}</span>
+        </label>
       ) : (
         <label
           htmlFor={id}

@@ -1,0 +1,13 @@
+node_modules
+.next
+.git
+.env
+.env.local
+deploy/secrets.env
+catalog/**/*.mp4
+catalog/**/*.webm
+catalog/**/*.mov
+catalog/**/*.pdf
+coverage
+test-results
+playwright-report

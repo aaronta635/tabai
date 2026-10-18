@@ -3,10 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FilePicker } from "@/components/file-picker";
+import { MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS } from "@/lib/constants";
+import { requiredText, submissionNote } from "@/lib/forms";
+
+type Kind = "take" | "practice" | "overdub";
+
+export type SubmitDesk = {
+  pieceTitle: string;
+  teacherName: string;
+  brief: string | null;
+  tips: string | null;
+  meta: string | null;
+};
 
 type Props = {
   code: string;
   needsProfile: boolean;
+  clipUrl?: string | null;
+  desk?: SubmitDesk | null;
 };
 
 type JsonBag = {
@@ -14,7 +28,6 @@ type JsonBag = {
   fields?: { name?: boolean; contactHandle?: boolean };
   signedUrl?: string;
   mediaId?: string;
-  studentToken?: string;
   page?: string;
 };
 
@@ -28,7 +41,22 @@ async function readJson(res: Response): Promise<JsonBag> {
   }
 }
 
-export function StudentUpload({ code, needsProfile }: Props) {
+async function mediaDuration(file: File) {
+  const url = URL.createObjectURL(file);
+  try {
+    return await new Promise<number>((resolve, reject) => {
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.onloadedmetadata = () => resolve(video.duration || 0);
+      video.onerror = () => reject(new Error("duration"));
+      video.src = url;
+    });
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
   const t = useTranslations("student");
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
   const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
@@ -41,6 +69,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const [video, setVideo] = useState<File | null>(null);
+  const [kind, setKind] = useState<Kind>("take");
 
   useEffect(() => {
     setRecordSupported(typeof MediaRecorder !== "undefined");
@@ -57,7 +86,7 @@ export function StudentUpload({ code, needsProfile }: Props) {
       recorder.onstop = () => {
         stream.getTracks().forEach((track) => track.stop());
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "video/webm" });
-        setVideo(new File([blob], "take.webm", { type: blob.type }));
+        setVideo(new File([blob], `${kind}.webm`, { type: blob.type }));
         setRecording(false);
       };
       recorderRef.current = recorder;
@@ -83,9 +112,19 @@ export function StudentUpload({ code, needsProfile }: Props) {
       setError(t("needFile"));
       return;
     }
-    if (picked.size > 60 * 1024 * 1024) {
-      setError(t("tooBig"));
+    if (picked.size > MAX_VIDEO_BYTES) {
+      setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
       return;
+    }
+    try {
+      const duration = await mediaDuration(picked);
+      const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
+      if (duration > maxSeconds) {
+        setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
+        return;
+      }
+    } catch {
+      // duration is best-effort; size already checked
     }
 
     setBusy(true);
@@ -93,10 +132,10 @@ export function StudentUpload({ code, needsProfile }: Props) {
       if (needsProfile) {
         const nameRaw = String(data.get("name") ?? "");
         const contactRaw = String(data.get("contactHandle") ?? "");
-        if (!nameRaw.trim() || !contactRaw.trim()) {
+        if (!requiredText(nameRaw) || !requiredText(contactRaw)) {
           const next = {
-            name: !nameRaw.trim() ? t("nameRequired") : undefined,
-            contactHandle: !contactRaw.trim() ? t("contactRequired") : undefined,
+            name: !requiredText(nameRaw) ? t("nameRequired") : undefined,
+            contactHandle: !requiredText(contactRaw) ? t("contactRequired") : undefined,
           };
           setFieldError(next);
           setError([next.name, next.contactHandle].filter(Boolean).join(" "));
@@ -150,15 +189,21 @@ export function StudentUpload({ code, needsProfile }: Props) {
       });
       if (!put.ok) throw new Error("upload failed");
 
+      const note = submissionNote(String(data.get("note") ?? ""));
+      if (note === undefined) {
+        setError(t("noteTooLong"));
+        setBusy(false);
+        return;
+      }
+
       const complete = await fetch(`/api/l/${code}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mediaId: signed.mediaId }),
+        body: JSON.stringify({ mediaId: signed.mediaId, kind, note }),
       });
       const finished = await readJson(complete);
-      if (!complete.ok) throw new Error(finished.error ?? "complete failed");
-      if (typeof finished.studentToken === "string") {
-        localStorage.setItem("student_token", finished.studentToken);
+      if (!complete.ok) {
+        throw new Error(finished.error === "note too long" ? t("noteTooLong") : (finished.error ?? "complete failed"));
       }
       if (typeof finished.page === "string") {
         window.location.href = finished.page;
@@ -173,8 +218,54 @@ export function StudentUpload({ code, needsProfile }: Props) {
   }
 
   if (done) {
-    return <p className="rounded-2xl bg-beat px-5 py-6 text-lg text-white">{t("sent")}</p>;
+    return <p className="text-sm">{t("sent")}</p>;
   }
+
+  const modes: { id: Kind; label: string; show: boolean }[] = [
+    { id: "take", label: t("sendTake"), show: true },
+    { id: "practice", label: t("sendPractice"), show: true },
+    { id: "overdub", label: t("overdub"), show: Boolean(clipUrl) },
+  ];
+
+  const modeRow = (
+    <div className="flex flex-wrap gap-2">
+      {modes
+        .filter((mode) => mode.show)
+        .map((mode) => (
+          <button
+            key={mode.id}
+            type="button"
+            className={kind === mode.id ? "btn px-3 py-1.5 text-sm" : "btn btn-quiet px-3 py-1.5 text-sm"}
+            onClick={() => setKind(mode.id)}
+          >
+            {mode.label}
+          </button>
+        ))}
+    </div>
+  );
+  const help = (
+    <p className="text-sm text-ink-soft">
+      {kind === "practice" ? t("practiceHelp") : kind === "overdub" ? t("overdubHelp") : t("takeHelp")}
+    </p>
+  );
+  const noteField = (
+    <label className="block">
+      <span className="field-label">{t("noteToTeacher")}</span>
+      <textarea
+        name="note"
+        maxLength={800}
+        rows={4}
+        placeholder={t("notePlaceholder")}
+        className="field mt-2 min-h-28"
+      />
+    </label>
+  );
+  const recordButton = recordSupported ? (
+    <button type="button" onClick={recording ? stopRecord : startRecord} className="btn btn-quiet">
+      {recording ? "Stop" : t("record")}
+    </button>
+  ) : null;
+  const sendLabel = busy ? "…" : kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
 
   return (
     <form onSubmit={onSubmit} className="space-y-5">
@@ -249,37 +340,77 @@ export function StudentUpload({ code, needsProfile }: Props) {
         </div>
       ) : null}
 
-      <div>
-        <p className="mb-2 text-sm font-medium">{t("upload")}</p>
-        <FilePicker
-          accept="video/*"
-          capture="environment"
-          file={video}
-          onFile={setVideo}
-          buttonLabel={t("chooseFile")}
-          changeLabel={t("changeFile")}
-          size="lg"
-        />
-      </div>
-
-      {recordSupported ? (
-        <button
-          type="button"
-          onClick={recording ? stopRecord : startRecord}
-          className="w-full rounded-2xl border border-ink/20 py-3"
-        >
-          {recording ? "Stop" : t("record")}
-        </button>
-      ) : null}
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
-
-      <button
-        type="submit"
-        disabled={busy}
-        className="w-full rounded-2xl bg-beat px-4 py-4 text-lg font-medium text-white disabled:opacity-60"
-      >
-        {busy ? "…" : t("submit")}
-      </button>
+      {desk ? (
+        <section className="submit-card">
+          <div className="submit-card-head">
+            <h2>{t("newSubmission")}</h2>
+            <p>{t("dropHint")}</p>
+          </div>
+          <div className="submit-desk">
+            <div className="space-y-3">
+              <FilePicker
+                accept="video/*"
+                capture="environment"
+                file={video}
+                onFile={setVideo}
+                buttonLabel={t("browseFiles")}
+                changeLabel={t("changeFile")}
+                dropTitle={t("dropHere")}
+                dropHint={t("dropHint")}
+              />
+              {recordButton}
+            </div>
+            <div className="space-y-4">
+              <div>
+                <p className="field-label">{t("thisPiece")}</p>
+                <p className="font-display mt-1 text-xl">{desk.pieceTitle}</p>
+                {desk.meta ? <p className="mt-1 text-sm text-ink-soft">{desk.meta}</p> : null}
+              </div>
+              <div>
+                <p className="field-label">{t("teacherLabel")}</p>
+                <p className="mt-1">{desk.teacherName}</p>
+              </div>
+              {desk.brief ? (
+                <div>
+                  <p className="field-label">{t("brief")}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-sm leading-relaxed">{desk.brief}</p>
+                </div>
+              ) : null}
+              {desk.tips ? <p className="text-sm leading-relaxed text-ink-soft">{desk.tips}</p> : null}
+              {modeRow}
+              {help}
+              {noteField}
+              {error ? <p className="text-sm text-danger">{error}</p> : null}
+              <button type="submit" disabled={busy || !video} className="btn submit-send disabled:opacity-60">
+                {sendLabel}
+              </button>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <>
+          {modeRow}
+          {help}
+          <div>
+            <p className="mb-2 text-sm font-medium">{kind === "overdub" ? t("overdub") : t("upload")}</p>
+            <FilePicker
+              accept="video/*"
+              capture="environment"
+              file={video}
+              onFile={setVideo}
+              buttonLabel={t("chooseFile")}
+              changeLabel={t("changeFile")}
+              size="lg"
+            />
+          </div>
+          {recordButton}
+          {noteField}
+          {error ? <p className="text-sm text-danger">{error}</p> : null}
+          <button type="submit" disabled={busy} className="btn disabled:opacity-60">
+            {sendLabel}
+          </button>
+        </>
+      )}
     </form>
   );
 }

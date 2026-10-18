@@ -6,7 +6,7 @@ loadLocalEnv();
 
 const prisma = new PrismaClient({
   datasources: {
-    db: { url: process.env.DIRECT_URL || process.env.DATABASE_URL },
+    db: { url: process.env.DATABASE_URL || process.env.DIRECT_URL },
   },
 });
 

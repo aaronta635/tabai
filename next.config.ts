@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
   },
+  // Client navigations reuse the last payload for 20s so Classes → Curriculum → Classes
+  // does not wait on Tokyo again. Pages still refetch after that window, and a reload
+  // always talks to Postgres.
+  experimental: {
+    staleTimes: {
+      dynamic: 20,
+      static: 180,
+    },
+  },
 };
 
 export default withNextIntl(nextConfig);

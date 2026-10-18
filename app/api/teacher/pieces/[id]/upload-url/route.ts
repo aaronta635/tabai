@@ -2,7 +2,7 @@ import { extname } from "node:path";
 import { NextRequest, NextResponse } from "next/server";
 import { requireTeacher } from "@/lib/auth";
 import { sheetKindFromName, tutorialKindFromName } from "@/lib/catalog";
-import { MAX_SHEET_BYTES, MAX_VIDEO_BYTES } from "@/lib/constants";
+import { MAX_CLIP_BYTES, MAX_SHEET_BYTES, MAX_VIDEO_BYTES } from "@/lib/constants";
 import { prisma } from "@/lib/prisma";
 import { createSignedUpload } from "@/lib/storage";
 
@@ -34,18 +34,18 @@ export async function POST(
     return NextResponse.json({ error: "file required" }, { status: 400 });
   }
 
-  const kind = body.kind === "sheet" ? "sheet" : body.kind === "tutorial" ? "tutorial" : null;
+  const kind =
+    body.kind === "sheet" || body.kind === "tutorial" || body.kind === "clip" ? body.kind : null;
   if (!kind) {
     return NextResponse.json({ error: "kind required" }, { status: 400 });
   }
 
-  const sniffed =
-    kind === "sheet" ? sheetKindFromName(filename) : tutorialKindFromName(filename);
+  const sniffed = kind === "sheet" ? sheetKindFromName(filename) : tutorialKindFromName(filename);
   if (!sniffed) {
     return NextResponse.json({ error: "unsupported file" }, { status: 400 });
   }
 
-  const max = kind === "sheet" ? MAX_SHEET_BYTES : MAX_VIDEO_BYTES;
+  const max = kind === "sheet" ? MAX_SHEET_BYTES : kind === "clip" ? MAX_CLIP_BYTES : MAX_VIDEO_BYTES;
   if (body.size > max) {
     return NextResponse.json({ error: "file too large" }, { status: 400 });
   }

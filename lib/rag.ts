@@ -36,16 +36,44 @@ function overlappingBars(observations: CompareObservations | null): number[] {
     .filter((bar): bar is number => typeof bar === "number");
 }
 
+export type DraftMetrics = {
+  duration_s?: number;
+  silence_ratio?: number;
+  tempo_stability?: number | null;
+  tempo_bpm?: number | null;
+  skipped?: boolean;
+};
+
+/** Loudness numbers must never become teaching claims unless compare already listed the same issue. */
+export function metricGuidance(metrics: DraftMetrics | null, observations: CompareObservations | null) {
+  if (!observations) {
+    return "Không có đối chiếu. Cấm dùng silence_ratio, tempo_stability, hay tiếng đàn để bịa lỗi. Không viết draft nếu worker gọi nhầm.";
+  }
+  if (closeMatch(observations)) {
+    return "Take khớp bài. Cấm dùng tempo_stability hay số đo để bịa lỗi nhịp.";
+  }
+  if (!metrics || metrics.skipped) return "Không có số đo âm thanh đáng tin. Đừng đoán kỹ thuật.";
+  return "Số đo chỉ là gợi ý. Chỉ nhắc nhịp/khoảng lặng nếu facts compare đã ghi cùng một chỗ (có tStart). Đừng bịa thêm.";
+}
+
 export function observationOutline(observations: CompareObservations | null) {
   if (!observations) {
     return [
-      "Không có đối chiếu bản nhạc cho take này.",
-      "Cấm nhận xét nốt, hợp âm, ngón, hoặc tư thế.",
-      "Chỉ được nói nhịp/khoảng lặng/độ dài nếu số đo thật sự kém.",
-      "Cấm câu một dòng kiểu 'hay quá' / 'I like your guitar sound'.",
+      "Không có đối chiếu bài (chưa có PieceModel / compare).",
+      "Cấm nhận xét nốt, hợp âm, ngón, tư thế, khoảng lặng, nhịp không đều, hay cảm xúc tiếng đàn.",
+      "Cấm bịa lỗi từ silence_ratio hoặc tempo_stability.",
+      "Không viết thư dài. Không khen 'có hồn' / 'tròn trịa'.",
     ].join(" ");
   }
-  if (observations.confidence < 0.45) {
+  const teacherKept = observations.issues.some((issue) => issue.verdict === "true" || issue.verdict === "false");
+  if (observations.pitchJudge === "weak" && !teacherKept) {
+    return [
+      "Không phân tích được nốt trên take này.",
+      "Đừng khen là khớp bài. Đừng bịa nốt sai hoặc hợp âm sai.",
+      "Có thể khen một điểm về nhịp hoặc tiếng nếu facts khác đã ghi, không thì chỉ nói chưa nghe rõ.",
+    ].join(" ");
+  }
+  if (observations.confidence < 0.45 && !teacherKept) {
     return [
       `Độ tin đối chiếu thấp (${observations.confidence}).`,
       "Không nêu nốt sai. Khen một điểm cụ thể về nhịp hoặc tiếng, rồi nhắc note của bài.",
@@ -53,26 +81,34 @@ export function observationOutline(observations: CompareObservations | null) {
     ].join(" ");
   }
   const issues = observations.issues
-    .filter((issue) => issue.confidence >= 0.75)
-    .slice(0, 4)
+    .filter((issue) => (teacherKept ? issue.verdict === "true" : issue.confidence >= 0.75))
+    .slice(0, teacherKept ? 8 : 4)
     .map((issue) => {
       const where = formatIssueWhere(issue) ?? "một đoạn";
       return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
     });
+  const unjudged =
+    observations.pitchJudge === "weak" ? "Nốt và hợp âm không phân tích được. Đừng khen là khớp nốt." : "";
   if (closeMatch(observations) || issues.length === 0) {
     return [
       `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
       `Khen: ${observations.positives.slice(0, 3).join("; ") || "(khen một điểm cụ thể về nhịp hoặc tiếng sạch)"}`,
       `Sửa: không có lỗi tin cậy — không bịa điểm sửa.`,
+      unjudged,
       `Lần sau: giữ đúng cảm giác take này. Chỉ nhắc note của bài nếu có, không bịa lỗi mới.`,
-    ].join("\n");
+    ]
+      .filter(Boolean)
+      .join("\n");
   }
   return [
     `Facts bắt buộc phải dùng (không bỏ, không bịa thêm):`,
+    unjudged,
     `Khen: ${observations.positives.slice(0, 2).join("; ") || "(không có khen cụ thể — khen nhịp hoặc tiếng sạch nếu số đo ổn)"}`,
     `Sửa: ${issues.join(" | ")}`,
     `Lần sau: ${observations.nextPractice || "chơi chậm, đúng nhịp"}`,
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export async function retrieveDraftContext(input: {

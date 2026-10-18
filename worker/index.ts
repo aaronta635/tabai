@@ -1,13 +1,19 @@
+import { enqueueTrainForPiecesWithoutReadyModel } from "../lib/catalog";
+import { isPrismaConnectionError } from "../lib/db-errors";
+import { PITCH_OVERLAY_VERSION } from "../lib/constants";
 import { loadLocalEnv } from "../lib/load-env";
-import { claimNextJob, failJob, finishJob } from "../lib/jobs";
+import { claimNextJob, enqueueAllTakesNeedingCompare, failJob, finishJob, reclaimStaleJobs } from "../lib/jobs";
+import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
 import { runDraft } from "./draft";
+import { listenHealthz } from "./healthz";
 import { runTrainPiece } from "./train";
 
 loadLocalEnv();
 
 const POLL_MS = 2000;
+const RECONNECT_WAIT_MS = 5000;
 
 async function handle(job: { id: string; type: string; payload: unknown }) {
   const payload = job.payload as {
@@ -43,6 +49,28 @@ async function handle(job: { id: string; type: string; payload: unknown }) {
 
 async function loop() {
   console.log("worker listening");
+  if (process.env.BASIC_PITCH === "1") {
+    console.log("pitch overlay", PITCH_OVERLAY_VERSION);
+  } else {
+    console.log("BASIC_PITCH is off — restart will not rewrite pitch drafts");
+  }
+  try {
+    const reclaimed = await reclaimStaleJobs();
+    if (reclaimed) console.log("reclaimed stale jobs", reclaimed);
+    const queued = await enqueueTrainForPiecesWithoutReadyModel();
+    if (queued.length) {
+      console.log(
+        "queued train for",
+        queued.map((row) => row.piece.code).join(", "),
+      );
+    }
+    const compares = await enqueueAllTakesNeedingCompare();
+    for (const row of compares) {
+      console.log("queued compare for", row.code, row.count);
+    }
+  } catch (error) {
+    console.error("startup job enqueue", error);
+  }
   for (;;) {
     try {
       const job = await claimNextJob();
@@ -51,19 +79,35 @@ async function loop() {
         continue;
       }
       try {
+        const payload = (job.payload ?? {}) as { submissionId?: string; pieceId?: string };
+        console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
         await handle(job);
         await finishJob(job.id);
         console.log("job done", job.type, job.id);
       } catch (error) {
         const message = error instanceof Error ? error.message : "unknown";
         console.error("job failed", job.id, message);
+        if (isPrismaConnectionError(error)) {
+          await reconnectPrisma();
+        }
         await failJob(job.id, message);
       }
     } catch (error) {
       console.error("worker loop", error);
+      if (isPrismaConnectionError(error)) {
+        try {
+          await reconnectPrisma();
+          console.log("prisma reconnected");
+        } catch (reconnectError) {
+          console.error("prisma reconnect failed", reconnectError);
+        }
+        await new Promise((r) => setTimeout(r, RECONNECT_WAIT_MS));
+        continue;
+      }
       await new Promise((r) => setTimeout(r, POLL_MS));
     }
   }
 }
 
+listenHealthz();
 void loop();

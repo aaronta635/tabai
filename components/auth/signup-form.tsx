@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { FormEvent, useState } from "react";
-import { useRouter } from "next/navigation";
-import { authHref, bindLocalSession, oauthReturn, startSocial, type Social } from "@/components/auth/auth-client";
+import { authHref, bindLocalSession, enterStudio, oauthReturn, startSocial, type Social } from "@/components/auth/auth-client";
 import { RolePicker, SocialRow } from "@/components/auth/auth-parts";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 import type { AccountRole } from "@/lib/onboarding";
@@ -38,7 +37,6 @@ export function SignupForm({
   };
   initialError?: string | null;
 }) {
-  const router = useRouter();
   const role = initialRole;
   const [error, setError] = useState<string | null>(initialError ?? null);
   const [info, setInfo] = useState<string | null>(null);
@@ -85,8 +83,7 @@ export function SignupForm({
           wrongRoleTutor: labels.wrongRoleTutor,
           wrongRoleStudent: labels.wrongRoleStudent,
         });
-        router.push(dest);
-        router.refresh();
+        enterStudio(dest);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "auth failed");

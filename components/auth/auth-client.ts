@@ -1,14 +1,18 @@
 import { createBrowserSupabase } from "@/lib/supabase/client";
+import { encodeOAuthBind, OAUTH_BIND_COOKIE, oauthRedirectTo } from "@/lib/oauth-bind";
 import type { AccountRole } from "@/lib/onboarding";
 import { authPath } from "@/lib/return-path";
 
 export type Social = "google" | "facebook" | "zalo";
 
+function stashOAuthBind(role: AccountRole, next: string) {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${OAUTH_BIND_COOKIE}=${encodeOAuthBind(role, next)}; Path=/; Max-Age=600; SameSite=Lax${secure}`;
+}
+
 export function oauthReturn(role: AccountRole, next: string) {
-  const params = new URLSearchParams();
-  params.set("role", role);
-  if (next) params.set("next", next);
-  return `${window.location.origin}/auth/callback?${params}`;
+  stashOAuthBind(role, next);
+  return oauthRedirectTo(window.location.origin, role, next);
 }
 
 export function authHref(path: "login" | "signup", role: AccountRole, next: string) {
@@ -42,11 +46,20 @@ export async function bindLocalSession(input: {
   return json.next ?? input.next;
 }
 
+/** Full load so a previous student's cached studio page cannot paint after account switch. */
+export function enterStudio(dest: string) {
+  window.location.assign(dest);
+}
+
 export async function startSocial(provider: Social, role: AccountRole, next: string) {
   const supabase = createBrowserSupabase();
   const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
     provider: provider === "zalo" ? ("custom:zalo" as "google") : provider,
-    options: { redirectTo: oauthReturn(role, next), skipBrowserRedirect: true },
+    options: {
+      redirectTo: oauthReturn(role, next),
+      skipBrowserRedirect: true,
+      queryParams: { prompt: "select_account" },
+    },
   });
   if (oauthError || !data?.url) throw oauthError ?? new Error("missing");
   const probe = await fetch("/api/auth/provider", {

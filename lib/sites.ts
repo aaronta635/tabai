@@ -1,3 +1,5 @@
+import { resolveAppOrigin } from "@/lib/app-origin";
+
 function stripSlash(url: string) {
   return url.replace(/\/$/, "");
 }
@@ -11,8 +13,7 @@ function hostFromOrigin(origin: string) {
 }
 
 export function productOrigin() {
-  const value = process.env.NEXT_PUBLIC_APP_URL?.trim();
-  return value ? stripSlash(value) : "";
+  return resolveAppOrigin();
 }
 
 export function marketingOrigin() {

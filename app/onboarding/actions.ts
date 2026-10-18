@@ -110,7 +110,7 @@ export async function saveStudentOnboarding(form: FormData) {
       consentVersion: student.consentVersion || CONSENT_VERSION,
     },
   });
-  await setStudentAccountCookies(updated.id, updated.name, updated.token, true);
+  await setStudentAccountCookies(updated.id, updated.name, updated.token, true, updated.authUserId);
   finish("student", form, "/student");
 }
 
@@ -137,7 +137,7 @@ export async function updateStudentProfile(form: FormData) {
     where: { id: student.id },
     data: { name, ageBand, contactHandle, answersJson: answers },
   });
-  await setStudentAccountCookies(updated.id, updated.name, updated.token, true);
+  await setStudentAccountCookies(updated.id, updated.name, updated.token, true, updated.authUserId);
   revalidateStudent();
 }
 
@@ -194,7 +194,7 @@ export async function guestJoinClass(form: FormData) {
   });
   const joined = await bindStudentToClass(student.id, code);
   if ("error" in joined) return { error: joined.error };
-  await setStudentAccountCookies(student.id, student.name, token, true);
+  await setStudentAccountCookies(student.id, student.name, token, true, student.authUserId);
   redirect("/student");
 }
 

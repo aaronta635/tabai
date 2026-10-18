@@ -75,6 +75,28 @@ describe("LoginForm", () => {
     expect(mockRouter.push).not.toHaveBeenCalled();
   });
 
+  it("opens the bound studio with a full load so another student's cached page cannot stick", async () => {
+    signInWithPassword.mockResolvedValue({ error: null });
+    vi.mocked(fetch).mockResolvedValue({
+      ok: true,
+      json: async () => ({ ok: true, next: "/student" }),
+    } as Response);
+    const assign = vi.fn();
+    vi.stubGlobal(
+      "location",
+      Object.assign(window.location, { assign }),
+    );
+
+    const user = userEvent.setup();
+    render(<LoginForm initialRole="student" next="/student" labels={loginLabels} />);
+    await user.type(screen.getByLabelText("Email"), "an@studio.test");
+    await user.type(screen.getByLabelText("Password"), "secret1");
+    await user.click(screen.getByRole("button", { name: "Sign in as Student" }));
+
+    expect(assign).toHaveBeenCalledWith("/student");
+    expect(mockRouter.push).not.toHaveBeenCalled();
+  });
+
   it("links to the signup page instead of swapping the form", () => {
     render(<LoginForm initialRole="student" next="/student" labels={loginLabels} />);
     expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute(
@@ -99,7 +121,11 @@ describe("LoginForm", () => {
       1,
       expect.objectContaining({
         provider: "google",
-        options: expect.objectContaining({ skipBrowserRedirect: true }),
+        options: expect.objectContaining({
+          skipBrowserRedirect: true,
+          queryParams: { prompt: "select_account" },
+          redirectTo: "https://paramuzic.com/auth/callback?role=student&next=%2Fstudent",
+        }),
       }),
     );
     expect(signInWithOAuth).toHaveBeenNthCalledWith(

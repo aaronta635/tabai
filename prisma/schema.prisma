@@ -416,8 +416,12 @@ model Reply {
   submission   Submission  @relation(fields: [submissionId], references: [id], onDelete: Cascade)
   teacherId    String
   teacher      Teacher     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
-  text         String
-  grade        String?
+  text            String
+  highlightStartS Float?
+  progressNote    String?
+  keyPoint        String?
+  nextStep        String?
+  grade           String?
   source       ReplySource
   editDistance Int?
   teacherPick  Boolean     @default(false)

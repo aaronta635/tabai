@@ -33,9 +33,15 @@ export type WeeklyReport = {
   week: string;
   song: string | null;
   takes: number;
+  practices: number;
   streak: number;
   letter: string | null;
   milestone: Milestone | null;
+  nextSong: string | null;
+  highlightStart: number | null;
+  progressNote: string | null;
+  keyPoint: string | null;
+  nextStep: string | null;
   paymentUrl: string | null;
 };
 
@@ -64,7 +70,7 @@ export async function loadWeeklyReport(token: string, locale: string, now = new 
     prisma.reply.findFirst({
       where: { sentAt: { gte: start, lt: end }, submission: { studentId: student.id } },
       orderBy: { sentAt: "desc" },
-      select: { text: true },
+      select: { text: true, highlightStartS: true, progressNote: true, keyPoint: true, nextStep: true },
     }),
     prisma.assignment.findMany({
       where: assignmentsWhereForStudent(student.id),
@@ -95,9 +101,15 @@ export async function loadWeeklyReport(token: string, locale: string, now = new 
     week: weekLabel(start, locale),
     song: weekTakes[0]?.piece.title ?? assigned?.title ?? null,
     takes: weekTakes.length,
+    practices: practices.filter((row) => row.startedAt >= start && row.startedAt < end).length,
     streak,
     letter: letter?.text ?? null,
     milestone: milestoneOf({ takes: sent, replies: replyCount, streak }),
+    nextSong: assigned?.title ?? null,
+    highlightStart: letter?.highlightStartS ?? null,
+    progressNote: letter?.progressNote ?? null,
+    keyPoint: letter?.keyPoint ?? null,
+    nextStep: letter?.nextStep ?? null,
     paymentUrl: safePaymentUrl(student.teacher.paymentUrl),
   };
 }

@@ -17,8 +17,10 @@ import { RevertReplyButton } from "@/components/teacher/revert-reply-button";
 import { FactBars } from "@/components/teacher/fact-bars";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
 import { requiredText } from "@/lib/forms";
+import { joinStoryLetter } from "@/lib/report";
 import {
   draftCoversFactVerdicts,
+  formatClock,
   latestFactVerdictAt,
   type FactVerdict,
   type ObservationMarker,
@@ -68,14 +70,16 @@ export function QueueClient({
 }) {
   const t = useTranslations("teacher");
   const [index, setIndex] = useState(0);
-  const [editing, setEditing] = useState(false);
-  const [text, setText] = useState("");
+  const [progressNote, setProgressNote] = useState("");
+  const [keyPoint, setKeyPoint] = useState("");
+  const [nextStep, setNextStep] = useState("");
+  const [highlightAt, setHighlightAt] = useState<number | null>(null);
   const [grade, setGrade] = useState("");
   const [fast, setFast] = useState(false);
   const [skipOpen, setSkipOpen] = useState(false);
   const [skipReason, setSkipReason] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
-  const boxRef = useRef<HTMLTextAreaElement>(null);
+  const progressRef = useRef<HTMLTextAreaElement>(null);
   const verdictQueue = useRef(Promise.resolve());
   const verdictTicket = useRef<Record<number, number>>({});
   const verdictItem = useRef<string | null>(null);
@@ -114,12 +118,26 @@ export function QueueClient({
   const letterOpen = !letterLocked || ownLetter;
   const letterText = polledDraft?.text ?? (hasFreshDraft ? item?.draft ?? "" : "");
 
-  const submitReply = useCallback(async (submissionId: string, value: string, mark: string) => {
-    if (!requiredText(value)) {
+  const submitReply = useCallback(async (
+    submissionId: string,
+    lines: { progress: string; keyPoint: string; nextStep: string },
+    mark: string,
+    moment: number | null,
+  ) => {
+    const letter = joinStoryLetter({ progress: lines.progress, keyPoint: lines.keyPoint, nextStep: lines.nextStep });
+    if (!requiredText(letter)) {
       setActionError(t("replyRequired"));
       return;
     }
-    const result = await sendReply({ submissionId, text: value, grade: mark || null });
+    const result = await sendReply({
+      submissionId,
+      text: letter,
+      grade: mark || null,
+      highlightStartS: moment,
+      progressNote: lines.progress,
+      keyPoint: lines.keyPoint,
+      nextStep: lines.nextStep,
+    });
     if (result && "error" in result) {
       setActionError(
         result.error === "stale_item" ? t("staleReply") : result.error === "bad_grade" ? t("badGrade") : t("replyRequired"),
@@ -143,25 +161,17 @@ export function QueueClient({
     setLocalLatestVerdictAt(null);
     setMinDraftAt(null);
     setWaitStarted(null);
-    setEditing(false);
     setOwnLetter(false);
+    setProgressNote("");
+    setKeyPoint("");
+    setNextStep("");
+    setHighlightAt(null);
     setGrade("");
     setActionError(null);
     if (item.submissionId && item.kind === "unanswered") {
       void markOpened(item.submissionId);
     }
   }, [item?.id]);
-
-  useEffect(() => {
-    if (!item) return;
-    if (!letterOpen) {
-      setText("");
-      return;
-    }
-    if (ownLetter && letterLocked) return;
-    if (editing) return;
-    setText(letterText || item.reply || "");
-  }, [item?.id, letterOpen, letterLocked, ownLetter, letterText, item?.reply, editing]);
 
   useEffect(() => {
     if (waitingForDraft && waitStarted == null) setWaitStarted(Date.now());
@@ -239,8 +249,7 @@ export function QueueClient({
       }
       if (event.key === "e" && !inField && letterOpen) {
         event.preventDefault();
-        setEditing(true);
-        queueMicrotask(() => boxRef.current?.focus());
+        queueMicrotask(() => progressRef.current?.focus());
       }
       if (event.key === "Enter" && !event.shiftKey) {
         if (inField && !event.metaKey && !event.ctrlKey) return;
@@ -248,14 +257,19 @@ export function QueueClient({
         if (item?.kind === "unanswered" && item.submissionId) {
           event.preventDefault();
           start(async () => {
-            await submitReply(item.submissionId!, text, grade);
+            await submitReply(
+              item.submissionId!,
+              { progress: progressNote, keyPoint, nextStep },
+              grade,
+              highlightAt,
+            );
           });
         }
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [item, text, grade, submitReply, letterOpen]);
+  }, [item, progressNote, keyPoint, nextStep, highlightAt, grade, submitReply, letterOpen]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, number>();
@@ -412,15 +426,64 @@ export function QueueClient({
                   {timedOut && !hasFreshDraft ? (
                     <p className="fact-draft-wait">{t("factDraftTimeout")}</p>
                   ) : null}
-                  <textarea
-                    ref={boxRef}
-                    value={text}
-                    readOnly={!editing && Boolean(letterText)}
-                    onChange={(e) => setText(e.target.value)}
-                    onFocus={() => setEditing(true)}
-                    rows={6}
-                    className="draft-letter field mt-0 w-full rounded-xl p-3 leading-relaxed"
-                  />
+                  {letterText ? (
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink-soft">{letterText}</p>
+                  ) : null}
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      className="chip"
+                      disabled={!videoUrl}
+                      onClick={() => {
+                        const video = videoRef.current;
+                        if (!video) return;
+                        setHighlightAt(video.currentTime || 0);
+                      }}
+                    >
+                      {t("markMoment")}
+                    </button>
+                    {item.markers.map((marker) => (
+                      <button
+                        key={marker.index}
+                        type="button"
+                        className="chip"
+                        onClick={() => setHighlightAt(marker.tStart)}
+                      >
+                        {t("useMoment", { time: formatClock(marker.tStart) })}
+                      </button>
+                    ))}
+                  </div>
+                  {highlightAt != null ? (
+                    <p className="text-sm">{t("highlightAt", { time: formatClock(highlightAt) })}</p>
+                  ) : null}
+                  <label className="block">
+                    <span className="field-label">{t("progressLine")}</span>
+                    <textarea
+                      ref={progressRef}
+                      value={progressNote}
+                      onChange={(event) => setProgressNote(event.target.value)}
+                      rows={2}
+                      className="field mt-1.5 w-full"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="field-label">{t("keyLine")}</span>
+                    <textarea
+                      value={keyPoint}
+                      onChange={(event) => setKeyPoint(event.target.value)}
+                      rows={2}
+                      className="field mt-1.5 w-full"
+                    />
+                  </label>
+                  <label className="block">
+                    <span className="field-label">{t("nextLine")}</span>
+                    <textarea
+                      value={nextStep}
+                      onChange={(event) => setNextStep(event.target.value)}
+                      rows={2}
+                      className="field mt-1.5 w-full"
+                    />
+                  </label>
                 </>
               )}
               {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
@@ -430,9 +493,10 @@ export function QueueClient({
                   className="desk-action"
                   onClick={() => {
                     setOwnLetter(true);
-                    setEditing(true);
-                    setText("");
-                    queueMicrotask(() => boxRef.current?.focus());
+                    setProgressNote("");
+                    setKeyPoint("");
+                    setNextStep("");
+                    queueMicrotask(() => progressRef.current?.focus());
                   }}
                 >
                   {t("writeYourself")}
@@ -461,7 +525,12 @@ export function QueueClient({
                 onClick={() =>
                   start(async () => {
                     if (!item.submissionId) return;
-                    await submitReply(item.submissionId, text, grade);
+                    await submitReply(
+                      item.submissionId,
+                      { progress: progressNote, keyPoint, nextStep },
+                      grade,
+                      highlightAt,
+                    );
                   })
                 }
               >
@@ -509,8 +578,7 @@ export function QueueClient({
                   type="button"
                   className="desk-action"
                   onClick={() => {
-                    setEditing(true);
-                    boxRef.current?.focus();
+                    progressRef.current?.focus();
                   }}
                 >
                   {t("edit")}
@@ -521,8 +589,9 @@ export function QueueClient({
                   onClick={() => {
                     setPolledDraft(null);
                     setMinDraftAt(shownDraftAt ?? new Date().toISOString());
-                    setText("");
-                    setEditing(false);
+                    setProgressNote("");
+                    setKeyPoint("");
+                    setNextStep("");
                     if (item.submissionId) void requestDraft(item.submissionId);
                   }}
                 >

@@ -89,7 +89,7 @@ describe("QueueClient", () => {
     sendReply.mockResolvedValue({ error: "stale_item" });
     renderQueue();
 
-    await user.type(screen.getByRole("textbox"), "Keep the beat.");
+    await user.type(screen.getByLabelText("How did you progress"), "Keep the beat.");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     expect(await screen.findByText("This take was already answered. Refresh the queue.")).toBeInTheDocument();
@@ -204,12 +204,19 @@ describe("QueueClient", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Write it yourself" }));
-    await user.type(screen.getByRole("textbox"), "Keep the chorus quieter.");
+    await user.click(screen.getByRole("button", { name: "Use 0:05" }));
+    await user.type(screen.getByLabelText("How did you progress"), "The chorus sits in time.");
+    await user.type(screen.getByLabelText("Key point"), "Keep the chorus quieter.");
+    await user.type(screen.getByLabelText("Next step"), "Play the verse once slowly.");
     await user.click(screen.getByRole("button", { name: "Send" }));
     expect(sendReply).toHaveBeenCalledWith({
       submissionId: "sub-1",
-      text: "Keep the chorus quieter.",
+      text: "The chorus sits in time.\n\nKeep the chorus quieter.\n\nPlay the verse once slowly.",
       grade: null,
+      highlightStartS: 5.05,
+      progressNote: "The chorus sits in time.",
+      keyPoint: "Keep the chorus quieter.",
+      nextStep: "Play the verse once slowly.",
     });
   });
 

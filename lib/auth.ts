@@ -351,7 +351,7 @@ export async function getStudentFromCookie() {
   return { id: session.id, name: session.name };
 }
 
-async function supabaseUser() {
+const supabaseUser = cache(async function supabaseUser() {
   try {
     const supabase = await createServerSupabase();
     const { data } = await supabase.auth.getSession();
@@ -359,7 +359,7 @@ async function supabaseUser() {
   } catch {
     return null;
   }
-}
+});
 
 export const requireTeacher = cache(async function requireTeacher() {
   const session = await readTeacherSession();

@@ -1,15 +1,18 @@
 import { createBrowserSupabase } from "@/lib/supabase/client";
-import { resolveAppOrigin } from "@/lib/app-origin";
+import { encodeOAuthBind, OAUTH_BIND_COOKIE, oauthRedirectTo } from "@/lib/oauth-bind";
 import type { AccountRole } from "@/lib/onboarding";
 import { authPath } from "@/lib/return-path";
 
 export type Social = "google" | "facebook" | "zalo";
 
+function stashOAuthBind(role: AccountRole, next: string) {
+  const secure = window.location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${OAUTH_BIND_COOKIE}=${encodeOAuthBind(role, next)}; Path=/; Max-Age=600; SameSite=Lax${secure}`;
+}
+
 export function oauthReturn(role: AccountRole, next: string) {
-  const params = new URLSearchParams();
-  params.set("role", role);
-  if (next) params.set("next", next);
-  return `${resolveAppOrigin(window.location.origin)}/auth/callback?${params}`;
+  stashOAuthBind(role, next);
+  return oauthRedirectTo(window.location.origin, role, next);
 }
 
 export function authHref(path: "login" | "signup", role: AccountRole, next: string) {
@@ -52,7 +55,11 @@ export async function startSocial(provider: Social, role: AccountRole, next: str
   const supabase = createBrowserSupabase();
   const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
     provider: provider === "zalo" ? ("custom:zalo" as "google") : provider,
-    options: { redirectTo: oauthReturn(role, next), skipBrowserRedirect: true },
+    options: {
+      redirectTo: oauthReturn(role, next),
+      skipBrowserRedirect: true,
+      queryParams: { prompt: "select_account" },
+    },
   });
   if (oauthError || !data?.url) throw oauthError ?? new Error("missing");
   const probe = await fetch("/api/auth/provider", {

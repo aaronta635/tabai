@@ -121,7 +121,11 @@ describe("LoginForm", () => {
       1,
       expect.objectContaining({
         provider: "google",
-        options: expect.objectContaining({ skipBrowserRedirect: true }),
+        options: expect.objectContaining({
+          skipBrowserRedirect: true,
+          queryParams: { prompt: "select_account" },
+          redirectTo: "https://paramuzic.com/auth/callback?role=student&next=%2Fstudent",
+        }),
       }),
     );
     expect(signInWithOAuth).toHaveBeenNthCalledWith(

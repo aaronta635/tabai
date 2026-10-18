@@ -2,13 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { bindAuthSession, isRoleMismatch, signOutAccount } from "@/lib/auth";
 import { parseRole } from "@/lib/onboarding";
 import { originFromRequest } from "@/lib/app-origin";
+import { OAUTH_BIND_COOKIE, parseOAuthBind } from "@/lib/oauth-bind";
 import { destinationAfterAuth, safeReturn, signInPath } from "@/lib/return-path";
 import { createServerSupabase } from "@/lib/supabase/server";
 
+function redirectHome(url: URL) {
+  const response = NextResponse.redirect(url);
+  response.cookies.delete(OAUTH_BIND_COOKIE);
+  return response;
+}
+
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
-  const next = request.nextUrl.searchParams.get("next");
-  const role = parseRole(request.nextUrl.searchParams.get("role"));
+  const bind = parseOAuthBind(request.cookies.get(OAUTH_BIND_COOKIE)?.value);
+  const role = parseRole(request.nextUrl.searchParams.get("role")) ?? bind?.role ?? null;
+  const next = request.nextUrl.searchParams.get("next") ?? bind?.next ?? null;
   const origin = originFromRequest(request);
   const carried = role ? safeReturn(role, next) : null;
 
@@ -21,10 +29,10 @@ export async function GET(request: NextRequest) {
     await signOutAccount();
     const auth = new URL(role ? signInPath(role, carried) : "/login", origin);
     auth.searchParams.set("error", "role_mismatch");
-    return NextResponse.redirect(auth);
+    return redirectHome(auth);
   }
   if (!bound) {
-    return NextResponse.redirect(new URL(role ? signInPath(role, carried) : "/login", origin));
+    return redirectHome(new URL(role ? signInPath(role, carried) : "/login", origin));
   }
   const dest = destinationAfterAuth({
     role: bound.role,
@@ -32,5 +40,5 @@ export async function GET(request: NextRequest) {
     requested: carried,
     home: bound.next,
   });
-  return NextResponse.redirect(new URL(dest, origin));
+  return redirectHome(new URL(dest, origin));
 }

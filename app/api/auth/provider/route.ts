@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { isOAuthProviderRedirect } from "@/lib/oauth-bind";
 
-/** Confirms a Supabase authorize URL will redirect before the browser leaves the page. */
+/** Confirms a Supabase authorize URL will send the browser to Google/Facebook/Zalo. */
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as { url?: string } | null;
   const url = body?.url ?? "";
@@ -11,7 +12,7 @@ export async function POST(request: Request) {
 
   const res = await fetch(url, { redirect: "manual" });
   const location = res.headers.get("location");
-  if (res.status >= 300 && res.status < 400 && location) {
+  if (res.status >= 300 && res.status < 400 && location && isOAuthProviderRedirect(location)) {
     return NextResponse.json({ ok: true });
   }
   return NextResponse.json({ ok: false }, { status: 400 });

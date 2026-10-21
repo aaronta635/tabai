@@ -24,9 +24,22 @@ function rememberedLocale(request: NextRequest): Locale {
   return request.cookies.get(LOCALE_COOKIE)?.value === "en" ? "en" : "vi";
 }
 
+/** Supabase attaches ?code= to the site address when it does not return to /auth/callback. */
+function rescueAuthCode(request: NextRequest) {
+  if (!request.nextUrl.searchParams.get("code")) return null;
+  const { pathname } = request.nextUrl;
+  if (skipsLocale(pathname)) return null;
+  if (splitLocale(pathname).pathname !== "/") return null;
+  const dest = request.nextUrl.clone();
+  dest.pathname = "/auth/callback";
+  return NextResponse.redirect(dest);
+}
+
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
   const { pathname, search } = request.nextUrl;
+  const rescued = rescueAuthCode(request);
+  if (rescued) return rescued;
 
   if (skipsLocale(pathname)) {
     if (!sitesAreSplit()) return continueWithPath(request, pathname, search);

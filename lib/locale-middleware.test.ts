@@ -34,6 +34,18 @@ describe("locale middleware", () => {
     expect(remembered.cookies.get(LOCALE_COOKIE)?.value).toBe("en");
   });
 
+  it("sends a session code on the language home to the auth callback", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
+    vi.stubEnv("NEXT_PUBLIC_MARKETING_URL", "");
+
+    expect(location(ask("https://www.paramuzic.com/en?code=5cac2858-f7c9-467d-8c26-81ba1c0299e6"))).toBe(
+      "https://www.paramuzic.com/auth/callback?code=5cac2858-f7c9-467d-8c26-81ba1c0299e6",
+    );
+    expect(location(ask("http://localhost:3000/?code=abc", "en"))).toBe(
+      "http://localhost:3000/auth/callback?code=abc",
+    );
+  });
+
   it("prefixes a bare app route and leaves api and auth alone", () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "");
     vi.stubEnv("NEXT_PUBLIC_MARKETING_URL", "");

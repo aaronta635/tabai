@@ -26,6 +26,7 @@ describe("safeReturn", () => {
 
   it("allows one class code and one invite token", () => {
     expect(safeReturn("student", "/join/abcd23")).toBe("/join/abcd23");
+    expect(safeReturn("student", "/join/kmprt")).toBe("/join/kmprt");
     expect(safeReturn("student", "/c/abcd23")).toBe("/c/abcd23");
     expect(safeReturn("student", "/join/abcd23/extra")).toBeNull();
     expect(safeReturn("tutor", "/t/abcdefghijklmnopqrstuvwx")).toBe("/t/abcdefghijklmnopqrstuvwx");

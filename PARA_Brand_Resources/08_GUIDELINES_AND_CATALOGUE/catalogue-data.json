@@ -1,0 +1,2160 @@
+[
+  {
+    "category": "Logo",
+    "title": "Horizontal logo",
+    "preview": "01_LOGO/PNG/para-horizontal-light-grain.png",
+    "files": [
+      [
+        "Grain · light",
+        "01_LOGO/Grain_Gradient/para-horizontal-light-grain.svg"
+      ],
+      [
+        "Grain · dark",
+        "01_LOGO/Grain_Gradient/para-horizontal-dark-grain.svg"
+      ],
+      [
+        "Editable gradient",
+        "01_LOGO/Editable_Masters/para-horizontal-light-gradient.svg"
+      ],
+      [
+        "Espresso",
+        "01_LOGO/Solid/para-horizontal-espresso.svg"
+      ],
+      [
+        "Ivory",
+        "01_LOGO/Solid/para-horizontal-ivory.svg"
+      ],
+      [
+        "Black",
+        "01_LOGO/Solid/para-horizontal-black.svg"
+      ],
+      [
+        "White",
+        "01_LOGO/Solid/para-horizontal-white.svg"
+      ],
+      [
+        "Cropped web SVG",
+        "01_LOGO/Grain_Gradient/Web/para-horizontal-light-grain-optical.svg"
+      ],
+      [
+        "Transparent PNG",
+        "01_LOGO/PNG/para-horizontal-light-grain.png"
+      ]
+    ],
+    "description": "Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.",
+    "status": "Approved geometry / approved treatment",
+    "dark": false
+  },
+  {
+    "category": "Logo",
+    "title": "Stacked logo",
+    "preview": "01_LOGO/PNG/para-stacked-light-grain.png",
+    "files": [
+      [
+        "Grain · light",
+        "01_LOGO/Grain_Gradient/para-stacked-light-grain.svg"
+      ],
+      [
+        "Grain · dark",
+        "01_LOGO/Grain_Gradient/para-stacked-dark-grain.svg"
+      ],
+      [
+        "Editable gradient",
+        "01_LOGO/Editable_Masters/para-stacked-light-gradient.svg"
+      ],
+      [
+        "Espresso",
+        "01_LOGO/Solid/para-stacked-espresso.svg"
+      ],
+      [
+        "Ivory",
+        "01_LOGO/Solid/para-stacked-ivory.svg"
+      ],
+      [
+        "Black",
+        "01_LOGO/Solid/para-stacked-black.svg"
+      ],
+      [
+        "White",
+        "01_LOGO/Solid/para-stacked-white.svg"
+      ],
+      [
+        "Cropped web SVG",
+        "01_LOGO/Grain_Gradient/Web/para-stacked-light-grain-optical.svg"
+      ],
+      [
+        "Transparent PNG",
+        "01_LOGO/PNG/para-stacked-light-grain.png"
+      ]
+    ],
+    "description": "Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.",
+    "status": "Approved geometry / approved treatment",
+    "dark": false
+  },
+  {
+    "category": "Logo",
+    "title": "Symbol logo",
+    "preview": "01_LOGO/PNG/para-symbol-light-grain.png",
+    "files": [
+      [
+        "Grain · light",
+        "01_LOGO/Grain_Gradient/para-symbol-light-grain.svg"
+      ],
+      [
+        "Grain · dark",
+        "01_LOGO/Grain_Gradient/para-symbol-dark-grain.svg"
+      ],
+      [
+        "Editable gradient",
+        "01_LOGO/Editable_Masters/para-symbol-light-gradient.svg"
+      ],
+      [
+        "Espresso",
+        "01_LOGO/Solid/para-symbol-espresso.svg"
+      ],
+      [
+        "Ivory",
+        "01_LOGO/Solid/para-symbol-ivory.svg"
+      ],
+      [
+        "Black",
+        "01_LOGO/Solid/para-symbol-black.svg"
+      ],
+      [
+        "White",
+        "01_LOGO/Solid/para-symbol-white.svg"
+      ],
+      [
+        "Cropped web SVG",
+        "01_LOGO/Grain_Gradient/Web/para-symbol-light-grain-optical.svg"
+      ],
+      [
+        "Transparent PNG",
+        "01_LOGO/PNG/para-symbol-light-grain.png"
+      ]
+    ],
+    "description": "Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.",
+    "status": "Approved geometry / approved treatment",
+    "dark": false
+  },
+  {
+    "category": "Logo",
+    "title": "Wordmark logo",
+    "preview": "01_LOGO/PNG/para-wordmark-light-grain.png",
+    "files": [
+      [
+        "Grain · light",
+        "01_LOGO/Grain_Gradient/para-wordmark-light-grain.svg"
+      ],
+      [
+        "Grain · dark",
+        "01_LOGO/Grain_Gradient/para-wordmark-dark-grain.svg"
+      ],
+      [
+        "Editable gradient",
+        "01_LOGO/Editable_Masters/para-wordmark-light-gradient.svg"
+      ],
+      [
+        "Espresso",
+        "01_LOGO/Solid/para-wordmark-espresso.svg"
+      ],
+      [
+        "Ivory",
+        "01_LOGO/Solid/para-wordmark-ivory.svg"
+      ],
+      [
+        "Black",
+        "01_LOGO/Solid/para-wordmark-black.svg"
+      ],
+      [
+        "White",
+        "01_LOGO/Solid/para-wordmark-white.svg"
+      ],
+      [
+        "Cropped web SVG",
+        "01_LOGO/Grain_Gradient/Web/para-wordmark-light-grain-optical.svg"
+      ],
+      [
+        "Transparent PNG",
+        "01_LOGO/PNG/para-wordmark-light-grain.png"
+      ]
+    ],
+    "description": "Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.",
+    "status": "Approved geometry / approved treatment",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Rhythm / metronome",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-rhythm-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.png"
+      ]
+    ],
+    "description": "Approved review specimen. Detailed ≥72 px; small ≥48 px.",
+    "status": "Approved specimen / unchanged",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Audio recording",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-recording-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-recording-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.png"
+      ]
+    ],
+    "description": "Approved review specimen. Detailed ≥72 px; small ≥48 px.",
+    "status": "Approved specimen / unchanged",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Teacher feedback",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-feedback-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.png"
+      ]
+    ],
+    "description": "Approved review specimen. Detailed ≥72 px; small ≥48 px.",
+    "status": "Approved specimen / unchanged",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Practise",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-practise-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-practise-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-practise-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.png"
+      ]
+    ],
+    "description": "Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Video submission",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-video-submission-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-video-submission-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-video-submission-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.png"
+      ]
+    ],
+    "description": "Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Listening",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-listening-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-listening-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-listening-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.png"
+      ]
+    ],
+    "description": "Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Pitch / tuning",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-pitch-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-pitch-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-pitch-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.png"
+      ]
+    ],
+    "description": "Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Assignment",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-assignment-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-assignment-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-assignment-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.png"
+      ]
+    ],
+    "description": "A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Review an attempt",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-review-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-review-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-review-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-review-grain.png"
+      ]
+    ],
+    "description": "Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Next practice step",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-next-step-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-next-step-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-next-step-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.png"
+      ]
+    ],
+    "description": "One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Progress over time",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-progress-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-progress-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-progress-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.png"
+      ]
+    ],
+    "description": "Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Repeat and improve",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.png"
+      ]
+    ],
+    "description": "A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Teacher",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-teacher-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-teacher-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-teacher-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.png"
+      ]
+    ],
+    "description": "A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Student",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-student-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-student-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-student-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-student-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-student-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-student-grain.png"
+      ]
+    ],
+    "description": "Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Expressive icons",
+    "title": "Parent or guardian",
+    "preview": "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.png",
+    "files": [
+      [
+        "Grain SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.svg"
+      ],
+      [
+        "Gradient SVG",
+        "04_ICONS/Landing_and_Communication/para-expressive-parent-gradient.svg"
+      ],
+      [
+        "Monochrome",
+        "04_ICONS/Landing_and_Communication/para-expressive-parent-mono.svg"
+      ],
+      [
+        "Small version",
+        "04_ICONS/Landing_and_Communication/para-expressive-parent-small.svg"
+      ],
+      [
+        "PNG 384 px",
+        "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.png"
+      ]
+    ],
+    "description": "An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.",
+    "status": "Extended from approved review",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Menu",
+    "preview": "04_ICONS/Application_UI/para-ui-menu-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-menu-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-menu-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-menu-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-menu-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-menu-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-menu-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Close",
+    "preview": "04_ICONS/Application_UI/para-ui-close-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-close-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-close-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-close-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-close-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-close-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-close-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Back",
+    "preview": "04_ICONS/Application_UI/para-ui-back-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-back-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-back-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-back-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-back-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-back-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-back-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Forward",
+    "preview": "04_ICONS/Application_UI/para-ui-forward-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-forward-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-forward-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-forward-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-forward-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-forward-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-forward-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Chevron Left",
+    "preview": "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-chevron-left-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-chevron-left-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-chevron-left-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-left-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Chevron Right",
+    "preview": "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-chevron-right-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-chevron-right-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-chevron-right-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-right-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Chevron Up",
+    "preview": "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-chevron-up-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-chevron-up-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-chevron-up-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-up-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Chevron Down",
+    "preview": "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-chevron-down-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-chevron-down-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-chevron-down-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-down-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Home",
+    "preview": "04_ICONS/Application_UI/para-ui-home-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-home-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-home-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-home-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-home-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-home-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-home-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Search",
+    "preview": "04_ICONS/Application_UI/para-ui-search-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-search-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-search-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-search-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-search-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-search-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-search-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Settings",
+    "preview": "04_ICONS/Application_UI/para-ui-settings-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-settings-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-settings-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-settings-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-settings-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-settings-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-settings-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Play",
+    "preview": "04_ICONS/Application_UI/para-ui-play-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-play-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-play-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-play-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-play-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-play-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-play-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Pause",
+    "preview": "04_ICONS/Application_UI/para-ui-pause-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-pause-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-pause-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-pause-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-pause-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-pause-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-pause-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Stop",
+    "preview": "04_ICONS/Application_UI/para-ui-stop-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-stop-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-stop-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-stop-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-stop-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-stop-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-stop-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Record",
+    "preview": "04_ICONS/Application_UI/para-ui-record-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-record-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-record-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-record-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-record-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-record-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-record-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Microphone",
+    "preview": "04_ICONS/Application_UI/para-ui-microphone-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-microphone-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-microphone-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-microphone-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-microphone-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-microphone-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-microphone-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Video",
+    "preview": "04_ICONS/Application_UI/para-ui-video-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-video-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-video-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-video-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-video-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-video-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-video-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Upload",
+    "preview": "04_ICONS/Application_UI/para-ui-upload-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-upload-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-upload-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-upload-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-upload-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-upload-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-upload-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Attachment",
+    "preview": "04_ICONS/Application_UI/para-ui-attachment-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-attachment-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-attachment-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-attachment-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-attachment-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-attachment-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-attachment-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Assignment",
+    "preview": "04_ICONS/Application_UI/para-ui-assignment-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-assignment-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-assignment-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-assignment-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-assignment-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-assignment-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-assignment-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Comment",
+    "preview": "04_ICONS/Application_UI/para-ui-comment-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-comment-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-comment-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-comment-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-comment-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-comment-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-comment-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Review",
+    "preview": "04_ICONS/Application_UI/para-ui-review-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-review-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-review-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-review-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-review-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-review-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-review-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Progress",
+    "preview": "04_ICONS/Application_UI/para-ui-progress-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-progress-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-progress-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-progress-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-progress-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-progress-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-progress-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Check",
+    "preview": "04_ICONS/Application_UI/para-ui-check-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-check-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-check-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-check-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-check-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-check-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-check-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Information",
+    "preview": "04_ICONS/Application_UI/para-ui-information-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-information-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-information-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-information-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-information-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-information-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-information-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Warning",
+    "preview": "04_ICONS/Application_UI/para-ui-warning-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-warning-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-warning-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-warning-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-warning-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-warning-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-warning-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Error",
+    "preview": "04_ICONS/Application_UI/para-ui-error-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-error-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-error-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-error-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-error-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-error-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-error-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Application icons",
+    "title": "Language",
+    "preview": "04_ICONS/Application_UI/para-ui-language-64-grain.png",
+    "files": [
+      [
+        "24 px solid",
+        "04_ICONS/Application_UI/para-ui-language-24-solid.svg"
+      ],
+      [
+        "24 px reverse",
+        "04_ICONS/Application_UI/para-ui-language-24-reverse.svg"
+      ],
+      [
+        "64 px grain",
+        "04_ICONS/Application_UI/para-ui-language-64-grain.svg"
+      ],
+      [
+        "64 px gradient",
+        "04_ICONS/Application_UI/para-ui-language-64-gradient.svg"
+      ],
+      [
+        "24 px PNG",
+        "04_ICONS/Application_UI/para-ui-language-24-solid.png"
+      ],
+      [
+        "128 px PNG",
+        "04_ICONS/Application_UI/para-ui-language-64-grain.png"
+      ]
+    ],
+    "description": "Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "Practise one phrase",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-01-practise-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-silhouette.svg"
+      ]
+    ],
+    "description": "One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.",
+    "status": "New supporting artwork",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "Submit an existing recording",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-02-submit-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-silhouette.svg"
+      ]
+    ],
+    "description": "An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",
+    "status": "New supporting artwork",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "Listen for one useful detail",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-03-listen-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-silhouette.svg"
+      ]
+    ],
+    "description": "A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.",
+    "status": "New supporting artwork",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "A teacher marks the next focus",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-04-feedback-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-silhouette.svg"
+      ]
+    ],
+    "description": "The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.",
+    "status": "Approved EN scene / localised VI extension",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "Return with a clear focus",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-05-try-again-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-silhouette.svg"
+      ]
+    ],
+    "description": "Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.",
+    "status": "New supporting artwork",
+    "dark": false
+  },
+  {
+    "category": "Learning artwork",
+    "title": "Understand the learning journey",
+    "preview": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-grain.png",
+    "files": [
+      [
+        "EN grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-en-grain.svg"
+      ],
+      [
+        "EN vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-en-gradient.svg"
+      ],
+      [
+        "EN PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-grain.png"
+      ],
+      [
+        "VI grain SVG",
+        "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-vi-grain.svg"
+      ],
+      [
+        "VI vector master",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-vi-gradient.svg"
+      ],
+      [
+        "VI PNG 1700 px",
+        "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-vi-grain.png"
+      ],
+      [
+        "Tonal monochrome",
+        "05_GRAPHIC_ARTWORK/Monochrome/para-art-06-parent-journey-tonal.svg"
+      ],
+      [
+        "Geometry silhouette",
+        "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-silhouette.svg"
+      ]
+    ],
+    "description": "A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",
+    "status": "New supporting artwork",
+    "dark": false
+  },
+  {
+    "category": "Materials",
+    "title": "Warm material",
+    "preview": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.png",
+    "files": [
+      [
+        "Editable gradient",
+        "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-warm-gradient.svg"
+      ],
+      [
+        "Grain SVG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.svg"
+      ],
+      [
+        "PNG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.png"
+      ],
+      [
+        "WebP",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.webp"
+      ],
+      [
+        "Flat fallback",
+        "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-warm-flat.svg"
+      ]
+    ],
+    "description": "Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Materials",
+    "title": "Deep material",
+    "preview": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.png",
+    "files": [
+      [
+        "Editable gradient",
+        "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-deep-gradient.svg"
+      ],
+      [
+        "Grain SVG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.svg"
+      ],
+      [
+        "PNG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.png"
+      ],
+      [
+        "WebP",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.webp"
+      ],
+      [
+        "Flat fallback",
+        "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-deep-flat.svg"
+      ]
+    ],
+    "description": "Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Materials",
+    "title": "Quiet material",
+    "preview": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.png",
+    "files": [
+      [
+        "Editable gradient",
+        "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-quiet-gradient.svg"
+      ],
+      [
+        "Grain SVG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.svg"
+      ],
+      [
+        "PNG",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.png"
+      ],
+      [
+        "WebP",
+        "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.webp"
+      ],
+      [
+        "Flat fallback",
+        "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-quiet-flat.svg"
+      ]
+    ],
+    "description": "Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Materials",
+    "title": "Fine film grain",
+    "preview": "06_GRADIENTS_AND_TEXTURES/Grain_Overlays/para-film-grain-256.png",
+    "files": [
+      [
+        "Transparent tile",
+        "06_GRADIENTS_AND_TEXTURES/Grain_Overlays/para-film-grain-256.png"
+      ],
+      [
+        "Reproduction script",
+        "06_GRADIENTS_AND_TEXTURES/Grain_Overlays/generate_grain.py"
+      ],
+      [
+        "Recipes JSON",
+        "06_GRADIENTS_AND_TEXTURES/gradient-recipes.json"
+      ]
+    ],
+    "description": "Separate raster material; seed 2718. Clip inside vector shapes. Never call it editable vector grain.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Photography resources",
+    "title": "Lower Shade",
+    "preview": "07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.png",
+    "files": [
+      [
+        "Overlay SVG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.svg"
+      ],
+      [
+        "Transparent PNG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.png"
+      ],
+      [
+        "Photography guide",
+        "07_PHOTOGRAPHY_GUIDANCE/PHOTOGRAPHY.md"
+      ]
+    ],
+    "description": "Optional overlay for your real landing-page photography. No photograph is supplied or processed.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Photography resources",
+    "title": "Rising Frame Ivory",
+    "preview": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.png",
+    "files": [
+      [
+        "Overlay SVG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.svg"
+      ],
+      [
+        "Transparent PNG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.png"
+      ],
+      [
+        "Photography guide",
+        "07_PHOTOGRAPHY_GUIDANCE/PHOTOGRAPHY.md"
+      ]
+    ],
+    "description": "Optional overlay for your real landing-page photography. No photograph is supplied or processed.",
+    "status": "New supporting asset",
+    "dark": true
+  },
+  {
+    "category": "Photography resources",
+    "title": "Rising Frame Espresso",
+    "preview": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.png",
+    "files": [
+      [
+        "Overlay SVG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.svg"
+      ],
+      [
+        "Transparent PNG",
+        "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.png"
+      ],
+      [
+        "Photography guide",
+        "07_PHOTOGRAPHY_GUIDANCE/PHOTOGRAPHY.md"
+      ]
+    ],
+    "description": "Optional overlay for your real landing-page photography. No photograph is supplied or processed.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Proposals",
+    "title": "App Espresso",
+    "preview": "01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.png",
+    "files": [
+      [
+        "Proposal SVG",
+        "01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.svg"
+      ],
+      [
+        "Proposal PNG",
+        "01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.png"
+      ],
+      [
+        "Review notes",
+        "01_LOGO/App_Favicon_Proposals/PROPOSALS.md"
+      ]
+    ],
+    "description": "Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.",
+    "status": "Proposal / review before use",
+    "dark": false
+  },
+  {
+    "category": "Proposals",
+    "title": "App Ivory",
+    "preview": "01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.png",
+    "files": [
+      [
+        "Proposal SVG",
+        "01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.svg"
+      ],
+      [
+        "Proposal PNG",
+        "01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.png"
+      ],
+      [
+        "Review notes",
+        "01_LOGO/App_Favicon_Proposals/PROPOSALS.md"
+      ]
+    ],
+    "description": "Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.",
+    "status": "Proposal / review before use",
+    "dark": false
+  },
+  {
+    "category": "Proposals",
+    "title": "Favicon 32",
+    "preview": "01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.png",
+    "files": [
+      [
+        "Proposal SVG",
+        "01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.svg"
+      ],
+      [
+        "Proposal PNG",
+        "01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.png"
+      ],
+      [
+        "Review notes",
+        "01_LOGO/App_Favicon_Proposals/PROPOSALS.md"
+      ]
+    ],
+    "description": "Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.",
+    "status": "Proposal / review before use",
+    "dark": false
+  },
+  {
+    "category": "Proposals",
+    "title": "Favicon 16",
+    "preview": "01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.png",
+    "files": [
+      [
+        "Proposal SVG",
+        "01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.svg"
+      ],
+      [
+        "Proposal PNG",
+        "01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.png"
+      ],
+      [
+        "Review notes",
+        "01_LOGO/App_Favicon_Proposals/PROPOSALS.md"
+      ]
+    ],
+    "description": "Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.",
+    "status": "Proposal / review before use",
+    "dark": false
+  },
+  {
+    "category": "Guides",
+    "title": "Bilingual typography",
+    "preview": "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.png",
+    "files": [
+      [
+        "Editable board",
+        "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.svg"
+      ],
+      [
+        "PNG proof",
+        "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.png"
+      ]
+    ],
+    "description": "Editable specification board. Refer to the adjacent guide for detailed use rules.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Guides",
+    "title": "Construction rules",
+    "preview": "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.png",
+    "files": [
+      [
+        "Editable board",
+        "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.svg"
+      ],
+      [
+        "PNG proof",
+        "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.png"
+      ]
+    ],
+    "description": "Editable specification board. Refer to the adjacent guide for detailed use rules.",
+    "status": "New supporting asset",
+    "dark": false
+  },
+  {
+    "category": "Guides",
+    "title": "Material system",
+    "preview": "08_GUIDELINES_AND_CATALOGUE/para-material-system.png",
+    "files": [
+      [
+        "Editable board",
+        "08_GUIDELINES_AND_CATALOGUE/para-material-system.svg"
+      ],
+      [
+        "PNG proof",
+        "08_GUIDELINES_AND_CATALOGUE/para-material-system.png"
+      ]
+    ],
+    "description": "Editable specification board. Refer to the adjacent guide for detailed use rules.",
+    "status": "New supporting asset",
+    "dark": false
+  }
+]

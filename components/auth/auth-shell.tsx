@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { BrandMark } from "@/components/landing/brand-mark";
-import { LocaleToggle } from "@/components/locale-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Theme } from "@/lib/theme";
 
@@ -11,7 +10,6 @@ export function AuthShell({
   kicker,
   footer,
   theme,
-  locale,
   themeLabels,
   children,
 }: {
@@ -20,7 +18,6 @@ export function AuthShell({
   kicker: string;
   footer: string;
   theme: Theme;
-  locale: string;
   themeLabels: { light: string; dark: string };
   children: ReactNode;
 }) {
@@ -28,10 +25,7 @@ export function AuthShell({
     <main className="auth-split">
       <section className="auth-brand">
         <Link href="/" className="auth-logo" aria-label={brand}>
-          <span className="auth-logo-chip">
-            <BrandMark compact priority />
-          </span>
-          <span className="auth-logo-name">howl0</span>
+          <BrandMark light priority />
         </Link>
         <div className="auth-brand-copy">
           <div className="auth-staff" aria-hidden />
@@ -43,7 +37,6 @@ export function AuthShell({
       <section className="auth-pane">
         <div className="auth-pane-tools">
           <ThemeToggle theme={theme} labels={themeLabels} />
-          <LocaleToggle locale={locale} />
         </div>
         {children}
       </section>

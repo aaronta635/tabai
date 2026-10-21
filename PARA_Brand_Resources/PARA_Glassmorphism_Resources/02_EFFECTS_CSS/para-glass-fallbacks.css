@@ -1,0 +1,36 @@
+/* Load last. Explicit solid mode wins over enhancement, including outline surfaces. */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .para-glass > .para-glass__surface {
+  background: var(--para-glass-solid, #F3EDE2) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  }
+  .para-glass > .para-glass__texture, .para-glass > .para-glass__rim { display:none !important; }
+}
+:is([data-para-glass="solid"].para-glass, [data-para-glass="solid"] .para-glass) > .para-glass__surface {
+  background: var(--para-glass-solid, #F3EDE2) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+:is([data-para-glass="solid"].para-glass, [data-para-glass="solid"] .para-glass) > :is(.para-glass__texture,.para-glass__rim) { display:none !important; }
+@media (prefers-reduced-transparency:reduce) {
+  .para-glass > .para-glass__surface {
+  background: var(--para-glass-solid, #F3EDE2) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  }
+  .para-glass > .para-glass__texture, .para-glass > .para-glass__rim { display:none !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+  .para-glass, .para-glass > .para-glass__surface { transition:none;animation:none; }
+  .para-glass--interactive:active:not(:disabled):not([aria-disabled="true"]) { transform:none; }
+}
+@media (forced-colors:active) {
+  .para-glass { color:CanvasText;forced-color-adjust:auto; }
+  .para-glass > .para-glass__surface { background:Canvas!important;border:1px solid CanvasText!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important; }
+  .para-glass > .para-glass__texture, .para-glass > .para-glass__rim { display:none !important; }
+  .para-glass:focus-visible {outline:2px solid Highlight;box-shadow:none;}
+}

@@ -1,0 +1,608 @@
+{
+  "samples": [
+    {
+      "viewport": 1440,
+      "specimen": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.019,
+      "worstBackgroundRGB": [
+        215,
+        202,
+        185
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 7.012,
+      "worstBackgroundRGB": [
+        90,
+        77,
+        64
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.585,
+      "worstBackgroundRGB": [
+        238,
+        232,
+        220
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.233,
+      "worstBackgroundRGB": [
+        216,
+        205,
+        189
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        243,
+        237,
+        226
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 7.393,
+      "worstBackgroundRGB": [
+        207,
+        194,
+        179
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.157,
+      "worstBackgroundRGB": [
+        236,
+        227,
+        213
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        59,
+        47,
+        42
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.51,
+      "worstBackgroundRGB": [
+        238,
+        231,
+        219
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1440,
+      "specimen": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.51,
+      "worstBackgroundRGB": [
+        238,
+        231,
+        219
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.106,
+      "worstBackgroundRGB": [
+        216,
+        203,
+        187
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 5.576,
+      "worstBackgroundRGB": [
+        104,
+        92,
+        79
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.62,
+      "worstBackgroundRGB": [
+        239,
+        232,
+        222
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.555,
+      "worstBackgroundRGB": [
+        219,
+        209,
+        194
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        243,
+        237,
+        226
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 7.321,
+      "worstBackgroundRGB": [
+        206,
+        193,
+        179
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.157,
+      "worstBackgroundRGB": [
+        236,
+        227,
+        213
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        59,
+        47,
+        42
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.516,
+      "worstBackgroundRGB": [
+        238,
+        231,
+        220
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 1024,
+      "specimen": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.407,
+      "worstBackgroundRGB": [
+        237,
+        230,
+        217
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.202,
+      "worstBackgroundRGB": [
+        218,
+        204,
+        187
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 5.902,
+      "worstBackgroundRGB": [
+        101,
+        88,
+        76
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.668,
+      "worstBackgroundRGB": [
+        238,
+        233,
+        222
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.888,
+      "worstBackgroundRGB": [
+        223,
+        213,
+        196
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        243,
+        237,
+        226
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 7.411,
+      "worstBackgroundRGB": [
+        208,
+        194,
+        179
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.157,
+      "worstBackgroundRGB": [
+        236,
+        227,
+        213
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        59,
+        47,
+        42
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.668,
+      "worstBackgroundRGB": [
+        238,
+        233,
+        222
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 768,
+      "specimen": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.592,
+      "worstBackgroundRGB": [
+        238,
+        232,
+        221
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.304,
+      "worstBackgroundRGB": [
+        220,
+        205,
+        188
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 7.229,
+      "worstBackgroundRGB": [
+        88,
+        75,
+        63
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.879,
+      "worstBackgroundRGB": [
+        241,
+        235,
+        223
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.285,
+      "worstBackgroundRGB": [
+        219,
+        205,
+        188
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        243,
+        237,
+        226
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 7.481,
+      "worstBackgroundRGB": [
+        208,
+        195,
+        182
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.533,
+      "worstBackgroundRGB": [
+        240,
+        231,
+        216
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        59,
+        47,
+        42
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.886,
+      "worstBackgroundRGB": [
+        241,
+        235,
+        224
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 390,
+      "specimen": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.802,
+      "worstBackgroundRGB": [
+        241,
+        234,
+        222
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.363,
+      "worstBackgroundRGB": [
+        220,
+        206,
+        188
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 6.183,
+      "worstBackgroundRGB": [
+        98,
+        85,
+        73
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.886,
+      "worstBackgroundRGB": [
+        241,
+        235,
+        224
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 8.693,
+      "worstBackgroundRGB": [
+        223,
+        210,
+        194
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        243,
+        237,
+        226
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 7.554,
+      "worstBackgroundRGB": [
+        209,
+        196,
+        182
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.533,
+      "worstBackgroundRGB": [
+        240,
+        231,
+        216
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "minimumContrast": 11.084,
+      "worstBackgroundRGB": [
+        59,
+        47,
+        42
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.802,
+      "worstBackgroundRGB": [
+        241,
+        234,
+        222
+      ],
+      "AA_normal_text": true
+    },
+    {
+      "viewport": 320,
+      "specimen": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "minimumContrast": 10.795,
+      "worstBackgroundRGB": [
+        241,
+        234,
+        221
+      ],
+      "AA_normal_text": true
+    }
+  ],
+  "allNormalTextPasses": true,
+  "minimumObserved": 5.576,
+  "method": "Actual rendered background rectangle beneath solid text, with text hidden without changing flow; conservative minimum across the rectangle.",
+  "limitations": "Supplied backgrounds only; future photos/crops require fresh checks."
+}

@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "tests": {
+    "all": 67,
+    "expressive": 15,
+    "application": 28,
+    "teacher": 7,
+    "none": 0,
+    "proposals": 4
+  },
+  "method": "DOM event/filter logic tested in Node; local file links separately validated. Browser layout not independently rendered."
+}

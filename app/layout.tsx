@@ -1,27 +1,29 @@
 import type { Metadata } from "next";
-import { Charis_SIL, Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { I18nProvider, getLocale } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import "./globals.css";
 
-const serif = Charis_SIL({
-  subsets: ["latin", "latin-ext", "vietnamese"],
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-  variable: "--font-serif",
+const headline = localFont({
+  src: "../public/fonts/PlusJakartaSans-wght.woff2",
+  weight: "200 800",
   display: "swap",
+  variable: "--font-serif",
 });
 
-const inter = Inter({
-  subsets: ["latin", "latin-ext", "vietnamese"],
+const body = localFont({
+  src: [
+    { path: "../public/fonts/BeVietnamPro-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../public/fonts/BeVietnamPro-Medium.woff2", weight: "500", style: "normal" },
+    { path: "../public/fonts/BeVietnamPro-SemiBold.woff2", weight: "600", style: "normal" },
+  ],
   display: "swap",
   variable: "--font-inter",
-  axes: ["opsz"],
 });
 
 export const metadata: Metadata = {
-  title: "howl0 — feedback for online guitar teachers",
-  description: "One link for the group. Students send a take. howl0 lines it up with your score and tutorial.",
+  title: "PARA — feedback for online guitar teachers",
+  description: "One link for the group. Students send a take. PARA lines it up with your score and tutorial.",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={locale}
       data-theme={theme}
-      className={`${serif.variable} ${inter.variable}`}
+      className={`${headline.variable} ${body.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased">

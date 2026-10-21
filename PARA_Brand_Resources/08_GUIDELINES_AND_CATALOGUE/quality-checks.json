@@ -1,0 +1,566 @@
+{
+  "svgStructure": {
+    "checked": 294,
+    "duplicateOrMissingReferences": 0,
+    "externalRasterDependencies": false
+  },
+  "fonts": {
+    "PlusJakartaSans[wght].ttf": {
+      "actualTextMissingGlyphs": [],
+      "vietnameseExtendedRangeComplete": true
+    },
+    "BeVietnamPro-Medium.ttf": {
+      "actualTextMissingGlyphs": [],
+      "vietnameseExtendedRangeComplete": true
+    },
+    "BeVietnamPro-Regular.ttf": {
+      "actualTextMissingGlyphs": [],
+      "vietnameseExtendedRangeComplete": true
+    },
+    "BeVietnamPro-SemiBold.ttf": {
+      "actualTextMissingGlyphs": [],
+      "vietnameseExtendedRangeComplete": true
+    }
+  },
+  "logoGeometry": {
+    "horizontal": {
+      "variantsChecked": 15,
+      "allPathAndTransformDataIdentical": true
+    },
+    "stacked": {
+      "variantsChecked": 15,
+      "allPathAndTransformDataIdentical": true
+    },
+    "symbol": {
+      "variantsChecked": 15,
+      "allPathAndTransformDataIdentical": true
+    },
+    "wordmark": {
+      "variantsChecked": 15,
+      "allPathAndTransformDataIdentical": true
+    }
+  },
+  "approvedSpecimens": [
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-recording-mono.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.svg",
+      "byteIdentical": true
+    },
+    {
+      "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg",
+      "byteIdentical": true
+    }
+  ],
+  "pngExports": {
+    "checked": 289,
+    "grainAlphaComparisons": [
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-horizontal-dark-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-horizontal-light-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-stacked-dark-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-stacked-light-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-symbol-dark-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-symbol-light-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 12
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-wordmark-dark-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 11
+      },
+      {
+        "asset": "01_LOGO/Grain_Gradient/para-wordmark-light-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 11
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-assignment-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 11
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-attachment-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 18,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 21
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-back-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-check-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-close-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-comment-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-error-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-forward-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-home-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-information-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-language-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-menu-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-microphone-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-pause-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-play-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-progress-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-record-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-review-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-search-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-settings-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-stop-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-upload-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 1,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-video-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "04_ICONS/Application_UI/para-ui-warning-64-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 7
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 11
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-student-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 10
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 11
+      },
+      {
+        "asset": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 8
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-en-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      },
+      {
+        "asset": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-vi-grain.svg",
+        "transparentPixelsOutsideAntialiasEdgeChanged": 0,
+        "edgeRoundingPixels": 0,
+        "opaqueInteriorAlphaChanged": 0,
+        "maxAntialiasAlphaDifference": 9
+      }
+    ]
+  },
+  "catalogue": {
+    "linksChecked": 446,
+    "broken": [],
+    "groups": 67
+  },
+  "foundationPalette": {
+    "exactApprovedHexes": true,
+    "cssColourMatches": true
+  },
+  "bounds": {
+    "svgChecked": 293,
+    "outside": [],
+    "note": "All final individual SVGs checked against their viewBoxes; multipage native source excluded. Superseded interim sheets removed."
+  },
+  "nativeMaster": {
+    "pages": 8,
+    "format": "Inkscape multipage SVG",
+    "editableVectorGeometry": true,
+    "grainIsSeparateEmbeddedRaster": true
+  },
+  "visualInspection": [
+    "Overview and logo suite",
+    "Both icon-family contact sheets, UI at 64/24/16 px",
+    "EN and VI learning-artwork sheets",
+    "Bilingual typography proof",
+    "Material system and construction rules"
+  ],
+  "limitations": [
+    "Destination-editor SVG import must be checked; Figma was not tested.",
+    "Textured SVG uses a separate clipped PNG grain tile; gradient-only variants are raster-free.",
+    "Compact mark proposals require review.",
+    "Illustration labels should remain real accessible text when used below recommended sizes."
+  ],
+  "errors": [],
+  "passed": true
+}

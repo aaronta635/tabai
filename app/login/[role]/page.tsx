@@ -25,7 +25,6 @@ export default async function LoginRolePage({
       kicker={t.auth.manifestoKicker}
       footer={t.auth.roomFooter}
       theme={ready.theme}
-      locale={ready.locale}
       themeLabels={{ light: t.theme.light, dark: t.theme.dark }}
     >
       <LoginForm

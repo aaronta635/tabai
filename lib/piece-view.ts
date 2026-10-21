@@ -3,6 +3,7 @@ import { studentForPiece } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { assignmentForStudentPiece } from "@/lib/lms";
 import { mediaStoragePath, sheetView, signedMediaUrl } from "@/lib/media-view";
+import { parseSheetSync } from "@/lib/score-model";
 
 export async function loadPieceClassroom(code: string) {
   const piece = await prisma.piece.findUnique({
@@ -44,10 +45,15 @@ export async function loadPieceClassroom(code: string) {
     mediaStoragePath(piece.tutorialMedia) ?? mediaStoragePath(piece.referenceMedia);
   const sheetPath = mediaStoragePath(piece.sheetMedia);
   const clipPath = mediaStoragePath(piece.clipMedia);
-  const [tutorialUrl, sheetUrl, clipUrl] = await Promise.all([
+  const [tutorialUrl, sheetUrl, clipUrl, readyModel] = await Promise.all([
     signedMediaUrl(tutorialPath),
     signedMediaUrl(sheetPath),
     signedMediaUrl(clipPath),
+    prisma.pieceModel.findFirst({
+      where: { pieceId: piece.id, status: "ready" },
+      orderBy: { version: "desc" },
+      select: { sheetSyncJson: true },
+    }),
   ]);
 
   return {
@@ -60,5 +66,6 @@ export async function loadPieceClassroom(code: string) {
     sheetUrl,
     clipUrl,
     sheetKind: sheetView(sheetPath ?? ""),
+    sheetSync: parseSheetSync(readyModel?.sheetSyncJson),
   };
 }

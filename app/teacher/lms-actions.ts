@@ -2,11 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 import { revalidateTeacherHotPath } from "@/lib/teacher-cache";
+import { after } from "next/server";
 import { redirect } from "next/navigation";
 import { requireTeacher } from "@/lib/auth";
 import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
-import { ensureDefaultCurriculum, newClassCode } from "@/lib/lms";
+import { ensureDefaultCurriculum, inviteEmailsFrom, newClassCode } from "@/lib/lms";
 import { parseDueAt } from "@/lib/practice";
 import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
 import { safePaymentUrl } from "@/lib/report";
@@ -32,20 +33,30 @@ function revalidateLms(teacherId: string) {
 }
 
 export async function createClass(formData: FormData) {
-  const teacher = await teacherOrThrow();
   const name = String(formData.get("name") ?? "").trim();
   if (!name) return;
+  const emails = inviteEmailsFrom(String(formData.get("emails") ?? ""));
+  const teacher = await teacherOrThrow();
   const row = await prisma.class.create({
-    data: { teacherId: teacher.id, name, code: newClassCode() },
+    data: {
+      teacherId: teacher.id,
+      name,
+      code: newClassCode(),
+      memberships: emails.length ? { create: emails.map((invitedEmail) => ({ invitedEmail })) } : undefined,
+    },
   });
-  await logEvent({
-    name: "class.created",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
-    props: { classId: row.id },
+  after(() => {
+    void logEvent({
+      name: "class.created",
+      actorType: "teacher",
+      actorId: teacher.id,
+      teacherId: teacher.id,
+      props: { classId: row.id },
+    });
   });
-  revalidateLms(teacher.id);
+  revalidateTeacherHotPath(teacher.id);
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/classes");
   redirect(`/teacher/classes/${row.id}`);
 }
 

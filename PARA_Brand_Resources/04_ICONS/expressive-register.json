@@ -1,0 +1,122 @@
+{
+  "rhythm": {
+    "title": "Rhythm / metronome",
+    "meaning": "Approved review specimen",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Approved specimen / unchanged",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg"
+  },
+  "recording": {
+    "title": "Audio recording",
+    "meaning": "Approved review specimen",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Approved specimen / unchanged",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg"
+  },
+  "feedback": {
+    "title": "Teacher feedback",
+    "meaning": "Approved review specimen",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Approved specimen / unchanged",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg"
+  },
+  "practise": {
+    "title": "Practise",
+    "meaning": "Open practice book with one phrase on each page",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg"
+  },
+  "video-submission": {
+    "title": "Video submission",
+    "meaning": "Recorded clip moving upwards into a submission",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.svg"
+  },
+  "listening": {
+    "title": "Listening",
+    "meaning": "Over-ear headphones; quiet open centre",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg"
+  },
+  "pitch": {
+    "title": "Pitch / tuning",
+    "meaning": "Tuning fork and one matching-pitch marker",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.svg"
+  },
+  "assignment": {
+    "title": "Assignment",
+    "meaning": "A teacher-issued score task held by a clip",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg"
+  },
+  "review": {
+    "title": "Review an attempt",
+    "meaning": "Magnifier isolates a moment in a recorded attempt",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg"
+  },
+  "next-step": {
+    "title": "Next practice step",
+    "meaning": "One chosen task and an unambiguous forward direction",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg"
+  },
+  "progress": {
+    "title": "Progress over time",
+    "meaning": "Accumulating practice pages; rising form is symbolic, not a measured result",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg"
+  },
+  "repeat-improve": {
+    "title": "Repeat and improve",
+    "meaning": "A phrase returned to with a specific focus; no automatic grading",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg"
+  },
+  "teacher": {
+    "title": "Teacher",
+    "meaning": "A person using a pencil and score to guide practice",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.svg"
+  },
+  "student": {
+    "title": "Student",
+    "meaning": "Learner looking into an open practice book",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-student-grain.svg"
+  },
+  "parent": {
+    "title": "Parent or guardian",
+    "meaning": "An adult alongside a younger learner; role needs a visible label",
+    "detailedMin": 72,
+    "smallMin": 48,
+    "status": "Extended from approved review",
+    "master": "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.svg"
+  }
+}

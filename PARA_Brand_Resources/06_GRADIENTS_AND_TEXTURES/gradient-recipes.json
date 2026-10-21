@@ -1,0 +1,161 @@
+{
+  "warm": {
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      0.92,
+      0.85
+    ],
+    "stops": [
+      [
+        0,
+        "#F3EDE2"
+      ],
+      [
+        0.36,
+        "#D6B98C"
+      ],
+      [
+        1,
+        "#8B5E34"
+      ]
+    ],
+    "use": "Instrument shells, pencil and response note"
+  },
+  "deep": {
+    "start": [
+      0.12,
+      0
+    ],
+    "end": [
+      0.85,
+      1
+    ],
+    "stops": [
+      [
+        0,
+        "#8B5E34"
+      ],
+      [
+        0.35,
+        "#D6B98C"
+      ],
+      [
+        0.64,
+        "#8B5E34"
+      ],
+      [
+        1,
+        "#3B2F2A"
+      ]
+    ],
+    "use": "Material side planes and recording capsule"
+  },
+  "quiet": {
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      1,
+      1
+    ],
+    "stops": [
+      [
+        0,
+        "#F3EDE2"
+      ],
+      [
+        0.68,
+        "#F3EDE2"
+      ],
+      [
+        0.9,
+        "#D6B98C"
+      ],
+      [
+        1,
+        "#6B7280"
+      ]
+    ],
+    "use": "Paper planes; retain broad quiet areas"
+  },
+  "logo-light": {
+    "start": [
+      0,
+      1
+    ],
+    "end": [
+      0.8,
+      0
+    ],
+    "stops": [
+      [
+        0,
+        "#3B2F2A"
+      ],
+      [
+        0.35,
+        "#3B2F2A"
+      ],
+      [
+        1,
+        "#8B5E34"
+      ]
+    ],
+    "use": "Ivory background; avoid pale disappearing edges"
+  },
+  "logo-dark": {
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      0.8,
+      1
+    ],
+    "stops": [
+      [
+        0,
+        "#F3EDE2"
+      ],
+      [
+        0.25,
+        "#F3EDE2"
+      ],
+      [
+        1,
+        "#D6B98C"
+      ]
+    ],
+    "use": "Espresso background"
+  },
+  "ink": {
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      0.8,
+      1
+    ],
+    "stops": [
+      [
+        0,
+        "#6B7280"
+      ],
+      [
+        0.55,
+        "#3B2F2A"
+      ],
+      [
+        1,
+        "#8B5E34"
+      ]
+    ],
+    "use": "Mic cradle, feedback bubble, cuff and book cover"
+  },
+  "notes": "Coordinates are object-bounding-box units. Interpolated tones are decorative, not extra foundation swatches. No metallic effect, blur, blend modes or SVG filters."
+}

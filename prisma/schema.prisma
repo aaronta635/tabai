@@ -236,6 +236,7 @@ model PieceModel {
   status           PieceModelStatus
   scoreJson        Json
   tutorialCuesJson Json
+  sheetSyncJson    Json?
   sourceJson       Json
   geminiModel      String
   promptVersion    String

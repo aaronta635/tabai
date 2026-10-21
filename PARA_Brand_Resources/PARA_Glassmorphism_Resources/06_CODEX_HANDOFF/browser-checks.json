@@ -1,0 +1,1063 @@
+{
+  "browser": "153.0.8010.0",
+  "failedResources": [],
+  "pageErrors": [],
+  "externalRequests": [],
+  "inspectionWarnings": [
+    {
+      "phase": "font-inspection",
+      "note": "Auxiliary DevTools file-origin font-inspection request; not a failed specimen asset."
+    }
+  ],
+  "viewports": [
+    {
+      "width": 1440,
+      "scrollWidth": 1440,
+      "brokenImages": 0,
+      "clippedText": 0,
+      "quietBlur": [
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)"
+      ]
+    },
+    {
+      "width": 1024,
+      "scrollWidth": 1024,
+      "brokenImages": 0,
+      "clippedText": 0,
+      "quietBlur": [
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)"
+      ]
+    },
+    {
+      "width": 768,
+      "scrollWidth": 768,
+      "brokenImages": 0,
+      "clippedText": 0,
+      "quietBlur": [
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)",
+        "blur(6px) saturate(1)"
+      ]
+    },
+    {
+      "width": 390,
+      "scrollWidth": 390,
+      "brokenImages": 0,
+      "clippedText": 0,
+      "quietBlur": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ]
+    },
+    {
+      "width": 320,
+      "scrollWidth": 320,
+      "brokenImages": 0,
+      "clippedText": 0,
+      "quietBlur": [
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none",
+        "none"
+      ]
+    }
+  ],
+  "fontRendering": [
+    {
+      "selector": "#type strong[lang=\"vi\"]",
+      "fonts": [
+        {
+          "familyName": "Plus Jakarta Sans",
+          "postScriptName": "PlusJakartaSans-Regular",
+          "isCustomFont": true,
+          "glyphCount": 47
+        }
+      ]
+    },
+    {
+      "selector": "#type p[lang=\"vi\"]",
+      "fonts": [
+        {
+          "familyName": "Be Vietnam Pro",
+          "postScriptName": "BeVietnamPro-Regular",
+          "isCustomFont": true,
+          "glyphCount": 54
+        }
+      ]
+    }
+  ],
+  "states": {
+    "normal": "rgba(243, 237, 226, 0.88)",
+    "hover": "rgba(243, 237, 226, 0.94)",
+    "pressed": "rgba(243, 237, 226, 0.97)",
+    "focus": {
+      "visible": true,
+      "outline": "solid",
+      "opacity": "1"
+    },
+    "disabled": true
+  },
+  "modes": {
+    "explicitSolid": {
+      "passed": true,
+      "samples": [
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        }
+      ]
+    },
+    "reducedTransparency": {
+      "passed": true,
+      "samples": [
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        }
+      ]
+    },
+    "reducedMotion": {
+      "root": "0s",
+      "surface": "0s"
+    },
+    "forcedColours": {
+      "passed": true,
+      "samples": [
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(255, 255, 255)",
+          "filter": "none",
+          "grain": "none"
+        }
+      ]
+    },
+    "unsupportedBranchForced": {
+      "passed": true,
+      "samples": [
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(59, 47, 42)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        },
+        {
+          "fill": "rgb(243, 237, 226)",
+          "filter": "none",
+          "grain": "none"
+        }
+      ]
+    }
+  },
+  "contrastSamples": [
+    {
+      "viewport": 1440,
+      "name": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 96,
+        "y": 754.90625,
+        "width": 336,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1440-ivory-main"
+    },
+    {
+      "viewport": 1440,
+      "name": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 552,
+        "y": 754.90625,
+        "width": 336,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1440-smoke-main"
+    },
+    {
+      "viewport": 1440,
+      "name": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 1008,
+        "y": 754.90625,
+        "width": 336,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1440-quiet-main"
+    },
+    {
+      "viewport": 1440,
+      "name": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 192,
+        "y": 1359.34375,
+        "width": 372,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1440-compare-live"
+    },
+    {
+      "viewport": 1440,
+      "name": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 876,
+        "y": 1359.34375,
+        "width": 372,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1440-compare-solid"
+    },
+    {
+      "viewport": 1440,
+      "name": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 110,
+        "y": 1878.140625,
+        "width": 506.234375,
+        "height": 108.78125
+      },
+      "sampleID": "sample-1440-large"
+    },
+    {
+      "viewport": 1440,
+      "name": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 906,
+        "y": 1776.8125,
+        "width": 70,
+        "height": 21.4375
+      },
+      "sampleID": "sample-1440-compact"
+    },
+    {
+      "viewport": 1440,
+      "name": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 906,
+        "y": 1966.8125,
+        "width": 99,
+        "height": 21.4375
+      },
+      "sampleID": "sample-1440-outline"
+    },
+    {
+      "viewport": 1440,
+      "name": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 102,
+        "y": 2597.40625,
+        "width": 552,
+        "height": 124.09375
+      },
+      "sampleID": "sample-1440-type-en"
+    },
+    {
+      "viewport": 1440,
+      "name": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 786,
+        "y": 2595.109375,
+        "width": 552,
+        "height": 128.6875
+      },
+      "sampleID": "sample-1440-type-vi"
+    },
+    {
+      "viewport": 1024,
+      "name": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 96,
+        "y": 735.3125,
+        "width": 197.328125,
+        "height": 155.96875
+      },
+      "sampleID": "sample-1024-ivory-main"
+    },
+    {
+      "viewport": 1024,
+      "name": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 413.328125,
+        "y": 735.3125,
+        "width": 197.328125,
+        "height": 155.96875
+      },
+      "sampleID": "sample-1024-smoke-main"
+    },
+    {
+      "viewport": 1024,
+      "name": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 730.65625,
+        "y": 735.3125,
+        "width": 197.34375,
+        "height": 155.96875
+      },
+      "sampleID": "sample-1024-quiet-main"
+    },
+    {
+      "viewport": 1024,
+      "name": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 96,
+        "y": 1359.34375,
+        "width": 356,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1024-compare-live"
+    },
+    {
+      "viewport": 1024,
+      "name": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 572,
+        "y": 1359.34375,
+        "width": 356,
+        "height": 116.78125
+      },
+      "sampleID": "sample-1024-compare-solid"
+    },
+    {
+      "viewport": 1024,
+      "name": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 110,
+        "y": 1878.140625,
+        "width": 326.515625,
+        "height": 108.78125
+      },
+      "sampleID": "sample-1024-large"
+    },
+    {
+      "viewport": 1024,
+      "name": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 656.390625,
+        "y": 1776.8125,
+        "width": 70,
+        "height": 21.4375
+      },
+      "sampleID": "sample-1024-compact"
+    },
+    {
+      "viewport": 1024,
+      "name": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 656.390625,
+        "y": 1966.8125,
+        "width": 99,
+        "height": 21.4375
+      },
+      "sampleID": "sample-1024-outline"
+    },
+    {
+      "viewport": 1024,
+      "name": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 102,
+        "y": 2597.40625,
+        "width": 344,
+        "height": 124.09375
+      },
+      "sampleID": "sample-1024-type-en"
+    },
+    {
+      "viewport": 1024,
+      "name": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 578,
+        "y": 2561.015625,
+        "width": 344,
+        "height": 196.875
+      },
+      "sampleID": "sample-1024-type-vi"
+    },
+    {
+      "viewport": 768,
+      "name": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 62,
+        "y": 733.125,
+        "width": 158.65625,
+        "height": 144.78125
+      },
+      "sampleID": "sample-768-ivory-main"
+    },
+    {
+      "viewport": 768,
+      "name": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 304.65625,
+        "y": 733.125,
+        "width": 158.671875,
+        "height": 144.78125
+      },
+      "sampleID": "sample-768-smoke-main"
+    },
+    {
+      "viewport": 768,
+      "name": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 547.328125,
+        "y": 733.125,
+        "width": 158.671875,
+        "height": 144.78125
+      },
+      "sampleID": "sample-768-quiet-main"
+    },
+    {
+      "viewport": 768,
+      "name": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 62,
+        "y": 1354.359375,
+        "width": 276,
+        "height": 111.1875
+      },
+      "sampleID": "sample-768-compare-live"
+    },
+    {
+      "viewport": 768,
+      "name": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 430,
+        "y": 1354.359375,
+        "width": 276,
+        "height": 111.1875
+      },
+      "sampleID": "sample-768-compare-solid"
+    },
+    {
+      "viewport": 768,
+      "name": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 90,
+        "y": 1873.15625,
+        "width": 448.625,
+        "height": 103.1875
+      },
+      "sampleID": "sample-768-large"
+    },
+    {
+      "viewport": 768,
+      "name": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 70,
+        "y": 2123.828125,
+        "width": 70,
+        "height": 21.4375
+      },
+      "sampleID": "sample-768-compact"
+    },
+    {
+      "viewport": 768,
+      "name": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 70,
+        "y": 2255.421875,
+        "width": 99,
+        "height": 21.4375
+      },
+      "sampleID": "sample-768-outline"
+    },
+    {
+      "viewport": 768,
+      "name": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 82,
+        "y": 2857.515625,
+        "width": 236,
+        "height": 106.6875
+      },
+      "sampleID": "sample-768-type-en"
+    },
+    {
+      "viewport": 768,
+      "name": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 450,
+        "y": 2826.390625,
+        "width": 236,
+        "height": 168.9375
+      },
+      "sampleID": "sample-768-type-vi"
+    },
+    {
+      "viewport": 390,
+      "name": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 764.109375,
+        "width": 258,
+        "height": 112.59375
+      },
+      "sampleID": "sample-390-ivory-main"
+    },
+    {
+      "viewport": 390,
+      "name": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 66,
+        "y": 1161.609375,
+        "width": 258,
+        "height": 112.59375
+      },
+      "sampleID": "sample-390-smoke-main"
+    },
+    {
+      "viewport": 390,
+      "name": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 1559.109375,
+        "width": 258,
+        "height": 112.59375
+      },
+      "sampleID": "sample-390-quiet-main"
+    },
+    {
+      "viewport": 390,
+      "name": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 2126.296875,
+        "width": 258,
+        "height": 112.59375
+      },
+      "sampleID": "sample-390-compare-live"
+    },
+    {
+      "viewport": 390,
+      "name": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 2530.4375,
+        "width": 258,
+        "height": 112.59375
+      },
+      "sampleID": "sample-390-compare-solid"
+    },
+    {
+      "viewport": 390,
+      "name": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 64,
+        "y": 3057.78125,
+        "width": 249.5,
+        "height": 104.59375
+      },
+      "sampleID": "sample-390-large"
+    },
+    {
+      "viewport": 390,
+      "name": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 54,
+        "y": 3305.15625,
+        "width": 70,
+        "height": 21.4375
+      },
+      "sampleID": "sample-390-compact"
+    },
+    {
+      "viewport": 390,
+      "name": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 54,
+        "y": 3428.75,
+        "width": 99,
+        "height": 21.4375
+      },
+      "sampleID": "sample-390-outline"
+    },
+    {
+      "viewport": 390,
+      "name": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 68,
+        "y": 4319.328125,
+        "width": 254,
+        "height": 112.46875
+      },
+      "sampleID": "sample-390-type-en"
+    },
+    {
+      "viewport": 390,
+      "name": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 68,
+        "y": 4630.421875,
+        "width": 254,
+        "height": 178.265625
+      },
+      "sampleID": "sample-390-type-vi"
+    },
+    {
+      "viewport": 320,
+      "name": "ivory-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 797.203125,
+        "width": 188,
+        "height": 147.59375
+      },
+      "sampleID": "sample-320-ivory-main"
+    },
+    {
+      "viewport": 320,
+      "name": "smoke-main",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 66,
+        "y": 1194.703125,
+        "width": 188,
+        "height": 147.59375
+      },
+      "sampleID": "sample-320-smoke-main"
+    },
+    {
+      "viewport": 320,
+      "name": "quiet-main",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 1592.203125,
+        "width": 188,
+        "height": 147.59375
+      },
+      "sampleID": "sample-320-quiet-main"
+    },
+    {
+      "viewport": 320,
+      "name": "compare-live",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 2166.8125,
+        "width": 188,
+        "height": 172.34375
+      },
+      "sampleID": "sample-320-compare-live"
+    },
+    {
+      "viewport": 320,
+      "name": "compare-solid",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 66,
+        "y": 2570.953125,
+        "width": 188,
+        "height": 172.34375
+      },
+      "sampleID": "sample-320-compare-solid"
+    },
+    {
+      "viewport": 320,
+      "name": "large",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 64,
+        "y": 3128.171875,
+        "width": 190,
+        "height": 104.59375
+      },
+      "sampleID": "sample-320-large"
+    },
+    {
+      "viewport": 320,
+      "name": "compact",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 54,
+        "y": 3385.4375,
+        "width": 70,
+        "height": 21.4375
+      },
+      "sampleID": "sample-320-compact"
+    },
+    {
+      "viewport": 320,
+      "name": "outline",
+      "foreground": "rgb(243, 237, 226)",
+      "clip": {
+        "x": 54,
+        "y": 3548.625,
+        "width": 99,
+        "height": 21.4375
+      },
+      "sampleID": "sample-320-outline"
+    },
+    {
+      "viewport": 320,
+      "name": "type-en",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 68,
+        "y": 4461.0625,
+        "width": 184,
+        "height": 210.9375
+      },
+      "sampleID": "sample-320-type-en"
+    },
+    {
+      "viewport": 320,
+      "name": "type-vi",
+      "foreground": "rgb(59, 47, 42)",
+      "clip": {
+        "x": 68,
+        "y": 4798.53125,
+        "width": 184,
+        "height": 280.546875
+      },
+      "sampleID": "sample-320-type-vi"
+    }
+  ],
+  "passed": true
+}

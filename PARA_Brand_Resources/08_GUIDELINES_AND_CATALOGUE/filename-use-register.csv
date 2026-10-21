@@ -1,0 +1,627 @@
+relative_path,format,family,intended_use,status,contains_embedded_raster_grain
+00_START_HERE/PARA-native-master.svg,svg,00_START_HERE,Overview and editable multi-page source,Supporting resource,yes
+00_START_HERE/START_HERE.md,md,00_START_HERE,Overview and editable multi-page source,Supporting resource,not applicable
+00_START_HERE/para-brand-overview.png,png,00_START_HERE,Overview and editable multi-page source,Supporting resource,raster export
+00_START_HERE/para-brand-overview.svg,svg,00_START_HERE,Overview and editable multi-page source,Supporting resource,yes
+01_LOGO/App_Favicon_Proposals/PROPOSALS.md,md,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,not applicable
+01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.png,png,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,raster export
+01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.svg,svg,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,yes
+01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.png,png,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,raster export
+01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.svg,svg,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,yes
+01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.png,png,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,raster export
+01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.svg,svg,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,no
+01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.png,png,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,raster export
+01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.svg,svg,Proposals,Compact application proposal. Only the separate 16 px SVG/PNG removes the two thin ties; all other proposed forms retain the original symbol.,Proposal / review before use,no
+01_LOGO/App_Favicon_Proposals/para-favicon-PROPOSAL.ico,ico,01_LOGO,Official logo identity / choose correct variant,Proposal / review,raster export
+01_LOGO/Editable_Masters/approved-horizontal-geometry.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/approved-stacked-geometry.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/approved-symbol-geometry.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/approved-wordmark-geometry.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/para-horizontal-dark-gradient.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/para-horizontal-light-gradient.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Editable_Masters/para-stacked-dark-gradient.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/para-stacked-light-gradient.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Editable_Masters/para-symbol-dark-gradient.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/para-symbol-light-gradient.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Editable_Masters/para-wordmark-dark-gradient.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Editable_Masters/para-wordmark-light-gradient.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Grain_Gradient/Web/para-horizontal-dark-grain-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,yes
+01_LOGO/Grain_Gradient/Web/para-horizontal-light-grain-optical.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/Web/para-stacked-dark-grain-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,yes
+01_LOGO/Grain_Gradient/Web/para-stacked-light-grain-optical.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/Web/para-symbol-dark-grain-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,yes
+01_LOGO/Grain_Gradient/Web/para-symbol-light-grain-optical.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/Web/para-wordmark-dark-grain-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,yes
+01_LOGO/Grain_Gradient/Web/para-wordmark-light-grain-optical.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-horizontal-dark-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-horizontal-light-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-stacked-dark-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-stacked-light-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-symbol-dark-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-symbol-light-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-wordmark-dark-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/Grain_Gradient/para-wordmark-light-grain.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,yes
+01_LOGO/LOGO_GUIDE.md,md,01_LOGO,Official logo identity / choose correct variant,Supporting resource,not applicable
+01_LOGO/PNG/para-horizontal-black-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-black.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-dark-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-dark-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-dark-grain.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-espresso-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-espresso.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-ivory-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-ivory.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-light-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-light-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-light-grain.png,png,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,raster export
+01_LOGO/PNG/para-horizontal-white-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-horizontal-white.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-black-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-black.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-dark-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-dark-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-dark-grain.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-espresso-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-espresso.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-ivory-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-ivory.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-light-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-light-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-light-grain.png,png,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,raster export
+01_LOGO/PNG/para-stacked-white-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-stacked-white.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-black-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-black.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-dark-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-dark-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-dark-grain.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-espresso-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-espresso.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-ivory-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-ivory.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-light-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-light-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-light-grain.png,png,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,raster export
+01_LOGO/PNG/para-symbol-white-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-symbol-white.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-black-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-black.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-dark-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-dark-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-dark-grain.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-espresso-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-espresso.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-ivory-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-ivory.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-light-gradient.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-light-grain-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-light-grain.png,png,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,raster export
+01_LOGO/PNG/para-wordmark-white-optical.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/PNG/para-wordmark-white.png,png,01_LOGO,Official logo identity / choose correct variant,Supporting resource,raster export
+01_LOGO/Solid/Web/para-horizontal-black-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-horizontal-espresso-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-horizontal-ivory-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-horizontal-white-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-stacked-black-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-stacked-espresso-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-stacked-ivory-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-stacked-white-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-symbol-black-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-symbol-espresso-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-symbol-ivory-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-symbol-white-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-wordmark-black-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-wordmark-espresso-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-wordmark-ivory-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/Web/para-wordmark-white-optical.svg,svg,01_LOGO,Official logo identity / choose correct variant,Supporting resource,no
+01_LOGO/Solid/para-horizontal-black.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-horizontal-espresso.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-horizontal-ivory.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-horizontal-white.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-stacked-black.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-stacked-espresso.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-stacked-ivory.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-stacked-white.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-symbol-black.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-symbol-espresso.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-symbol-ivory.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-symbol-white.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-wordmark-black.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-wordmark-espresso.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-wordmark-ivory.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+01_LOGO/Solid/para-wordmark-white.svg,svg,Logo,Existing lockup; exact approved paths and transforms. Use the matching light/dark treatment.,Approved geometry / approved treatment,no
+02_PALETTE_AND_TOKENS/COLOUR_AND_STATES.md,md,02_PALETTE_AND_TOKENS,"Colours, typography and layout implementation",Supporting resource,not applicable
+02_PALETTE_AND_TOKENS/para-tokens.css,css,02_PALETTE_AND_TOKENS,"Colours, typography and layout implementation",Supporting resource,not applicable
+02_PALETTE_AND_TOKENS/para-tokens.json,json,02_PALETTE_AND_TOKENS,"Colours, typography and layout implementation",Supporting resource,not applicable
+03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.png,png,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,raster export
+03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.svg,svg,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,no
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Medium.ttf,ttf,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Medium.woff2,woff2,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Regular.ttf,ttf,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Regular.woff2,woff2,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-SemiBold.ttf,ttf,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-SemiBold.woff2,woff2,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/OFL.txt,txt,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/OFL.txt,txt,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/PlusJakartaSans[wght].ttf,ttf,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/PlusJakartaSans[wght].woff2,woff2,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/TYPOGRAPHY.md,md,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+03_TYPOGRAPHY/para-fonts.css,css,03_TYPOGRAPHY,Font setup and bilingual typography,Supporting resource,not applicable
+04_ICONS/Application_UI/para-ui-assignment-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-assignment-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-assignment-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-assignment-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-assignment-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-assignment-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-assignment-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-assignment-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-attachment-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-attachment-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-attachment-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-attachment-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-attachment-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-attachment-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-attachment-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-attachment-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-back-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-back-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-back-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-back-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-back-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-back-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-back-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-back-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-check-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-check-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-check-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-check-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-check-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-check-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-check-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-check-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-chevron-down-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-down-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-down-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-down-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-down-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-down-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-down-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-down-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-chevron-left-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-left-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-left-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-left-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-left-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-left-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-left-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-left-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-chevron-right-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-right-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-right-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-right-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-right-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-right-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-right-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-right-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-chevron-up-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-up-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-up-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-up-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-up-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-chevron-up-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-chevron-up-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-chevron-up-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-close-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-close-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-close-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-close-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-close-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-close-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-close-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-close-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-comment-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-comment-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-comment-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-comment-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-comment-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-comment-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-comment-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-comment-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-error-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-error-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-error-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-error-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-error-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-error-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-error-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-error-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-forward-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-forward-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-forward-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-forward-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-forward-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-forward-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-forward-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-forward-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-home-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-home-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-home-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-home-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-home-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-home-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-home-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-home-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-information-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-information-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-information-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-information-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-information-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-information-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-information-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-information-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-language-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-language-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-language-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-language-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-language-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-language-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-language-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-language-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-menu-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-menu-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-menu-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-menu-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-menu-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-menu-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-menu-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-menu-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-microphone-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-microphone-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-microphone-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-microphone-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-microphone-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-microphone-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-microphone-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-microphone-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-pause-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-pause-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-pause-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-pause-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-pause-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-pause-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-pause-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-pause-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-play-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-play-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-play-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-play-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-play-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-play-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-play-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-play-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-progress-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-progress-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-progress-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-progress-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-progress-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-progress-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-progress-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-progress-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-record-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-record-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-record-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-record-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-record-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-record-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-record-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-record-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-review-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-review-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-review-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-review-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-review-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-review-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-review-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-review-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-search-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-search-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-search-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-search-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-search-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-search-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-search-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-search-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-settings-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-settings-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-settings-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-settings-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-settings-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-settings-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-settings-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-settings-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-stop-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-stop-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-stop-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-stop-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-stop-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-stop-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-stop-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-stop-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-upload-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-upload-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-upload-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-upload-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-upload-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-upload-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-upload-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-upload-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-video-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-video-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-video-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-video-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-video-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-video-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-video-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-video-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Application_UI/para-ui-warning-24-reverse.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-warning-24-reverse.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-warning-24-solid.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-warning-24-solid.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-warning-64-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Application_UI/para-ui-warning-64-gradient.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,no
+04_ICONS/Application_UI/para-ui-warning-64-grain.png,png,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,raster export
+04_ICONS/Application_UI/para-ui-warning-64-grain.svg,svg,Application icons,Familiar 24-unit control; 1.8-unit strokes. Solid at 16–32 px. Grain for ≥64 px uses.,New supporting asset,yes
+04_ICONS/Contact_Sheets/para-expressive-family.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Contact_Sheets/para-expressive-family.svg,svg,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,yes
+04_ICONS/Contact_Sheets/para-ui-family.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Contact_Sheets/para-ui-family.svg,svg,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,yes
+04_ICONS/ICON_GUIDE.md,md,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,not applicable
+04_ICONS/Landing_and_Communication/para-expressive-assignment-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-assignment-gradient.svg,svg,Expressive icons,A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.png,png,Expressive icons,A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg,svg,Expressive icons,A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-assignment-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-assignment-mono.svg,svg,Expressive icons,A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-assignment-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-assignment-small.svg,svg,Expressive icons,A teacher-issued score task held by a clip. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.png,png,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,raster export
+04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,yes
+04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-feedback-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-feedback-small.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-listening-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-listening-gradient.svg,svg,Expressive icons,Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-listening-grain.png,png,Expressive icons,Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg,svg,Expressive icons,Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-listening-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-listening-mono.svg,svg,Expressive icons,Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-listening-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-listening-small.svg,svg,Expressive icons,Over-ear headphones; quiet open centre. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-next-step-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-next-step-gradient.svg,svg,Expressive icons,One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.png,png,Expressive icons,One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg,svg,Expressive icons,One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-next-step-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-next-step-mono.svg,svg,Expressive icons,One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-next-step-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-next-step-small.svg,svg,Expressive icons,One chosen task and an unambiguous forward direction. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-parent-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-parent-gradient.svg,svg,Expressive icons,An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-parent-grain.png,png,Expressive icons,An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-parent-grain.svg,svg,Expressive icons,An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-parent-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-parent-mono.svg,svg,Expressive icons,An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-parent-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-parent-small.svg,svg,Expressive icons,An adult alongside a younger learner; role needs a visible label. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-pitch-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-pitch-gradient.svg,svg,Expressive icons,Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.png,png,Expressive icons,Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.svg,svg,Expressive icons,Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-pitch-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-pitch-mono.svg,svg,Expressive icons,Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-pitch-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-pitch-small.svg,svg,Expressive icons,Tuning fork and one matching-pitch marker. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-practise-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-practise-gradient.svg,svg,Expressive icons,Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-practise-grain.png,png,Expressive icons,Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg,svg,Expressive icons,Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-practise-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-practise-mono.svg,svg,Expressive icons,Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-practise-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-practise-small.svg,svg,Expressive icons,Open practice book with one phrase on each page. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-progress-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-progress-gradient.svg,svg,Expressive icons,"Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-progress-grain.png,png,Expressive icons,"Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg,svg,Expressive icons,"Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-progress-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-progress-mono.svg,svg,Expressive icons,"Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-progress-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-progress-small.svg,svg,Expressive icons,"Accumulating practice pages; rising form is symbolic, not a measured result. Detailed ≥72 px; small ≥48 px.",Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-recording-grain.png,png,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,raster export
+04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,yes
+04_ICONS/Landing_and_Communication/para-expressive-recording-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-recording-mono.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-recording-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-recording-small.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-gradient.svg,svg,Expressive icons,A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.png,png,Expressive icons,A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg,svg,Expressive icons,A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-mono.svg,svg,Expressive icons,A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-small.svg,svg,Expressive icons,A phrase returned to with a specific focus; no automatic grading. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-review-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-review-gradient.svg,svg,Expressive icons,Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-review-grain.png,png,Expressive icons,Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg,svg,Expressive icons,Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-review-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-review-mono.svg,svg,Expressive icons,Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-review-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-review-small.svg,svg,Expressive icons,Magnifier isolates a moment in a recorded attempt. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.png,png,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,raster export
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,yes
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-rhythm-small.svg,svg,Expressive icons,Approved review specimen. Detailed ≥72 px; small ≥48 px.,Approved specimen / unchanged,no
+04_ICONS/Landing_and_Communication/para-expressive-student-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-student-gradient.svg,svg,Expressive icons,Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-student-grain.png,png,Expressive icons,Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-student-grain.svg,svg,Expressive icons,Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-student-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-student-mono.svg,svg,Expressive icons,Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-student-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-student-small.svg,svg,Expressive icons,Learner looking into an open practice book. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-teacher-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-teacher-gradient.svg,svg,Expressive icons,A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.png,png,Expressive icons,A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.svg,svg,Expressive icons,A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-teacher-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-teacher-mono.svg,svg,Expressive icons,A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-teacher-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-teacher-small.svg,svg,Expressive icons,A person using a pencil and score to guide practice. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-gradient.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-gradient.svg,svg,Expressive icons,Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.png,png,Expressive icons,Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.,Extended from approved review,raster export
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.svg,svg,Expressive icons,Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.,Extended from approved review,yes
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-mono.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-mono.svg,svg,Expressive icons,Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-small.png,png,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,raster export
+04_ICONS/Landing_and_Communication/para-expressive-video-submission-small.svg,svg,Expressive icons,Recorded clip moving upwards into a submission. Detailed ≥72 px; small ≥48 px.,Extended from approved review,no
+04_ICONS/expressive-register.json,json,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,not applicable
+04_ICONS/ui-register.json,json,04_ICONS,Communication symbols or functional controls; separate families,Supporting resource,not applicable
+05_GRAPHIC_ARTWORK/ARTWORK_GUIDE.md,md,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,not applicable
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-en-gradient.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-silhouette.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-vi-gradient.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-en-gradient.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-silhouette.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-vi-gradient.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-en-gradient.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-silhouette.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-vi-gradient.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-en-gradient.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-silhouette.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-vi-gradient.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-en-gradient.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-silhouette.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-vi-gradient.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-en-gradient.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-silhouette.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-vi-gradient.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-en-grain.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-vi-grain.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-en-grain.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-vi-grain.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-vi-grain.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-vi-grain.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-en-grain.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-vi-grain.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-en-grain.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-vi-grain.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,yes
+05_GRAPHIC_ARTWORK/Monochrome/para-art-01-practise-tonal.svg,svg,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Monochrome/para-art-02-submit-tonal.svg,svg,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/Monochrome/para-art-03-listen-tonal.svg,svg,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Monochrome/para-art-04-feedback-tonal.svg,svg,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,no
+05_GRAPHIC_ARTWORK/Monochrome/para-art-05-try-again-tonal.svg,svg,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,no
+05_GRAPHIC_ARTWORK/Monochrome/para-art-06-parent-journey-tonal.svg,svg,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,no
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-grain.png,png,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-vi-grain.png,png,Learning artwork,One hand presses the guitar strings while the learner returns to a short score phrase. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-grain.png,png,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-vi-grain.png,png,Learning artwork,"An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen. Recommended ≥480 px.",New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-grain.png,png,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-vi-grain.png,png,Learning artwork,A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-grain.png,png,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-vi-grain.png,png,Learning artwork,The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus. Recommended ≥480 px.,Approved EN scene / localised VI extension,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-grain.png,png,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-vi-grain.png,png,Learning artwork,Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement. Recommended ≥480 px.,New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-grain.png,png,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-silhouette.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-tonal.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-vi-gradient.png,png,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,raster export
+05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-vi-grain.png,png,Learning artwork,"A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen. Recommended ≥480 px.",New supporting artwork,raster export
+05_GRAPHIC_ARTWORK/artwork-register.json,json,05_GRAPHIC_ARTWORK,Conceptual music-learning narrative,Supporting resource,not applicable
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-deep-gradient.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-deep-gradient.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-quiet-gradient.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-quiet-gradient.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-warm-gradient.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-warm-gradient.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-deep-flat.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-deep-flat.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-quiet-flat.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-quiet-flat.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-warm-flat.png,png,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,raster export
+06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-warm-flat.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,no
+06_GRADIENTS_AND_TEXTURES/Grain_Overlays/generate_grain.py,py,Materials,Separate raster material; seed 2718. Clip inside vector shapes. Never call it editable vector grain.,New supporting asset,not applicable
+06_GRADIENTS_AND_TEXTURES/Grain_Overlays/para-film-grain-256.png,png,Materials,Separate raster material; seed 2718. Clip inside vector shapes. Never call it editable vector grain.,New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/MATERIAL_GUIDE.md,md,06_GRADIENTS_AND_TEXTURES,Reusable material recipe / grain / fallback,Supporting resource,not applicable
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.png,png,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,yes
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.webp,webp,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.png,png,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,yes
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.webp,webp,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.png,png,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.svg,svg,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,yes
+06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.webp,webp,Materials,"Reusable material field. Use as an editable fill or mask, with the separate grain tile and documented recipe.",New supporting asset,raster export
+06_GRADIENTS_AND_TEXTURES/gradient-recipes.json,json,Materials,Separate raster material; seed 2718. Clip inside vector shapes. Never call it editable vector grain.,New supporting asset,not applicable
+07_PHOTOGRAPHY_GUIDANCE/PHOTOGRAPHY.md,md,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,not applicable
+07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.png,png,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,raster export
+07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.svg,svg,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,no
+07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.png,png,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,raster export
+07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.svg,svg,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,no
+07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.png,png,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,raster export
+07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.svg,svg,Photography resources,Optional overlay for your real landing-page photography. No photograph is supplied or processed.,New supporting asset,no
+08_GUIDELINES_AND_CATALOGUE/DESIGNER_DEVELOPER_GUIDE.md,md,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/LICENCE_SOURCE_REGISTER.md,md,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/QUALITY_AND_REMAINING_DECISIONS.md,md,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/bounds-check.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/catalogue-data.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/catalogue-functional-check.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/catalogue.html,html,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/export-register.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/filename-use-register.csv,csv,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/master-pages.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable
+08_GUIDELINES_AND_CATALOGUE/para-artwork-en.png,png,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,raster export
+08_GUIDELINES_AND_CATALOGUE/para-artwork-en.svg,svg,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,yes
+08_GUIDELINES_AND_CATALOGUE/para-artwork-vi.png,png,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,raster export
+08_GUIDELINES_AND_CATALOGUE/para-artwork-vi.svg,svg,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,yes
+08_GUIDELINES_AND_CATALOGUE/para-construction-rules.png,png,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,raster export
+08_GUIDELINES_AND_CATALOGUE/para-construction-rules.svg,svg,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,yes
+08_GUIDELINES_AND_CATALOGUE/para-logo-suite.png,png,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,raster export
+08_GUIDELINES_AND_CATALOGUE/para-logo-suite.svg,svg,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,yes
+08_GUIDELINES_AND_CATALOGUE/para-material-system.png,png,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,raster export
+08_GUIDELINES_AND_CATALOGUE/para-material-system.svg,svg,Guides,Editable specification board. Refer to the adjacent guide for detailed use rules.,New supporting asset,yes
+08_GUIDELINES_AND_CATALOGUE/quality-checks.json,json,08_GUIDELINES_AND_CATALOGUE,"Reference, catalogue and QA",Supporting resource,not applicable

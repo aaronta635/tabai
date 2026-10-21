@@ -1,0 +1,50 @@
+[
+  {
+    "file": "08_GUIDELINES_AND_CATALOGUE/para-logo-suite.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "01 Logo suite"
+  },
+  {
+    "file": "04_ICONS/Contact_Sheets/para-expressive-family.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "02 Expressive family"
+  },
+  {
+    "file": "04_ICONS/Contact_Sheets/para-ui-family.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "03 Application family"
+  },
+  {
+    "file": "08_GUIDELINES_AND_CATALOGUE/para-artwork-en.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "04 Artwork EN"
+  },
+  {
+    "file": "08_GUIDELINES_AND_CATALOGUE/para-artwork-vi.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "04 Artwork VI"
+  },
+  {
+    "file": "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.svg",
+    "width": 1500,
+    "height": 1080,
+    "title": "06 English and Vietnamese typography"
+  },
+  {
+    "file": "08_GUIDELINES_AND_CATALOGUE/para-material-system.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "07 Material system"
+  },
+  {
+    "file": "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.svg",
+    "width": 1800,
+    "height": 1200,
+    "title": "08 Construction rules"
+  }
+]

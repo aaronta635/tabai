@@ -1,5 +1,3 @@
-import Image from "next/image";
-
 export function BrandMark({
   light = false,
   compact = false,
@@ -9,23 +7,26 @@ export function BrandMark({
   compact?: boolean;
   priority?: boolean;
 }) {
+  const src = compact
+    ? light
+      ? "/brand/para-symbol-ivory.svg"
+      : "/brand/para-symbol-espresso.svg"
+    : light
+      ? "/brand/para-horizontal-ivory.svg"
+      : "/brand/para-horizontal-espresso.svg";
+
   return (
     <span
       className={`brand-mark ${light ? "brand-mark-light" : ""} ${compact ? "brand-mark-compact" : ""}`}
-      aria-label="howl0"
+      aria-label="PARA"
     >
-      {compact ? null : (
-        <span className="brand-mark-how" aria-hidden>
-          how
-        </span>
-      )}
-      <Image
-        src="/brand/howl0-symbol.png"
-        alt={compact ? "howl0" : ""}
-        width={512}
-        height={343}
+      <img
+        src={src}
+        alt=""
+        width={compact ? 290 : 1106}
+        height={300}
         className="brand-mark-symbol"
-        priority={priority}
+        fetchPriority={priority ? "high" : "auto"}
       />
     </span>
   );

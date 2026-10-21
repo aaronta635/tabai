@@ -84,7 +84,7 @@ export function StudioShell({
   const rail = (
     <div className="flex h-full flex-col px-3 pb-4 pt-5">
       <div className="mb-6 px-2">
-        <Link href={home} className="inline-flex" aria-label="howl0">
+        <Link href={home} className="inline-flex" aria-label="PARA">
           <BrandMark />
         </Link>
         <p className="studio-kicker">{kicker}</p>
@@ -162,7 +162,7 @@ export function StudioShell({
           <button type="button" className="studio-menu" aria-label={labels.menu} onClick={() => setRailOpen(true)}>
             ☰
           </button>
-          <Link href={home} aria-label="howl0">
+          <Link href={home} aria-label="PARA">
             <BrandMark compact />
           </Link>
         </div>

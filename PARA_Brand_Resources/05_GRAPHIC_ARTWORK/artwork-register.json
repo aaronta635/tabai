@@ -1,0 +1,88 @@
+{
+  "01-practise": {
+    "title": "Practise one phrase",
+    "story": "One hand presses the guitar strings while the learner returns to a short score phrase.",
+    "alt": "A learner practises a short phrase on guitar, with a hand on the fretboard beside a practice sheet.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-en-grain.svg",
+    "localisation": {
+      "PRACTISE": "LUYỆN TẬP",
+      "One phrase at a time.": "Từng câu nhạc một.",
+      "Find a steady pulse.": "Giữ nhịp đều đặn."
+    }
+  },
+  "02-submit": {
+    "title": "Submit an existing recording",
+    "story": "An existing music recording travels into a receiving tray through one clear transfer. This is a conceptual submission illustration, not a product screen.",
+    "alt": "An existing music recording moves into a receiving tray through one link.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-en-grain.svg",
+    "localisation": {
+      "EXISTING RECORDING": "BẢN GHI CÓ SẴN",
+      "Take 02": "Lần ghi 02",
+      "Audio / video": "Âm thanh / video",
+      "SUBMIT": "GỬI BÀI",
+      "One recording. One link.": "Một bản ghi. Một liên kết."
+    }
+  },
+  "03-listen": {
+    "title": "Listen for one useful detail",
+    "story": "A teacher focuses listening on one marked moment in the learner’s recording. The waveform is illustrative and is not an assessment graph.",
+    "alt": "Headphones and a recorded phrase with one moment marked for the teacher to discuss.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg",
+    "localisation": {
+      "LISTEN CLOSELY": "LẮNG NGHE KỸ",
+      "THIS MOMENT": "ĐOẠN NÀY",
+      "Hear the space": "Nghe khoảng nghỉ",
+      "between notes.": "giữa các nốt."
+    }
+  },
+  "04-feedback": {
+    "title": "A teacher marks the next focus",
+    "story": "The approved teacher-guidance composition: a pencil marks a bar and a short note gives the next practice focus.",
+    "alt": "A teacher marks one bar in a practice book and suggests slowing down while keeping the pulse.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg",
+    "localisation": {
+      "PRACTICE  /  01": "LUYỆN TẬP / 01",
+      "A little slower.": "Chậm hơn một chút.",
+      "Listen to each beat.": "Lắng nghe từng nhịp.",
+      "NEXT PRACTICE": "LẦN TẬP TỚI",
+      "Slow this bar.": "Tập ô này chậm lại.",
+      "Keep the pulse.": "Giữ nhịp đều."
+    }
+  },
+  "05-try-again": {
+    "title": "Return with a clear focus",
+    "story": "Two attempts stay separate and understandable. The same highlighted bar and teacher focus carry into another attempt; there is no score or guaranteed improvement.",
+    "alt": "Two practice attempts side by side, linked by the teacher’s instruction to keep a steady pulse.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-en-grain.svg",
+    "localisation": {
+      "FIRST ATTEMPT": "LẦN TẬP TRƯỚC",
+      "TRY AGAIN": "THỬ LẠI",
+      "The same phrase.": "Cùng một câu nhạc.",
+      "A new attempt.": "Một lần tập mới.",
+      "TEACHER’S FOCUS": "GỢI Ý TỪ GIÁO VIÊN",
+      "Keep a steady pulse.": "Giữ nhịp thật đều."
+    }
+  },
+  "06-parent-journey": {
+    "title": "Understand the learning journey",
+    "story": "A parent holds a learning journal organised around effort, teacher guidance and the next focus. This is a conceptual communication image, not an available parent-report screen.",
+    "alt": "Hands hold a learning journal showing practice, teacher guidance and the next practice focus.",
+    "minWidth": 480,
+    "file": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-en-grain.svg",
+    "localisation": {
+      "THIS WEEK": "TUẦN NÀY",
+      "A learning journey.": "Hành trình học nhạc.",
+      "Practice": "Luyện tập",
+      "A phrase worth returning to.": "Một câu nhạc để luyện thêm.",
+      "Teacher guidance": "Góp ý của giáo viên",
+      "What to listen for next.": "Điều cần chú ý khi nghe.",
+      "Next focus": "Trọng tâm tiếp theo",
+      "One clear practice step.": "Một bước luyện tập rõ ràng."
+    }
+  }
+}

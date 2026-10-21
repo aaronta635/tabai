@@ -1,0 +1,110 @@
+{
+  "passed": true,
+  "localLinksChecked": 23,
+  "tokensMatchJSON": true,
+  "cssTokenCount": 65,
+  "svgFilesParsed": [
+    "04_EDITABLE_SOURCE/overlay-construction.svg",
+    "05_SPECIMENS/assets/para-horizontal-espresso.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rim-smoke.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-scrim-espresso.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-ivory.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-smoke.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rim-ivory.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-outline-ivory.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-outline-espresso.svg",
+    "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-scrim-ivory.svg"
+  ],
+  "alphaChecks": [
+    {
+      "file": "para-glass-scrim-espresso.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-rim-ivory.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-outline-espresso.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-rising-edge-smoke.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-scrim-ivory.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-outline-ivory.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-rim-smoke.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-glass-rising-edge-ivory.png",
+      "dimensions": [
+        1280,
+        800
+      ],
+      "alpha": true
+    },
+    {
+      "file": "para-film-grain-256.png",
+      "dimensions": [
+        256,
+        256
+      ],
+      "alpha": true
+    }
+  ],
+  "fontChecks": [
+    {
+      "font": "BeVietnamPro-SemiBold.woff2",
+      "missingGlyphs": []
+    },
+    {
+      "font": "BeVietnamPro-Regular.woff2",
+      "missingGlyphs": []
+    },
+    {
+      "font": "BeVietnamPro-Medium.woff2",
+      "missingGlyphs": []
+    },
+    {
+      "font": "PlusJakartaSans[wght].woff2",
+      "missingGlyphs": []
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+relative_path,type,use,dimensions,bytes
+00_START_HERE/README.md,Handoff / verification,Designer and developer instructions,,2865
+01_TOKENS/para-glass-tokens.css,Design tokens,Source of truth for adjustable parameters,,2785
+01_TOKENS/para-glass-tokens.json,Design tokens,Source of truth for adjustable parameters,,5621
+02_EFFECTS_CSS/para-glass-fallbacks.css,Live CSS,Production material and accessibility fallback,,1979
+02_EFFECTS_CSS/para-glass.css,Live CSS,Production material and accessibility fallback,,7776
+03_OVERLAYS_AND_TEXTURES/PNG/para-film-grain-256.png,Raster texture / export,"Optional edge, outline, separation or grain",256x256,118522
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-outline-espresso.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,8071
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-outline-ivory.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,8008
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-rim-ivory.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,12501
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-rim-smoke.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,10351
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-rising-edge-ivory.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,7142
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-rising-edge-smoke.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,6958
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-scrim-espresso.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,6257
+03_OVERLAYS_AND_TEXTURES/PNG/para-glass-scrim-ivory.png,Raster texture / export,"Optional edge, outline, separation or grain",1280x800,6397
+03_OVERLAYS_AND_TEXTURES/SOURCE_NOTES.md,Raster texture / export,"Optional edge, outline, separation or grain",,1766
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-outline-espresso.svg,SVG overlay,"Optional edge, outline, separation or grain",,493
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-outline-ivory.svg,SVG overlay,"Optional edge, outline, separation or grain",,490
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rim-ivory.svg,SVG overlay,"Optional edge, outline, separation or grain",,677
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rim-smoke.svg,SVG overlay,"Optional edge, outline, separation or grain",,677
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-ivory.svg,SVG overlay,"Optional edge, outline, separation or grain",,518
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-smoke.svg,SVG overlay,"Optional edge, outline, separation or grain",,518
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-scrim-espresso.svg,SVG overlay,"Optional edge, outline, separation or grain",,639
+03_OVERLAYS_AND_TEXTURES/SVG/para-glass-scrim-ivory.svg,SVG overlay,"Optional edge, outline, separation or grain",,636
+04_EDITABLE_SOURCE/EDITING.md,Editable source,Vector construction / minimal layering snippets,,818
+04_EDITABLE_SOURCE/button-snippet.html,Editable source,Vector construction / minimal layering snippets,,388
+04_EDITABLE_SOURCE/layering-snippet.html,Editable source,Vector construction / minimal layering snippets,,321
+04_EDITABLE_SOURCE/overlay-construction.svg,Editable source,Vector construction / minimal layering snippets,,752
+04_EDITABLE_SOURCE/solid-mode-snippet.html,Editable source,Vector construction / minimal layering snippets,,449
+05_SPECIMENS/assets/fonts/bevietnampro/BeVietnamPro-Medium.woff2,Approved source / licensed font,Unchanged existing asset for specimens,,40248
+05_SPECIMENS/assets/fonts/bevietnampro/BeVietnamPro-Regular.woff2,Approved source / licensed font,Unchanged existing asset for specimens,,38104
+05_SPECIMENS/assets/fonts/bevietnampro/BeVietnamPro-SemiBold.woff2,Approved source / licensed font,Unchanged existing asset for specimens,,40412
+05_SPECIMENS/assets/fonts/bevietnampro/OFL.txt,Approved source / licensed font,Unchanged existing asset for specimens,,4397
+05_SPECIMENS/assets/fonts/plusjakartasans/OFL.txt,Approved source / licensed font,Unchanged existing asset for specimens,,4402
+05_SPECIMENS/assets/fonts/plusjakartasans/PlusJakartaSans[wght].woff2,Approved source / licensed font,Unchanged existing asset for specimens,,60440
+05_SPECIMENS/assets/fonts.css,Approved source / licensed font,Unchanged existing asset for specimens,,738
+05_SPECIMENS/assets/para-art-04-feedback-en-grain.png,Approved source / licensed font,Unchanged existing asset for specimens,1700x1240,1816449
+05_SPECIMENS/assets/para-expressive-rhythm-grain.png,Approved source / licensed font,Unchanged existing asset for specimens,384x384,107471
+05_SPECIMENS/assets/para-horizontal-espresso.svg,Approved source / licensed font,Unchanged existing asset for specimens,,2896
+05_SPECIMENS/assets/para-material-deep-grain.png,Approved source / licensed font,Unchanged existing asset for specimens,1600x1000,2379773
+05_SPECIMENS/assets/para-material-quiet-grain.png,Approved source / licensed font,Unchanged existing asset for specimens,1600x1000,939400
+05_SPECIMENS/assets/para-material-warm-grain.png,Approved source / licensed font,Unchanged existing asset for specimens,1600x1000,2353983
+05_SPECIMENS/index.html,Offline specimen,Local material catalogue; do not import layout into landing page,,11715
+05_SPECIMENS/previews/para-glass-comparison.png,Static preview,Reference only; cannot blur later backgrounds,1344x524,244264
+05_SPECIMENS/previews/para-glass-desktop.png,Static preview,Reference only; cannot blur later backgrounds,1440x3272,1623449
+05_SPECIMENS/previews/para-glass-material-family.png,Static preview,Reference only; cannot blur later backgrounds,1344x456,536211
+05_SPECIMENS/previews/para-glass-mobile.png,Static preview,Reference only; cannot blur later backgrounds,390x5364,1088329
+05_SPECIMENS/previews/para-glass-overview.png,Static preview,Reference only; cannot blur later backgrounds,1440x2367,1530599
+05_SPECIMENS/previews/para-glass-scale.png,Static preview,Reference only; cannot blur later backgrounds,1344x424,444033
+05_SPECIMENS/previews/para-glass-solid.png,Static preview,Reference only; cannot blur later backgrounds,1440x3272,1079137
+05_SPECIMENS/previews/para-glass-states.png,Static preview,Reference only; cannot blur later backgrounds,1344x255,38299
+05_SPECIMENS/previews/para-glass-type.png,Static preview,Reference only; cannot blur later backgrounds,1344x384,268014
+05_SPECIMENS/specimens.css,Offline specimen,Local material catalogue; do not import layout into landing page,,6051
+05_SPECIMENS/specimens.js,Offline specimen,Local material catalogue; do not import layout into landing page,,629
+06_CODEX_HANDOFF/IMPLEMENTATION_GUIDE.md,Handoff / verification,Designer and developer instructions,,7528
+06_CODEX_HANDOFF/INTEGRATION_PROMPT.md,Handoff / verification,Designer and developer instructions,,2488
+06_CODEX_HANDOFF/LICENCES.md,Handoff / verification,Designer and developer instructions,,813
+06_CODEX_HANDOFF/QA_AND_LIMITATIONS.md,Handoff / verification,Designer and developer instructions,,2772
+06_CODEX_HANDOFF/SOURCE_AND_LICENCE_REGISTER.json,Handoff / verification,Designer and developer instructions,,2941
+06_CODEX_HANDOFF/browser-checks.json,Handoff / verification,Designer and developer instructions,,23434
+06_CODEX_HANDOFF/contrast-checks.json,Handoff / verification,Designer and developer instructions,,12563
+06_CODEX_HANDOFF/structural-checks.json,Handoff / verification,Designer and developer instructions,,2350

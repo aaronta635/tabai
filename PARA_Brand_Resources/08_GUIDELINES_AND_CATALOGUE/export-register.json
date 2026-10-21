@@ -1,0 +1,2025 @@
+[
+  {
+    "svg": "00_START_HERE/para-brand-overview.svg",
+    "png": "00_START_HERE/para-brand-overview.png",
+    "width": 1800,
+    "height": 2380,
+    "bytes": 1511037
+  },
+  {
+    "svg": "01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.svg",
+    "png": "01_LOGO/App_Favicon_Proposals/para-app-espresso-PROPOSAL.png",
+    "width": 512,
+    "height": 512,
+    "bytes": 112516
+  },
+  {
+    "svg": "01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.svg",
+    "png": "01_LOGO/App_Favicon_Proposals/para-app-ivory-PROPOSAL.png",
+    "width": 512,
+    "height": 512,
+    "bytes": 113400
+  },
+  {
+    "svg": "01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.svg",
+    "png": "01_LOGO/App_Favicon_Proposals/para-favicon-16-PROPOSAL.png",
+    "width": 16,
+    "height": 16,
+    "bytes": 516
+  },
+  {
+    "svg": "01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.svg",
+    "png": "01_LOGO/App_Favicon_Proposals/para-favicon-32-PROPOSAL.png",
+    "width": 32,
+    "height": 32,
+    "bytes": 1036
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-horizontal-dark-gradient.svg",
+    "png": "01_LOGO/PNG/para-horizontal-dark-gradient.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 168725
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-horizontal-light-gradient.svg",
+    "png": "01_LOGO/PNG/para-horizontal-light-gradient.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 151525
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-stacked-dark-gradient.svg",
+    "png": "01_LOGO/PNG/para-stacked-dark-gradient.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 188710
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-stacked-light-gradient.svg",
+    "png": "01_LOGO/PNG/para-stacked-light-gradient.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 177391
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-symbol-dark-gradient.svg",
+    "png": "01_LOGO/PNG/para-symbol-dark-gradient.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 122144
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-symbol-light-gradient.svg",
+    "png": "01_LOGO/PNG/para-symbol-light-gradient.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 111174
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-wordmark-dark-gradient.svg",
+    "png": "01_LOGO/PNG/para-wordmark-dark-gradient.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 86551
+  },
+  {
+    "svg": "01_LOGO/Editable_Masters/para-wordmark-light-gradient.svg",
+    "png": "01_LOGO/PNG/para-wordmark-light-gradient.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 76599
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-horizontal-dark-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-dark-grain-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 772857
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-horizontal-light-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-light-grain-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 757586
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-stacked-dark-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-dark-grain-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 895838
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-stacked-light-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-light-grain-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 890419
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-symbol-dark-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-dark-grain-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 876039
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-symbol-light-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-light-grain-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 858189
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-wordmark-dark-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-dark-grain-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 426278
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/Web/para-wordmark-light-grain-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-light-grain-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 413018
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-horizontal-dark-grain.svg",
+    "png": "01_LOGO/PNG/para-horizontal-dark-grain.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 772857
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-horizontal-light-grain.svg",
+    "png": "01_LOGO/PNG/para-horizontal-light-grain.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 757586
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-stacked-dark-grain.svg",
+    "png": "01_LOGO/PNG/para-stacked-dark-grain.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 895838
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-stacked-light-grain.svg",
+    "png": "01_LOGO/PNG/para-stacked-light-grain.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 890419
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-symbol-dark-grain.svg",
+    "png": "01_LOGO/PNG/para-symbol-dark-grain.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 876039
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-symbol-light-grain.svg",
+    "png": "01_LOGO/PNG/para-symbol-light-grain.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 858189
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-wordmark-dark-grain.svg",
+    "png": "01_LOGO/PNG/para-wordmark-dark-grain.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 426278
+  },
+  {
+    "svg": "01_LOGO/Grain_Gradient/para-wordmark-light-grain.svg",
+    "png": "01_LOGO/PNG/para-wordmark-light-grain.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 413018
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-horizontal-black-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-black-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 42760
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-horizontal-espresso-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-espresso-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 52413
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-horizontal-ivory-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-ivory-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 51295
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-horizontal-white-optical.svg",
+    "png": "01_LOGO/PNG/para-horizontal-white-optical.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 39568
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-stacked-black-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-black-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 48607
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-stacked-espresso-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-espresso-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 64288
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-stacked-ivory-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-ivory-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 62277
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-stacked-white-optical.svg",
+    "png": "01_LOGO/PNG/para-stacked-white-optical.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 44961
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-symbol-black-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-black-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 23386
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-symbol-espresso-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-espresso-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 32898
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-symbol-ivory-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-ivory-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 31701
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-symbol-white-optical.svg",
+    "png": "01_LOGO/PNG/para-symbol-white-optical.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 21783
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-wordmark-black-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-black-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 26151
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-wordmark-espresso-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-espresso-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 30149
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-wordmark-ivory-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-ivory-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 29497
+  },
+  {
+    "svg": "01_LOGO/Solid/Web/para-wordmark-white-optical.svg",
+    "png": "01_LOGO/PNG/para-wordmark-white-optical.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 24327
+  },
+  {
+    "svg": "01_LOGO/Solid/para-horizontal-black.svg",
+    "png": "01_LOGO/PNG/para-horizontal-black.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 42760
+  },
+  {
+    "svg": "01_LOGO/Solid/para-horizontal-espresso.svg",
+    "png": "01_LOGO/PNG/para-horizontal-espresso.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 52413
+  },
+  {
+    "svg": "01_LOGO/Solid/para-horizontal-ivory.svg",
+    "png": "01_LOGO/PNG/para-horizontal-ivory.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 51295
+  },
+  {
+    "svg": "01_LOGO/Solid/para-horizontal-white.svg",
+    "png": "01_LOGO/PNG/para-horizontal-white.png",
+    "width": 2212,
+    "height": 600,
+    "bytes": 39568
+  },
+  {
+    "svg": "01_LOGO/Solid/para-stacked-black.svg",
+    "png": "01_LOGO/PNG/para-stacked-black.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 48607
+  },
+  {
+    "svg": "01_LOGO/Solid/para-stacked-espresso.svg",
+    "png": "01_LOGO/PNG/para-stacked-espresso.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 64288
+  },
+  {
+    "svg": "01_LOGO/Solid/para-stacked-ivory.svg",
+    "png": "01_LOGO/PNG/para-stacked-ivory.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 62277
+  },
+  {
+    "svg": "01_LOGO/Solid/para-stacked-white.svg",
+    "png": "01_LOGO/PNG/para-stacked-white.png",
+    "width": 1600,
+    "height": 1244,
+    "bytes": 44961
+  },
+  {
+    "svg": "01_LOGO/Solid/para-symbol-black.svg",
+    "png": "01_LOGO/PNG/para-symbol-black.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 23386
+  },
+  {
+    "svg": "01_LOGO/Solid/para-symbol-espresso.svg",
+    "png": "01_LOGO/PNG/para-symbol-espresso.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 32898
+  },
+  {
+    "svg": "01_LOGO/Solid/para-symbol-ivory.svg",
+    "png": "01_LOGO/PNG/para-symbol-ivory.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 31701
+  },
+  {
+    "svg": "01_LOGO/Solid/para-symbol-white.svg",
+    "png": "01_LOGO/PNG/para-symbol-white.png",
+    "width": 1024,
+    "height": 1059,
+    "bytes": 21783
+  },
+  {
+    "svg": "01_LOGO/Solid/para-wordmark-black.svg",
+    "png": "01_LOGO/PNG/para-wordmark-black.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 26151
+  },
+  {
+    "svg": "01_LOGO/Solid/para-wordmark-espresso.svg",
+    "png": "01_LOGO/PNG/para-wordmark-espresso.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 30149
+  },
+  {
+    "svg": "01_LOGO/Solid/para-wordmark-ivory.svg",
+    "png": "01_LOGO/PNG/para-wordmark-ivory.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 29497
+  },
+  {
+    "svg": "01_LOGO/Solid/para-wordmark-white.svg",
+    "png": "01_LOGO/PNG/para-wordmark-white.png",
+    "width": 1502,
+    "height": 420,
+    "bytes": 24327
+  },
+  {
+    "svg": "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.svg",
+    "png": "03_TYPOGRAPHY/English_Vietnamese_Specimens/para-bilingual-proof.png",
+    "width": 1500,
+    "height": 1080,
+    "bytes": 166198
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-assignment-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-assignment-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 449
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-assignment-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-assignment-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 458
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-assignment-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-assignment-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4251
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-assignment-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-assignment-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 12492
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-attachment-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-attachment-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 751
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-attachment-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-attachment-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 789
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-attachment-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-attachment-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7084
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-attachment-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-attachment-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 14395
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-back-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-back-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 354
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-back-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-back-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 370
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-back-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-back-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2346
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-back-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-back-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5418
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-check-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-check-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 373
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-check-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-check-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 388
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-check-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-check-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2246
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-check-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-check-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4754
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-down-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-down-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 361
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-down-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-down-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 379
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-down-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-down-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2265
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-down-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4241
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-left-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-left-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 347
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-left-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-left-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 335
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-left-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-left-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2340
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-left-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4227
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-right-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-right-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 344
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-right-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-right-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 340
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-right-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-right-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2210
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-right-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4205
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-up-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-up-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 333
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-up-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-up-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 372
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-up-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-up-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2201
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-chevron-up-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4181
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-close-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-close-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 431
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-close-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-close-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 459
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-close-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-close-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2681
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-close-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-close-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 6340
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-comment-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-comment-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 573
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-comment-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-comment-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 568
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-comment-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-comment-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4280
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-comment-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-comment-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10936
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-error-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-error-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 881
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-error-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-error-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 910
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-error-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-error-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 6713
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-error-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-error-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 13022
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-forward-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-forward-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 354
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-forward-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-forward-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 362
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-forward-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-forward-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2420
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-forward-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-forward-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5416
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-home-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-home-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 549
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-home-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-home-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 585
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-home-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-home-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4235
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-home-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-home-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10980
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-information-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-information-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 744
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-information-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-information-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 757
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-information-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-information-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5535
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-information-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-information-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10899
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-language-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-language-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 902
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-language-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-language-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 889
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-language-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-language-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7595
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-language-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-language-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 16277
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-menu-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-menu-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 189
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-menu-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-menu-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 188
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-menu-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-menu-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 1884
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-menu-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-menu-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 6567
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-microphone-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-microphone-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 752
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-microphone-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-microphone-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 797
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-microphone-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-microphone-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5350
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-microphone-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-microphone-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10616
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-pause-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-pause-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 194
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-pause-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-pause-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 194
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-pause-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-pause-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2358
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-pause-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-pause-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5406
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-play-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-play-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 574
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-play-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-play-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 597
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-play-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-play-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 3427
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-play-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-play-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7847
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-progress-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-progress-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 266
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-progress-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-progress-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 269
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-progress-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-progress-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 3277
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-progress-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-progress-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 8778
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-record-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-record-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 645
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-record-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-record-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 653
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-record-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-record-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4127
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-record-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-record-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7699
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-review-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-review-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 647
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-review-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-review-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 651
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-review-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-review-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5585
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-review-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-review-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 12724
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-search-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-search-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 671
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-search-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-search-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 714
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-search-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-search-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4604
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-search-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-search-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 8509
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-settings-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-settings-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 890
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-settings-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-settings-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 971
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-settings-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-settings-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7363
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-settings-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-settings-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 13715
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-stop-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-stop-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 273
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-stop-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-stop-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 275
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-stop-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-stop-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 2255
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-stop-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-stop-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 7350
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-upload-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-upload-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 466
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-upload-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-upload-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 456
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-upload-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-upload-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 3419
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-upload-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-upload-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 8024
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-video-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-video-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 571
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-video-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-video-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 575
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-video-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-video-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 4471
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-video-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-video-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10642
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-warning-24-reverse.svg",
+    "png": "04_ICONS/Application_UI/para-ui-warning-24-reverse.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 731
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-warning-24-solid.svg",
+    "png": "04_ICONS/Application_UI/para-ui-warning-24-solid.png",
+    "width": 24,
+    "height": 24,
+    "bytes": 700
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-warning-64-gradient.svg",
+    "png": "04_ICONS/Application_UI/para-ui-warning-64-gradient.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 5018
+  },
+  {
+    "svg": "04_ICONS/Application_UI/para-ui-warning-64-grain.svg",
+    "png": "04_ICONS/Application_UI/para-ui-warning-64-grain.png",
+    "width": 128,
+    "height": 128,
+    "bytes": 10714
+  },
+  {
+    "svg": "04_ICONS/Contact_Sheets/para-expressive-family.svg",
+    "png": "04_ICONS/Contact_Sheets/para-expressive-family.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 474522
+  },
+  {
+    "svg": "04_ICONS/Contact_Sheets/para-ui-family.svg",
+    "png": "04_ICONS/Contact_Sheets/para-ui-family.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 179190
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-assignment-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-assignment-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 16673
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 112769
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-assignment-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-assignment-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2089
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-assignment-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-assignment-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 877
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-feedback-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 26773
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 106434
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-feedback-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4286
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-feedback-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-feedback-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1452
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-listening-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-listening-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 20386
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 60805
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-listening-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-listening-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4737
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-listening-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-listening-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1308
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-next-step-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-next-step-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 22343
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 119299
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-next-step-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-next-step-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 3202
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-next-step-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-next-step-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1084
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-parent-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-parent-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 21202
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-parent-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 62292
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-parent-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-parent-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4945
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-parent-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-parent-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1307
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-pitch-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-pitch-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 12611
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-pitch-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 39027
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-pitch-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-pitch-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2731
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-pitch-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-pitch-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 814
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-practise-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-practise-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 25216
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 114051
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-practise-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-practise-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4500
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-practise-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-practise-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1306
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-progress-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-progress-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 28278
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 89397
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-progress-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-progress-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 961
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-progress-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-progress-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 493
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-recording-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 26385
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 73243
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-recording-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-recording-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4555
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-recording-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-recording-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1406
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 21253
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 109951
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4189
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1165
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-review-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-review-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 32603
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 113292
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-review-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-review-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 5425
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-review-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-review-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1417
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 32846
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 107471
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 5560
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1512
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-student-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-student-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 23694
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-student-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-student-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 87684
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-student-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-student-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 4732
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-student-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-student-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1309
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-teacher-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-teacher-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 18624
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-teacher-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 78205
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-teacher-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-teacher-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 3899
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-teacher-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-teacher-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 1173
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-gradient.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-gradient.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 19747
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-grain.png",
+    "width": 384,
+    "height": 384,
+    "bytes": 75605
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-mono.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-mono.png",
+    "width": 192,
+    "height": 192,
+    "bytes": 2224
+  },
+  {
+    "svg": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-small.svg",
+    "png": "04_ICONS/Landing_and_Communication/para-expressive-video-submission-small.png",
+    "width": 48,
+    "height": 48,
+    "bytes": 828
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 367715
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 56159
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-01-practise-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 366195
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 214872
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 35342
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-02-submit-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 216700
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 190796
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 41974
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-03-listen-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 191755
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 350676
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 46752
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-04-feedback-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 356796
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 279081
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 38715
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-05-try-again-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 279431
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-en-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 246508
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-silhouette.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-silhouette.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 37725
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Editable_Masters/para-art-06-parent-journey-vi-gradient.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-vi-gradient.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 256528
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1337811
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-01-practise-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1336891
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1071083
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-02-submit-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1072765
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 944614
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 945905
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1816449
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-04-feedback-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1817464
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1392499
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-05-try-again-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1392741
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-en-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-en-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1538047
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-06-parent-journey-vi-grain.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-vi-grain.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 1542199
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-01-practise-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-01-practise-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 250328
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-02-submit-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-02-submit-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 109516
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-03-listen-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-03-listen-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 104651
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-04-feedback-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 204878
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-05-try-again-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-05-try-again-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 133680
+  },
+  {
+    "svg": "05_GRAPHIC_ARTWORK/Monochrome/para-art-06-parent-journey-tonal.svg",
+    "png": "05_GRAPHIC_ARTWORK/PNG/para-art-06-parent-journey-tonal.png",
+    "width": 1700,
+    "height": 1240,
+    "bytes": 163197
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-deep-gradient.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-deep-gradient.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 285049
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-quiet-gradient.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-quiet-gradient.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 78817
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-warm-gradient.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Editable_Gradients/para-material-warm-gradient.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 270707
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-deep-flat.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-deep-flat.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 8635
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-quiet-flat.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-quiet-flat.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 8634
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-warm-flat.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Flat_Fallbacks/para-material-warm-flat.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 8634
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 2379773
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 939400
+  },
+  {
+    "svg": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.svg",
+    "png": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 2353983
+  },
+  {
+    "svg": "07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.svg",
+    "png": "07_PHOTOGRAPHY_GUIDANCE/para-photo-lower-shade.png",
+    "width": 1600,
+    "height": 1000,
+    "bytes": 9177
+  },
+  {
+    "svg": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.svg",
+    "png": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-espresso.png",
+    "width": 1600,
+    "height": 1200,
+    "bytes": 14086
+  },
+  {
+    "svg": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.svg",
+    "png": "07_PHOTOGRAPHY_GUIDANCE/para-photo-rising-frame-ivory.png",
+    "width": 1600,
+    "height": 1200,
+    "bytes": 13866
+  },
+  {
+    "svg": "08_GUIDELINES_AND_CATALOGUE/para-artwork-en.svg",
+    "png": "08_GUIDELINES_AND_CATALOGUE/para-artwork-en.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 1034710
+  },
+  {
+    "svg": "08_GUIDELINES_AND_CATALOGUE/para-artwork-vi.svg",
+    "png": "08_GUIDELINES_AND_CATALOGUE/para-artwork-vi.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 1038576
+  },
+  {
+    "svg": "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.svg",
+    "png": "08_GUIDELINES_AND_CATALOGUE/para-construction-rules.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 329527
+  },
+  {
+    "svg": "08_GUIDELINES_AND_CATALOGUE/para-logo-suite.svg",
+    "png": "08_GUIDELINES_AND_CATALOGUE/para-logo-suite.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 592750
+  },
+  {
+    "svg": "08_GUIDELINES_AND_CATALOGUE/para-material-system.svg",
+    "png": "08_GUIDELINES_AND_CATALOGUE/para-material-system.png",
+    "width": 1800,
+    "height": 1200,
+    "bytes": 900174
+  }
+]

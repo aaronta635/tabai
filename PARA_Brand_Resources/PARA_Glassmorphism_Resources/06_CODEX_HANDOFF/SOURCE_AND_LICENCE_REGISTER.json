@@ -1,0 +1,52 @@
+{
+  "copiedApprovedAssets": [
+    {
+      "sourceInApprovedPackage": "01_LOGO/Solid/para-horizontal-espresso.svg",
+      "destination": "05_SPECIMENS/assets/para-horizontal-espresso.svg",
+      "sha256": "aaa13a35654f25ac54bbe906dcea168fed11e86fc80ecccb38b36454da33df54",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.png",
+      "destination": "05_SPECIMENS/assets/para-material-warm-grain.png",
+      "sha256": "2531c95094029b1292e7c31419ef246e49a675715d88a8e547aadbd34d5f394f",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.png",
+      "destination": "05_SPECIMENS/assets/para-material-deep-grain.png",
+      "sha256": "0b3a773aa74b938c6415536fd7d853cff79bf37b68625293ee5a2825ad59c044",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.png",
+      "destination": "05_SPECIMENS/assets/para-material-quiet-grain.png",
+      "sha256": "f14438a482fff3b92f886ff22e300e7bea36affd4cf909b22a8a7ea236aaa167",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.png",
+      "destination": "05_SPECIMENS/assets/para-expressive-rhythm-grain.png",
+      "sha256": "13a0e530af9461eb2b81425bae927eeda3c12c58e5ff55e0c16422eadff0cc75",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "05_GRAPHIC_ARTWORK/PNG/para-art-04-feedback-en-grain.png",
+      "destination": "05_SPECIMENS/assets/para-art-04-feedback-en-grain.png",
+      "sha256": "ac6baf9db9f8a7da03cc6f17b2658bd199bb4624f3457c16ba340f36074d56fe",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    },
+    {
+      "sourceInApprovedPackage": "06_GRADIENTS_AND_TEXTURES/Grain_Overlays/para-film-grain-256.png",
+      "destination": "03_OVERLAYS_AND_TEXTURES/PNG/para-film-grain-256.png",
+      "sha256": "97b30b0e07adc2389787e765e2d78a913928d642e828422013775e20fd2532ed",
+      "status": "Recovered unchanged; CRC verified from original add-on archive entry"
+    }
+  ],
+  "fontLicences": "Original OFL files alongside unmodified WOFF2 sources",
+  "missingSources": [
+    "Local Mac repository not accessible; no files changed there",
+    "No photographs supplied or processed"
+  ],
+  "sourceInspection": "Approved full package was inspected during initial construction; this handoff restores the saved add-on without changing its logo, icon, artwork, material or font files."
+}

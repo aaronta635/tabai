@@ -1,5 +1,5 @@
 {
-  "brand": "howl0",
+  "brand": "PARA",
   "locale": {
     "vi": "VI",
     "en": "EN"
@@ -23,7 +23,7 @@
     "eyebrow": "Cho lớp guitar trên Zalo và Facebook",
     "titleLead": "Nghe đúng nhịp.",
     "titleEm": "Nói đúng nốt.",
-    "subhead": "Một link cho nhóm. Học viên gửi video. howl0 đối chiếu với bản nhạc và bài mẫu để thầy nhận xét.",
+    "subhead": "Một link cho nhóm. Học viên gửi video. PARA đối chiếu với bản nhạc và bài mẫu để thầy nhận xét.",
     "navCta": "Đăng nhập",
     "navOpen": "Vào lớp",
     "tutorCta": "Tôi là giáo viên",
@@ -48,9 +48,9 @@
     "how3Body": "Take vào bảng. Mở một hàng để xem, sửa nháp, gửi."
   },
   "auth": {
-    "title": "Vào howl0",
+    "title": "Vào PARA",
     "body": "Đăng nhập để tạo link nộp video cho học viên.",
-    "pickTitle": "Bạn dùng howl0 thế nào?",
+    "pickTitle": "Bạn dùng PARA thế nào?",
     "pickBody": "Tài khoản thầy và học viên trả lời câu hỏi khác nhau lúc đầu, để biết bạn đang ở bước nào.",
     "tutorKicker": "Giáo viên",
     "tutorTitle": "Tôi dạy lớp",
@@ -85,7 +85,7 @@
     "resetSent": "Kiểm tra email để đặt lại mật khẩu.",
     "signInAs": "Đăng nhập vai {role}",
     "signUpAs": "Tạo tài khoản {role}",
-    "newHere": "Mới dùng howl0?",
+    "newHere": "Mới dùng PARA?",
     "createLink": "Tạo tài khoản",
     "createTitle": "Tạo phòng tập",
     "createSub": "Thầy và học viên vào hai phòng khác nhau.",
@@ -93,7 +93,7 @@
     "signInLink": "Đăng nhập",
     "manifesto": "Luyện, thu, và nghe thầy nhận xét.",
     "manifestoKicker": "Buổi học · Bài · Nhận xét",
-    "roomFooter": "howl0 · Phòng tập",
+    "roomFooter": "PARA · Phòng tập",
     "providerFailed": "Đăng nhập này chưa bắt đầu. Bật nhà cung cấp trên Supabase rồi thử lại.",
     "checkEmail": "Kiểm tra email để xác nhận tài khoản (nếu Supabase bật xác nhận).",
     "wrongRoleTutor": "Email này là tài khoản giáo viên. Đăng nhập ở trang thầy.",

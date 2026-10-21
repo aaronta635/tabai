@@ -28,10 +28,7 @@ export function AuthShell({
     <main className="auth-split">
       <section className="auth-brand">
         <Link href="/" className="auth-logo" aria-label={brand}>
-          <span className="auth-logo-chip">
-            <BrandMark compact priority />
-          </span>
-          <span className="auth-logo-name">howl0</span>
+          <BrandMark light priority />
         </Link>
         <div className="auth-brand-copy">
           <div className="auth-staff" aria-hidden />

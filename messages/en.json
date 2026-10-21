@@ -1,5 +1,5 @@
 {
-  "brand": "howl0",
+  "brand": "PARA",
   "locale": {
     "vi": "VI",
     "en": "EN"
@@ -23,7 +23,7 @@
     "eyebrow": "For guitar classes on Zalo and Facebook",
     "titleLead": "Hear the beat.",
     "titleEm": "Name the notes.",
-    "subhead": "One link for the group. Students send a take. howl0 lines it up with your score and tutorial so you can reply.",
+    "subhead": "One link for the group. Students send a take. PARA lines it up with your score and tutorial so you can reply.",
     "navCta": "Sign in",
     "navOpen": "Open studio",
     "tutorCta": "I'm a teacher",
@@ -48,9 +48,9 @@
     "how3Body": "Takes land in a table. Open a row to watch, edit the draft, and send."
   },
   "auth": {
-    "title": "Enter howl0",
+    "title": "Enter PARA",
     "body": "Sign in to create a student upload link.",
-    "pickTitle": "How do you use howl0?",
+    "pickTitle": "How do you use PARA?",
     "pickBody": "Teacher and student accounts start with different questions, so the first screen matches where you are.",
     "tutorKicker": "Teacher",
     "tutorTitle": "I run the class",
@@ -85,7 +85,7 @@
     "resetSent": "Check your email for the reset link.",
     "signInAs": "Sign in as {role}",
     "signUpAs": "Create a {role} account",
-    "newHere": "New to howl0?",
+    "newHere": "New to PARA?",
     "createLink": "Create an account",
     "createTitle": "Create your practice room",
     "createSub": "Teachers and students start in different rooms.",
@@ -93,7 +93,7 @@
     "signInLink": "Sign in",
     "manifesto": "Practice, record, and hear back from your teacher.",
     "manifestoKicker": "Lessons · Pieces · Feedback",
-    "roomFooter": "howl0 · Practice room",
+    "roomFooter": "PARA · Practice room",
     "providerFailed": "That sign-in did not start. Turn the provider on in Supabase, then try again.",
     "checkEmail": "Check your email to confirm the account if confirmation is on.",
     "wrongRoleTutor": "This email is a teacher account. Sign in as a teacher.",

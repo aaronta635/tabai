@@ -1,0 +1,40 @@
+{
+  "grid": 24,
+  "stroke": 1.8,
+  "compact": [
+    16,
+    24,
+    32
+  ],
+  "texturedMinimum": 64,
+  "names": [
+    "menu",
+    "close",
+    "back",
+    "forward",
+    "chevron-left",
+    "chevron-right",
+    "chevron-up",
+    "chevron-down",
+    "home",
+    "search",
+    "settings",
+    "play",
+    "pause",
+    "stop",
+    "record",
+    "microphone",
+    "video",
+    "upload",
+    "attachment",
+    "assignment",
+    "comment",
+    "review",
+    "progress",
+    "check",
+    "information",
+    "warning",
+    "error",
+    "language"
+  ]
+}

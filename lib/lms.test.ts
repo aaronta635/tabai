@@ -5,7 +5,7 @@ describe("lms helpers", () => {
   it("builds a mailto invite with the join URL in the body", () => {
     const href = mailtoInvite("an@example.com", "Beginner", "https://howl0.com/join/abc123");
     expect(href.startsWith("mailto:an%40example.com?")).toBe(true);
-    expect(href).toContain(encodeURIComponent("Join Beginner on howl0"));
+    expect(href).toContain(encodeURIComponent("Join Beginner on PARA"));
     expect(href).toContain(encodeURIComponent("https://howl0.com/join/abc123"));
   });
 

@@ -7,13 +7,9 @@ export function BrandMark({
   compact?: boolean;
   priority?: boolean;
 }) {
-  const src = compact
-    ? light
-      ? "/brand/para-symbol-ivory.svg"
-      : "/brand/para-symbol-espresso.svg"
-    : light
-      ? "/brand/para-horizontal-ivory.svg"
-      : "/brand/para-horizontal-espresso.svg";
+  const espresso = compact ? "/brand/para-symbol-espresso.svg" : "/brand/para-horizontal-espresso.svg";
+  const ivory = compact ? "/brand/para-symbol-ivory.svg" : "/brand/para-horizontal-ivory.svg";
+  const width = compact ? 290 : 1106;
 
   return (
     <span
@@ -21,12 +17,19 @@ export function BrandMark({
       aria-label="PARA"
     >
       <img
-        src={src}
+        src={espresso}
         alt=""
-        width={compact ? 290 : 1106}
+        width={width}
         height={300}
-        className="brand-mark-symbol"
+        className="brand-mark-symbol brand-mark-on-light"
         fetchPriority={priority ? "high" : "auto"}
+      />
+      <img
+        src={ivory}
+        alt=""
+        width={width}
+        height={300}
+        className="brand-mark-symbol brand-mark-on-dark"
       />
     </span>
   );

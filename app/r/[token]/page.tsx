@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata() {
   return {
-    title: "howl0",
+    title: "PARA",
     robots: { index: false, follow: false },
   };
 }

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("landing shows the studio entry and keeps an empty code on the page", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByLabel("howl0").first()).toBeVisible();
+  await expect(page.getByLabel("PARA").first()).toBeVisible();
 
   const code = page.getByLabel(/Mã lớp|Class code/);
   await expect(code).toBeVisible();

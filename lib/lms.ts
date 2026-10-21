@@ -115,7 +115,7 @@ export async function assignmentsForStudent(studentId: string) {
 }
 
 export function mailtoInvite(email: string, className: string, url: string) {
-  const subject = encodeURIComponent(`Join ${className} on howl0`);
+  const subject = encodeURIComponent(`Join ${className} on PARA`);
   const body = encodeURIComponent(`Join the class with this link:\n${url}`);
   return `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
 }

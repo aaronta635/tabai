@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Analytics } from "@vercel/analytics/next";
 import { I18nProvider, getLocale } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import "./globals.css";
@@ -38,6 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     >
       <body className="antialiased">
         <I18nProvider>{children}</I18nProvider>
+        <Analytics />
       </body>
     </html>
   );

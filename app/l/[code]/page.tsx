@@ -7,6 +7,7 @@ import { formatDueLabel } from "@/lib/practice";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { AssignmentMeta } from "@/components/student/assignment-meta";
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
+import { SyncedTutorial } from "@/components/student/synced-tutorial";
 import { PracticeTimer } from "@/components/student/practice-timer";
 import { StudentUpload } from "@/components/student/upload-form";
 
@@ -23,6 +24,14 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
   const dueAt = room.assigned?.dueAt ?? room.piece.dueAt;
   const dueLabel = dueAt ? formatDueLabel(dueAt, locale) : null;
   const blurb = room.piece.description || room.piece.note;
+  const follow =
+    room.sheetSync?.confidence === "ok" &&
+    room.sheetSync.points.length > 0 &&
+    room.sheetKind === "file" &&
+    room.sheetUrl &&
+    room.tutorialUrl
+      ? { tutorialUrl: room.tutorialUrl, sheetUrl: room.sheetUrl, points: room.sheetSync.points }
+      : null;
 
   return (
     <main className="student-shell mx-auto min-h-dvh max-w-lg px-5 py-8">
@@ -45,7 +54,17 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
       {!room.canSubmit && room.bound.student ? (
         <p className="mt-6 rounded-2xl bg-cream px-4 py-3 text-sm">{t.student.joinHelp}</p>
       ) : null}
-      {room.tutorialUrl ? (
+      {follow ? (
+        <SyncedTutorial
+          className="mt-5"
+          tutorialUrl={follow.tutorialUrl}
+          sheetUrl={follow.sheetUrl}
+          points={follow.points}
+          videoLabel={t.student.reference}
+          sheetLabel={t.student.sheet}
+          openSheet={t.student.openSheet}
+        />
+      ) : room.tutorialUrl ? (
         <div className="mt-5">
           <LoopSpeedPlayer src={room.tutorialUrl} label={t.student.reference} />
         </div>
@@ -55,7 +74,7 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
           <LoopSpeedPlayer src={room.clipUrl} label={t.student.clip} />
         </div>
       ) : null}
-      {room.sheetUrl ? (
+      {follow ? null : room.sheetUrl ? (
         <div className="mt-5">
           <p className="mb-2 text-sm">{t.student.sheet}</p>
           {room.sheetKind === "image" ? (

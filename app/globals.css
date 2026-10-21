@@ -1142,6 +1142,26 @@ a.tile:hover,
   background: #000;
 }
 
+.synced-sheet .at-cursor-bar {
+  background: rgba(139, 94, 52, 0.16);
+}
+
+.synced-sheet .at-cursor-beat {
+  background: var(--color-beat-dark);
+  width: 2px;
+}
+
+.synced-sheet .at-highlight * {
+  fill: var(--color-beat-dark);
+  stroke: var(--color-beat-dark);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .synced-sheet .at-cursor-beat {
+    transition: none;
+  }
+}
+
 .sent-list {
   border: 1px solid rgba(59, 47, 42, 0.08);
   border-radius: 1.15rem;

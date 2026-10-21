@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
+    "@coderline/alphatab": "^1.8.4",
     "@google/genai": "^2.22.0",
     "@prisma/client": "^6.19.3",
     "@supabase/ssr": "^0.12.7",

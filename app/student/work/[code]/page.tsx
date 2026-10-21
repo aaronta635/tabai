@@ -58,6 +58,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
         clipUrl={room.clipUrl}
         sheetUrl={room.sheetUrl}
         sheetKind={room.sheetKind}
+        sheetSync={room.sheetSync}
         labels={{
           reference: t.student.reference,
           clip: t.student.clip,

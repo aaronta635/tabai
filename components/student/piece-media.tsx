@@ -1,10 +1,13 @@
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
+import { SyncedTutorial } from "@/components/student/synced-tutorial";
+import type { SheetSyncJson } from "@/lib/score-model";
 
 export function PieceMedia({
   tutorialUrl,
   clipUrl,
   sheetUrl,
   sheetKind,
+  sheetSync = null,
   labels,
   compact = false,
 }: {
@@ -12,12 +15,33 @@ export function PieceMedia({
   clipUrl: string | null;
   sheetUrl: string | null;
   sheetKind: "pdf" | "image" | "file";
+  sheetSync?: SheetSyncJson | null;
   labels: { reference: string; clip: string; sheet: string; openSheet: string };
   compact?: boolean;
 }) {
+  const synced =
+    sheetSync?.confidence === "ok" &&
+    sheetSync.points.length > 0 &&
+    sheetKind === "file" &&
+    sheetUrl &&
+    tutorialUrl
+      ? { tutorialUrl, sheetUrl, points: sheetSync.points }
+      : null;
+
   return (
     <div className={compact ? "piece-media-compact" : "contents"}>
-      {tutorialUrl ? (
+      {synced ? (
+        <SyncedTutorial
+          tutorialUrl={synced.tutorialUrl}
+          sheetUrl={synced.sheetUrl}
+          points={synced.points}
+          videoLabel={labels.reference}
+          sheetLabel={labels.sheet}
+          openSheet={labels.openSheet}
+          compact={compact}
+          tiled={!compact}
+        />
+      ) : tutorialUrl ? (
         <section className={compact ? undefined : "tile"}>
           <LoopSpeedPlayer src={tutorialUrl} label={labels.reference} compact={compact} />
         </section>
@@ -27,7 +51,7 @@ export function PieceMedia({
           <LoopSpeedPlayer src={clipUrl} label={labels.clip} compact={compact} />
         </section>
       ) : null}
-      {sheetUrl ? (
+      {!synced && sheetUrl ? (
         compact ? (
           <a href={sheetUrl} target="_blank" rel="noreferrer" className="btn btn-quiet self-center">
             {labels.openSheet}

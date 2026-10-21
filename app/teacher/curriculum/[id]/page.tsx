@@ -13,6 +13,7 @@ import { AssignDialog } from "@/components/teacher/assign-dialog";
 import { PieceModelPanel } from "@/components/teacher/piece-model-panel";
 import { PieceMedia } from "@/components/student/piece-media";
 import { mediaStoragePath, sheetView, signedMediaUrl } from "@/lib/media-view";
+import { parseSheetSync } from "@/lib/score-model";
 
 export default async function PiecePage({ params }: { params: Promise<{ id: string }> }) {
   const teacher = await readTeacherSession();
@@ -52,10 +53,15 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
   const tutorialPath = mediaStoragePath(piece.tutorialMedia);
   const sheetPath = mediaStoragePath(piece.sheetMedia);
   const clipPath = mediaStoragePath(piece.clipMedia);
-  const [tutorialUrl, sheetUrl, clipUrl] = await Promise.all([
+  const [tutorialUrl, sheetUrl, clipUrl, readyModel] = await Promise.all([
     signedMediaUrl(tutorialPath),
     signedMediaUrl(sheetPath),
     signedMediaUrl(clipPath),
+    prisma.pieceModel.findFirst({
+      where: { pieceId: piece.id, status: "ready" },
+      orderBy: { version: "desc" },
+      select: { sheetSyncJson: true },
+    }),
   ]);
   const files = [
     piece.sheetMediaId ? t.teacher.hasSheet : null,
@@ -151,6 +157,7 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
         clipUrl={clipUrl}
         sheetUrl={sheetUrl}
         sheetKind={sheetView(sheetPath ?? "")}
+        sheetSync={parseSheetSync(readyModel?.sheetSyncJson)}
         labels={{
           reference: t.teacher.tutorialLabel,
           clip: t.teacher.clipLabel,

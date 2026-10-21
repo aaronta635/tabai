@@ -17,13 +17,17 @@ import {
   type GeminiFileRef,
 } from "../lib/gemini";
 import { prisma } from "../lib/prisma";
+import { isMusicXmlPath } from "../lib/musicxml";
+import { pitchNotesFromMetrics } from "../lib/pitch-overlay";
 import {
   parseTrainExtract,
   splitTrainExtract,
   isThinTrainExtract,
   trainExtractRichness,
   type PieceModelSourceJson,
+  type SheetSyncJson,
 } from "../lib/score-model";
+import { sheetSyncForAssets } from "../lib/sheet-sync";
 import { downloadMedia } from "../lib/storage";
 import { extractPitchFromVideo, pitchEnabled } from "./pitch";
 
@@ -115,9 +119,11 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
   const files: GeminiFileRef[] = [];
   const started = Date.now();
   let tutorialBytes: Buffer | null = null;
+  let sheetBytes: Buffer | null = null;
+  const sheetPath = piece.sheetMedia?.storagePath ?? "";
   try {
     if (piece.sheetMedia) {
-      const sheetBytes = await downloadMedia(piece.sheetMedia.storagePath);
+      sheetBytes = await downloadMedia(piece.sheetMedia.storagePath);
       const sheetMime = sniffMime(sheetBytes, "application/pdf");
       const sheetFile = await uploadGeminiFile(ai, sheetBytes, sheetMime, `${piece.code}-sheet`);
       uploaded.push(sheetFile.name);
@@ -177,8 +183,10 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
 
     const { scoreJson, tutorialCuesJson } = splitTrainExtract(extract);
     let cuesJson: Record<string, unknown> = { ...tutorialCuesJson };
+    let ranPitch = false;
 
     if (pitchEnabled() && tutorialBytes) {
+      ranPitch = true;
       const dir = await mkdtemp(join(tmpdir(), "train-pitch-"));
       try {
         const tutorialPath = join(dir, "tutorial.bin");
@@ -202,12 +210,22 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
       }
     }
 
+    const sheetSyncJson: SheetSyncJson | null =
+      ranPitch && sheetBytes && isMusicXmlPath(sheetPath)
+        ? sheetSyncForAssets({
+            sheetPath,
+            sheetXml: sheetBytes.toString("utf8"),
+            pitchNotes: pitchNotesFromMetrics(cuesJson),
+          })
+        : null;
+
     await prisma.pieceModel.update({
       where: { id: row.id },
       data: {
         status: "ready",
         scoreJson: scoreJson as unknown as Prisma.InputJsonValue,
         tutorialCuesJson: cuesJson as Prisma.InputJsonValue,
+        ...(sheetSyncJson ? { sheetSyncJson: sheetSyncJson as unknown as Prisma.InputJsonValue } : {}),
         sourceJson: sourceJson as unknown as Prisma.InputJsonValue,
         trainedAt: new Date(),
         error: null,

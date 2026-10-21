@@ -33,6 +33,21 @@ export type TutorialCuesJson = {
   cues: TutorialCue[];
 };
 
+export type SheetSyncPoint = {
+  bar: number;
+  beat: number;
+  t: number;
+};
+
+export type SheetSyncJson = {
+  version: "sheet-sync-v1";
+  confidence: "ok" | "weak";
+  points: SheetSyncPoint[];
+  matched: number;
+  expected: number;
+  error?: string;
+};
+
 export type PieceModelSourceJson = {
   sheetMediaId?: string;
   tutorialMediaId?: string;
@@ -139,6 +154,34 @@ export function parseTrainExtract(raw: unknown): TrainExtract {
         bar: asNumber(cue.bar),
       };
     }),
+  };
+}
+
+export function parseSheetSync(raw: unknown): SheetSyncJson | null {
+  const data = asRecord(raw);
+  if (!data || data.version !== "sheet-sync-v1") return null;
+  if (data.confidence !== "ok" && data.confidence !== "weak") return null;
+  const points: SheetSyncPoint[] = [];
+  if (Array.isArray(data.points)) {
+    for (const item of data.points) {
+      const point = asRecord(item);
+      if (!point) continue;
+      const bar = asNumber(point.bar);
+      const beat = asNumber(point.beat);
+      const t = asNumber(point.t);
+      if (bar == null || beat == null || t == null) continue;
+      points.push({ bar, beat, t });
+    }
+  }
+  if (data.confidence === "ok" && points.length === 0) return null;
+  const error = typeof data.error === "string" && data.error.trim() ? data.error : undefined;
+  return {
+    version: "sheet-sync-v1",
+    confidence: data.confidence,
+    points: data.confidence === "weak" ? [] : points,
+    matched: asNumber(data.matched) ?? 0,
+    expected: asNumber(data.expected) ?? 0,
+    ...(error ? { error } : {}),
   };
 }
 

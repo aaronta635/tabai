@@ -65,6 +65,8 @@
     "switchRole": "Không phải vai này",
     "email": "Email",
     "password": "Mật khẩu",
+    "confirmPassword": "Nhập lại mật khẩu",
+    "passwordMismatch": "Hai mật khẩu chưa khớp.",
     "signIn": "Đăng nhập",
     "signUp": "Tạo tài khoản",
     "continueGoogle": "Tiếp tục với Google",

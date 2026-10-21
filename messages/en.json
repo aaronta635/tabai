@@ -65,6 +65,8 @@
     "switchRole": "Not this role",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm password",
+    "passwordMismatch": "Those passwords do not match.",
     "signIn": "Sign in",
     "signUp": "Create account",
     "continueGoogle": "Continue with Google",

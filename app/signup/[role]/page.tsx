@@ -39,6 +39,8 @@ export default async function SignupRolePage({
           student: t.auth.student,
           email: t.auth.email,
           password: t.auth.password,
+          confirmPassword: t.auth.confirmPassword,
+          passwordMismatch: t.auth.passwordMismatch,
           signUpAs: t.auth.signUpAs,
           checkEmail: t.auth.checkEmail,
           wrongRoleTutor: t.auth.wrongRoleTutor,

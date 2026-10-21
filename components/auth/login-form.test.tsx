@@ -19,7 +19,7 @@ vi.mock("@/lib/supabase/client", () => ({
       signInWithOAuth,
       signOut,
       signUp,
-      getSession: vi.fn(),
+      getSession: vi.fn(async () => ({ data: { session: null } })),
     },
   }),
 }));
@@ -153,6 +153,8 @@ describe("SignupForm", () => {
           student: "Student",
           email: "Email",
           password: "Password",
+          confirmPassword: "Confirm password",
+          passwordMismatch: "Those passwords do not match.",
           signUpAs: "Create a {role} account",
           checkEmail: "Check email",
           wrongRoleTutor: "teacher",
@@ -173,5 +175,46 @@ describe("SignupForm", () => {
       "/login/teacher",
     );
     expect(screen.queryByRole("button", { name: "Forgot password?" })).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Confirm password")).toBeInTheDocument();
+  });
+
+  it("does not create an account when the passwords differ", async () => {
+    const user = userEvent.setup();
+    render(
+      <SignupForm
+        initialRole="student"
+        next="/student"
+        labels={{
+          createTitle: "Create your practice room",
+          createSub: "Teachers and students start in different rooms.",
+          iAm: "I am a",
+          teacher: "Teacher",
+          student: "Student",
+          email: "Email",
+          password: "Password",
+          confirmPassword: "Confirm password",
+          passwordMismatch: "Those passwords do not match.",
+          signUpAs: "Create a {role} account",
+          checkEmail: "Check email",
+          wrongRoleTutor: "teacher",
+          wrongRoleStudent: "student",
+          google: "Google",
+          facebook: "Facebook",
+          zalo: "Zalo",
+          orWithEmail: "or with email",
+          haveAccount: "Already have an account?",
+          signInLink: "Sign in",
+          providerFailed: "That sign-in did not start.",
+        }}
+      />,
+    );
+
+    await user.type(screen.getByLabelText("Email"), "an@studio.test");
+    await user.type(screen.getByLabelText("Password"), "secret1");
+    await user.type(screen.getByLabelText("Confirm password"), "secret2");
+    await user.click(screen.getByRole("button", { name: "Create a Student account" }));
+
+    expect(await screen.findByText("Those passwords do not match.")).toBeInTheDocument();
+    expect(signUp).not.toHaveBeenCalled();
   });
 });

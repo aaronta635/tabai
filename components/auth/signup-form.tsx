@@ -23,6 +23,8 @@ export function SignupForm({
     student: string;
     email: string;
     password: string;
+    confirmPassword: string;
+    passwordMismatch: string;
     signUpAs: string;
     checkEmail: string;
     wrongRoleTutor: string;
@@ -63,6 +65,12 @@ export function SignupForm({
     const data = new FormData(event.currentTarget);
     const email = String(data.get("email") ?? "").trim();
     const password = String(data.get("password") ?? "");
+    const confirm = String(data.get("confirm") ?? "");
+    if (password !== confirm) {
+      setError(labels.passwordMismatch);
+      setBusy(false);
+      return;
+    }
     const supabase = createBrowserSupabase();
     try {
       const { error: signError } = await supabase.auth.signUp({
@@ -125,6 +133,17 @@ export function SignupForm({
           autoComplete="new-password"
           placeholder={labels.password}
           aria-label={labels.password}
+          className="auth-field"
+          suppressHydrationWarning
+        />
+        <input
+          required
+          type="password"
+          name="confirm"
+          minLength={6}
+          autoComplete="new-password"
+          placeholder={labels.confirmPassword}
+          aria-label={labels.confirmPassword}
           className="auth-field"
           suppressHydrationWarning
         />

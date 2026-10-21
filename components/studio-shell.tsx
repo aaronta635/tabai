@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { BrandMark } from "@/components/landing/brand-mark";
-import { LocaleToggle } from "@/components/locale-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { initialsOf } from "@/lib/initials";
 
@@ -38,7 +37,6 @@ function StudioSearch({ action, placeholder }: { action: string; placeholder: st
  */
 export function StudioShell({
   name,
-  locale,
   theme,
   home,
   kicker,
@@ -50,7 +48,6 @@ export function StudioShell({
   children,
 }: {
   name: string;
-  locale?: string;
   theme?: "light" | "dark";
   home: string;
   kicker: string;
@@ -74,9 +71,11 @@ export function StudioShell({
     void fetch("/api/session", { method: "POST" });
   }, []);
 
+  const here = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
+
   function active(href: string, exact?: boolean) {
-    if (exact) return pathname === href;
-    return pathname === href || pathname.startsWith(`${href}/`);
+    if (exact) return here === href;
+    return here === href || here.startsWith(`${href}/`);
   }
 
   const profile = menuLinks[0];
@@ -106,10 +105,9 @@ export function StudioShell({
         })}
       </nav>
       <div className="studio-rail-foot">
-        {locale && theme ? (
+        {theme ? (
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <ThemeToggle theme={theme} labels={{ light: labels.themeLight, dark: labels.themeDark }} />
-            <LocaleToggle locale={locale} />
           </div>
         ) : null}
         {profile ? (

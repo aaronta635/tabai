@@ -1,12 +1,35 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PARTS, mailtoInvite, shelfName, shouldBackfillOrphanPieces } from "@/lib/lms";
+import { DEFAULT_PARTS, classJoinPath, displayClassCode, inviteEmailsFrom, mailtoInvite, newClassCode, shelfName, shouldBackfillOrphanPieces } from "@/lib/lms";
 
 describe("lms helpers", () => {
-  it("builds a mailto invite with the join URL in the body", () => {
-    const href = mailtoInvite("an@example.com", "Beginner", "https://howl0.com/join/abc123");
+  it("issues a five-letter class code without i, l, or o", () => {
+    for (let i = 0; i < 20; i += 1) {
+      expect(newClassCode()).toMatch(/^[abcdefghjkmnpqrstuvwxyz]{5}$/);
+    }
+    expect(displayClassCode("kmprt")).toBe("KMPRT");
+    expect(displayClassCode("demo1234")).toBe("DEMO1234");
+    expect(classJoinPath("kmprt")).toBe("/join/kmprt");
+  });
+
+  it("keeps piece codes eight characters", async () => {
+    const { newPieceCode } = await import("@/lib/auth");
+    expect(newPieceCode()).toMatch(/^[abcdefghijkmnopqrstuvwxyz23456789]{8}$/);
+  });
+
+  it("reads invite emails and skips blanks and duplicates", () => {
+    expect(inviteEmailsFrom("  An@Example.com, an@example.com\nb@school.edu not-an-email ")).toEqual([
+      "an@example.com",
+      "b@school.edu",
+    ]);
+    expect(inviteEmailsFrom("")).toEqual([]);
+  });
+
+  it("builds a mailto invite that names the class code", () => {
+    const href = mailtoInvite("an@example.com", "Beginner", "kmprt");
     expect(href.startsWith("mailto:an%40example.com?")).toBe(true);
     expect(href).toContain(encodeURIComponent("Join Beginner on PARA"));
-    expect(href).toContain(encodeURIComponent("https://howl0.com/join/abc123"));
+    expect(href).toContain(encodeURIComponent("KMPRT"));
+    expect(href).not.toContain("http");
   });
 
   it("ships three default curriculum parts", () => {

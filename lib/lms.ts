@@ -1,15 +1,36 @@
-import { newPieceCode } from "@/lib/auth";
+import { customAlphabet } from "nanoid";
 import { DEFAULT_PARTS } from "@/lib/curriculum";
 import { prisma } from "@/lib/prisma";
 
 export { DEFAULT_PARTS, shelfName } from "@/lib/curriculum";
 
+const classCode = customAlphabet("abcdefghjkmnpqrstuvwxyz", 5);
+
+/** Five letters, skipping i, l, and o so a spoken code stays readable. */
 export function newClassCode() {
-  return newPieceCode();
+  return classCode();
+}
+
+export function displayClassCode(code: string) {
+  return code.toUpperCase();
 }
 
 export function classJoinPath(code: string) {
   return `/join/${code}`;
+}
+
+/** Optional invite box: one address per line, comma, or space. Invalid lines are skipped. */
+export function inviteEmailsFrom(value: string) {
+  const seen = new Set<string>();
+  const emails: string[] = [];
+  for (const part of value.split(/[\s,;]+/)) {
+    const email = part.trim().toLowerCase();
+    if (!email.includes("@") || email.startsWith("@") || email.endsWith("@") || seen.has(email)) continue;
+    seen.add(email);
+    emails.push(email);
+    if (emails.length === 40) break;
+  }
+  return emails;
 }
 
 // Seeding is a one-time job per teacher, but it used to run on every studio page load.
@@ -114,9 +135,9 @@ export async function assignmentsForStudent(studentId: string) {
   });
 }
 
-export function mailtoInvite(email: string, className: string, url: string) {
+export function mailtoInvite(email: string, className: string, code: string) {
   const subject = encodeURIComponent(`Join ${className} on PARA`);
-  const body = encodeURIComponent(`Join the class with this link:\n${url}`);
+  const body = encodeURIComponent(`Type this class code to join ${className}:\n${displayClassCode(code)}`);
   return `mailto:${encodeURIComponent(email)}?subject=${subject}&body=${body}`;
 }
 

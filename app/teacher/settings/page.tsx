@@ -7,7 +7,6 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { SectionPanel } from "@/components/disclosure";
-import { LocaleToggle } from "@/components/locale-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default async function SettingsPage() {
@@ -27,12 +26,6 @@ export default async function SettingsPage() {
       <section className="studio-panel space-y-4 pb-4">
         <h2>{t.theme.appearance}</h2>
         <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-        <div>
-          <p className="field-label">{t.theme.language}</p>
-          <div className="mt-1.5">
-            <LocaleToggle locale={locale} />
-          </div>
-        </div>
       </section>
       <form action={updateDelivery} className="studio-panel space-y-3 pb-4">
         <label className="block">

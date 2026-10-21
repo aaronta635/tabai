@@ -3,11 +3,9 @@ import { notFound, redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { appOrigin } from "@/lib/origin";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { classJoinPath, mailtoInvite } from "@/lib/lms";
+import { displayClassCode, mailtoInvite } from "@/lib/lms";
 import { formatWhen } from "@/lib/when";
-import { CopyLink } from "@/components/teacher/copy-link";
 import { AddPanel, SectionPanel } from "@/components/disclosure";
 import { approveMembershipForm, inviteByEmail, renameClass } from "@/app/teacher/lms-actions";
 
@@ -37,8 +35,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
   if (!studioClass) notFound();
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const origin = await appOrigin();
-  const joinUrl = `${origin}${classJoinPath(studioClass.code)}`;
+  const classCode = displayClassCode(studioClass.code);
   const roster = studioClass.memberships.filter((row) => row.student);
   const pendingInvites = studioClass.memberships.filter((row) => row.invitedEmail && !row.studentId);
 
@@ -54,10 +51,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
           {" · "}
           {t.teacher.countAssigned.replace("{n}", String(studioClass.assignments.length))}
         </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <p className="break-all text-sm">{joinUrl}</p>
-          <CopyLink url={joinUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
-        </div>
+        <p className="mt-3 font-display text-2xl tracking-[0.28em]">{classCode}</p>
       </header>
 
       <AddPanel label={t.teacher.inviteEmail}>
@@ -85,7 +79,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
                 <span>{row.invitedEmail}</span>
                 <a
                   className="font-ui text-xs text-beat"
-                  href={mailtoInvite(row.invitedEmail!, studioClass.name, joinUrl)}
+                  href={mailtoInvite(row.invitedEmail!, studioClass.name, studioClass.code)}
                 >
                   {t.teacher.inviteEmail}
                 </a>
@@ -187,8 +181,8 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
             {t.teacher.rename}
           </button>
         </form>
-        <p className="field-label mt-4">{t.teacher.linkTitle}</p>
-        <p className="mt-1.5 break-all text-sm">{joinUrl}</p>
+        <p className="field-label mt-4">{t.teacher.studentLink}</p>
+        <p className="mt-1.5 font-display tracking-[0.22em]">{classCode}</p>
       </SectionPanel>
     </div>
   );

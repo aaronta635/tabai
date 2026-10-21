@@ -23,4 +23,13 @@ describe("PieceCodeForm", () => {
     await user.click(screen.getByRole("button", { name: "Join" }));
     expect(mockRouter.push).toHaveBeenCalledWith("/join/song1");
   });
+
+  it("opens a five-letter class code in lowercase", async () => {
+    const user = userEvent.setup();
+    render(<PieceCodeForm placeholder="Class code" submit="Join" />);
+
+    await user.type(screen.getByLabelText("Class code"), "  KmPrT ");
+    await user.click(screen.getByRole("button", { name: "Join" }));
+    expect(mockRouter.push).toHaveBeenCalledWith("/join/kmprt");
+  });
 });

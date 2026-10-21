@@ -3,7 +3,6 @@ import Link from "next/link";
 import { requireStudentAccount, requireTeacher } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
-import { LocaleToggle } from "@/components/locale-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { getTheme } from "@/lib/theme";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
@@ -40,7 +39,6 @@ export default async function OnboardingPage({
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-            <LocaleToggle locale={locale} tone="dark" />
           </div>
         </header>
       ) : (
@@ -50,7 +48,6 @@ export default async function OnboardingPage({
           </Link>
           <div className="flex items-center gap-2">
             <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-            <LocaleToggle locale={locale} />
           </div>
         </div>
       )}

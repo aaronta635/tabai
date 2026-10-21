@@ -3,15 +3,13 @@ import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { appOrigin } from "@/lib/origin";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { cachedClassPulseForTeacher } from "@/lib/class-pulse";
 import { classColor } from "@/lib/class-color";
 import { formatTime, formatWait, formatWhen } from "@/lib/when";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
-import { classJoinPath } from "@/lib/lms";
-import { CopyLink } from "@/components/teacher/copy-link";
+import { displayClassCode } from "@/lib/lms";
 import {
   AssignmentList,
   ClassChips,
@@ -28,7 +26,6 @@ export default async function TeacherDashboard() {
   if (!teacher) redirect(signInPath("tutor", "/teacher"));
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const origin = await appOrigin();
   const now = new Date();
   const { start, end } = weekRangeUtc(now);
   const [classes, nextLessons, waiting, dueSoon, pulse, practiceRows] = await Promise.all([
@@ -219,7 +216,7 @@ export default async function TeacherDashboard() {
               <span>
                 {t.teacher.studentLink}: {latestClass.name}
               </span>
-              <CopyLink url={`${origin}${classJoinPath(latestClass.code)}`} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
+              <span className="font-display tracking-[0.22em] text-ink">{displayClassCode(latestClass.code)}</span>
             </p>
           ) : null}
           </div>

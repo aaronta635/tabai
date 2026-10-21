@@ -1,30 +1,70 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { LOCALE_COOKIE } from "@/lib/constants";
+import { LOCALE_HEADER, skipsLocale, splitLocale, withLocale, type Locale } from "@/lib/locale-path";
 import { RETURN_PATH_HEADER } from "@/lib/return-path";
 import { isMarketingHost, isProductHost, isProductPath, marketingOrigin, productOrigin, sitesAreSplit } from "@/lib/sites";
 
-function continueWithPath(request: NextRequest) {
+function continueWithPath(request: NextRequest, pathname: string, search: string) {
   const requestHeaders = new Headers(request.headers);
-  const { pathname, search } = request.nextUrl;
   requestHeaders.set(RETURN_PATH_HEADER, `${pathname}${search}`);
   return NextResponse.next({ request: { headers: requestHeaders } });
 }
 
-export function middleware(request: NextRequest) {
-  if (!sitesAreSplit()) return continueWithPath(request);
+function remember(response: NextResponse, locale: Locale) {
+  response.cookies.set(LOCALE_COOKIE, locale, {
+    path: "/",
+    maxAge: 60 * 60 * 24 * 365,
+    ...(process.env.COOKIE_DOMAIN ? { domain: process.env.COOKIE_DOMAIN } : {}),
+  });
+  return response;
+}
 
+function rememberedLocale(request: NextRequest): Locale {
+  return request.cookies.get(LOCALE_COOKIE)?.value === "en" ? "en" : "vi";
+}
+
+export function middleware(request: NextRequest) {
   const host = request.headers.get("host") ?? "";
   const { pathname, search } = request.nextUrl;
 
-  if (isMarketingHost(host) && isProductPath(pathname)) {
-    return NextResponse.redirect(new URL(`${pathname}${search}`, productOrigin()));
+  if (skipsLocale(pathname)) {
+    if (!sitesAreSplit()) return continueWithPath(request, pathname, search);
+    if (isMarketingHost(host) && isProductPath(pathname)) {
+      return NextResponse.redirect(new URL(`${pathname}${search}`, productOrigin()));
+    }
+    if (isProductHost(host) && pathname === "/") {
+      return NextResponse.redirect(new URL(`/${search}`, marketingOrigin()));
+    }
+    return continueWithPath(request, pathname, search);
   }
 
-  if (isProductHost(host) && pathname === "/") {
-    return NextResponse.redirect(new URL(`/${search}`, marketingOrigin()));
+  const { locale, pathname: bare } = splitLocale(pathname);
+
+  if (sitesAreSplit() && isProductHost(host) && bare === "/") {
+    const landing = locale ? `/${locale}` : "/";
+    return NextResponse.redirect(new URL(`${landing}${search}`, marketingOrigin()));
   }
 
-  return continueWithPath(request);
+  if (sitesAreSplit() && isMarketingHost(host) && isProductPath(bare)) {
+    const chosen = locale ?? rememberedLocale(request);
+    const target = locale ? pathname : withLocale(pathname, chosen);
+    return remember(NextResponse.redirect(new URL(`${target}${search}`, productOrigin())), chosen);
+  }
+
+  if (!locale) {
+    const chosen = rememberedLocale(request);
+    const dest = request.nextUrl.clone();
+    dest.pathname = withLocale(pathname, chosen);
+    return remember(NextResponse.redirect(dest), chosen);
+  }
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set(RETURN_PATH_HEADER, `${bare}${search}`);
+  requestHeaders.set(LOCALE_HEADER, locale);
+  const url = request.nextUrl.clone();
+  url.pathname = bare;
+  return remember(NextResponse.rewrite(url, { request: { headers: requestHeaders } }), locale);
 }
 
 export const config = {

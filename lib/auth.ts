@@ -483,8 +483,16 @@ export async function studentForPiece(teacherId: string) {
   if (session) {
     const account = await prisma.student.findUnique({ where: { id: session.id } });
     if (account) {
-      const otherClass = Boolean(account.teacherId && account.teacherId !== teacherId);
-      return { student: otherClass ? null : account, otherClass, fromSession: true as const };
+      const sameStudio = !account.teacherId || account.teacherId === teacherId;
+      const inClass =
+        sameStudio ||
+        Boolean(
+          await prisma.classMembership.findFirst({
+            where: { studentId: account.id, class: { teacherId, archived: false } },
+            select: { id: true },
+          }),
+        );
+      return { student: inClass ? account : null, otherClass: !inClass, fromSession: true as const };
     }
   }
   if (await supabaseUser()) {

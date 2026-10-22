@@ -19,7 +19,6 @@ export function GuestJoinForm({
     under18Line: string;
     join: string;
     badCode: string;
-    otherClass: string;
     signIn: string;
   };
 }) {
@@ -29,8 +28,7 @@ export function GuestJoinForm({
     <form
       action={async (form) => {
         const result = await guestJoinClass(form);
-        if (result?.error === "otherClass") setError(labels.otherClass);
-        else if (result?.error) setError(labels.badCode);
+        if (result?.error) setError(labels.badCode);
       }}
       className="mt-6 space-y-3"
     >

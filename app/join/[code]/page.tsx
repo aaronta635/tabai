@@ -23,18 +23,7 @@ export default async function ClassJoinPage({ params }: { params: Promise<{ code
   const t = await getMessages(locale);
 
   if (student) {
-    const result = await bindStudentToClass(student.id, studioClass.code);
-    if (result && "error" in result && result.error === "otherClass") {
-      return (
-        <main className="student-shell mx-auto min-h-dvh max-w-lg px-5 py-8">
-          <Link href="/" aria-label={t.brand} className="mb-6 inline-flex">
-            <BrandMark />
-          </Link>
-          <h1 className="font-display text-3xl">{studioClass.name}</h1>
-          <p className="mt-6 rounded-2xl bg-cream px-4 py-3 text-sm">{t.student.otherClass}</p>
-        </main>
-      );
-    }
+    await bindStudentToClass(student.id, studioClass.code);
     redirect(student.onboardedAt ? "/student" : "/onboarding");
   }
 
@@ -59,7 +48,6 @@ export default async function ClassJoinPage({ params }: { params: Promise<{ code
           under18Line: t.student.under18Line,
           join: t.student.joinClass,
           badCode: t.onboarding.badCode,
-          otherClass: t.student.otherClass,
           signIn: t.auth.studentSignIn,
         }}
       />

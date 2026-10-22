@@ -85,7 +85,7 @@ export async function saveStudentOnboarding(form: FormData) {
   let teacherId = student.teacherId;
   if (code) {
     const joined = await bindStudentToClass(student.id, code);
-    if ("error" in joined) return { error: joined.error === "otherClass" ? "otherClass" : "code" };
+    if ("error" in joined) return { error: "code" as const };
     teacherId = student.teacherId ?? joined.class.teacherId;
   }
 

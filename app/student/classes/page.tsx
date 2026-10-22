@@ -27,7 +27,6 @@ export default async function StudentClassesPage() {
           placeholder={t.home.codePlaceholder}
           submit={t.student.joinClass}
           badCode={t.onboarding.badCode}
-          otherClass={t.student.otherClass}
         />
         <p className="mt-3 text-sm text-ink-soft">{t.student.joinHelp}</p>
       </AddPanel>

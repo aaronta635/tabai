@@ -67,6 +67,13 @@ describe("metricGuidance", () => {
     expect(text).not.toMatch(/Nhiều khoảng lặng/);
   });
 
+  it("writes the same guard in English when the teacher chose English", () => {
+    const text = observationOutline(null, "en");
+    expect(text).toMatch(/no comparison/i);
+    expect(text).not.toMatch(/Không có đối chiếu/);
+    expect(metricGuidance(null, close, "en")).toMatch(/matches the piece/);
+  });
+
   it("still forbids metric-invented timing on a close match", () => {
     const text = metricGuidance({ tempo_stability: 0.9 }, close);
     expect(text).toMatch(/Cấm dùng tempo_stability/);

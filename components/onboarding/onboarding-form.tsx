@@ -23,12 +23,7 @@ function Choices({
       {options.map((option) => {
         const on = value === option.value;
         return (
-          <label
-            key={option.value}
-            className={`flex cursor-pointer items-center rounded-2xl border px-4 py-3 text-sm ${
-              on ? "border-beat bg-paper" : "border-ink/10 bg-cream hover:border-ink/25"
-            }`}
-          >
+          <label key={option.value} className={`setup-choice ${on ? "is-on" : ""}`}>
             <input
               type="radio"
               name={name}
@@ -48,12 +43,17 @@ function Choices({
 export function TutorOnboardingForm({
   defaultName,
   returnTo,
+  initialLocale,
   labels,
 }: {
   defaultName: string;
   returnTo?: string;
+  initialLocale: "vi" | "en";
   labels: {
     name: string;
+    feedbackLanguage: string;
+    feedbackVi: string;
+    feedbackEn: string;
     q1: string;
     q2: string;
     q3: string;
@@ -71,6 +71,7 @@ export function TutorOnboardingForm({
   };
 }) {
   const t = useTranslations("onboarding");
+  const [feedbackLocale, setFeedbackLocale] = useState(initialLocale === "en" ? "en" : "vi");
   const [videos, setVideos] = useState("");
   const [size, setSize] = useState("");
   const [focus, setFocus] = useState("");
@@ -82,20 +83,27 @@ export function TutorOnboardingForm({
         const result = await saveTutorOnboarding(form);
         if (result?.error) setError(labels.incomplete);
       }}
-      className="space-y-6"
+      className="setup"
     >
       {returnTo ? <input type="hidden" name="next" value={returnTo} /> : null}
-      <label className="block text-sm">
-        {labels.name}
-        <input
-          required
-          name="name"
-          defaultValue={defaultName}
-          className="mt-1 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
-        />
+      <label className="setup-block">
+        <span className="setup-label">{labels.name}</span>
+        <input required name="name" defaultValue={defaultName} className="setup-field setup-field-name" />
       </label>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.q1}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.feedbackLanguage}</legend>
+        <Choices
+          name="feedbackLocale"
+          value={feedbackLocale}
+          onChange={setFeedbackLocale}
+          options={[
+            { value: "vi", label: labels.feedbackVi },
+            { value: "en", label: labels.feedbackEn },
+          ]}
+        />
+      </fieldset>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.q1}</legend>
         <Choices
           name="videos"
           value={videos}
@@ -107,8 +115,8 @@ export function TutorOnboardingForm({
           ]}
         />
       </fieldset>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.q2}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.q2}</legend>
         <Choices
           name="size"
           value={size}
@@ -120,8 +128,8 @@ export function TutorOnboardingForm({
           ]}
         />
       </fieldset>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.q3}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.q3}</legend>
         <Choices
           name="focus"
           value={focus}
@@ -144,8 +152,8 @@ export function TutorOnboardingForm({
         ]}
       />
       <SkillPicks />
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <button type="submit" className="w-full rounded-2xl bg-beat px-4 py-3 text-white">
+      {error ? <p className="setup-error">{error}</p> : null}
+      <button type="submit" className="setup-go">
         {labels.continue}
       </button>
     </form>
@@ -174,9 +182,8 @@ export function StudentOnboardingForm({
     workChords: string;
     workSong: string;
     workExam: string;
-    contact: string;
-    zalo: string;
-    messenger: string;
+    phone: string;
+    phonePlaceholder: string;
     continue: string;
     incomplete: string;
     badCode: string;
@@ -194,20 +201,15 @@ export function StudentOnboardingForm({
         if (result?.error === "code") setError(labels.badCode);
         else if (result?.error) setError(labels.incomplete);
       }}
-      className="space-y-6"
+      className="setup"
     >
       {returnTo ? <input type="hidden" name="next" value={returnTo} /> : null}
-      <label className="block text-sm">
-        {labels.name}
-        <input
-          required
-          name="name"
-          defaultValue={defaultName}
-          className="mt-1 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
-        />
+      <label className="setup-block">
+        <span className="setup-label">{labels.name}</span>
+        <input required name="name" defaultValue={defaultName} autoComplete="name" className="setup-field setup-field-name" />
       </label>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.age}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.age}</legend>
         <Choices
           name="ageBand"
           value={ageBand}
@@ -218,16 +220,12 @@ export function StudentOnboardingForm({
           ]}
         />
       </fieldset>
-      <label className="block text-sm">
-        {labels.q1}
-        <input
-          name="code"
-          placeholder={labels.codePlaceholder}
-          className="mt-1 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
-        />
+      <label className="setup-block">
+        <span className="setup-label">{labels.q1}</span>
+        <input name="code" placeholder={labels.codePlaceholder} autoComplete="off" className="setup-field" />
       </label>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.q2}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.q2}</legend>
         <Choices
           name="playing"
           value={playing}
@@ -239,8 +237,8 @@ export function StudentOnboardingForm({
           ]}
         />
       </fieldset>
-      <fieldset>
-        <legend className="mb-2 text-sm font-medium">{labels.q3}</legend>
+      <fieldset className="setup-block">
+        <legend className="setup-label">{labels.q3}</legend>
         <Choices
           name="work"
           value={work}
@@ -253,17 +251,20 @@ export function StudentOnboardingForm({
         />
       </fieldset>
       <SkillPicks />
-      <label className="block text-sm">
-        {labels.contact}
+      <label className="setup-block">
+        <span className="setup-label">{labels.phone}</span>
         <input
           name="contactHandle"
-          placeholder={labels.zalo}
-          className="mt-1 w-full rounded-2xl border border-ink/10 bg-white px-4 py-3"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder={labels.phonePlaceholder}
+          className="setup-field"
         />
       </label>
       <input type="hidden" name="contactType" value="zalo" />
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <button type="submit" className="w-full rounded-2xl bg-beat px-4 py-3 text-white">
+      {error ? <p className="setup-error">{error}</p> : null}
+      <button type="submit" className="setup-go">
         {labels.continue}
       </button>
     </form>

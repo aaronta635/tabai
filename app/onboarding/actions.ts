@@ -12,6 +12,7 @@ import {
   signOutAccount,
 } from "@/lib/auth";
 import {
+  feedbackLocaleFrom,
   studentStageFromAnswers,
   tutorStageFromAnswers,
   type StudentAnswers,
@@ -59,6 +60,7 @@ export async function saveTutorOnboarding(form: FormData) {
       stage,
       answersJson: answers,
       onboardedAt: new Date(),
+      feedbackLocale: feedbackLocaleFrom(str(form, "feedbackLocale")),
       deliveryType: videos === "zalo" ? "zalo" : teacher.deliveryType,
     },
   });

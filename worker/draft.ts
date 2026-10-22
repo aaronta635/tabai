@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-import { MAX_ACTIVE_VOICE_SAMPLES, PROMPT_VERSION } from "../lib/constants";
+import { MAX_ACTIVE_VOICE_SAMPLES, PROMPT_VERSION, PROMPT_VERSION_EN } from "../lib/constants";
 import {
   geminiClient,
   geminiCostCents,
@@ -10,7 +10,14 @@ import {
 } from "../lib/gemini";
 import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
-import { metricGuidance, observationOutline, retrieveDraftContext, type DraftMetrics, type DraftRetrieval } from "../lib/rag";
+import {
+  metricGuidance,
+  observationOutline,
+  retrieveDraftContext,
+  type DraftLocale,
+  type DraftMetrics,
+  type DraftRetrieval,
+} from "../lib/rag";
 import {
   observationsForDraft,
   parseCompareObservations,
@@ -18,16 +25,18 @@ import {
   type CompareObservations,
 } from "../lib/score-model";
 
-function formatExamples(rows: { source: string; text: string }[]) {
-  if (!rows.length) return "Chưa có nhận xét cũ trên bài này.";
+function formatExamples(rows: { source: string; text: string }[], locale: DraftLocale) {
+  if (!rows.length) return locale === "en" ? "No earlier replies on this piece." : "Chưa có nhận xét cũ trên bài này.";
   return rows.map((row) => `- (${row.source}) ${row.text}`).join("\n");
 }
 
-async function loadSystemPrompt() {
-  return readFile(join(process.cwd(), "prompts/draft_reply_vi.md"), "utf8");
+async function loadSystemPrompt(locale: DraftLocale) {
+  const file = locale === "en" ? "draft_reply_en.md" : "draft_reply_vi.md";
+  return readFile(join(process.cwd(), "prompts", file), "utf8");
 }
 
 function buildUserPrompt(input: {
+  locale: DraftLocale;
   title: string;
   note: string | null;
   studentName: string;
@@ -36,6 +45,27 @@ function buildUserPrompt(input: {
   samples: string[];
   retrieval: DraftRetrieval;
 }) {
+  if (input.locale === "en") {
+    return [
+      `Piece: ${input.title}`,
+      input.note ? `Teacher's note: ${input.note}` : "No note.",
+      `Student: ${input.studentName}`,
+      input.retrieval.previousText
+        ? `Previous reply (same student, same piece): ${input.retrieval.previousText}`
+        : "No previous reply for this student.",
+      `Required facts:\n${observationOutline(input.observations, "en")}`,
+      `Measures: ${JSON.stringify(input.metrics)}`,
+      `How to use the measures: ${metricGuidance(input.metrics, input.observations, "en")}`,
+      input.retrieval.scoreHints.length
+        ? `Related score or tutorial:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
+        : "No score passage tied to a mistake.",
+      `Earlier replies on this piece (voice, not facts):\n${formatExamples(input.retrieval.pieceReplies, "en")}`,
+      `Earlier replies on the same kind of mistake:\n${formatExamples(input.retrieval.similarReplies, "en")}`,
+      input.samples.length
+        ? `Teacher's voice (samples):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
+        : "No voice samples yet. Write 50–110 words, warm and specific, with a clock time when the facts have one.",
+    ].join("\n\n");
+  }
   return [
     `Bài: ${input.title}`,
     input.note ? `Note của thầy: ${input.note}` : "Không có note.",
@@ -49,8 +79,8 @@ function buildUserPrompt(input: {
     input.retrieval.scoreHints.length
       ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
       : "Không có đoạn score gắn với lỗi.",
-    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(input.retrieval.pieceReplies)}`,
-    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(input.retrieval.similarReplies)}`,
+    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(input.retrieval.pieceReplies, "vi")}`,
+    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(input.retrieval.similarReplies, "vi")}`,
     input.samples.length
       ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
       : "Chưa có mẫu giọng. Viết 50–110 chữ, ấm, cụ thể, kèm mốc giờ nếu facts có.",
@@ -93,6 +123,7 @@ export async function runDraft(submissionId: string) {
     submission.piece.title,
     `kept ${observations.issues.length}/${parsed.issues.length}`,
   );
+  const locale: DraftLocale = submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi";
   const samples = submission.piece.teacher.voiceSamples
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
@@ -105,8 +136,9 @@ export async function runDraft(submissionId: string) {
     observations,
   });
   const started = Date.now();
-  const system = await loadSystemPrompt();
+  const system = await loadSystemPrompt(locale);
   const user = buildUserPrompt({
+    locale,
     title: submission.piece.title,
     note: submission.piece.note,
     studentName: submission.student.name,
@@ -131,7 +163,7 @@ export async function runDraft(submissionId: string) {
     });
     text =
       response.text ||
-      fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
+      fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note, locale);
     usedModel = response.model;
     await prisma.event.create({
       data: {
@@ -162,7 +194,7 @@ export async function runDraft(submissionId: string) {
     text =
       block && block.type === "text"
         ? block.text.trim()
-        : fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
+        : fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note, locale);
 
     const inputTokens = response.usage.input_tokens;
     const outputTokens = response.usage.output_tokens;
@@ -177,7 +209,7 @@ export async function runDraft(submissionId: string) {
       },
     });
   } else {
-    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note);
+    text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note, locale);
   }
 
   const route = routeSubmission({
@@ -188,7 +220,7 @@ export async function runDraft(submissionId: string) {
   await prisma.draft.create({
     data: {
       submissionId,
-      promptVersion: PROMPT_VERSION,
+      promptVersion: locale === "en" ? PROMPT_VERSION_EN : PROMPT_VERSION,
       model: usedModel,
       text,
     },
@@ -212,7 +244,11 @@ export async function runDraft(submissionId: string) {
   }
 }
 
-function fallbackDraft(name: string, title: string, note: string | null) {
+function fallbackDraft(name: string, title: string, note: string | null, locale: DraftLocale) {
+  if (locale === "en") {
+    const focus = note?.trim() || "steady time and a clean sound";
+    return `I heard ${name} play ${title}. The opening holds together, so keep that time. Next time focus on ${focus}, slow it by a beat, and send another take.`;
+  }
   const focus = note?.trim() || "đúng nhịp và tiếng sạch";
   return `Thầy đã nghe ${name} chơi ${title}. Đoạn mở đầu ổn, giữ nhịp đó. Lần sau tập trung ${focus}, chơi chậm một nhịp rồi gửi lại một take.`;
 }

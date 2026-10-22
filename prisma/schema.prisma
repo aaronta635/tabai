@@ -124,6 +124,7 @@ model Teacher {
   stage          TutorStage?
   answersJson    Json?
   onboardedAt    DateTime?
+  feedbackLocale String    @default("vi")
   paymentUrl     String?
   createdAt      DateTime      @default(now())
 

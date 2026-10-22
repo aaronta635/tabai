@@ -44,8 +44,24 @@ export type DraftMetrics = {
   skipped?: boolean;
 };
 
+export type DraftLocale = "vi" | "en";
+
 /** Loudness numbers must never become teaching claims unless compare already listed the same issue. */
-export function metricGuidance(metrics: DraftMetrics | null, observations: CompareObservations | null) {
+export function metricGuidance(
+  metrics: DraftMetrics | null,
+  observations: CompareObservations | null,
+  locale: DraftLocale = "vi",
+) {
+  if (locale === "en") {
+    if (!observations) {
+      return "No comparison. Do not use silence_ratio, tempo_stability, or tone to invent a mistake. Do not write a draft if this was called by mistake.";
+    }
+    if (closeMatch(observations)) {
+      return "The take matches the piece. Do not use tempo_stability or the numbers to invent a timing mistake.";
+    }
+    if (!metrics || metrics.skipped) return "No trustworthy audio measures. Do not guess at technique.";
+    return "The measures are only a hint. Mention rhythm or silence only when the compare facts already name the same place (with tStart). Do not add more.";
+  }
   if (!observations) {
     return "Không có đối chiếu. Cấm dùng silence_ratio, tempo_stability, hay tiếng đàn để bịa lỗi. Không viết draft nếu worker gọi nhầm.";
   }
@@ -56,7 +72,62 @@ export function metricGuidance(metrics: DraftMetrics | null, observations: Compa
   return "Số đo chỉ là gợi ý. Chỉ nhắc nhịp/khoảng lặng nếu facts compare đã ghi cùng một chỗ (có tStart). Đừng bịa thêm.";
 }
 
-export function observationOutline(observations: CompareObservations | null) {
+function observationOutlineEn(observations: CompareObservations | null) {
+  if (!observations) {
+    return [
+      "There is no comparison with the piece yet (no PieceModel / compare).",
+      "Do not comment on notes, chords, fingers, posture, silence, uneven rhythm, or the feeling of the sound.",
+      "Do not invent a mistake from silence_ratio or tempo_stability.",
+      "Do not write a long letter. Do not praise tone or feeling.",
+    ].join(" ");
+  }
+  const teacherKept = observations.issues.some((issue) => issue.verdict === "true" || issue.verdict === "false");
+  if (observations.pitchJudge === "weak" && !teacherKept) {
+    return [
+      "The notes on this take could not be read.",
+      "Do not say it matches the piece. Do not invent a wrong note or a wrong chord.",
+      "You may praise one point about time or sound if another fact already says so. Otherwise say it was hard to hear.",
+    ].join(" ");
+  }
+  if (observations.confidence < 0.45 && !teacherKept) {
+    return [
+      `The comparison confidence is low (${observations.confidence}).`,
+      "Do not name a wrong note. Praise one specific point about time or sound, then mention the lesson note.",
+      "Write 50–110 words. Not one sentence.",
+    ].join(" ");
+  }
+  const issues = observations.issues
+    .filter((issue) => (teacherKept ? issue.verdict === "true" : issue.confidence >= 0.75))
+    .slice(0, teacherKept ? 8 : 4)
+    .map((issue) => {
+      const where = formatIssueWhere(issue) ?? "one passage";
+      return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
+    });
+  const unjudged = observations.pitchJudge === "weak" ? "Notes and chords could not be read. Do not praise a note match." : "";
+  if (closeMatch(observations) || issues.length === 0) {
+    return [
+      "Required facts (use these, do not drop them, do not invent more):",
+      `Praise: ${observations.positives.slice(0, 3).join("; ") || "(praise one specific point about time or a clean sound)"}`,
+      "Fix: no trustworthy mistake — do not invent one.",
+      unjudged,
+      "Next time: keep the feel of this take. Mention the lesson note only if there is one. Do not invent a new mistake.",
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
+  return [
+    "Required facts (use these, do not drop them, do not invent more):",
+    unjudged,
+    `Praise: ${observations.positives.slice(0, 2).join("; ") || "(no specific praise — praise time or a clean sound if the measures are steady)"}`,
+    `Fix: ${issues.join(" | ")}`,
+    `Next time: ${observations.nextPractice || "play slowly, in time"}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+export function observationOutline(observations: CompareObservations | null, locale: DraftLocale = "vi") {
+  if (locale === "en") return observationOutlineEn(observations);
   if (!observations) {
     return [
       "Không có đối chiếu bài (chưa có PieceModel / compare).",

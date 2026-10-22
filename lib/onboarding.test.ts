@@ -1,7 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { homeFor, parseRole, studentStageFromAnswers, tutorStageFromAnswers } from "@/lib/onboarding";
+import { feedbackLocaleFrom, homeFor, parseRole, studentStageFromAnswers, tutorStageFromAnswers } from "@/lib/onboarding";
 
 describe("onboarding", () => {
+  it("keeps feedback Vietnamese unless the teacher chooses English", () => {
+    expect(feedbackLocaleFrom("en")).toBe("en");
+    expect(feedbackLocaleFrom("vi")).toBe("vi");
+    expect(feedbackLocaleFrom("")).toBe("vi");
+  });
+
   it("parses roles", () => {
     expect(parseRole("tutor")).toBe("tutor");
     expect(parseRole("student")).toBe("student");

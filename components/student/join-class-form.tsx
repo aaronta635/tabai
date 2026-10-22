@@ -7,12 +7,10 @@ export function JoinClassForm({
   placeholder,
   submit,
   badCode,
-  otherClass,
 }: {
   placeholder: string;
   submit: string;
   badCode: string;
-  otherClass: string;
 }) {
   const [error, setError] = useState<string | null>(null);
 
@@ -20,8 +18,7 @@ export function JoinClassForm({
     <form
       action={async (form) => {
         const result = await joinStudentClass(form);
-        if (result?.error === "otherClass") setError(otherClass);
-        else if (result?.error) setError(badCode);
+        if (result?.error) setError(badCode);
       }}
       className="space-y-2"
     >

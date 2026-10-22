@@ -149,9 +149,6 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
 
   const student = await prisma.student.findUnique({ where: { id: studentId } });
   if (!student) return { error: "code" as const };
-  if (student.teacherId && student.teacherId !== studioClass.teacherId) {
-    return { error: "otherClass" as const };
-  }
 
   let membership = await prisma.classMembership.findFirst({
     where: { classId: studioClass.id, studentId: student.id },
@@ -186,7 +183,7 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
   await prisma.student.update({
     where: { id: student.id },
     data: {
-      teacherId: studioClass.teacherId,
+      ...(student.teacherId ? {} : { teacherId: studioClass.teacherId }),
       stage: "in_class",
     },
   });

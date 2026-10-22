@@ -68,7 +68,6 @@ export default async function StudentProfilePage() {
           placeholder={t.home.codePlaceholder}
           submit={t.student.joinClass}
           badCode={t.onboarding.badCode}
-          otherClass={t.student.otherClass}
         />
       </AddPanel>
     </div>

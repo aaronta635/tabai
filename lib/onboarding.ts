@@ -19,6 +19,10 @@ export type StudentAnswers = {
   weaknesses?: string[];
 };
 
+export function feedbackLocaleFrom(value: string | null | undefined): "vi" | "en" {
+  return value === "en" ? "en" : "vi";
+}
+
 export function parseRole(value: string | null | undefined): AccountRole | null {
   if (value === "tutor" || value === "student") return value;
   return null;

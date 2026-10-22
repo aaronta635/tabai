@@ -1604,6 +1604,11 @@ body:has(.student-shell) {
   background: #F3EDE2;
 }
 
+html:has(.setup-page.student-shell),
+body:has(.setup-page.student-shell) {
+  background: var(--color-paper);
+}
+
 html:has(.studio-shell),
 body:has(.studio-shell) {
   background: var(--color-paper);
@@ -3068,6 +3073,180 @@ body:has(.auth-split) {
 @keyframes report-in {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: none; }
+}
+
+.setup-page.student-shell {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+.setup-sheet {
+  margin-top: 2rem;
+}
+
+.setup {
+  --setup-fill: #3B2F2A;
+  --setup-on-ink: #F3EDE2;
+  display: flex;
+  flex-direction: column;
+  gap: 1.35rem;
+}
+
+[data-theme="dark"] .setup-page.student-shell .setup {
+  --setup-fill: #F3EDE2;
+  --setup-on-ink: #3B2F2A;
+}
+
+.setup fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.teacher-onboard .setup {
+  --setup-fill: #F3EDE2;
+  --setup-on-ink: #3B2F2A;
+}
+
+.setup-block {
+  display: block;
+  min-width: 0;
+}
+
+.setup-label {
+  display: block;
+  margin-bottom: 0.45rem;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.teacher-onboard .setup-label {
+  color: #D6B98C;
+}
+
+.setup-field,
+[data-theme="dark"] input.setup-field {
+  width: 100%;
+  margin: 0;
+  padding: 0.35rem 0 0.55rem;
+  border: 0;
+  border-bottom: 1.5px solid color-mix(in srgb, currentColor 28%, transparent);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  caret-color: currentColor;
+  font-family: var(--font-serif), "Plus Jakarta Sans", system-ui, sans-serif;
+  font-size: 1.35rem;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  -webkit-text-fill-color: currentColor;
+}
+
+.setup-field::placeholder {
+  color: color-mix(in srgb, currentColor 38%, transparent);
+  -webkit-text-fill-color: color-mix(in srgb, currentColor 38%, transparent);
+}
+
+.setup-field:focus {
+  outline: none;
+  border-bottom-color: currentColor;
+}
+
+.setup-field-name {
+  font-size: 1.85rem;
+}
+
+.setup-choice {
+  display: flex;
+  align-items: center;
+  min-height: 2.85rem;
+  padding: 0.4rem 1rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--setup-fill) 7%, transparent);
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.98rem;
+}
+
+.setup-choice:hover {
+  background: color-mix(in srgb, var(--setup-fill) 16%, transparent);
+}
+
+.setup-choice.is-on,
+.setup-choice.is-on:hover {
+  background: var(--setup-fill);
+  color: var(--setup-on-ink);
+}
+
+.setup-choice:focus-within {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.setup .pick {
+  border: 0;
+  background: color-mix(in srgb, var(--setup-fill) 7%, transparent);
+}
+
+.setup .pick:hover {
+  background: color-mix(in srgb, var(--setup-fill) 16%, transparent);
+}
+
+.setup .field-label {
+  margin-bottom: 0.45rem;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.teacher-onboard .setup .field-label {
+  color: #D6B98C;
+}
+
+.setup .pick-on,
+.setup .pick-on:hover,
+[data-theme="dark"] .setup .pick-on {
+  border: 0;
+  background: var(--setup-fill);
+  color: var(--setup-on-ink);
+}
+
+.setup-go {
+  min-height: 3.35rem;
+  margin-top: 0.35rem;
+  border: 0;
+  border-radius: 999px;
+  background: var(--setup-fill);
+  color: var(--setup-on-ink);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+}
+
+.setup-go:hover {
+  background: #8B5E34;
+  color: #F3EDE2;
+}
+
+.setup-go:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+.setup-error {
+  margin: 0;
+  color: var(--color-danger);
+  font-size: 0.9rem;
 }
 
 @media (prefers-reduced-motion: reduce) {

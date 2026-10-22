@@ -31,7 +31,7 @@ export default async function OnboardingPage({
   const o = t.onboarding;
 
   return (
-    <main className={teacher ? "teacher-onboard min-h-dvh" : "student-shell min-h-dvh"}>
+    <main className={teacher ? "teacher-onboard setup-page min-h-dvh" : "student-shell setup-page min-h-dvh"}>
       {teacher ? (
         <header className="studio-rail flex items-center justify-between px-6 py-4 text-white">
           <Link href="/" aria-label={t.brand}>
@@ -61,13 +61,17 @@ export default async function OnboardingPage({
         <p className={`mt-3 ${teacher ? "text-white/70" : "text-ink-soft"}`}>
           {teacher ? o.tutorBody : o.studentBody}
         </p>
-        <div className={`mt-8 ${teacher ? "lms-card p-5 text-ink" : ""}`}>
+        <div className="setup-sheet">
           {teacher ? (
             <TutorOnboardingForm
               defaultName={teacher.name}
               returnTo={back ?? undefined}
+              initialLocale={locale === "en" ? "en" : "vi"}
               labels={{
                 name: o.name,
+                feedbackLanguage: o.feedbackLanguage,
+                feedbackVi: o.feedbackVi,
+                feedbackEn: o.feedbackEn,
                 q1: o.tutorQ1,
                 q2: o.tutorQ2,
                 q3: o.tutorQ3,
@@ -103,9 +107,8 @@ export default async function OnboardingPage({
                 workChords: o.workChords,
                 workSong: o.workSong,
                 workExam: o.workExam,
-                contact: t.student.contact,
-                zalo: t.student.zalo,
-                messenger: t.student.messenger,
+                phone: o.phone,
+                phonePlaceholder: o.phonePlaceholder,
                 continue: o.continue,
                 incomplete: o.incomplete,
                 badCode: o.badCode,

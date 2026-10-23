@@ -1,0 +1,1384 @@
+/* Homepage-only art direction. CSS/SVG + the recovered passive rAF scene hook.
+   Other routes deliberately keep their existing presentation and interactions. */
+.para-site .studio-home {
+  --story-active-ink: var(--color-action);
+  --story-active-dot: var(--para-raspberry);
+  --scene-enter: 1;
+  --scene-exit: 0;
+  --scene-progress: 0;
+}
+.para-site .studio-home section {
+  position: relative;
+}
+.para-site .studio-home .scene-heading {
+  max-width: none;
+  font-size: clamp(60px, 6.2vw, 90px);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 500;
+}
+.para-site .studio-home .headline-mask {
+  display: block;
+  overflow: clip;
+  padding: 0.12em 0 0.18em;
+  margin: -0.12em 0 -0.18em;
+}
+.para-site .studio-home .headline-mask > span {
+  display: block;
+}
+.para-site .studio-home .eyebrow {
+  margin-bottom: 28px;
+}
+.para-site .studio-home figure figcaption {
+  font-size: 11px;
+  line-height: 1.65;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .scene-hero {
+  isolation: isolate;
+  background: none;
+}
+.para-site .studio-home .hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.03fr);
+  gap: 44px;
+  min-height: min(820px, calc(100svh - var(--header-height) - 28px));
+  padding-block: 48px 56px;
+}
+.para-site .studio-home .hero-copy {
+  position: relative;
+  z-index: 2;
+  transform: translateY(calc(var(--scene-exit) * -32px));
+  opacity: calc(1 - var(--scene-exit) * 0.65);
+}
+.para-site .studio-home .hero-copy:focus-within {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .hero-copy h1 {
+  font-size: clamp(64px, 7.15vw, 102px);
+}
+.para-site .studio-home .hero-copy .headline-mask > span {
+  animation: studio-line-in 700ms var(--ease-phrase) both;
+  animation-delay: calc(var(--line-index) * 110ms);
+}
+.para-site .studio-home .hero-lead {
+  max-width: 43ch;
+  font-size: 17px;
+  margin-top: 28px;
+  animation: studio-support-in 650ms ease both 260ms;
+}
+.para-site .studio-home .hero-actions {
+  animation: studio-support-in 650ms ease both 380ms;
+}
+.para-site .studio-home .development-label {
+  font-size: 11px;
+  max-width: 46ch;
+}
+.para-site .studio-home .hero-visual {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+}
+.para-site .studio-home .signal-story {
+  margin: 0;
+}
+.para-site .studio-home .signal-sculpture {
+  position: relative;
+  aspect-ratio: 680 / 640;
+}
+.para-site .studio-home .signal-sculpture > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform: translateY(calc(var(--scene-exit) * 44px))
+    scaleX(calc(1 + var(--scene-exit) * 0.08))
+    scaleY(calc(1 - var(--scene-exit) * 0.18));
+  transform-origin: 60% 90%;
+}
+.para-site .studio-home .sculpture-guides {
+  stroke: var(--color-border);
+  opacity: 0.36;
+  stroke-width: 1;
+}
+.para-site .studio-home .sculpture-ribbon {
+  transform-origin: 50% 50%;
+  animation: studio-ribbon-breathe 11s ease-in-out infinite;
+}
+.para-site .studio-home .ribbon-body {
+  stroke-width: 58;
+  stroke-linecap: butt;
+}
+.para-site .studio-home .ribbon-shadow {
+  stroke: #3b2f2a0c;
+  stroke-width: 76;
+  transform: translate(6px, 12px);
+}
+.para-site .studio-home .ribbon-thread {
+  stroke: var(--para-paper);
+  stroke-width: 1;
+  opacity: 0.35;
+}
+.para-site .studio-home .sculpture-unfold {
+  stroke: var(--para-raspberry);
+  stroke-width: 2;
+  opacity: var(--scene-exit);
+  transform-origin: 50% 80%;
+  transform: scaleX(calc(1 + var(--scene-exit) * 0.15))
+    scaleY(calc(1 - var(--scene-exit) * 0.25));
+}
+.para-site .studio-home .assignment-capsule {
+  position: absolute;
+  top: 29%;
+  left: 8%;
+  width: 65%;
+  min-height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: var(--color-background);
+  border: 1px solid var(--color-control-border);
+  box-shadow: 0 12px 32px #3b2f2a0c;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  transform: rotate(-4deg);
+  transition:
+    transform 850ms var(--ease-phrase),
+    opacity 700ms ease;
+  animation: studio-capsule-float 11s ease-in-out infinite;
+}
+.para-site .studio-home .assignment-capsule .music-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--color-action);
+}
+.para-site .studio-home .assignment-capsule > span:last-child {
+  margin-left: auto;
+  color: var(--color-action);
+}
+.para-site .studio-home .signal-story[data-stage="1"] .assignment-capsule {
+  transform: translate(16px, 8px) rotate(0);
+}
+.para-site .studio-home .signal-story[data-stage="2"] .assignment-capsule {
+  transform: translate(34px, 32px) rotate(2deg);
+  opacity: 0.18;
+}
+.para-site .studio-home .signal-story[data-stage="3"] .assignment-capsule,
+.para-site .studio-home .signal-story[data-stage="4"] .assignment-capsule {
+  transform: translate(34px, 32px) rotate(2deg);
+  opacity: 0;
+}
+.para-site .studio-home .sculpture-recording {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 750ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .signal-story[data-stage="2"] .sculpture-recording,
+.para-site .studio-home .signal-story[data-stage="3"] .sculpture-recording,
+.para-site .studio-home .signal-story[data-stage="4"] .sculpture-recording {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .sculpture-wave {
+  stroke: var(--color-text);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.para-site .studio-home .sculpture-time {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 3 7;
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.para-site .studio-home .sculpture-pin {
+  fill: var(--para-butter);
+  stroke: var(--para-cocoa);
+  stroke-width: 1.5;
+  opacity: 0;
+  transform: translateY(-12px);
+  transition:
+    opacity 700ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .pin-2 {
+  transition-delay: 100ms;
+  fill: var(--para-apricot);
+}
+.para-site .studio-home .pin-3 {
+  transition-delay: 200ms;
+}
+.para-site .studio-home .signal-story[data-stage="3"] .sculpture-pin,
+.para-site .studio-home .signal-story[data-stage="4"] .sculpture-pin {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .signal-story[data-stage="3"] .sculpture-time,
+.para-site .studio-home .signal-story[data-stage="4"] .sculpture-time {
+  opacity: 0.5;
+}
+.para-site .studio-home .sculpture-next {
+  stroke: var(--para-raspberry);
+  stroke-width: 3;
+  opacity: 0;
+  transition: opacity 850ms ease;
+}
+.para-site .studio-home .signal-story[data-stage="4"] .sculpture-next {
+  opacity: 1;
+}
+.para-site .studio-home .sculpture-label {
+  position: absolute;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  transition:
+    opacity 700ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .recording-label {
+  top: 72%;
+  right: 9%;
+}
+.para-site .studio-home .feedback-label {
+  top: 45%;
+  right: 8%;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.para-site .studio-home .next-label {
+  bottom: 7%;
+  right: 4%;
+  opacity: 0;
+  transform: translateY(10px);
+}
+.para-site .studio-home .signal-story[data-stage="3"] .feedback-label,
+.para-site .studio-home .signal-story[data-stage="4"] .next-label {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .sculpture-timing {
+  position: absolute;
+  top: 7%;
+  right: 4%;
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .signal-story figcaption {
+  margin: 0 0 16px;
+}
+.para-site .studio-home .hero-stage-keys {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+.para-site .studio-home .hero-stage-keys button {
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  background: none;
+  text-align: left;
+  color: var(--color-text-muted);
+  font: 500 11px/1.5 var(--font-body);
+  transition:
+    color 180ms ease,
+    border-color 180ms ease;
+}
+.para-site .studio-home .hero-stage-keys button span {
+  display: block;
+  font-size: 10px;
+  margin-bottom: 3px;
+}
+.para-site .studio-home .hero-stage-keys button[aria-current="step"] {
+  color: var(--color-action);
+  border-color: var(--color-action);
+}
+.para-site .studio-home .hero-story-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+}
+.para-site .studio-home .hero-story-controls > span {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  max-width: 28ch;
+  margin-right: auto;
+}
+.para-site .studio-home .story-control {
+  font-size: 11px;
+  padding: 8px;
+}
+.para-site .studio-home .scene-hero[data-playing="false"] .ambient,
+.para-site .studio-home .sculpture-stage:hover .ambient {
+  animation-play-state: paused;
+}
+.para-site .studio-home .hero-handoff {
+  height: 72px;
+  margin-top: -30px;
+  pointer-events: none;
+}
+.para-site .studio-home .hero-handoff svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.para-site .studio-home .hero-handoff path {
+  stroke: var(--para-raspberry);
+  stroke-width: 1.5;
+  fill: none;
+  stroke-dasharray: 400;
+  stroke-dashoffset: calc(400 * (1 - var(--scene-exit)));
+  opacity: 0.6;
+}
+.para-site .studio-home .hero-baseline {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  padding-block: 0 32px;
+  color: var(--color-text-muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.para-site .studio-home .hero-baseline > span:nth-child(2) {
+  height: 1px;
+  flex: 1;
+  background: var(--color-border);
+}
+
+/* The capsule joins one continuous route. Desktop borrows < one extra screen;
+   mobile and short screens are ordinary document flow, without pinning. */
+.para-site .studio-home .scene-loop {
+  --loop-progress: 0.08;
+  min-height: 150svh;
+  border-top: 1px solid var(--color-border);
+}
+.para-site .studio-home .loop-sticky {
+  position: sticky;
+  top: var(--header-height);
+  min-height: calc(100svh - var(--header-height));
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 64px;
+  align-items: center;
+  padding-block: 48px;
+}
+.para-site .studio-home .loop-copy,
+.para-site .studio-home .loop-composition {
+  min-width: 0;
+}
+.para-site .studio-home .loop-copy .scene-heading {
+  font-size: clamp(56px, 5.6vw, 80px);
+}
+.para-site .studio-home .loop-intro {
+  font-size: 15px;
+  max-width: 35ch;
+  margin-top: 24px;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .submission-sequence {
+  display: block;
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+}
+.para-site .studio-home .submission-sequence .loop-step {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 12px;
+  gap: 12px;
+  padding: 13px 0;
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  background: none;
+  transition: color 280ms ease;
+}
+.para-site .studio-home .loop-step-index {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding-top: 4px;
+}
+.para-site .studio-home .submission-sequence h3 {
+  font: 500 16px/1.4 var(--font-body);
+  margin: 0;
+}
+.para-site .studio-home .submission-sequence p {
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.55;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .loop-step-signal {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-border);
+  margin-top: 7px;
+  transition:
+    background 280ms ease,
+    transform 280ms ease;
+}
+.para-site .studio-home .scene-loop[data-stage="0"] .step-0 h3,
+.para-site .studio-home .scene-loop[data-stage="1"] .step-1 h3,
+.para-site .studio-home .scene-loop[data-stage="2"] .step-2 h3,
+.para-site .studio-home .scene-loop[data-stage="3"] .step-3 h3,
+.para-site .studio-home .scene-loop[data-stage="4"] .step-4 h3 {
+  color: var(--story-active-ink);
+}
+.para-site .studio-home .scene-loop[data-stage="0"] .step-0 .loop-step-signal,
+.para-site .studio-home .scene-loop[data-stage="1"] .step-1 .loop-step-signal,
+.para-site .studio-home .scene-loop[data-stage="2"] .step-2 .loop-step-signal,
+.para-site .studio-home .scene-loop[data-stage="3"] .step-3 .loop-step-signal,
+.para-site .studio-home .scene-loop[data-stage="4"] .step-4 .loop-step-signal {
+  background: var(--story-active-dot);
+  transform: scale(1.3);
+}
+.para-site .studio-home .loop-diagram {
+  position: relative;
+  aspect-ratio: 680 / 540;
+}
+.para-site .studio-home .loop-diagram svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.para-site .studio-home .loop-route-base {
+  stroke: var(--color-border);
+  stroke-width: 1.5;
+}
+.para-site .studio-home .loop-route-active {
+  stroke: var(--para-raspberry);
+  stroke-width: 2.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--loop-progress));
+}
+.para-site .studio-home .loop-interval {
+  stroke: var(--color-border);
+  opacity: 0.55;
+}
+.para-site .studio-home .loop-wave {
+  stroke: var(--color-text);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.25;
+  transition: opacity 700ms ease;
+}
+.para-site .studio-home .scene-loop[data-stage="2"] .loop-wave,
+.para-site .studio-home .scene-loop[data-stage="3"] .loop-wave,
+.para-site .studio-home .scene-loop[data-stage="4"] .loop-wave {
+  opacity: 1;
+}
+.para-site .studio-home .loop-feedback-pins {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 850ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .loop-feedback-pins path {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 3 8;
+}
+.para-site .studio-home .loop-feedback-pins circle {
+  fill: var(--para-butter);
+  stroke: var(--para-cocoa);
+  stroke-width: 1.5;
+}
+.para-site .studio-home .scene-loop[data-stage="3"] .loop-feedback-pins,
+.para-site .studio-home .scene-loop[data-stage="4"] .loop-feedback-pins {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .loop-next-path {
+  stroke: var(--para-raspberry);
+  stroke-width: 2;
+  opacity: 0;
+  transition: opacity 850ms ease;
+}
+.para-site .studio-home .scene-loop[data-stage="4"] .loop-next-path {
+  opacity: 1;
+}
+.para-site .studio-home .loop-traveller circle:first-child {
+  fill: var(--color-background);
+  stroke: var(--para-raspberry);
+  stroke-width: 2;
+}
+.para-site .studio-home .loop-traveller circle:last-child {
+  fill: var(--para-raspberry);
+}
+.para-site .studio-home .loop-start {
+  fill: var(--para-apricot);
+}
+.para-site .studio-home .loop-task-capsule {
+  position: absolute;
+  top: 12%;
+  left: 24%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border: 1px solid var(--color-control-border);
+  border-radius: 8px;
+  background: var(--color-background);
+  font-size: 12px;
+  transform: rotate(-3deg);
+}
+.para-site .studio-home .loop-task-capsule .music-icon {
+  width: 20px;
+  height: 20px;
+}
+.para-site .studio-home .loop-record-label {
+  position: absolute;
+  top: 67%;
+  left: 37%;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .loop-response-label {
+  position: absolute;
+  top: 30%;
+  right: 11%;
+  font-size: 11px;
+  color: var(--color-text-muted);
+  opacity: 0;
+  transition: opacity 700ms ease;
+}
+.para-site .studio-home .scene-loop[data-stage="3"] .loop-response-label,
+.para-site .studio-home .scene-loop[data-stage="4"] .loop-response-label {
+  opacity: 1;
+}
+.para-site .studio-home .loop-next-instruction {
+  position: absolute;
+  bottom: 5%;
+  right: 4%;
+  max-width: 32ch;
+  font: 500 24px/1.35 var(--font-display);
+  color: var(--color-text);
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 700ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .loop-next-instruction span {
+  margin-left: 12px;
+}
+.para-site .studio-home .scene-loop[data-stage="4"] .loop-next-instruction {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .loop-return-label {
+  position: absolute;
+  left: 5%;
+  bottom: 26%;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .loop-composition figcaption {
+  margin: 32px 0 0;
+}
+
+/* One diagram, three views. All copy contributes to the stable grid height. */
+.para-site .studio-home .scene-perspectives {
+  padding-block: 112px 100px;
+  border-top: 1px solid var(--color-border);
+}
+.para-site .studio-home .perspective-scene-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 100px;
+  align-items: center;
+}
+.para-site .studio-home .perspective-intro .text-link {
+  margin-top: 40px;
+  max-width: 32ch;
+}
+.para-site .studio-home .perspective-tabs {
+  position: relative;
+  margin: 0;
+}
+.para-site .studio-home .perspective-tabs button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: flex-start;
+  min-height: 66px;
+  padding-inline: 0;
+  border-bottom-width: 1px;
+  font-size: 14px;
+}
+.para-site .studio-home .perspective-tabs button span {
+  display: block;
+  font-size: 10px;
+}
+.para-site .studio-home .perspective-tabs button[aria-selected="true"] {
+  border-color: var(--color-border);
+}
+.para-site .studio-home .audience-tab-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 33.333%;
+  height: 2px;
+  background: var(--color-action);
+  transform: translateX(calc(var(--audience) * 100%));
+  transition: transform 650ms var(--ease-phrase);
+}
+.para-site .studio-home .perspective-signal {
+  margin-top: 24px;
+}
+.para-site .studio-home .perspective-signal svg {
+  display: block;
+  width: 100%;
+}
+.para-site .studio-home .perspective-guide {
+  stroke: var(--color-border);
+  opacity: 0.5;
+}
+.para-site .studio-home .perspective-thread {
+  stroke: var(--para-apricot);
+  stroke-width: 1.5;
+  opacity: 0.35;
+}
+.para-site .studio-home .perspective-view {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 650ms ease,
+    transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .perspective-signal[data-perspective="0"] .view-teacher,
+.para-site .studio-home .perspective-signal[data-perspective="1"] .view-student,
+.para-site .studio-home .perspective-signal[data-perspective="2"] .view-parent {
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .perspective-wave {
+  stroke: var(--para-raspberry);
+  stroke-width: 3;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.para-site .studio-home .perspective-markers {
+  stroke: var(--color-text-muted);
+  stroke-dasharray: 3 8;
+}
+.para-site .studio-home .perspective-pin {
+  fill: var(--para-butter);
+  stroke: var(--para-cocoa);
+  stroke-width: 1.5;
+}
+.para-site .studio-home .perspective-next {
+  stroke: var(--para-raspberry);
+  stroke-width: 3;
+}
+.para-site .studio-home .perspective-history {
+  stroke: var(--para-raspberry);
+  stroke-width: 2;
+}
+.para-site .studio-home .history-ring {
+  fill: var(--color-background);
+  stroke: var(--color-border);
+  stroke-width: 1.5;
+}
+.para-site .studio-home .history-attempt {
+  stroke: var(--color-text);
+  stroke-width: 2;
+}
+.para-site .studio-home .history-number {
+  fill: var(--color-text-muted);
+  font: 12px var(--font-body);
+}
+.para-site .studio-home .perspective-origin {
+  fill: var(--para-raspberry);
+}
+.para-site .studio-home .perspective-art-label {
+  margin-top: -20px;
+  font-size: 11px;
+  text-align: right;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .perspective-signal figcaption {
+  margin-top: 20px;
+}
+.para-site .studio-home .perspective-panes {
+  display: grid;
+  margin-top: 32px;
+}
+.para-site .studio-home .perspective-pane {
+  grid-area: 1 / 1;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(5px);
+  transition:
+    opacity 450ms ease,
+    transform 650ms var(--ease-phrase),
+    visibility 450ms;
+}
+.para-site .studio-home .perspective-pane.active {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .perspective-pane h3 {
+  font: 500 clamp(30px, 3vw, 42px)/1.18 var(--font-display);
+  max-width: 28ch;
+}
+.para-site .studio-home .perspective-pane p {
+  font-size: 13px;
+  margin-top: 16px;
+  max-width: 52ch;
+  color: var(--color-text-muted);
+}
+.para-site .studio-home .perspective-handoff {
+  position: absolute;
+  bottom: -2px;
+  width: 100%;
+  height: 100px;
+  pointer-events: none;
+}
+.para-site .studio-home .perspective-handoff svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.para-site .studio-home .perspective-handoff path {
+  stroke: var(--para-raspberry);
+  stroke-width: 1.5;
+}
+.para-site .studio-home .perspective-handoff circle {
+  fill: var(--para-raspberry);
+}
+
+/* The feedback pin opens into an Espresso field. Text is always on a
+   contrast-safe base; only the decorative boundary expands with native scroll. */
+.para-site .studio-home .scene-belief {
+  isolation: isolate;
+  padding-block: 112px 80px;
+  background: var(--para-cocoa);
+  color: var(--para-paper);
+}
+.para-site .studio-home .belief-aperture {
+  position: absolute;
+  z-index: -1;
+  inset: -95px 0 0;
+  background: var(--para-espresso);
+  clip-path: ellipse(calc(65% + var(--scene-enter) * 70%) 100% at 74% 100%);
+}
+.para-site .studio-home .scene-belief .eyebrow {
+  color: var(--para-apricot);
+}
+.para-site .studio-home .scene-belief .scene-heading {
+  font-size: clamp(76px, 9vw, 132px);
+  max-width: 21ch;
+  line-height: 1.04;
+}
+.para-site .studio-home .scene-belief .headline-mask:last-child {
+  color: var(--para-apricot);
+}
+.para-site .studio-home .belief-statement {
+  position: relative;
+}
+.para-site .studio-home .belief-statement .headline-mask > span {
+  transition: transform 850ms var(--ease-phrase);
+}
+.para-site .studio-home .scene-belief[data-scene-visible="false"] .headline-mask > span {
+  transform: translateY(20%);
+}
+.para-site .studio-home .belief-support {
+  margin-top: 36px;
+  font-size: 18px;
+}
+.para-site .studio-home .belief-signal {
+  margin-block: 40px 36px;
+  height: 120px;
+}
+.para-site .studio-home .belief-signal svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  fill: none;
+}
+.para-site .studio-home .belief-wave-echo {
+  stroke: var(--para-paper);
+  stroke-width: 1;
+  opacity: 0.15;
+}
+.para-site .studio-home .belief-wave-main {
+  stroke: var(--para-apricot);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc(1 - var(--scene-enter));
+}
+.para-site .studio-home .belief-signal circle {
+  fill: var(--para-butter);
+}
+.para-site .studio-home .belief-cues {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  gap: 28px;
+}
+.para-site .studio-home .belief-cues li {
+  border-top: 1px solid #f3ede240;
+  padding-top: 16px;
+  font-size: 12px;
+}
+.para-site .studio-home .belief-cues span {
+  display: block;
+  font-size: 10px;
+  color: var(--para-apricot);
+  margin-bottom: 8px;
+}
+
+/* A quieter open loop. No ambient movement near the unavailable form. */
+.para-site .studio-home .scene-closing {
+  padding-block: 88px;
+  background: var(--color-background);
+}
+.para-site .studio-home .waitlist-grid {
+  gap: 112px;
+  align-items: center;
+}
+.para-site .studio-home .closing-mark {
+  width: min(320px, 100%);
+  position: relative;
+  aspect-ratio: 2;
+  margin: 0 0 36px -12px;
+}
+.para-site .studio-home .closing-mark svg {
+  width: 100%;
+  height: 100%;
+}
+.para-site .studio-home .closing-mark path {
+  stroke: var(--color-action);
+  stroke-width: 1.5;
+  stroke-dasharray: 1;
+  stroke-dashoffset: calc((1 - var(--scene-enter)) * 0.85);
+}
+.para-site .studio-home .closing-mark circle {
+  fill: var(--para-apricot);
+}
+.para-site .studio-home .closing-mark .brand-logo {
+  position: absolute;
+  top: 32%;
+  left: 22%;
+  padding: 12px;
+}
+.para-site .studio-home .closing-mark .brand-logo img {
+  width: 150px;
+}
+.para-site .studio-home .scene-closing .scene-heading {
+  font-size: clamp(52px, 5vw, 72px);
+  max-width: none;
+}
+.para-site .studio-home .scene-closing h2 + p {
+  font-size: 14px;
+  max-width: 42ch;
+}
+.para-site .studio-home .scene-closing .text-link {
+  margin-top: 20px;
+}
+.para-site .studio-home .waitlist-form {
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-background);
+}
+.para-site .studio-home .field input {
+  border-radius: 6px;
+}
+.para-site .studio-home .form-note {
+  font-size: 12px;
+}
+.para-site .studio-home .consent-note {
+  font-size: 11px;
+}
+
+@keyframes studio-line-in {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes studio-support-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes studio-ribbon-breathe {
+  0%,
+  100% {
+    transform: rotate(-1deg);
+  }
+  50% {
+    transform: rotate(1deg);
+  }
+}
+@keyframes studio-capsule-float {
+  0%,
+  100% {
+    translate: 0 -3px;
+  }
+  50% {
+    translate: 0 3px;
+  }
+}
+
+@media (max-width: 1100px) {
+  .para-site .studio-home .hero-grid {
+    gap: 24px;
+    padding-top: 32px;
+  }
+  .para-site .studio-home .hero-copy h1 {
+    font-size: 74px;
+  }
+  .para-site .studio-home .hero-lead {
+    font-size: 16px;
+  }
+  .para-site .studio-home .hero-actions {
+    gap: 8px;
+  }
+  .para-site .studio-home .hero-actions .button {
+    padding-inline: 16px;
+    font-size: 13px;
+  }
+  .para-site .studio-home .loop-sticky {
+    gap: 36px;
+  }
+  .para-site .studio-home .perspective-scene-grid {
+    gap: 48px;
+  }
+  .para-site .studio-home .perspective-intro .scene-heading {
+    font-size: 64px;
+  }
+  .para-site .studio-home .waitlist-grid {
+    gap: 56px;
+  }
+}
+/* Vietnamese phrases are sized independently, avoiding a one-word final line. */
+@media (min-width: 901px) {
+  html[lang="vi"] .para-site .studio-home .hero-copy h1 {
+    font-size: clamp(64px, 6.3vw, 92px);
+  }
+  html[lang="vi"] .para-site .studio-home .scene-belief .scene-heading {
+    font-size: clamp(68px, 7.8vw, 112px);
+  }
+}
+@media (max-width: 900px), (max-height: 740px) {
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+  .para-site .studio-home .loop-sticky {
+    position: relative;
+    top: auto;
+    min-height: 0;
+    padding-block: 64px;
+  }
+}
+@media (max-width: 900px) {
+  .para-site .studio-home .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-block: 40px;
+    gap: 32px;
+  }
+  .para-site .studio-home .hero-copy {
+    max-width: 680px;
+  }
+  .para-site .studio-home .hero-copy h1 {
+    font-size: clamp(64px, 9vw, 86px);
+  }
+  .para-site .studio-home .hero-visual {
+    max-width: 600px;
+    margin-inline: auto;
+  }
+  .para-site .studio-home .signal-sculpture {
+    aspect-ratio: 680 / 560;
+  }
+  .para-site .studio-home .loop-sticky {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .para-site .studio-home .loop-copy {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 32px;
+  }
+  .para-site .studio-home .loop-copy .eyebrow {
+    grid-column: 1 / -1;
+  }
+  .para-site .studio-home .loop-copy h2 {
+    grid-column: 1;
+  }
+  .para-site .studio-home .loop-intro {
+    grid-column: 1;
+  }
+  .para-site .studio-home .submission-sequence {
+    grid-column: 2;
+    grid-row: 2 / 4;
+    margin-top: 0;
+  }
+  .para-site .studio-home .loop-composition {
+    max-width: 640px;
+    width: 100%;
+    margin-inline: auto;
+  }
+  .para-site .studio-home .loop-composition figcaption {
+    margin-top: 12px;
+  }
+  .para-site .studio-home .perspective-scene-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .para-site .studio-home .perspective-intro .text-link {
+    margin-top: 20px;
+  }
+  .para-site .studio-home .scene-perspectives {
+    padding-block: 64px 100px;
+  }
+  .para-site .studio-home .scene-belief {
+    padding-block: 88px 64px;
+  }
+  .para-site .studio-home .scene-belief .scene-heading {
+    font-size: clamp(64px, 9vw, 90px);
+  }
+  .para-site .studio-home .waitlist-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+  }
+}
+@media (max-width: 640px) {
+  .para-site .studio-home .hero-grid {
+    padding-block: 28px 24px;
+    gap: 24px;
+  }
+  .para-site .studio-home .hero-copy h1 {
+    font-size: clamp(46px, 12.8vw, 64px);
+    line-height: 1.04;
+  }
+  .para-site .studio-home .hero-copy {
+    transform: none;
+    opacity: 1;
+  }
+  .para-site .studio-home .eyebrow {
+    font-size: 10px;
+    margin-bottom: 22px;
+    letter-spacing: 0.09em;
+  }
+  .para-site .studio-home .hero-lead {
+    margin-top: 22px;
+    font-size: 15px;
+  }
+  .para-site .studio-home .hero-actions {
+    margin-block: 24px 18px;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+  .para-site .studio-home .hero-actions .button {
+    width: auto;
+    font-size: 12px;
+    padding-inline: 14px;
+    min-height: 48px;
+  }
+  .para-site .studio-home .hero-actions .text-link {
+    font-size: 12px;
+    gap: 8px;
+    padding-block: 4px;
+    min-height: 44px;
+    justify-content: flex-start;
+  }
+  .para-site .studio-home .development-label {
+    margin: 0;
+    font-size: 10px;
+    max-width: none;
+  }
+  .para-site .studio-home .signal-sculpture {
+    height: 290px;
+    aspect-ratio: auto;
+  }
+  .para-site .studio-home .signal-sculpture > svg {
+    transform: none;
+  }
+  .para-site .studio-home .assignment-capsule {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 12px;
+    width: 68%;
+    left: 10%;
+    top: 25%;
+    gap: 8px;
+  }
+  .para-site .studio-home .assignment-capsule .music-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .para-site .studio-home .sculpture-label {
+    font-size: 9px;
+  }
+  .para-site .studio-home .recording-label {
+    top: 72%;
+    right: 6%;
+  }
+  .para-site .studio-home .sculpture-timing {
+    font-size: 9px;
+    top: 4%;
+    right: 1%;
+  }
+  .para-site .studio-home .signal-story figcaption {
+    font-size: 10px;
+    margin-bottom: 14px;
+  }
+  .para-site .studio-home .hero-stage-keys {
+    gap: 8px;
+  }
+  .para-site .studio-home .hero-stage-keys button {
+    font-size: 10px;
+    min-height: 58px;
+  }
+  .para-site .studio-home .hero-story-controls {
+    flex-wrap: wrap;
+  }
+  .para-site .studio-home .hero-story-controls > span {
+    max-width: 23ch;
+    font-size: 10px;
+  }
+  .para-site .studio-home .hero-story-controls .story-control {
+    font-size: 10px;
+  }
+  .para-site .studio-home .hero-handoff {
+    height: 40px;
+    margin: 0;
+  }
+  .para-site .studio-home .hero-baseline {
+    padding-bottom: 24px;
+    font-size: 9px;
+  }
+  .para-site .studio-home .loop-sticky {
+    padding-block: 48px;
+    gap: 24px;
+  }
+  .para-site .studio-home .loop-copy {
+    display: block;
+  }
+  .para-site .studio-home .loop-copy .scene-heading {
+    font-size: 52px;
+  }
+  .para-site .studio-home .loop-intro {
+    font-size: 14px;
+    margin-top: 20px;
+    max-width: 32ch;
+  }
+  .para-site .studio-home .submission-sequence {
+    margin-top: 28px;
+  }
+  .para-site .studio-home .submission-sequence .loop-step {
+    padding: 12px 0;
+    gap: 12px;
+  }
+  .para-site .studio-home .submission-sequence h3 {
+    font-size: 14px;
+  }
+  .para-site .studio-home .submission-sequence p {
+    font-size: 12px;
+  }
+  .para-site .studio-home .loop-composition figcaption {
+    font-size: 10px;
+  }
+  .para-site .studio-home .loop-task-capsule {
+    padding: 8px 12px;
+    font-size: 10px;
+    gap: 6px;
+  }
+  .para-site .studio-home .loop-task-capsule .music-icon {
+    width: 16px;
+    height: 16px;
+  }
+  .para-site .studio-home .loop-record-label,
+  .para-site .studio-home .loop-response-label {
+    font-size: 9px;
+  }
+  .para-site .studio-home .loop-next-instruction {
+    font-size: 19px;
+  }
+  .para-site .studio-home .loop-return-label {
+    font-size: 9px;
+  }
+  .para-site .studio-home .scene-perspectives {
+    padding-block: 48px 100px;
+  }
+  .para-site .studio-home .perspective-intro .scene-heading {
+    font-size: 48px;
+  }
+  .para-site .studio-home .perspective-intro .text-link {
+    margin-top: 16px;
+    font-size: 13px;
+  }
+  .para-site .studio-home .perspective-scene-grid {
+    gap: 24px;
+  }
+  .para-site .studio-home .perspective-tabs button {
+    font-size: 12px;
+    min-height: 60px;
+  }
+  .para-site .studio-home .perspective-signal {
+    margin-top: 12px;
+  }
+  .para-site .studio-home .perspective-art-label {
+    font-size: 10px;
+    margin-top: -8px;
+  }
+  .para-site .studio-home .perspective-signal figcaption {
+    font-size: 10px;
+    margin-top: 16px;
+  }
+  .para-site .studio-home .perspective-panes {
+    margin-top: 24px;
+  }
+  .para-site .studio-home .perspective-pane h3 {
+    font-size: 32px;
+  }
+  .para-site .studio-home .perspective-pane p {
+    font-size: 12px;
+  }
+  .para-site .studio-home .perspective-handoff {
+    height: 70px;
+  }
+  .para-site .studio-home .scene-belief {
+    padding-block: 64px 48px;
+  }
+  .para-site .studio-home .belief-aperture {
+    top: -60px;
+  }
+  .para-site .studio-home .scene-belief .scene-heading {
+    font-size: clamp(48px, 12.7vw, 66px);
+    line-height: 1.08;
+  }
+  .para-site .studio-home .belief-support {
+    margin-top: 28px;
+    font-size: 15px;
+    max-width: 28ch;
+  }
+  .para-site .studio-home .belief-signal {
+    height: 88px;
+    margin-block: 28px;
+  }
+  .para-site .studio-home .belief-cues {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+  .para-site .studio-home .belief-cues li {
+    font-size: 11px;
+  }
+  .para-site .studio-home .scene-closing {
+    padding-block: 48px;
+  }
+  .para-site .studio-home .waitlist-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .para-site .studio-home .closing-mark {
+    width: 270px;
+    margin-bottom: 28px;
+  }
+  .para-site .studio-home .scene-closing .scene-heading {
+    font-size: 52px;
+  }
+  .para-site .studio-home .waitlist-form {
+    padding: 24px;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .studio-home {
+    --story-active-ink: var(--para-paper);
+    --story-active-dot: var(--para-apricot);
+  }
+  .para-site .studio-home .sculpture-wave {
+    stroke: var(--para-paper);
+  }
+  .para-site .studio-home .sculpture-unfold,
+  .para-site .studio-home .sculpture-next,
+  .para-site .studio-home .loop-route-active,
+  .para-site .studio-home .loop-next-path,
+  .para-site .studio-home .perspective-wave,
+  .para-site .studio-home .perspective-next,
+  .para-site .studio-home .perspective-history,
+  .para-site .studio-home .perspective-handoff path {
+    fill: none;
+    stroke: var(--para-apricot);
+  }
+  .para-site .studio-home .loop-traveller circle:last-child,
+  .para-site .studio-home .perspective-origin {
+    fill: var(--para-apricot);
+  }
+  .para-site .studio-home .loop-traveller circle:first-child {
+    stroke: var(--para-apricot);
+  }
+  .para-site .studio-home .hero-stage-keys button[aria-current="step"],
+  .para-site .studio-home .scene-loop .loop-step h3,
+  .para-site .studio-home .assignment-capsule .music-icon,
+  .para-site .studio-home .assignment-capsule > span:last-child {
+    color: var(--para-paper);
+  }
+  .para-site .studio-home .audience-tab-indicator {
+    background: var(--para-paper);
+  }
+  .para-site .studio-home .closing-mark path {
+    stroke: var(--para-paper);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .hero-copy,
+  .para-site .studio-home .signal-sculpture > svg,
+  .para-site .studio-home .scene-belief .headline-mask > span {
+    opacity: 1;
+    transform: none;
+  }
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+  .para-site .studio-home .loop-sticky {
+    position: relative;
+    top: auto;
+    min-height: 0;
+  }
+  .para-site .studio-home .ambient-toggle {
+    display: none;
+  }
+  .para-site .studio-home .loop-route-active,
+  .para-site .studio-home .belief-wave-main,
+  .para-site .studio-home .closing-mark path {
+    stroke-dashoffset: 0;
+  }
+  .para-site .studio-home .loop-wave,
+  .para-site .studio-home .loop-feedback-pins,
+  .para-site .studio-home .loop-next-instruction,
+  .para-site .studio-home .loop-next-path,
+  .para-site .studio-home .loop-response-label {
+    opacity: 1;
+    transform: none;
+  }
+  .para-site .studio-home .belief-aperture {
+    clip-path: none;
+  }
+}
+

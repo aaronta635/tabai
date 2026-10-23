@@ -1,0 +1,380 @@
+/* Reading hierarchy: one message and one visual per scene. */
+.para-site .studio-home .hero-grid {
+  padding-block: 48px 32px;
+}
+.para-site .studio-home .hero-story-controls {
+  justify-content: flex-end;
+  margin: 0;
+}
+.para-site .studio-home .hero-artwork .signal-sculpture {
+  aspect-ratio: 680 / 610;
+}
+.para-site .studio-home .hero-artwork .approved-listening {
+  inset: 0;
+}
+.para-site .studio-home .hero-artwork .signal-material {
+  inset: 7% 7% 5%;
+}
+.para-site .studio-home .hero-handoff {
+  height: 48px;
+}
+
+.para-site .studio-home .scene-loop {
+  min-height: 260svh;
+}
+.para-site .studio-home .loop-sticky {
+  position: sticky;
+  top: var(--header-height);
+  min-height: calc(100svh - var(--header-height));
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  padding-block: 24px;
+}
+.para-site .studio-home .loop-heading-slot {
+  width: 100%;
+  min-height: 156px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+.para-site .studio-home .loop-current-heading {
+  font-size: clamp(40px, 4.4vw, 60px);
+  line-height: 1.35;
+  max-width: 22ch;
+  margin: 0;
+  overflow: clip;
+  padding-block: 0.15em;
+}
+.para-site .studio-home .loop-current-heading > span {
+  display: block;
+  animation: focus-headline-in 340ms var(--ease-phrase) both;
+}
+.para-site .studio-home .loop-composition {
+  width: min(640px, 100%);
+  margin: 0;
+  text-align: center;
+}
+.para-site .studio-home .loop-diagram {
+  width: 100%;
+}
+.para-site .studio-home .loop-diagram > svg {
+  max-height: none;
+}
+.para-site .studio-home .loop-composition figcaption {
+  margin-top: 12px;
+  font-size: 11px;
+  text-align: center;
+}
+.para-site .studio-home .loop-record-label {
+  opacity: 0;
+}
+.para-site .studio-home
+  .scene-loop:is([data-stage="2"], [data-stage="3"], [data-stage="4"])
+  .loop-record-label {
+  opacity: 1;
+}
+.para-site .studio-home
+  .scene-loop:is([data-stage="2"], [data-stage="3"], [data-stage="4"])
+  .loop-task-capsule {
+  opacity: 0;
+}
+.para-site .studio-home .loop-next-instruction {
+  font-size: 18px;
+}
+.para-site .studio-home .loop-static-summary {
+  max-width: 55ch;
+  margin: 20px auto 0;
+  font-size: 15px;
+}
+.para-site .studio-home .scene-loop[data-enhanced="true"] .loop-static-summary {
+  display: none;
+}
+.para-site .studio-home
+  .scene-loop:not([data-enhanced="true"])
+  :is(
+    .loop-wave,
+    .loop-feedback-pins,
+    .loop-recording-ground,
+    .loop-timestamp
+  ) {
+  opacity: 1;
+  transform: none;
+}
+
+.para-site .studio-home .perspective-intro {
+  margin-bottom: 32px;
+}
+.para-site .studio-home .perspective-pane h3 {
+  margin-bottom: 0;
+}
+.para-site .studio-home .perspective-pane p {
+  margin-bottom: 0;
+}
+.para-site .studio-home .perspective-signal figcaption {
+  margin-top: 8px;
+}
+.para-site .studio-home .belief-emblem-surface {
+  position: absolute;
+  top: 8%;
+  right: 0;
+  width: 152px;
+  height: 152px;
+  border-radius: 50%;
+  background: var(--para-ivory)
+    url("/brand/para/resources/para-material-quiet-grain.webp") center / cover;
+  border: 1px solid var(--para-sand);
+  display: grid;
+  place-items: center;
+}
+.para-site .studio-home .belief-emblem-surface .belief-emblem {
+  position: static;
+  width: 112px;
+  height: 112px;
+  margin: 0;
+}
+.para-site .studio-home .scene-belief .scene-heading {
+  padding-right: 160px;
+}
+.para-site .studio-home .belief-cues {
+  gap: 32px;
+}
+.para-site .studio-home .belief-cues li {
+  border: 0;
+  padding: 0;
+}
+.para-site .studio-home .belief-phrase {
+  width: 100%;
+  min-height: 124px;
+  text-align: left;
+  border: 0;
+  border-top: 1px solid #f3ede24d;
+  background: none;
+  color: var(--para-ivory);
+  padding: 20px 6px 12px;
+  font: 500 19px/1.6 var(--font-body);
+  transform-origin: left center;
+  transition:
+    transform 400ms var(--ease-phrase),
+    filter 400ms ease,
+    opacity 400ms ease;
+}
+.para-site .studio-home .belief-phrase-index {
+  display: block;
+  font-size: 11px;
+  margin-bottom: 12px;
+  color: var(--para-sand);
+}
+.para-site .studio-home .belief-cues .belief-phrase-label {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+}
+.para-site .studio-home
+  .belief-focus[data-available="true"]
+  .belief-phrase[aria-pressed="false"] {
+  filter: blur(0.45px);
+  opacity: 0.72;
+  transform: scale(0.94);
+}
+.para-site .studio-home
+  .belief-focus[data-available="true"]
+  .belief-phrase[aria-pressed="true"] {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.06);
+  border-color: var(--para-sand);
+}
+.para-site .studio-home .belief-phrase:focus-visible {
+  outline-color: var(--para-sand);
+}
+.para-site .studio-home .belief-cycle-control {
+  color: var(--para-ivory);
+  margin: 16px 0 0 auto;
+  width: fit-content;
+  display: flex;
+}
+.para-site .studio-home .closing-mark {
+  width: fit-content;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: auto;
+  margin: 0 0 32px;
+}
+.para-site .studio-home .closing-mark .brand-logo {
+  position: static;
+  width: auto;
+  max-width: 100%;
+  padding: 20px;
+}
+.para-site .studio-home .closing-mark .brand-logo img {
+  width: 280px;
+  max-width: 100%;
+}
+@keyframes focus-headline-in {
+  from {
+    transform: translateY(9px);
+  }
+  to {
+    transform: none;
+  }
+}
+@media (max-width: 1199px) {
+  .para-site .studio-home .hero-artwork .approved-listening {
+    inset: 8% 12% 12%;
+  }
+}
+@media (max-width: 900px) {
+  .para-site .studio-home .scene-loop {
+    min-height: 240svh;
+  }
+  .para-site .studio-home .loop-heading-slot {
+    min-height: 130px;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(580px, 100%);
+  }
+  .para-site .studio-home .belief-cues {
+    gap: 24px;
+  }
+  .para-site .studio-home .belief-phrase {
+    font-size: 17px;
+  }
+}
+@media (max-width: 640px) {
+  .para-site .studio-home .hero-grid {
+    padding-block: 28px 12px;
+  }
+  .para-site .studio-home .hero-artwork .signal-sculpture {
+    aspect-ratio: auto;
+    height: 280px;
+  }
+  .para-site .studio-home .hero-artwork .approved-listening {
+    inset: 0 15% 5%;
+  }
+  .para-site .studio-home .hero-story-controls {
+    margin-top: 4px;
+  }
+  .para-site .studio-home .scene-loop {
+    min-height: 230svh;
+  }
+  .para-site .studio-home .loop-sticky {
+    gap: 12px;
+    padding-block: 20px;
+  }
+  .para-site .studio-home .loop-heading-slot {
+    min-height: 112px;
+  }
+  .para-site .studio-home .loop-current-heading {
+    font-size: 34px;
+    max-width: 20ch;
+    line-height: 1.4;
+  }
+  html[lang="vi"] .para-site .studio-home .loop-current-heading {
+    font-size: 32px;
+    letter-spacing: -0.01em;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(100%, 440px);
+  }
+  .para-site .studio-home .loop-next-instruction {
+    font-size: 15px;
+  }
+  .para-site .studio-home .belief-emblem-surface {
+    position: relative;
+    top: auto;
+    width: 104px;
+    height: 104px;
+    margin: 0 0 28px auto;
+  }
+  .para-site .studio-home .belief-emblem-surface .belief-emblem {
+    width: 80px;
+    height: 80px;
+  }
+  .para-site .studio-home .scene-belief .scene-heading {
+    padding: 0;
+  }
+  .para-site .studio-home .belief-cues {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 24px;
+  }
+  .para-site .studio-home .belief-phrase {
+    font-size: 16px;
+    min-height: 124px;
+    padding-inline: 4px;
+  }
+  .para-site .studio-home .closing-mark .brand-logo {
+    padding: 18px;
+  }
+}
+@media (max-height: 740px) and (min-width: 641px) {
+  .para-site .studio-home .loop-sticky {
+    flex-direction: row;
+    gap: 24px;
+  }
+  .para-site .studio-home .loop-heading-slot {
+    width: 45%;
+    min-height: 140px;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(48%, 460px);
+  }
+  .para-site .studio-home .loop-current-heading {
+    font-size: 38px;
+  }
+}
+@media (max-height: 650px) and (max-width: 640px) {
+  .para-site .studio-home .loop-heading-slot {
+    min-height: 92px;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(100%, 300px);
+  }
+  .para-site .studio-home .loop-sticky {
+    gap: 8px;
+    padding-block: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+  .para-site .studio-home .loop-sticky {
+    position: relative;
+    top: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding-block: 48px;
+  }
+  .para-site .studio-home .loop-heading-slot {
+    width: 100%;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(640px, 100%);
+  }
+  .para-site .studio-home .loop-current-heading > span {
+    animation: none;
+  }
+  .para-site .studio-home .scene-loop[data-enhanced] .loop-static-summary {
+    display: block;
+  }
+  .para-site .studio-home .belief-focus[data-available] .belief-phrase[aria-pressed],
+  .para-site .studio-home .belief-phrase {
+    filter: none;
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .para-site .studio-home .belief-cycle-control {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .para-site .studio-home .belief-focus[data-available] .belief-phrase[aria-pressed] {
+    filter: none;
+    opacity: 1;
+  }
+}
+

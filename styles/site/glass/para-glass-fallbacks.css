@@ -1,0 +1,70 @@
+/* Load last. Explicit solid mode wins over enhancement, including outline surfaces. */
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .para-site .para-glass > .para-glass__surface {
+    background: var(--para-glass-solid, #f3ede2) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .para-site .para-glass > .para-glass__texture,
+  .para-site .para-glass > .para-glass__rim {
+    display: none !important;
+  }
+}
+.para-site :is([data-para-glass="solid"].para-glass, [data-para-glass="solid"] .para-glass)
+  > .para-glass__surface {
+  background: var(--para-glass-solid, #f3ede2) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+.para-site :is([data-para-glass="solid"].para-glass, [data-para-glass="solid"] .para-glass)
+  > :is(.para-glass__texture, .para-glass__rim) {
+  display: none !important;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .para-site .para-glass > .para-glass__surface {
+    background: var(--para-glass-solid, #f3ede2) !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
+  .para-site .para-glass > .para-glass__texture,
+  .para-site .para-glass > .para-glass__rim {
+    display: none !important;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .para-glass,
+  .para-site .para-glass > .para-glass__surface {
+    transition: none;
+    animation: none;
+  }
+  .para-site .para-glass--interactive:active:not(:disabled):not([aria-disabled="true"]) {
+    transform: none;
+  }
+}
+@media (forced-colors: active) {
+  .para-site .para-glass {
+    color: CanvasText;
+    forced-color-adjust: auto;
+  }
+  .para-site .para-glass > .para-glass__surface {
+    background: Canvas !important;
+    border: 1px solid CanvasText !important;
+    box-shadow: none !important;
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .para-site .para-glass > .para-glass__texture,
+  .para-site .para-glass > .para-glass__rim {
+    display: none !important;
+  }
+  .para-site .para-glass:focus-visible {
+    outline: 2px solid Highlight;
+    box-shadow: none;
+  }
+}
+

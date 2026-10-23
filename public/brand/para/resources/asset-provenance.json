@@ -1,0 +1,190 @@
+{
+  "source": "design-resources/PARA_Brand_Resources",
+  "assets": [
+    {
+      "source": "01_LOGO/Solid/Web/para-horizontal-espresso-optical.svg",
+      "file": "para-horizontal-espresso-optical.svg",
+      "sha256": "081f6661139e5f8c799d478770966a907a58c2fe968209172ff436408b195b69"
+    },
+    {
+      "source": "01_LOGO/Solid/Web/para-horizontal-ivory-optical.svg",
+      "file": "para-horizontal-ivory-optical.svg",
+      "sha256": "cb49cbd48de02930ac4eacfda2311d50bef8a55101d82649c302599a330c0d61"
+    },
+    {
+      "source": "01_LOGO/Grain_Gradient/Web/para-horizontal-light-grain-optical.svg",
+      "file": "para-horizontal-light-grain-optical.svg",
+      "sha256": "146835db0991ccf9450b78a7f90579f662b0578ad84d3dc8c0725a81e17e8098"
+    },
+    {
+      "source": "01_LOGO/Grain_Gradient/Web/para-horizontal-dark-grain-optical.svg",
+      "file": "para-horizontal-dark-grain-optical.svg",
+      "sha256": "0cebca525f2a6f2bd36e963dc9941180093838bf81a6c792157c033d2edc3d8f"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/PlusJakartaSans[wght].woff2",
+      "file": "PlusJakartaSans[wght].woff2",
+      "sha256": "b7949b0154fbaa405e2e25675858776df4defe9d54e189be85f46b3bedf17393"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/OFL.txt",
+      "file": "PlusJakartaSans-OFL.txt",
+      "sha256": "995c7199cab65954f545996326755daee7b63cc6b42b06c13da1f9502ab08a99"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Regular.woff2",
+      "file": "BeVietnamPro-Regular.woff2",
+      "sha256": "4ba7c18af82def18b3dc3d6fca8b1759730bb1cfd4760d6d188be2025f6f621d"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-Medium.woff2",
+      "file": "BeVietnamPro-Medium.woff2",
+      "sha256": "7be91ec7500f13e19b20f0a409e41b977922c14f730edf9dc75a5aab3999cdca"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/BeVietnamPro-SemiBold.woff2",
+      "file": "BeVietnamPro-SemiBold.woff2",
+      "sha256": "cc484270a611017ec1798f27eccb2063525c330964050f41ddd7a6cf48cc41f4"
+    },
+    {
+      "source": "03_TYPOGRAPHY/Fonts_and_Licences/bevietnampro/OFL.txt",
+      "file": "BeVietnamPro-OFL.txt",
+      "sha256": "6b7f8f73609a25ea78c891e34cf37b06f8a676b7ea986e941e43b009110f2a85"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-assignment-grain.svg",
+      "file": "para-expressive-assignment-grain.svg",
+      "sha256": "ae202fb82af02fd6de930dd2c2eb270d3109c74c1eafb13c3f7c17d054cb7015"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-rhythm-grain.svg",
+      "file": "para-expressive-rhythm-grain.svg",
+      "sha256": "35abe4e1285d613cbbe2aa51845ab352a00d37eb1b4e704e79ace693d80484ac"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-recording-grain.svg",
+      "file": "para-expressive-recording-grain.svg",
+      "sha256": "fed0793a9999c0db61194f3d230c1e1c168cc3217c8df06da74383bb418906a6"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-feedback-grain.svg",
+      "file": "para-expressive-feedback-grain.svg",
+      "sha256": "9715620da3df18388b3fba752fa76a93ba7678f0927b52145278ba639cb8d1d5"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-next-step-grain.svg",
+      "file": "para-expressive-next-step-grain.svg",
+      "sha256": "b3a321cd381222a13a7d5d6b731fb6f051058f4dde81017571b64c3122903b6e"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-listening-grain.svg",
+      "file": "para-expressive-listening-grain.svg",
+      "sha256": "0561e5b20952d9b06bb58595379547b88565bbe1bc647680b6891228cb1bbbea"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-repeat-improve-grain.svg",
+      "file": "para-expressive-repeat-improve-grain.svg",
+      "sha256": "356605ccd7084916c23a1a889629dbb0e80a376deb41b5f631adaf1f430629c9"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-review-grain.svg",
+      "file": "para-expressive-review-grain.svg",
+      "sha256": "6bb3a63522cf5b5f980223e8935c5f85daf3667ef2f43499f8ac7a9ed71f484e"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-practise-grain.svg",
+      "file": "para-expressive-practise-grain.svg",
+      "sha256": "7af5cd9a1d789c9719ce7737b61e09485e4d8558e152419d804325a8a35f5853"
+    },
+    {
+      "source": "04_ICONS/Landing_and_Communication/para-expressive-progress-grain.svg",
+      "file": "para-expressive-progress-grain.svg",
+      "sha256": "ee288a5a7c8a0b15b9779458695d8b659b0cd30958134a6e2db326e51da89255"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-forward-24-solid.svg",
+      "file": "para-ui-forward-24-solid.svg",
+      "sha256": "f0c0f7e33fee22de58b9e51084c822655853bf9fbd0ed24750f07d6fa64885e3"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-assignment-24-solid.svg",
+      "file": "para-ui-assignment-24-solid.svg",
+      "sha256": "c26fa00adb36a2028b243d99a500ca96ece01e60ec0364fbc1ae49c9a0e453fb"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-pause-24-solid.svg",
+      "file": "para-ui-pause-24-solid.svg",
+      "sha256": "39b470f48c6f0043fb390e1de7c1c8616174401b24134b7959242da04e3c2fa6"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-play-24-solid.svg",
+      "file": "para-ui-play-24-solid.svg",
+      "sha256": "01474971b9610ca7aec917ccef67bb9b64adb6d83a81948236586516169be5eb"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-menu-24-solid.svg",
+      "file": "para-ui-menu-24-solid.svg",
+      "sha256": "bf1df05365ba824d203c2983d1341f81441992c1fb93efed56f166eb091cbdf4"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-close-24-solid.svg",
+      "file": "para-ui-close-24-solid.svg",
+      "sha256": "bddd6446aa17dfee364b557f2bb18be70f9d4855f1297be8b7ccb7a7a8e70f76"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-warning-24-solid.svg",
+      "file": "para-ui-warning-24-solid.svg",
+      "sha256": "3b3786a5d7e379bebb5ea86dc7d91875e055c9db1d9de338cf8d0ab4fb82415b"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-language-24-solid.svg",
+      "file": "para-ui-language-24-solid.svg",
+      "sha256": "efc887ccc57ef072aa6148d8bf3f02159065490647830f2102298df8d53106cf"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-comment-24-solid.svg",
+      "file": "para-ui-comment-24-solid.svg",
+      "sha256": "24e23020b99148c4f94e207a3c966a93f8e0151f1d4894edba275b1442c0e010"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-upload-24-solid.svg",
+      "file": "para-ui-upload-24-solid.svg",
+      "sha256": "f7970157787e4a89c5ad50ea8fe9d528a84fd0432609a6db12a5b508d7b9cd84"
+    },
+    {
+      "source": "04_ICONS/Application_UI/para-ui-review-24-solid.svg",
+      "file": "para-ui-review-24-solid.svg",
+      "sha256": "fa9e16f9b10e65c3bf5590ccd843ae06dd120054c38e6dbf0a9148da73a66d51"
+    },
+    {
+      "source": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-en-grain.svg",
+      "file": "para-art-03-listen-en-grain.svg",
+      "sha256": "5ccf2afd8e252e966d6dbd9cbe16bbe995fe6813de5fdcac7bed66888d968718"
+    },
+    {
+      "source": "05_GRAPHIC_ARTWORK/Grain_Gradient/para-art-03-listen-vi-grain.svg",
+      "file": "para-art-03-listen-vi-grain.svg",
+      "sha256": "4aeb81362f95127c8372fc36f6a9278989c134d0628497a75e9c22c923346412"
+    },
+    {
+      "source": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-warm-grain.webp",
+      "file": "para-material-warm-grain.webp",
+      "sha256": "98ee6b367da0ae5332c97fc99ebd6a568ed7867f11ce188752d934eb3332310a"
+    },
+    {
+      "source": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-deep-grain.webp",
+      "file": "para-material-deep-grain.webp",
+      "sha256": "332aaf45c58079d5181980cb3a6957ea002ccccf76027e65383b40212f6a661f"
+    },
+    {
+      "source": "06_GRADIENTS_AND_TEXTURES/Web_Exports/para-material-quiet-grain.webp",
+      "file": "para-material-quiet-grain.webp",
+      "sha256": "d48076ed02f1b264ee552201e8b9cf3ed9a335eae143e8fa9036d9249227ecbd"
+    },
+    {
+      "source": "06_GRADIENTS_AND_TEXTURES/Grain_Overlays/para-film-grain-256.png",
+      "file": "para-film-grain-256.png",
+      "sha256": "97b30b0e07adc2389787e765e2d78a913928d642e828422013775e20fd2532ed"
+    }
+  ]
+}

@@ -1,0 +1,248 @@
+/* Performance images complement the approved artwork. All text remains on
+   separate layers. Background 0, contrast scrim 1, reading / controls 2. */
+.para-site .studio-home .belief-photograph {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: max(0px, calc((100vw - 1440px) / 2 - 160px));
+  width: min(78vw, 1120px);
+  aspect-ratio: 1436 / 1095;
+  max-height: 100%;
+  overflow: clip;
+  pointer-events: none;
+}
+.para-site .studio-home .belief-photograph img {
+  object-fit: contain;
+  object-position: right top;
+  filter: saturate(0.72) contrast(0.95);
+  transform: scale(calc(1.015 - var(--scene-enter, 1) * 0.015));
+  transform-origin: 72% 45%;
+}
+.para-site .studio-home .belief-photo-scrim {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(
+      90deg,
+      var(--para-espresso) 0%,
+      var(--para-espresso) 28%,
+      #3b2f2ae8 57%,
+      #3b2f2a45 82%,
+      #3b2f2a33 100%
+    ),
+    linear-gradient(
+      0deg,
+      var(--para-espresso) 0%,
+      #3b2f2af2 14%,
+      transparent 52%
+    );
+}
+.para-site .studio-home .belief-with-photograph .belief-statement {
+  z-index: 2;
+}
+.para-site .studio-home .belief-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 80px;
+  gap: 24px;
+  align-items: center;
+  width: min(66%, 780px);
+}
+.para-site .studio-home .belief-copy .eyebrow {
+  margin: 0;
+}
+.para-site .studio-home .belief-copy .belief-emblem-surface {
+  position: static;
+  width: 80px;
+  height: 80px;
+  margin: 0;
+}
+.para-site .studio-home .belief-copy .belief-emblem {
+  width: 72px;
+  height: 72px;
+}
+.para-site .studio-home .belief-copy .scene-heading {
+  grid-column: 1 / -1;
+  max-width: 100%;
+  padding: 0;
+  font-size: clamp(52px, 5.2vw, 74px);
+  margin: 0;
+}
+html[lang="vi"] .para-site .studio-home .belief-copy .scene-heading {
+  font-size: clamp(48px, 4.8vw, 68px);
+  line-height: 1.4;
+}
+html[lang="vi"] .para-site .studio-home .belief-copy .headline-mask > span {
+  text-wrap: pretty;
+}
+.para-site .studio-home .belief-with-photograph .belief-focus {
+  position: relative;
+  isolation: isolate;
+  background: none;
+}
+.para-site .studio-home .belief-with-photograph .belief-focus::before {
+  content: "";
+  position: absolute;
+  inset: -64px calc((100% - 100vw) / 2) -64px;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    transparent 0,
+    var(--para-espresso) 64px,
+    var(--para-espresso) 100%
+  );
+  pointer-events: none;
+}
+.para-site .studio-home .closing-editorial {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: 80px;
+  margin-bottom: 64px;
+}
+.para-site .studio-home .performance-portraits {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.74fr);
+  gap: 24px;
+  align-items: end;
+  width: min(100%, 520px);
+  padding-bottom: 24px;
+  transform: translateY(calc((1 - var(--scene-enter, 1)) * 10px));
+}
+.para-site .studio-home .performance-print {
+  margin: 0;
+  padding: 8px;
+  border-radius: var(--para-glass-radius-panel);
+  background: var(--para-ivory);
+  border: 1px solid rgb(243 237 226 / 0.8);
+  box-shadow:
+    var(--para-glass-ivory-raised-shadow),
+    inset 0 1px 0 var(--para-ivory);
+}
+.para-site .studio-home .performance-print img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--para-glass-radius-small);
+}
+.para-site .studio-home .performance-print-bass {
+  margin-bottom: -24px;
+}
+.para-site .studio-home .closing-editorial .closing-mark {
+  margin: 0 0 0 -20px;
+}
+@media (max-width: 1100px) and (min-width: 901px) {
+  .para-site .studio-home .belief-copy {
+    width: 68%;
+  }
+  .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 54px;
+  }
+  html[lang="vi"] .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 50px;
+  }
+  .para-site .studio-home .closing-editorial {
+    gap: 40px;
+  }
+}
+@media (max-width: 900px) {
+  .para-site .studio-home .belief-with-photograph {
+    padding-top: 0;
+  }
+  .para-site .studio-home .belief-photograph {
+    position: relative;
+    width: 100%;
+    right: auto;
+    max-height: none;
+    aspect-ratio: 1436 / 1095;
+    margin-bottom: 28px;
+  }
+  .para-site .studio-home .belief-photograph img {
+    object-fit: contain;
+    object-position: center;
+  }
+  .para-site .studio-home .belief-photograph::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, var(--para-espresso) 0%, transparent 32%);
+    pointer-events: none;
+  }
+  .para-site .studio-home .belief-photo-scrim {
+    background: none;
+  }
+  .para-site .studio-home .belief-copy {
+    width: 100%;
+  }
+  .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 50px;
+  }
+  html[lang="vi"] .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 46px;
+  }
+  .para-site .studio-home .closing-editorial {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    margin-bottom: 48px;
+  }
+  .para-site .studio-home .performance-portraits {
+    width: min(100%, 520px);
+  }
+}
+@media (max-width: 640px) {
+  .para-site .studio-home .belief-copy {
+    grid-template-columns: minmax(0, 1fr) 80px;
+    gap: 24px 16px;
+  }
+  .para-site .studio-home .belief-copy .belief-emblem-surface {
+    width: 80px;
+    height: 80px;
+  }
+  .para-site .studio-home .belief-copy .belief-emblem {
+    width: 72px;
+    height: 72px;
+  }
+  .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 38px;
+  }
+  html[lang="vi"] .para-site .studio-home .belief-copy .scene-heading {
+    font-size: 34px;
+  }
+  .para-site .studio-home .belief-photograph {
+    margin-bottom: 20px;
+  }
+  .para-site .studio-home .performance-portraits {
+    gap: 16px;
+    padding-bottom: 20px;
+  }
+  .para-site .studio-home .performance-print {
+    padding: 6px;
+  }
+  .para-site .studio-home .performance-print-bass {
+    margin-bottom: -20px;
+  }
+  .para-site .studio-home .closing-editorial {
+    gap: 28px;
+    margin-bottom: 36px;
+  }
+  .para-site .studio-home .closing-editorial .closing-mark {
+    margin-left: -18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .belief-photograph img,
+  .para-site .studio-home .performance-portraits {
+    transform: none;
+  }
+}
+@media (forced-colors: active) {
+  .para-site .studio-home .belief-photograph,
+  .para-site .studio-home .belief-photo-scrim {
+    display: none;
+  }
+  .para-site .studio-home .belief-with-photograph {
+    padding-top: 64px;
+  }
+}
+

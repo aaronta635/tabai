@@ -1,0 +1,487 @@
+/* Integration layout only. Material values/layers come from the supplied add-on.
+   Local stack: artwork 0, path 1, glass 2, readable content 3; header 50. */
+.para-site [data-para-glass="solid"] .para-glass__surface,
+.para-site [data-para-glass="solid"].para-glass > .para-glass__surface {
+  transition: none;
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .para-site .para-glass > .para-glass__surface {
+    transition: none;
+  }
+}
+.para-site .site-header.para-glass {
+  position: sticky;
+  z-index: 50;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  backdrop-filter: none;
+  color: var(--color-text);
+}
+.para-site .site-header > .para-glass__surface {
+  border-width: 0 0 1px;
+}
+.para-site .site-header > .para-glass__texture {
+  display: none;
+}
+.para-site .studio-home .hero-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+  gap: clamp(32px, 4vw, 64px);
+  padding-block: 40px 24px;
+}
+.para-site .studio-home .hero-copy {
+  position: relative;
+  z-index: 1;
+}
+.para-site .studio-home .hero-lead {
+  max-width: 40ch;
+  line-height: 1.75;
+}
+.para-site .studio-home .signal-sculpture {
+  isolation: auto;
+  z-index: 0;
+  aspect-ratio: 680 / 590;
+}
+.para-site .studio-home .signal-material {
+  inset: 5% 5% 2% 5%;
+  z-index: 0;
+  mask: none;
+  border-radius: 48% 48% 12% 48%;
+  opacity: 1;
+  background-image: url("/brand/para/resources/para-material-warm-grain.webp");
+  transform: rotate(-7deg);
+  animation: glass-ground-drift 11s ease-in-out infinite;
+}
+.para-site .studio-home .signal-sculpture > .hero-signal-path {
+  z-index: 1;
+}
+.para-site .studio-home .approved-listening {
+  inset: 0 0 7%;
+  z-index: 1;
+}
+.para-site .studio-home
+  .material-story:is([data-stage="2"], [data-stage="3"], [data-stage="4"])
+  .approved-listening {
+  opacity: 0.64;
+  scale: 0.94;
+}
+.para-site .studio-home .sculpture-timing {
+  z-index: 2;
+  color: var(--para-espresso);
+  top: 10%;
+  right: 7%;
+}
+.para-site .studio-home .assignment-capsule,
+.para-site .studio-home .recording-glass,
+.para-site .studio-home .feedback-label,
+.para-site .studio-home .loop-task-capsule,
+.para-site .studio-home .loop-timestamp {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  display: block;
+  z-index: 2;
+}
+.para-site .studio-home .assignment-capsule {
+  top: 61%;
+  left: 6%;
+  width: 78%;
+  min-height: 0;
+  animation: none;
+}
+.para-site .studio-home .assignment-material > .para-glass__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  min-height: 56px;
+}
+.para-site .studio-home .assignment-material .para-glass__content > span:last-child {
+  margin-left: auto;
+}
+.para-site .studio-home .recording-glass {
+  top: 51%;
+  left: 5%;
+  width: 88%;
+  /* Opacity on a backdrop ancestor temporarily flattens the blur. Bring the
+     panel into place at full material strength; only the SVG markers fade. */
+  opacity: 1;
+  visibility: hidden;
+  transition:
+    transform 750ms var(--ease-phrase),
+    visibility 0s;
+}
+.para-site .studio-home
+  .material-story:is([data-stage="2"], [data-stage="3"], [data-stage="4"])
+  .recording-glass {
+  visibility: visible;
+  transition-delay: 160ms;
+}
+.para-site .studio-home
+  .material-story:is([data-stage="2"], [data-stage="3"], [data-stage="4"])
+  .assignment-capsule {
+  transition-duration: 650ms, 220ms;
+}
+.para-site .studio-home .recording-material > .para-glass__content {
+  padding: 20px 22px 16px;
+}
+.para-site .studio-home .feedback-label {
+  top: 35%;
+  right: 1%;
+}
+.para-site .studio-home .feedback-material > .para-glass__content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+}
+.para-site .studio-home .feedback-material .para-icon {
+  color: var(--para-ivory);
+}
+.para-site .studio-home .next-label {
+  z-index: 2;
+  bottom: 0;
+  right: 8%;
+  color: var(--para-espresso);
+}
+.para-site .studio-home .signal-story figcaption {
+  margin-top: 20px;
+}
+.para-site .studio-home .hero-story-controls {
+  margin-top: 10px;
+}
+.para-site .studio-home .hero-baseline {
+  display: none;
+}
+.para-site .studio-home .hero-handoff {
+  height: 68px;
+}
+.para-site .studio-home .scene-loop {
+  min-height: 128svh;
+}
+.para-site .studio-home .loop-sticky {
+  padding-block: 28px;
+  gap: 64px;
+}
+.para-site .studio-home .loop-intro {
+  max-width: 35ch;
+}
+.para-site .studio-home .loop-material {
+  inset: 18% 10% 15%;
+  mask: none;
+  border-radius: 48% 16% 48% 16%;
+  opacity: 0.8;
+}
+.para-site .studio-home .loop-recording-ground {
+  z-index: 0;
+}
+.para-site .studio-home .loop-recording-ground > .para-glass {
+  height: 100%;
+}
+.para-site .studio-home .loop-diagram > svg {
+  position: relative;
+  z-index: 1;
+}
+.para-site .studio-home .loop-task-capsule {
+  top: 12%;
+  left: 13%;
+}
+.para-site .studio-home .loop-task-capsule .para-glass__content {
+  min-height: 44px;
+  padding: 10px 14px;
+}
+.para-site .studio-home .loop-timestamp {
+  right: 12%;
+  top: 61%;
+}
+.para-site .studio-home .loop-timestamp .para-glass__content {
+  padding: 8px 12px;
+}
+.para-site .studio-home .loop-record-label {
+  z-index: 2;
+}
+.para-site .studio-home .loop-response-label {
+  z-index: 2;
+  top: 27%;
+  right: 16%;
+}
+.para-site .studio-home .scene-perspectives {
+  padding-block: 80px 120px;
+}
+.para-site .studio-home .perspective-scene-grid {
+  display: block;
+}
+.para-site .studio-home .perspective-intro {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px 48px;
+  align-items: end;
+  margin-bottom: 40px;
+}
+.para-site .studio-home .perspective-intro .eyebrow {
+  grid-column: 1 / -1;
+  margin-bottom: 0;
+}
+.para-site .studio-home .perspective-intro .scene-heading {
+  margin: 0;
+  font-size: clamp(40px, 4vw, 56px);
+}
+.para-site .studio-home .perspective-intro .text-link {
+  margin: 0 0 12px;
+}
+.para-site .studio-home .perspective-tabs {
+  max-width: 680px;
+}
+.para-site .studio-home .perspective-workspace {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.8fr);
+  align-items: center;
+  gap: 0;
+  margin-top: 24px;
+}
+.para-site .studio-home .perspective-workspace::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/brand/para/resources/para-material-quiet-grain.webp")
+    center / cover;
+  border-radius: 100px 12px 12px 12px;
+  pointer-events: none;
+}
+.para-site .studio-home .perspective-signal {
+  margin: 0;
+  padding: 24px;
+  position: relative;
+}
+.para-site .studio-home .perspective-material {
+  display: none;
+}
+.para-site .studio-home .perspective-reading {
+  margin: 24px;
+}
+.para-site .studio-home .perspective-panes {
+  background: transparent;
+  border: 0;
+  margin: 0;
+  padding: 28px;
+}
+.para-site .studio-home .perspective-pane h3 {
+  color: var(--para-espresso);
+  font-size: clamp(25px, 2.2vw, 32px);
+}
+.para-site .studio-home .perspective-pane p {
+  color: var(--para-espresso);
+  line-height: 1.75;
+}
+.para-site .studio-home .perspective-emblems {
+  top: -2%;
+  right: 8%;
+}
+.para-site .studio-home .perspective-art-label {
+  color: var(--para-espresso);
+}
+.para-site .studio-home .perspective-signal figcaption {
+  color: var(--para-espresso);
+}
+.para-site .studio-home .perspective-view {
+  transition-duration: 500ms, 650ms;
+}
+.para-site .studio-home .perspective-guide {
+  stroke: var(--para-saddle-brown);
+  opacity: 0.3;
+}
+.para-site .studio-home .perspective-wave,
+.para-site .studio-home .perspective-next,
+.para-site .studio-home .perspective-history {
+  stroke: var(--para-saddle-brown);
+}
+.para-site .studio-home .perspective-markers {
+  stroke: var(--para-espresso);
+}
+.para-site .studio-home .history-number {
+  fill: var(--para-espresso);
+}
+.para-site .studio-home .scene-closing {
+  padding-block: 80px;
+}
+.para-site .studio-home .waitlist-form {
+  box-shadow: none;
+}
+@keyframes glass-ground-drift {
+  0%,
+  100% {
+    transform: rotate(-7deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-4deg) translateY(-4px);
+  }
+}
+@media (max-width: 1199px) {
+  .para-site .studio-home .hero-grid {
+    gap: 28px;
+  }
+  .para-site .studio-home .approved-listening {
+    inset: 6% 14% 18%;
+  }
+  .para-site .studio-home .perspective-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+  }
+  .para-site .studio-home .perspective-reading {
+    margin: 16px;
+  }
+}
+@media (max-width: 900px) {
+  .para-site .studio-home .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+  .para-site .studio-home .loop-sticky {
+    padding-block: 48px;
+  }
+  .para-site .studio-home .perspective-intro {
+    display: block;
+  }
+  .para-site .studio-home .perspective-intro .scene-heading {
+    margin-block: 20px;
+  }
+  .para-site .studio-home .perspective-intro .text-link {
+    margin: 0;
+  }
+  .para-site .studio-home .perspective-workspace {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .para-site .studio-home .perspective-workspace::before {
+    inset: 0;
+    border-radius: 12px;
+  }
+  .para-site .studio-home .perspective-reading {
+    margin: 0 16px 16px;
+  }
+  .para-site .studio-home .perspective-signal {
+    padding: 20px 16px;
+  }
+}
+@media (max-width: 640px) {
+  .para-site .studio-home .hero-grid {
+    padding-block: 28px 12px;
+    gap: 24px;
+  }
+  .para-site .studio-home .signal-sculpture {
+    height: 290px;
+    width: 100%;
+    aspect-ratio: auto;
+  }
+  .para-site .studio-home .signal-material {
+    inset: 4% 4% 0 4%;
+  }
+  .para-site .studio-home .approved-listening {
+    inset: 0 18% 20%;
+  }
+  .para-site .studio-home .assignment-capsule {
+    top: 59%;
+    left: 5%;
+    width: 90%;
+  }
+  .para-site .studio-home .assignment-material > .para-glass__content {
+    padding: 12px 14px;
+    min-height: 52px;
+  }
+  .para-site .studio-home .recording-glass {
+    top: 47%;
+    left: 3%;
+    width: 94%;
+  }
+  .para-site .studio-home .recording-material > .para-glass__content {
+    padding: 14px;
+  }
+  .para-site .studio-home .feedback-label {
+    top: 25%;
+    right: 0;
+  }
+  .para-site .studio-home .feedback-material > .para-glass__content {
+    padding: 10px 12px;
+  }
+  .para-site .studio-home .next-label {
+    bottom: 0;
+    right: 8%;
+  }
+  .para-site .studio-home .hero-handoff {
+    height: 40px;
+  }
+  .para-site .studio-home .scene-perspectives {
+    padding-block: 48px 96px;
+  }
+  .para-site .studio-home .perspective-intro {
+    margin-bottom: 24px;
+  }
+  .para-site .studio-home .perspective-intro .scene-heading {
+    font-size: 36px;
+  }
+  .para-site .studio-home .perspective-panes {
+    padding: 20px;
+  }
+  .para-site .studio-home .perspective-pane h3 {
+    font-size: 23px;
+  }
+  .para-site .studio-home .perspective-emblems {
+    width: 72px;
+    height: 72px;
+    right: 3%;
+  }
+  .para-site .studio-home .perspective-emblem {
+    width: 72px;
+    height: 72px;
+  }
+  .para-site .studio-home .scene-closing {
+    padding-block: 48px;
+  }
+  .para-site .studio-home .loop-task-capsule .para-glass__content {
+    min-height: 36px;
+    padding: 8px 10px;
+  }
+}
+@media (max-height: 740px) {
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .site-header {
+    --para-glass-rgb: var(--para-glass-smoke-rgb);
+    --para-glass-solid: var(--para-glass-smoke-fallback);
+    --para-glass-border: var(--para-glass-smoke-border);
+    --para-glass-rim: var(--para-glass-smoke-rim);
+  }
+  .para-site .studio-home .perspective-pane h3 {
+    color: var(--para-espresso);
+  }
+  .para-site .studio-home .perspective-workspace::before {
+    background-color: var(--para-sand);
+  }
+  .para-site .studio-home .loop-record-label,
+  .para-site .studio-home .loop-response-label {
+    color: var(--para-espresso);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .scene-loop {
+    min-height: 0;
+  }
+  .para-site .studio-home .signal-material {
+    animation: none;
+    transform: none;
+  }
+  .para-site .studio-home .approved-listening {
+    opacity: 0.64;
+  }
+  .para-site .studio-home .recording-glass {
+    visibility: visible;
+    transition: none;
+  }
+}
+

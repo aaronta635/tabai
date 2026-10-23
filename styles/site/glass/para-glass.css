@@ -1,0 +1,213 @@
+/* Load tokens first, this file second, fallbacks last. No global reset or dependencies. */
+.para-site .para-glass {
+  position: relative;
+  z-index: 0;
+  box-sizing: border-box;
+  display: block;
+  border: 0;
+  border-radius: var(--para-glass-radius, var(--para-glass-radius-panel));
+  background: transparent;
+  color: var(--para-glass-foreground, var(--para-glass-espresso));
+  opacity: 1;
+  /* No filter, opacity or mask on this parent: keep content and backdrop separate. */
+  --para-glass-current-alpha: var(--para-glass-alpha);
+  --para-glass-shadow: var(--para-glass-low-shadow);
+}
+.para-site .para-glass--ivory {
+  --para-glass-rgb: var(--para-glass-ivory-rgb);
+  --para-glass-alpha: var(--para-glass-ivory-alpha);
+  --para-glass-hover-alpha: var(--para-glass-ivory-hover-alpha);
+  --para-glass-pressed-alpha: var(--para-glass-ivory-pressed-alpha);
+  --para-glass-blur: var(--para-glass-ivory-blur);
+  --para-glass-mobile-blur: var(--para-glass-ivory-mobile-blur);
+  --para-glass-saturation: var(--para-glass-ivory-saturation);
+  --para-glass-foreground: var(--para-glass-ivory-text);
+  --para-glass-solid: var(--para-glass-ivory-fallback);
+  --para-glass-border: var(--para-glass-ivory-border);
+  --para-glass-rim: var(--para-glass-ivory-rim);
+  --para-glass-shade: var(--para-glass-ivory-shade);
+  --para-glass-grain-opacity: var(--para-glass-ivory-grain-opacity);
+  --para-glass-grain-mobile: var(--para-glass-ivory-grain-mobile);
+  --para-glass-low-shadow: var(--para-glass-ivory-low-shadow);
+  --para-glass-raised-shadow: var(--para-glass-ivory-raised-shadow);
+}
+.para-site .para-glass--smoke {
+  --para-glass-rgb: var(--para-glass-smoke-rgb);
+  --para-glass-alpha: var(--para-glass-smoke-alpha);
+  --para-glass-hover-alpha: var(--para-glass-smoke-hover-alpha);
+  --para-glass-pressed-alpha: var(--para-glass-smoke-pressed-alpha);
+  --para-glass-blur: var(--para-glass-smoke-blur);
+  --para-glass-mobile-blur: var(--para-glass-smoke-mobile-blur);
+  --para-glass-saturation: var(--para-glass-smoke-saturation);
+  --para-glass-foreground: var(--para-glass-smoke-text);
+  --para-glass-solid: var(--para-glass-smoke-fallback);
+  --para-glass-border: var(--para-glass-smoke-border);
+  --para-glass-rim: var(--para-glass-smoke-rim);
+  --para-glass-shade: var(--para-glass-smoke-shade);
+  --para-glass-grain-opacity: var(--para-glass-smoke-grain-opacity);
+  --para-glass-grain-mobile: var(--para-glass-smoke-grain-mobile);
+  --para-glass-low-shadow: var(--para-glass-smoke-low-shadow);
+  --para-glass-raised-shadow: var(--para-glass-smoke-raised-shadow);
+}
+.para-site .para-glass--quiet {
+  --para-glass-rgb: var(--para-glass-quiet-rgb);
+  --para-glass-alpha: var(--para-glass-quiet-alpha);
+  --para-glass-hover-alpha: var(--para-glass-quiet-hover-alpha);
+  --para-glass-pressed-alpha: var(--para-glass-quiet-pressed-alpha);
+  --para-glass-blur: var(--para-glass-quiet-blur);
+  --para-glass-mobile-blur: var(--para-glass-quiet-mobile-blur);
+  --para-glass-saturation: var(--para-glass-quiet-saturation);
+  --para-glass-foreground: var(--para-glass-quiet-text);
+  --para-glass-solid: var(--para-glass-quiet-fallback);
+  --para-glass-border: var(--para-glass-quiet-border);
+  --para-glass-rim: var(--para-glass-quiet-rim);
+  --para-glass-shade: var(--para-glass-quiet-shade);
+  --para-glass-grain-opacity: var(--para-glass-quiet-grain-opacity);
+  --para-glass-grain-mobile: var(--para-glass-quiet-grain-mobile);
+  --para-glass-low-shadow: var(--para-glass-quiet-low-shadow);
+  --para-glass-raised-shadow: var(--para-glass-quiet-raised-shadow);
+}
+
+.para-site .para-glass__surface,
+.para-site .para-glass__texture,
+.para-site .para-glass__rim {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: inherit;
+  pointer-events: none;
+  user-select: none;
+}
+.para-site .para-glass__surface {
+  z-index: 0;
+  /* Solid is the default until supported enhancement is applied below. */
+  background-color: var(--para-glass-solid, var(--para-glass-ivory));
+  border: var(--para-glass-border-width) solid
+    rgb(var(--para-glass-border, 59 47 42 / 0.22));
+  box-shadow:
+    inset 0 1px 0 var(--para-glass-rim),
+    inset 0 -1px 0 var(--para-glass-shade),
+    var(--para-glass-shadow);
+  transition:
+    background-color var(--para-glass-duration) var(--para-glass-easing),
+    box-shadow var(--para-glass-duration) var(--para-glass-easing);
+}
+.para-site .para-glass__texture {
+  z-index: 1;
+  display: none;
+  background-image: url("/brand/para/glass/para-film-grain-256.png");
+  background-size: var(--para-glass-grain-size) var(--para-glass-grain-size);
+  background-repeat: repeat;
+  opacity: var(--para-glass-grain-opacity);
+}
+.para-site .para-glass__rim {
+  z-index: 2;
+}
+.para-site .para-glass--rising > .para-glass__rim {
+  background: url("/brand/para/glass/para-glass-rising-edge-ivory.svg") center /
+    100% 100% no-repeat;
+}
+.para-site .para-glass--smoke.para-glass--rising > .para-glass__rim {
+  background-image: url("/brand/para/glass/para-glass-rising-edge-smoke.svg");
+}
+.para-site .para-glass__content {
+  position: relative;
+  z-index: 3;
+  color: inherit;
+}
+.para-site .para-glass--raised {
+  --para-glass-shadow: var(--para-glass-raised-shadow);
+}
+.para-site .para-glass--low {
+  --para-glass-shadow: var(--para-glass-low-shadow);
+}
+.para-site .para-glass--control {
+  --para-glass-radius: var(--para-glass-radius-control);
+}
+.para-site .para-glass--square {
+  --para-glass-radius: var(--para-glass-radius-small);
+}
+.para-site .para-glass--functional > .para-glass__surface {
+  border-width: var(--para-glass-functional-border-width);
+  border-color: currentColor;
+}
+.para-site .para-glass--outline > .para-glass__surface {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: currentColor;
+  box-shadow: none;
+}
+.para-site .para-glass--outline > .para-glass__texture {
+  display: none;
+}
+.para-site .para-glass--interactive {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  text-align: inherit;
+  transition: transform 140ms var(--para-glass-easing);
+  -webkit-tap-highlight-color: transparent;
+}
+@media (hover: hover) {
+  .para-site .para-glass--interactive:hover:not(:disabled):not([aria-disabled="true"]) {
+    --para-glass-current-alpha: var(--para-glass-hover-alpha);
+  }
+}
+.para-site .para-glass--interactive:active:not(:disabled):not([aria-disabled="true"]) {
+  --para-glass-current-alpha: var(--para-glass-pressed-alpha);
+  transform: translateY(1px);
+}
+.para-site .para-glass:focus-visible {
+  outline: var(--para-glass-focus-width) solid var(--para-glass-focus-ink);
+  outline-offset: var(--para-glass-focus-offset);
+  box-shadow: 0 0 0 4px var(--para-glass-focus-paper);
+}
+.para-site .para-glass:disabled,
+.para-site .para-glass[aria-disabled="true"] {
+  --para-glass-current-alpha: 1;
+  cursor: not-allowed;
+  transform: none;
+}
+.para-site .para-glass:disabled > .para-glass__surface,
+.para-site .para-glass[aria-disabled="true"] > .para-glass__surface {
+  border-style: dashed;
+  box-shadow: none;
+}
+.para-site .para-glass:disabled > .para-glass__texture,
+.para-site .para-glass[aria-disabled="true"] > .para-glass__texture {
+  display: none;
+}
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .para-site .para-glass:not(.para-glass--outline) > .para-glass__surface {
+    background-color: rgb(
+      var(--para-glass-rgb) / var(--para-glass-current-alpha)
+    );
+    -webkit-backdrop-filter: blur(var(--para-glass-blur))
+      saturate(var(--para-glass-saturation));
+    backdrop-filter: blur(var(--para-glass-blur))
+      saturate(var(--para-glass-saturation));
+  }
+  .para-site .para-glass:not(.para-glass--outline) > .para-glass__texture {
+    display: block;
+  }
+  .para-site .para-glass:disabled > .para-glass__texture,
+  .para-site .para-glass[aria-disabled="true"] > .para-glass__texture {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .para-site .para-glass {
+    --para-glass-blur: var(--para-glass-mobile-blur);
+    --para-glass-grain-opacity: var(--para-glass-grain-mobile);
+  }
+  .para-site .para-glass--quiet > .para-glass__surface {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+}
+

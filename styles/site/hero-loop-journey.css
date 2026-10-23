@@ -1,0 +1,212 @@
+/* One sticky viewport, one clock, one wave canvas. Default = normal document
+   flow; pinning is opt-in only after the controller has measured successfully.
+   Local layers: loop 0, portal 1, opening hero 2. Navigation remains outside. */
+.para-site .studio-home .hero-loop-journey {
+  position: relative;
+  overflow-anchor: none;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+}
+.para-site .studio-home .journey-viewport {
+  display: contents;
+}
+.para-site .studio-home .journey-loop-anchor {
+  order: 1;
+  height: 0;
+  pointer-events: none;
+}
+.para-site .studio-home .hero-loop-journey .simple-hero {
+  order: 0;
+  min-height: calc(100svh - var(--header-height));
+  padding: 0;
+  background: var(--color-background);
+  border: 0;
+}
+.para-site .studio-home .hero-loop-journey .simple-hero::before,
+.para-site .studio-home .hero-loop-journey .simple-hero::after {
+  content: none;
+}
+.para-site .studio-home .simple-hero .hero-grid {
+  grid-template-columns: minmax(0, 1fr);
+  min-height: calc(100svh - var(--header-height));
+  max-width: 1240px;
+  gap: 0;
+  padding-block: 64px 80px;
+  align-content: center;
+}
+.para-site .studio-home .simple-hero .hero-copy,
+.para-site .studio-home .simple-hero .hero-copy:focus-within {
+  max-width: none;
+  opacity: 1;
+  transform: none;
+}
+.para-site .studio-home .simple-hero .hero-copy h1 {
+  max-width: none;
+  font-size: clamp(58px, 7.5vw, 108px);
+  line-height: 1.17;
+}
+html[lang="vi"] .para-site .studio-home .simple-hero .hero-copy h1 {
+  font-size: clamp(56px, 6.8vw, 98px);
+  line-height: 1.3;
+}
+.para-site .studio-home .simple-hero .hero-lead {
+  max-width: 55ch;
+  margin-top: 32px;
+}
+.para-site .studio-home .simple-hero .hero-actions {
+  margin-top: 28px;
+}
+.para-site .studio-home .hero-loop-journey .scene-loop {
+  order: 2;
+  min-height: 0;
+  border: 0;
+}
+.para-site .studio-home .hero-loop-journey .loop-sticky {
+  position: relative;
+  top: auto;
+}
+.para-site .studio-home .para-word-portal {
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+  color: var(--color-text);
+}
+.para-site .studio-home .portal-surface {
+  fill: var(--color-background);
+}
+.para-site .studio-home .portal-aperture {
+  opacity: var(--journey-word-in, 0);
+}
+.para-site .studio-home .portal-word-ink {
+  opacity: var(--journey-word-ink, 0);
+}
+
+.para-site .studio-home .hero-loop-journey[data-journey-ready="true"] {
+  display: block;
+  height: 500svh;
+}
+.para-site .studio-home [data-journey-ready="true"] .journey-viewport {
+  display: block;
+  position: sticky;
+  top: var(--header-height);
+  height: calc(100svh - var(--header-height));
+  isolation: isolate;
+}
+.para-site .studio-home [data-journey-ready="true"] .journey-loop-anchor {
+  position: absolute;
+  top: var(--journey-intro-offset);
+  left: 0;
+  width: 1px;
+  height: 1px;
+}
+.para-site .studio-home [data-journey-ready="true"] .simple-hero {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  min-height: 0;
+  opacity: var(--journey-hero-opacity, 1);
+  transform: translateY(var(--journey-hero-y, 0px));
+}
+.para-site .studio-home [data-journey-ready="true"] .simple-hero .hero-grid {
+  height: 100%;
+  min-height: 0;
+}
+.para-site .studio-home [data-journey-ready="true"] .simple-hero[inert] {
+  visibility: hidden;
+  pointer-events: none;
+}
+.para-site .studio-home [data-journey-ready="true"] .scene-loop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+.para-site .studio-home [data-journey-ready="true"] .loop-sticky {
+  height: 100%;
+  min-height: 0;
+}
+.para-site .studio-home [data-journey-ready="true"] .para-word-portal {
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+.para-site .studio-home [data-journey-ready="true"][data-portal="open"] .para-word-portal {
+  visibility: hidden;
+}
+.para-site .studio-home
+  [data-journey-ready="true"]
+  :is(.loop-heading-slot, .loop-composition) {
+  opacity: var(--journey-loop-reveal, 0);
+  transform: translateY(var(--journey-loop-y, 20px));
+}
+.para-site .studio-home [data-journey-ready="true"] .scene-loop[inert] .loop-wave-control {
+  visibility: hidden;
+  pointer-events: none;
+}
+.para-site .studio-home
+  .hero-loop-journey:not([data-journey-ready="true"])
+  .loop-static-summary {
+  display: block;
+}
+
+@media (max-width: 700px) {
+  .para-site .studio-home .hero-loop-journey[data-journey-ready="true"] {
+    height: 460svh;
+  }
+  .para-site .studio-home .simple-hero .hero-grid {
+    padding-block: 40px 56px;
+  }
+  .para-site .studio-home .simple-hero .hero-copy h1 {
+    font-size: clamp(38px, 10.6vw, 64px);
+    line-height: 1.35;
+    letter-spacing: -0.04em;
+  }
+  html[lang="vi"] .para-site .studio-home .simple-hero .hero-copy h1 {
+    font-size: clamp(34px, 9.7vw, 60px);
+    line-height: 1.45;
+    letter-spacing: -0.035em;
+  }
+  .para-site .studio-home .simple-hero .hero-lead {
+    margin-top: 24px;
+    max-width: 38ch;
+  }
+  .para-site .studio-home .simple-hero .hero-actions {
+    gap: 20px;
+    row-gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+/* CSS also releases pinning immediately, before the media-query listener runs.
+   Forced colours and very short landscape windows get the same safe story. */
+@media (prefers-reduced-motion: reduce),
+  (forced-colors: active),
+  (max-height: 479px) {
+  .para-site .studio-home .hero-loop-journey[data-journey-ready] {
+    display: flex;
+    height: auto;
+  }
+  .para-site .studio-home [data-journey-ready] .journey-viewport {
+    display: contents;
+    position: static;
+  }
+  .para-site .studio-home [data-journey-ready] .journey-loop-anchor {
+    position: static;
+    height: 0;
+  }
+  .para-site .studio-home [data-journey-ready] :is(.simple-hero, .scene-loop) {
+    position: relative;
+    inset: auto;
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+  }
+  .para-site .studio-home [data-journey-ready] :is(.loop-heading-slot, .loop-composition) {
+    opacity: 1;
+    transform: none;
+  }
+  .para-site .studio-home [data-journey-ready] .para-word-portal {
+    display: none;
+  }
+}
+

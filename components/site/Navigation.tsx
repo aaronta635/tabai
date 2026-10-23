@@ -1,0 +1,157 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { BrandLogo } from "@/components/site/BrandLogo";
+import { ParaIcon } from "@/components/site/ParaIcon";
+import { GlassLayers } from "@/components/site/GlassSurface";
+import {
+  content,
+  homeHref,
+  languageChoiceHref,
+  localePath,
+  type Locale,
+} from "@/lib/site/content";
+
+export function Navigation({ locale }: { locale: Locale }) {
+  const [open, setOpen] = useState(false);
+  const [hash, setHash] = useState("");
+  const pathname = usePathname();
+  const dictionary = content[locale].navigation;
+  const toggle = useRef<HTMLButtonElement>(null);
+  const firstLink = useRef<HTMLAnchorElement>(null);
+  const navigation = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const update = () =>
+      setHash(window.location.hash === "#waitlist" ? "#waitlist" : "");
+    update();
+    window.addEventListener("hashchange", update);
+    return () => window.removeEventListener("hashchange", update);
+  }, [pathname]);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const surfaces = Array.from(
+      document.querySelectorAll<HTMLElement>(".para-site main, .para-site > footer"),
+    );
+    const previous = surfaces.map((node) => node.inert);
+    const overflow = document.body.style.overflow;
+    surfaces.forEach((node) => {
+      node.inert = true;
+    });
+    document.body.style.overflow = "hidden";
+    firstLink.current?.focus();
+    return () => {
+      surfaces.forEach((node, index) => {
+        node.inert = previous[index];
+      });
+      document.body.style.overflow = overflow;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const media = matchMedia("(min-width: 1101px)");
+    const resize = () => {
+      if (media.matches) setOpen(false);
+    };
+    media.addEventListener("change", resize);
+    return () => media.removeEventListener("change", resize);
+  }, []);
+
+  const plainPath = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
+  const languageHref = languageChoiceHref(
+    locale === "en" ? "vi" : "en",
+    plainPath,
+    plainPath === "/" ? hash : "",
+  );
+
+  function handleKeys(event: React.KeyboardEvent<HTMLElement>) {
+    if (!open) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setOpen(false);
+      toggle.current?.focus();
+      return;
+    }
+    if (event.key !== "Tab") return;
+    const links = Array.from(
+      navigation.current!.querySelectorAll<HTMLElement>("a,button"),
+    ).filter((node) => node.getClientRects().length);
+    const first = links[0],
+      last = links[links.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
+  return (
+    <header className="site-header para-glass para-glass--quiet">
+      <GlassLayers />
+      <nav
+        ref={navigation}
+        className="nav wrap para-glass__content"
+        aria-label={dictionary.label}
+        onKeyDown={handleKeys}
+      >
+        <a
+          className="brand"
+          href={homeHref(locale)}
+          aria-label={dictionary.homeLabel}
+        >
+          <BrandLogo width={120} height={59} />
+        </a>
+        <div id="nav-links" className={open ? "nav-links open" : "nav-links"}>
+          {dictionary.items.map(([label, url], index) => {
+            const href = localePath(locale, url);
+            return (
+              <Link
+                key={url}
+                ref={index === 0 ? firstLink : undefined}
+                href={href}
+                prefetch={false}
+                aria-current={pathname === href ? "page" : undefined}
+                onClick={() => setOpen(false)}
+              >
+                {label}
+              </Link>
+            );
+          })}
+          <a
+            className="nav-cta button button-primary"
+            href={homeHref(locale, "#waitlist")}
+            onClick={() => setOpen(false)}
+          >
+            {dictionary.waitlist}
+          </a>
+        </div>
+        <a
+          className="language-switch"
+          href={languageHref}
+          hrefLang={locale === "en" ? "vi" : "en"}
+          lang={locale === "en" ? "vi" : "en"}
+          aria-label={dictionary.languageLabel}
+          onClick={() => setOpen(false)}
+        >
+          EN / VI
+        </a>
+        <button
+          ref={toggle}
+          className="menu-toggle"
+          aria-expanded={open}
+          aria-controls="nav-links"
+          onClick={() => setOpen((value) => !value)}
+        >
+          <span className="sr-only">
+            {open ? dictionary.close : dictionary.menu}
+          </span>
+          <ParaIcon name={open ? "close" : "menu"} />
+        </button>
+      </nav>
+    </header>
+  );
+}

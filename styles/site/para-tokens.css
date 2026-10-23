@@ -1,0 +1,139 @@
+/* PARA_Brand_Resources v1: Sandalwood. Old variable names are compatibility
+   aliases for existing secondary routes, not additional brand swatches. */
+.para-site {
+  --para-espresso: #3b2f2a;
+  --para-saddle-brown: #8b5e34;
+  --para-sand: #d6b98c;
+  --para-ivory: #f3ede2;
+  --para-cool-grey: #6b7280;
+  --para-espresso-strong: #302722;
+  --para-paper-soft: #f0e7d8;
+  --para-border-strong: #726861;
+  --para-raspberry: var(--para-saddle-brown);
+  --para-cocoa: var(--para-espresso);
+  --para-paper: var(--para-ivory);
+  --para-apricot: var(--para-sand);
+  --para-butter: var(--para-sand);
+  --para-white: var(--para-ivory);
+  --para-black: var(--para-espresso-strong);
+  --para-raspberry-hover: var(--para-saddle-brown);
+  --para-raspberry-pressed: var(--para-espresso-strong);
+  --para-rose: var(--para-paper-soft);
+  --para-muted: var(--para-saddle-brown);
+  --para-border: var(--para-sand);
+  --para-control-border: var(--para-border-strong);
+  --para-disabled: var(--para-sand);
+  --color-background: var(--para-paper);
+  --color-surface: var(--para-white);
+  --color-text: var(--para-cocoa);
+  --color-text-muted: var(--para-muted);
+  --color-action: var(--para-espresso);
+  --color-action-hover: var(--para-raspberry-hover);
+  --color-action-pressed: var(--para-raspberry-pressed);
+  --color-on-action: var(--para-white);
+  --color-border: var(--para-border);
+  --color-focus: var(--para-espresso);
+  --color-inverse-background: var(--para-cocoa);
+  --color-inverse-text: var(--para-paper);
+  --color-error: var(--para-espresso);
+  --color-success: var(--para-espresso);
+  --color-disabled-background: var(--para-disabled);
+  --color-disabled-text: var(--para-espresso);
+  --color-control-border: var(--para-control-border);
+  --space-0: 0px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-120: 120px;
+  --radius-none: 0px;
+  --radius-control: 8px;
+  --radius-panel: 12px;
+  --radius-round: 999px;
+  --font-display: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --container-max: 1240px;
+  --gutter: 24px;
+  --ease-phrase: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-feedback: 160ms;
+  --duration-tab: 280ms;
+  --duration-entrance: 720ms;
+  --shadow-menu: 0 12px 32px #3b2f2a14;
+}
+@media (min-width: 1024px) {
+  .para-site {
+    --gutter: 48px;
+  }
+}
+.para-site .type-display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(48px, 6.11vw, 88px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+}
+.para-site .type-h1 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(44px, 5vw, 72px);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+}
+.para-site .type-h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(38px, 3.89vw, 56px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.para-site .type-h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(28px, 2.22vw, 32px);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.para-site .type-lead {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(18px, 1.39vw, 20px);
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+.para-site .type-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(16px, 1.11vw, 16px);
+  line-height: 1.7;
+  letter-spacing: 0;
+}
+.para-site .type-label {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: clamp(14px, 0.97vw, 14px);
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.para-site .type-caption {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: clamp(13px, 0.9vw, 13px);
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+.para-site .type-eyebrow {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: clamp(12px, 0.83vw, 12px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+}
+

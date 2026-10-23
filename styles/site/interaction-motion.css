@@ -1,0 +1,266 @@
+/* One ambient field, replacing the old material drift. The wave owns its SVG
+   transforms; the pointer owns only the enclosing depth plane. No blur animation. */
+.para-site .studio-home .gradient-wave {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: clip;
+  pointer-events: none;
+  opacity: 0.54;
+  mask-image: linear-gradient(90deg, transparent 28%, #000 70%);
+}
+.para-site .studio-home .gradient-wave::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-background),
+    transparent 24%,
+    transparent 65%,
+    var(--color-background)
+  );
+}
+.para-site .studio-home .gradient-wave-depth {
+  position: absolute;
+  inset: -3%;
+  transform: translate3d(
+    calc(var(--surface-nx, 0) * 14px),
+    calc(var(--surface-ny, 0) * 9px),
+    0
+  );
+  transition: transform 850ms var(--finish-ease);
+}
+.para-site .studio-home .gradient-wave svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.para-site .studio-home .wave-ribbon {
+  transform-box: view-box;
+  transform-origin: 76% 55%;
+  animation: para-wave-flow 24s ease-in-out infinite alternate;
+  animation-play-state: paused;
+}
+.para-site .studio-home .wave-ribbon-front {
+  animation-name: para-wave-fold;
+}
+.para-site .studio-home .scene-hero[data-playing="true"] .wave-ribbon {
+  animation-play-state: running;
+}
+.para-site .studio-home .gradient-wave-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  background: url("/brand/para/glass/para-film-grain-256.png") repeat;
+  background-size: 256px 256px;
+}
+.para-site .studio-home .scene-hero::before {
+  background-image: url("/brand/para/glass/para-film-grain-256.png");
+  background-size: 256px 256px;
+}
+.para-site .studio-home .hero-artwork .signal-material {
+  display: none;
+}
+.para-site .studio-home .hero-artwork .approved-listening {
+  animation: none;
+}
+@keyframes para-wave-flow {
+  from {
+    transform: translate(-36px, 24px) rotate(-5deg) scale(1.04, 0.98);
+  }
+  to {
+    transform: translate(42px, -30px) rotate(5deg) scale(0.96, 1.06);
+  }
+}
+@keyframes para-wave-fold {
+  from {
+    transform: translate(32px, 10px) rotate(4deg) scale(0.99, 1.04);
+  }
+  to {
+    transform: translate(-44px, -24px) rotate(-4deg) scale(1.05, 0.98);
+  }
+}
+
+/* Local layers follow the supplied glass stack: surface 0, grain 1, rim 2,
+   reading 3. The highlight never filters, fades or captures foreground content. */
+.para-site .interactive-surface {
+  position: relative;
+  --surface-nx: 0;
+  --surface-ny: 0;
+}
+.para-site .surface-light {
+  position: absolute;
+  inset: 1px;
+  z-index: 2;
+  border-radius: inherit;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease;
+}
+.para-site .surface-light::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 220px;
+  background: radial-gradient(
+    ellipse,
+    rgb(243 237 226 / 0.3),
+    rgb(214 185 140 / 0.1) 40%,
+    transparent 70%
+  );
+  transform: translate3d(
+    calc(var(--surface-x, 50%) - 140px),
+    calc(var(--surface-y, 35%) - 110px),
+    0
+  );
+  transition: transform 240ms var(--finish-ease);
+}
+.para-site .surface-light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgb(243 237 226 / 0.5);
+  border-bottom-color: rgb(139 94 52 / 0.12);
+}
+.para-site .interactive-surface:focus-within > .surface-light {
+  opacity: 0.75;
+}
+.para-site .studio-home .button.interactive-surface {
+  isolation: isolate;
+  transform: none;
+  /* Light opacity is the feedback. Do not interpolate opposing text/fill
+     colours through a low-contrast midpoint when the device theme changes. */
+  transition: border-color 180ms ease;
+}
+.para-site .site-header .nav-cta {
+  transition:
+    border-color 180ms ease,
+    transform 180ms var(--finish-ease);
+}
+.para-site .site-header > .para-glass__surface {
+  transition: none;
+}
+.para-site .language-switch,
+.para-site .menu-toggle,
+.para-site .studio-home .story-control {
+  transition:
+    border-color 180ms ease,
+    transform 180ms var(--finish-ease);
+}
+.para-site .studio-home .button.interactive-surface > :not(.surface-light) {
+  position: relative;
+  z-index: 3;
+}
+.para-site .studio-home .button.interactive-surface > .surface-light {
+  z-index: -1;
+}
+.para-site .studio-home .button.interactive-surface > .surface-light::before {
+  opacity: 0.8;
+}
+.para-site .studio-home .button.interactive-surface:hover:not(:active) {
+  /* Keep Ivory labels above 4.5:1 even at the highlight's brightest point. */
+  background: var(--para-espresso);
+}
+.para-site .studio-home .button.interactive-surface:active {
+  transform: none;
+  background: var(--color-action-pressed);
+}
+.para-site .studio-home .button.interactive-surface:active > .surface-light {
+  opacity: 0.4;
+}
+.para-site .studio-home .performance-print {
+  isolation: isolate;
+}
+.para-site .studio-home .performance-photo-depth {
+  position: relative;
+  z-index: 1;
+  border-radius: var(--para-glass-radius-small);
+  transform-origin: 50% 50%;
+  transition: transform 460ms var(--finish-ease);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .para-site .interactive-surface[data-pointer-active="true"] > .surface-light {
+    opacity: 1;
+  }
+  .para-site .studio-home .performance-print[data-depth] .performance-photo-depth {
+    transform: perspective(900px) rotateX(calc(var(--surface-ny, 0) * -3deg))
+      rotateY(calc(var(--surface-nx, 0) * 3deg)) translateZ(4px);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .site-header .nav-links > .nav-cta,
+  .para-site .site-header .nav-links > .nav-cta:hover {
+    color: var(--para-espresso);
+  }
+  .para-site .studio-home .button.interactive-surface:hover:not(:active) {
+    background: var(--para-sand);
+    color: var(--para-espresso);
+  }
+  .para-site .studio-home .button.interactive-surface:active {
+    background: var(--para-paper-soft);
+    color: var(--para-espresso);
+  }
+  .para-site .studio-home .gradient-wave {
+    opacity: 0.38;
+  }
+}
+@media (max-width: 700px) {
+  .para-site .studio-home .gradient-wave {
+    /* The wave lives beneath the artwork, never the mobile reading area. */
+    inset: 42% 0 0;
+    opacity: 0.35;
+    mask-image: linear-gradient(
+      180deg,
+      transparent,
+      #000 35%,
+      #000 75%,
+      transparent
+    );
+  }
+  .para-site .studio-home .gradient-wave-depth {
+    inset: 0;
+    transform: none;
+  }
+  .para-site .studio-home .wave-ribbon {
+    animation-duration: 32s;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .wave-ribbon {
+    animation: none;
+  }
+  .para-site .studio-home .gradient-wave-depth,
+  .para-site .studio-home .performance-photo-depth {
+    transform: none;
+    transition: none;
+  }
+  .para-site .surface-light {
+    display: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+  .para-site .surface-light {
+    display: none;
+  }
+}
+.para-site [data-para-glass="solid"] .surface-light {
+  display: none;
+}
+@supports not (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .para-site .surface-light {
+    display: none;
+  }
+}
+@media (forced-colors: active) {
+  .para-site .studio-home .gradient-wave {
+    display: none;
+  }
+}
+

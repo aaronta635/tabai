@@ -8,7 +8,7 @@ import type { Prisma } from "@prisma/client";
 import { newPieceCode, requireTeacher, signOutTeacher } from "@/lib/auth";
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
-import { maybeUnlockAiDirect } from "@/lib/growth";
+import { maybeRelockAiDirect, maybeUnlockAiDirect } from "@/lib/growth";
 import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
@@ -56,7 +56,13 @@ export async function createPieceRecord(input: {
   const note = (input.description ?? input.note).trim();
   const tips = input.tips?.trim() || null;
   let partId = input.partId;
-  if (!partId) {
+  if (partId) {
+    const part = await prisma.curriculumPart.findFirst({
+      where: { id: partId, teacherId: teacher.id },
+      select: { id: true },
+    });
+    if (!part) throw new Error("not found");
+  } else {
     const { firstCurriculumPartId } = await import("@/lib/lms");
     partId = await firstCurriculumPartId(teacher.id);
   }
@@ -297,6 +303,7 @@ export async function sendReply(input: {
     },
   });
   await maybeUnlockAiDirect(submission.pieceId);
+  await maybeRelockAiDirect(submission.pieceId);
   revalidateTeacherQueue(teacher.id, submission.studentId);
   return { ok: true as const };
 }

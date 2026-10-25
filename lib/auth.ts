@@ -477,6 +477,11 @@ export async function getStudentTokenFromCookie() {
   return jar.get(STUDENT_COOKIE)?.value ?? null;
 }
 
+/** Opening another teacher's piece link must not move the student's home studio. */
+export function homeTeacherId(current: string | null | undefined, pieceTeacherId: string) {
+  return current ?? pieceTeacherId;
+}
+
 /** Guest token cookie or logged-in student session for this teacher's piece. */
 export async function studentForPiece(teacherId: string) {
   const session = await readStudentSession();

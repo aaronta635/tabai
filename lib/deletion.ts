@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { removeMedia } from "@/lib/storage";
 import { logEvent } from "@/lib/events";
+import { isOwnTakeMedia } from "@/lib/take-media";
 
 export function takeMediaIsShared(input: {
   mediaId: string;
@@ -20,6 +21,35 @@ export function takeMediaIsShared(input: {
     input.piece.referenceMediaId,
   ];
   return ids.includes(input.mediaId);
+}
+
+/** Keep the file when another take uses it, or when it is not this student's own upload. */
+export function shouldKeepTakeFile(input: {
+  mediaId: string;
+  storagePath: string;
+  otherSubmissionCount: number;
+  teacherId: string;
+  pieceId: string;
+  studentId: string;
+  piece: {
+    sheetMediaId: string | null;
+    tutorialMediaId: string | null;
+    clipMediaId: string | null;
+    referenceMediaId: string | null;
+  };
+}) {
+  return (
+    takeMediaIsShared({
+      mediaId: input.mediaId,
+      otherSubmissionCount: input.otherSubmissionCount,
+      piece: input.piece,
+    }) ||
+    !isOwnTakeMedia(input.storagePath, {
+      teacherId: input.teacherId,
+      pieceId: input.pieceId,
+      studentId: input.studentId,
+    })
+  );
 }
 
 /**
@@ -69,6 +99,8 @@ export async function deleteStudentData(studentId: string) {
 
 type DroppableTake = {
   id: string;
+  pieceId: string;
+  studentId: string;
   mediaId: string;
   media: { storagePath: string };
   piece: {
@@ -80,14 +112,18 @@ type DroppableTake = {
   };
 };
 
-/** Drop the take, its jobs, and the video unless another piece still uses that file. */
+/** Drop the take, its jobs, and the video unless the file is shared or not this student's upload. */
 async function dropTake(submission: DroppableTake) {
   const otherSubmissionCount = await prisma.submission.count({
     where: { mediaId: submission.mediaId, id: { not: submission.id } },
   });
-  const shared = takeMediaIsShared({
+  const shared = shouldKeepTakeFile({
     mediaId: submission.mediaId,
+    storagePath: submission.media.storagePath,
     otherSubmissionCount,
+    teacherId: submission.piece.teacherId,
+    pieceId: submission.pieceId,
+    studentId: submission.studentId,
     piece: submission.piece,
   });
 

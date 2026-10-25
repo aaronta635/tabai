@@ -3,6 +3,7 @@ import { MAX_VIDEO_BYTES } from "@/lib/constants";
 import { studentForPiece } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { createSignedUpload } from "@/lib/storage";
+import { studentTakeFolder } from "@/lib/take-media";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
   const { code } = await context.params;
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     },
   });
 
-  const path = `teachers/${piece.teacherId}/pieces/${piece.id}/students/${student.id}/${media.id}`;
+  const path = `${studentTakeFolder({ teacherId: piece.teacherId, pieceId: piece.id, studentId: student.id })}${media.id}`;
   try {
     const signed = await createSignedUpload(path);
     await prisma.media.update({

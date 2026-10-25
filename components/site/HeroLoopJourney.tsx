@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import type { Locale } from "@/lib/site/content";
 import { HomeIntro } from "@/components/site/HomeIntro";
 import {
@@ -32,7 +32,6 @@ export function HeroLoopJourney({ locale }: { locale: Locale }) {
   const flow = useRef<SubmissionFlowHandle>(null);
   const initialized = useRef(false);
   const lastProgress = useRef(0);
-  const [loopVisible, setLoopVisible] = useState(false);
 
   const update = useCallback((progress: number) => {
     const element = root.current;
@@ -52,7 +51,6 @@ export function HeroLoopJourney({ locale }: { locale: Locale }) {
       loop.inert = false;
       hero.removeAttribute("aria-hidden");
       loop.removeAttribute("aria-hidden");
-      setLoopVisible(true);
       flow.current?.update(0);
       return;
     }
@@ -100,10 +98,6 @@ export function HeroLoopJourney({ locale }: { locale: Locale }) {
     hero.setAttribute("aria-hidden", String(exit > 0.98));
     loop.inert = reveal < 0.15;
     loop.setAttribute("aria-hidden", String(reveal < 0.15));
-    setLoopVisible((previous) => {
-      const visible = progress >= JOURNEY.zoomEnd;
-      return previous === visible ? previous : visible;
-    });
     // Native fragment navigation targets the physical intro position, outside
     // the sticky viewport. No click interception or history mutations.
     const distance = Math.max(1, element.clientHeight - innerHeight);
@@ -227,12 +221,7 @@ export function HeroLoopJourney({ locale }: { locale: Locale }) {
     >
       <div ref={viewport} className="journey-viewport">
         <HomeIntro locale={locale} />
-        <SubmissionFlow
-          locale={locale}
-          coordinated
-          flowRef={flow}
-          waveActive={loopVisible}
-        />
+        <SubmissionFlow locale={locale} coordinated flowRef={flow} />
         <ParaWordPortal geometry={camera} />
       </div>
       <span

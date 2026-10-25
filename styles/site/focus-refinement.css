@@ -189,12 +189,6 @@
 .para-site .studio-home .belief-phrase:focus-visible {
   outline-color: var(--para-sand);
 }
-.para-site .studio-home .belief-cycle-control {
-  color: var(--para-ivory);
-  margin: 16px 0 0 auto;
-  width: fit-content;
-  display: flex;
-}
 .para-site .studio-home .closing-mark {
   width: fit-content;
   max-width: 100%;
@@ -367,9 +361,6 @@
     transform: none;
     transition: none;
   }
-  .para-site .studio-home .belief-cycle-control {
-    display: none;
-  }
 }
 @media (forced-colors: active) {
   .para-site .studio-home .belief-focus[data-available] .belief-phrase[aria-pressed] {
@@ -377,4 +368,3 @@
     opacity: 1;
   }
 }
-

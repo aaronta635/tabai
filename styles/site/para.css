@@ -11,6 +11,12 @@
 @import "./interaction-motion.css";
 @import "./loop-waves.css";
 @import "./hero-loop-journey.css";
+@import "./product-cta.css";
+@import "./final-scene.css";
+@import "./scene-atmosphere.css";
+@import "./homepage-composition.css";
+@import "./performance-reel.css";
+@import "./hero-session.css";
 
 @font-face {
   font-family: "Plus Jakarta Sans";
@@ -555,62 +561,12 @@
 .para-site .waitlist {
   background: var(--para-rose);
 }
-.para-site .waitlist-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 96px;
-}
 .para-site .waitlist h2 {
   max-width: 15ch;
 }
 .para-site .waitlist h2 + p {
   margin-top: 24px;
   max-width: 50ch;
-}
-.para-site .form-note {
-  display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  color: var(--color-action);
-  font-size: 14px;
-  font-weight: 500;
-}
-.para-site .form-note .para-icon {
-  margin-top: 3px;
-}
-.para-site .field {
-  margin-block: 20px;
-}
-.para-site .field label {
-  display: block;
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 10px;
-}
-.para-site .field input {
-  width: 100%;
-  min-height: 48px;
-  padding: 10px 14px;
-  border: 1px solid var(--para-control-border);
-  border-radius: 4px;
-  color: var(--para-cocoa);
-  background: var(--para-paper);
-  font-size: 16px;
-}
-.para-site .field input:disabled {
-  background: var(--para-disabled);
-  opacity: 1;
-  cursor: not-allowed;
-}
-.para-site .form-submit {
-  width: 100%;
-  margin-top: 8px;
-}
-.para-site .consent-note {
-  margin-top: 24px;
-  font-size: 13px;
-  line-height: 1.6;
-  color: var(--color-text-muted);
 }
 
 /* Shared supporting pages retain their complete original content. */
@@ -1227,7 +1183,6 @@
   .para-site .belief-grid {
     gap: 64px;
   }
-  .para-site .waitlist-grid,
   .para-site .page-hero-grid {
     gap: 64px;
   }
@@ -1296,7 +1251,6 @@
   .para-site .section-heading-grid,
   .para-site .perspective-panel,
   .para-site .belief-grid,
-  .para-site .waitlist-grid,
   .para-site .page-hero-grid,
   .para-site .principle-grid,
   .para-site .practice-grid,
@@ -1578,30 +1532,12 @@
   .para-site .signal-loop-berry {
     stroke: var(--para-rose);
   }
-  .para-site .waitlist .form-note {
-    color: var(--para-paper);
-  }
   .para-site .welcome-choices a:not(:first-child) {
     color: var(--para-paper);
     border-color: var(--para-control-border);
   }
   .para-site .welcome-choices a:not(:first-child):hover {
     color: var(--para-cocoa);
-  }
-  .para-site .button-primary,
-  .para-site .site-header .nav-links > .nav-cta,
-  .para-site .site-header .nav-links > .nav-cta:hover,
-  .para-site .studio-home .button.interactive-surface,
-  .para-site .studio-home .button.interactive-surface:hover:not(:active),
-  .para-site .studio-home .button.interactive-surface:active {
-    background: var(--para-ivory);
-    color: var(--para-espresso);
-  }
-  .para-site .button-primary:hover:not(:disabled),
-  .para-site .site-header .nav-links > .nav-cta:hover,
-  .para-site .studio-home .button.interactive-surface:hover:not(:active) {
-    background: var(--para-sand);
-    color: var(--para-espresso);
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1625,80 +1561,62 @@
   min-height: 100dvh;
 }
 
-/* Closing column. Studio `.field` cards are white; these controls stay in the landing palette. */
-.para-site .scene-closing .site-field {
-  margin-block: 14px 16px;
+/* Class code stays with the product invitation, in the landing palette. */
+.para-site .final-scene .studio-entry-block {
+  width: calc(100% - var(--ending-gutter) * 2);
+  margin: 4px auto 8px;
+  display: grid;
+  gap: 10px;
 }
-.para-site .scene-closing .site-field label {
+.para-site .final-scene .form-note,
+.para-site .final-scene .site-field label {
+  color: var(--wave-muted, var(--para-saddle-brown));
+  font-size: 14px;
+}
+.para-site .final-scene .site-field label {
   display: block;
   margin-bottom: 8px;
-  color: var(--para-saddle-brown);
-  font-size: 13px;
-  font-weight: 500;
 }
-.para-site .scene-closing .site-field input {
+.para-site .final-scene .studio-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+}
+.para-site .final-scene .site-field {
+  flex: 1 1 260px;
+  margin: 0;
+}
+.para-site .final-scene .site-field input {
   width: 100%;
   min-height: 52px;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--para-espresso) 16%, var(--para-sand));
-  background: var(--para-ivory);
+  border: 1px solid color-mix(in srgb, var(--wave-ink, var(--para-espresso)) 28%, transparent);
+  background: color-mix(in srgb, var(--para-ivory) 72%, transparent);
   color: var(--para-espresso);
-  font-size: 16px;
+  font: 400 16px/1.4 var(--font-body);
 }
-.para-site .scene-closing .site-field input:disabled {
-  background: color-mix(in srgb, var(--para-sand) 28%, var(--para-ivory));
-  color: var(--para-saddle-brown);
-  -webkit-text-fill-color: var(--para-saddle-brown);
-  border-color: transparent;
-  opacity: 1;
+.para-site .final-scene .studio-entry .button-primary {
+  min-height: 52px;
+  padding-inline: 22px;
+  background: var(--para-espresso);
+  color: var(--para-ivory);
+  border: 0;
 }
-.para-site .scene-closing .studio-entry-block .form-note {
-  color: var(--para-saddle-brown);
+.para-site .final-scene .studio-entry-block .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
 }
-.para-site .scene-closing .waitlist-form {
-  background: color-mix(in srgb, var(--para-ivory) 72%, white);
-  border-color: color-mix(in srgb, var(--para-sand) 80%, transparent);
-}
-
 @media (prefers-color-scheme: dark) {
-  .para-site .scene-closing .site-field label,
-  .para-site .scene-closing .form-note,
-  .para-site .scene-closing .consent-note {
-    color: var(--para-sand);
-  }
-  .para-site .scene-closing .site-field input {
-    background: #302722;
-    color: var(--para-ivory);
-    border-color: color-mix(in srgb, var(--para-sand) 46%, transparent);
-  }
-  .para-site .scene-closing .site-field input:focus {
-    outline: 2px solid var(--para-sand);
-    outline-offset: 2px;
-  }
-  .para-site .scene-closing .site-field input:disabled {
-    background: color-mix(in srgb, var(--para-sand) 12%, #302722);
-    color: color-mix(in srgb, var(--para-ivory) 58%, var(--para-sand));
-    -webkit-text-fill-color: color-mix(in srgb, var(--para-ivory) 58%, var(--para-sand));
-    border-color: color-mix(in srgb, var(--para-sand) 24%, transparent);
-  }
-  .para-site .scene-closing .waitlist-form {
-    background: transparent;
-    border-color: color-mix(in srgb, var(--para-sand) 34%, transparent);
-    box-shadow: none;
-  }
-  .para-site .scene-closing .studio-entry .site-field input {
+  .para-site .final-scene .site-field input {
     background: var(--para-ivory);
     color: var(--para-espresso);
     border-color: transparent;
   }
-  .para-site .scene-closing .studio-entry .button-primary {
+  .para-site .final-scene .studio-entry .button-primary {
     background: var(--para-ivory);
     color: var(--para-espresso);
-  }
-  .para-site .scene-closing .button-primary:disabled {
-    background: transparent;
-    color: var(--para-sand);
-    border-color: color-mix(in srgb, var(--para-sand) 42%, transparent);
   }
 }

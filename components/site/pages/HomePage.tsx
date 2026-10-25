@@ -1,11 +1,12 @@
 import { HeroLoopJourney } from "@/components/site/HeroLoopJourney";
 import { BeliefMoment } from "@/components/site/BeliefMoment";
 import { PerspectiveSwitcher } from "@/components/site/PerspectiveSwitcher";
-import { WaitlistSection } from "@/components/site/WaitlistSection";
+import { ProductInvitation } from "@/components/site/ProductInvitation";
 import { content, type Locale } from "@/lib/site/content";
+import { SharedWaveEnvironment } from "@/components/site/SharedWaveEnvironment";
 export function HomePage({ locale }: { locale: Locale }) {
   return (
-    <main id="main" className="studio-home">
+    <SharedWaveEnvironment>
       <HeroLoopJourney locale={locale} />
       <PerspectiveSwitcher
         locale={locale}
@@ -16,7 +17,7 @@ export function HomePage({ locale }: { locale: Locale }) {
         locale={locale}
         immersive
       />
-      <WaitlistSection locale={locale} />
-    </main>
+      <ProductInvitation locale={locale} />
+    </SharedWaveEnvironment>
   );
 }

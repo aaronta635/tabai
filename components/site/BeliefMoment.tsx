@@ -6,7 +6,6 @@ import { ScrollScene } from "@/components/site/ScrollScene";
 import { sceneCopy } from "@/lib/site/studio";
 import { ExpressiveIcon } from "@/components/site/ExpressiveIcon";
 import { BeliefFocus } from "@/components/site/BeliefFocus";
-import Image from "next/image";
 export function BeliefMoment({
   content,
   locale,
@@ -24,18 +23,7 @@ export function BeliefMoment({
   if (immersive) {
     const copy = sceneCopy(locale);
     return (
-      <ScrollScene id="belief" className="scene-belief belief-with-photograph">
-        <div className="belief-aperture" aria-hidden="true" />
-        <div className="belief-photograph" aria-hidden="true">
-          <Image
-            src="/images/performance/guitar-stage.webp"
-            alt=""
-            fill
-            sizes="(max-width: 900px) 100vw, (min-width: 1600px) 1120px, 78vw"
-            loading="lazy"
-          />
-        </div>
-        <div className="belief-photo-scrim" aria-hidden="true" />
+      <ScrollScene id="belief" className="scene-belief belief-abstract">
         <div className="wrap belief-statement">
           <div className="belief-copy">
             <p className="eyebrow">{content.eyebrow}</p>
@@ -58,7 +46,7 @@ export function BeliefMoment({
               <circle cx="560" cy="90" r="7" />
             </svg>
           </div>
-          <BeliefFocus labels={content.labels} locale={locale} />
+          <BeliefFocus labels={content.labels} />
         </div>
       </ScrollScene>
     );

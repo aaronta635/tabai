@@ -1,0 +1,166 @@
+/* One contained sticky wave field, one canvas, one document brightness value.
+   No section owns a colour field or a background transition anymore. */
+.para-site .studio-home.shared-wave-environment {
+  position: relative;
+  isolation: isolate;
+  --wave-base: var(--para-paper-soft);
+  --wave-haze: var(--para-ivory);
+  --wave-ink: var(--para-espresso);
+  --wave-muted: var(--para-saddle-brown);
+  --wave-grain: url("/brand/para/glass/para-film-grain-256.png");
+  --wave-progress: 0;
+}
+.para-site .shared-wave-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.para-site .shared-wave-viewport {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+}
+.para-site .shared-wave-layer .loop-atmosphere {
+  position: absolute;
+  inset: 0;
+  overflow: clip;
+  pointer-events: none;
+}
+.para-site .shared-wave-layer
+  :is(.loop-waves-fallback, .loop-waves-effect, .loop-waves-scrim) {
+  position: absolute;
+  inset: 0;
+}
+.para-site .shared-wave-layer .loop-waves-fallback {
+  background:
+    radial-gradient(ellipse at 76% 65%, rgb(139 94 52 / 24%), transparent 72%),
+    radial-gradient(ellipse at 15% 85%, var(--para-sand), transparent 68%),
+    var(--wave-base);
+}
+.para-site .shared-wave-layer .loop-waves-effect {
+  opacity: 0;
+}
+.para-site .shared-wave-layer [data-wave-state="ready"] .loop-waves-effect {
+  opacity: 0.74;
+}
+.para-site .shared-wave-layer .loop-waves-scrim {
+  /* One continuous light source, not a crossfade between section scenes.
+     Only its opacity follows unsmoothed scroll. No animated filters. */
+  background: radial-gradient(
+    ellipse at 28% 14%,
+    var(--wave-haze),
+    transparent 85%
+  );
+  opacity: calc(0.12 + var(--wave-progress) * 0.2);
+}
+.para-site .shared-wave-layer .loop-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--wave-grain) repeat;
+  background-size: 256px 256px;
+  opacity: 0.055;
+  pointer-events: none;
+}
+.para-site .studio-home
+  > :is(.hero-loop-journey, .scene-perspectives, .scene-belief, .final-scene) {
+  position: relative;
+  z-index: 1;
+}
+.para-site .studio-home .hero-loop-journey,
+.para-site .studio-home
+  :is(
+    .scene-loop,
+    .loop-sticky,
+    .scene-perspectives,
+    .scene-belief,
+    .final-scene
+  ) {
+  background: transparent;
+  border: 0;
+}
+.para-site .studio-home :is(.scene-perspectives, .scene-belief, .final-scene)::before, .para-site .studio-home .belief-aperture, .para-site .studio-home .belief-focus::before {
+  display: none;
+}
+.para-site .studio-home :is(.scene-perspectives, .scene-belief, .final-scene) {
+  color: var(--wave-ink);
+}
+.para-site .studio-home .perspective-workspace::before,
+.para-site .studio-home .perspective-workspace::after {
+  background: none;
+}
+.para-site .studio-home .perspective-handoff {
+  z-index: 1;
+}
+.para-site .studio-home .perspective-handoff path {
+  fill: none;
+}
+.para-site .studio-home
+  .scene-belief
+  :is(.scene-heading, .headline-mask:last-child, .belief-phrase), .para-site .studio-home .final-utilities button {
+  color: var(--wave-ink);
+}
+.para-site .studio-home .scene-belief :is(.eyebrow, .belief-phrase-index) {
+  color: var(--wave-muted);
+}
+.para-site .studio-home .belief-phrase {
+  border-color: color-mix(in srgb, var(--wave-ink) 24%, transparent);
+}
+.para-site .studio-home .belief-phrase:focus-visible {
+  outline-color: var(--wave-muted);
+}
+.para-site .studio-home
+  .belief-focus[data-available="true"]
+  .belief-phrase[aria-pressed="true"] {
+  border-color: var(--wave-muted);
+}
+.para-site .studio-home .belief-signal {
+  color: var(--wave-muted);
+}
+.para-site .studio-home .belief-signal :is(path, circle) {
+  stroke: var(--wave-muted);
+}
+.para-site .studio-home .final-utilities button:focus-visible {
+  outline-color: var(--wave-ink);
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .studio-home.shared-wave-environment {
+    --wave-base: var(--para-espresso-strong);
+    --wave-haze: var(--para-saddle-brown);
+    --wave-ink: var(--para-ivory);
+    --wave-muted: var(--para-sand);
+  }
+  .para-site .shared-wave-layer .loop-waves-fallback {
+    background:
+      radial-gradient(
+        ellipse at 76% 65%,
+        rgb(139 94 52 / 24%),
+        transparent 72%
+      ),
+      var(--wave-base);
+  }
+  .para-site .shared-wave-layer [data-wave-state="ready"] .loop-waves-effect {
+    opacity: 0.5;
+  }
+  .para-site .studio-home .perspective-art-label {
+    color: var(--wave-ink);
+  }
+  .para-site .studio-home :is(.perspective-wave, .perspective-next, .perspective-history) {
+    stroke: var(--para-sand);
+  }
+  .para-site .studio-home .perspective-signal figcaption {
+    color: var(--wave-ink);
+  }
+}
+@media (max-width: 700px) {
+  .para-site .shared-wave-layer [data-wave-state="ready"] .loop-waves-effect {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .para-site .shared-wave-layer .loop-waves-effect {
+    display: none;
+  }
+}

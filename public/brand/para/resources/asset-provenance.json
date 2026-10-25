@@ -22,6 +22,16 @@
       "sha256": "0cebca525f2a6f2bd36e963dc9941180093838bf81a6c792157c033d2edc3d8f"
     },
     {
+      "source": "01_LOGO/Grain_Gradient/Web/para-symbol-light-grain-optical.svg",
+      "file": "para-symbol-light-grain-optical.svg",
+      "sha256": "b47ffa56f7e57be5c571380e1a9f78faeea28d7f4818d6c83a1c384f4985ad64"
+    },
+    {
+      "source": "01_LOGO/Grain_Gradient/Web/para-symbol-dark-grain-optical.svg",
+      "file": "para-symbol-dark-grain-optical.svg",
+      "sha256": "4b8b9879196dcd32c21455823e19da47edbca9a5622a5aac12ca52a01f58aa34"
+    },
+    {
       "source": "03_TYPOGRAPHY/Fonts_and_Licences/plusjakartasans/PlusJakartaSans[wght].woff2",
       "file": "PlusJakartaSans[wght].woff2",
       "sha256": "b7949b0154fbaa405e2e25675858776df4defe9d54e189be85f46b3bedf17393"

@@ -8,7 +8,6 @@ import { PerspectiveSignal } from "@/components/site/PerspectiveSignal";
 import { SceneHeading } from "@/components/site/SceneHeading";
 import { ScrollScene } from "@/components/site/ScrollScene";
 import { ParaIcon } from "@/components/site/ParaIcon";
-import { GlassSurface } from "@/components/site/GlassSurface";
 
 export function PerspectiveSwitcher({
   locale,
@@ -40,23 +39,17 @@ export function PerspectiveSwitcher({
     refs.current[next]?.focus();
   }
   return (
-    <ScrollScene id="perspectives" className="scene-perspectives">
-      <div className="wrap perspective-scene-grid">
-        <div className="perspective-intro">
+    <ScrollScene
+      id="perspectives"
+      className="scene-perspectives session-perspectives"
+    >
+      <div
+        className="wrap perspective-scene-grid"
+        style={{ "--audience": active } as CSSProperties}
+      >
+        <div className="perspective-intro session-intro">
           <SceneHeading lines={copy.perspectivesLines} />
-          <Link
-            className="text-link"
-            href={localePath(locale, "/for-you")}
-            prefetch={false}
-          >
-            {content.link}
-            <ParaIcon name="arrow-right" />
-          </Link>
-        </div>
-        <div
-          className="perspective-switcher"
-          style={{ "--audience": active } as CSSProperties}
-        >
+          <p className="session-support">{content.title}</p>
           <div
             className="perspective-tabs"
             role="tablist"
@@ -76,55 +69,49 @@ export function PerspectiveSwitcher({
                 onClick={() => setActive(index)}
                 onKeyDown={(event) => keyDown(event, index)}
               >
-                <span>0{index + 1}</span>
                 {item.name}
               </button>
             ))}
             <span className="audience-tab-indicator" aria-hidden="true" />
           </div>
-          <div className="perspective-workspace">
-            <PerspectiveSignal locale={locale} active={active} />
-            <GlassSurface
-              material="quiet"
-              raised
-              interactive
-              className="perspective-reading"
-            >
-              <div className="perspective-panes">
-                {content.items.map((item, index) => (
-                  <div
-                    className={`perspective-pane ${index === active ? "active" : ""}`}
-                    key={item.name}
-                    id={`perspective-panel-${index}`}
-                    role="tabpanel"
-                    tabIndex={index === active ? 0 : -1}
-                    aria-hidden={index !== active}
-                    aria-labelledby={`perspective-tab-${index}`}
-                  >
-                    <h3>{copy.perspectives[index]}</h3>
-                    {index === 2 && <p>{copy.parentNote}</p>}
-                  </div>
-                ))}
+          <div className="perspective-panes session-explanations">
+            {content.items.map((item, index) => (
+              <div
+                className={`perspective-pane ${index === active ? "active" : ""}`}
+                key={item.name}
+                id={`perspective-panel-${index}`}
+                role="tabpanel"
+                tabIndex={index === active ? 0 : -1}
+                aria-hidden={index !== active}
+                inert={index !== active}
+                aria-labelledby={`perspective-tab-${index}`}
+              >
+                <h3>{content.items[index].copy}</h3>
+                {index === 2 && <p>{copy.parentNote}</p>}
               </div>
-            </GlassSurface>
+            ))}
           </div>
+          <Link
+            className="text-link"
+            href={localePath(locale, "/for-you")}
+            prefetch={false}
+          >
+            {content.link}
+            <ParaIcon name="arrow-right" />
+          </Link>
           <noscript>
             <div className="no-js-perspectives">
               {content.items.slice(1).map((item, index) => (
                 <p key={item.name}>
                   <strong>{item.name}: </strong>
                   {copy.perspectives[index + 1]}
+                  {index === 1 && <small>{copy.parentNote}</small>}
                 </p>
               ))}
             </div>
           </noscript>
         </div>
-      </div>
-      <div className="perspective-handoff" aria-hidden="true">
-        <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
-          <path d="M1110 0C1110 75 1050 80 1050 120" />
-          <circle cx="1050" cy="114" r="7" />
-        </svg>
+        <PerspectiveSignal locale={locale} active={active} />
       </div>
     </ScrollScene>
   );

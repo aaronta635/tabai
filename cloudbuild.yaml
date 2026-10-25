@@ -26,6 +26,8 @@ steps:
       - NEXT_PUBLIC_SUPABASE_ANON_KEY=${_NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - --build-arg
       - NEXT_PUBLIC_APP_URL=${_NEXT_PUBLIC_APP_URL}
+      - --build-arg
+      - INSTALL_BASIC_PITCH=true
       - -t
       - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/app:$COMMIT_SHA
       - -t
@@ -58,10 +60,12 @@ steps:
           --max-instances 5 \
           --timeout 300 \
           --cpu-throttling \
+          --command npm \
+          --args start \
           --allow-unauthenticated \
           --service-account "howl0-run@$PROJECT_ID.iam.gserviceaccount.com" \
           --set-secrets "$$COMMON_SECRETS" \
-          --set-env-vars "NODE_ENV=production,PORT=8080"
+          --set-env-vars "NODE_ENV=production"
         gcloud run deploy ${_SERVICE_WORKER} \
           --image "$$IMAGE" \
           --region ${_REGION} \
@@ -78,7 +82,7 @@ steps:
           --no-allow-unauthenticated \
           --service-account "howl0-run@$PROJECT_ID.iam.gserviceaccount.com" \
           --set-secrets "$$COMMON_SECRETS" \
-          --set-env-vars "NODE_ENV=production,PORT=8080,ANALYZE_BACKEND=librosa"
+          --set-env-vars "NODE_ENV=production,ANALYZE_BACKEND=librosa,BASIC_PITCH=1,GEMINI_MODEL_TRAIN=gemini-3.1-pro-preview,GEMINI_MODEL_COMPARE=gemini-3.5-flash"
 
 images:
   - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/app:$COMMIT_SHA

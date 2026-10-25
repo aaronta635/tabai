@@ -172,6 +172,10 @@ export async function completePieceAssets(input: {
   return { code: updated.code, trained };
 }
 
+export async function approveStudentForm(formData: FormData) {
+  await approveStudent(String(formData.get("studentId") ?? ""));
+}
+
 export async function approveStudent(studentId: string) {
   const teacher = await teacherOrThrow();
   const student = await prisma.student.findFirst({
@@ -179,9 +183,14 @@ export async function approveStudent(studentId: string) {
   });
   if (!student) throw new Error("not found");
 
+  const approvedAt = student.approvedAt ?? new Date();
   await prisma.student.update({
     where: { id: studentId },
-    data: { approvedAt: new Date() },
+    data: { approvedAt },
+  });
+  await prisma.classMembership.updateMany({
+    where: { studentId, class: { teacherId: teacher.id }, approvedAt: null },
+    data: { approvedAt },
   });
 
   const pending = await prisma.submission.findMany({
@@ -199,7 +208,9 @@ export async function approveStudent(studentId: string) {
     teacherId: teacher.id,
     props: { studentId },
   });
-  revalidateTeacherQueue(teacher.id);
+  revalidateTeacherQueue(teacher.id, studentId);
+  revalidatePath("/teacher/roster");
+  revalidatePath("/teacher/classes", "layout");
 }
 
 export async function markOpened(submissionId: string) {

@@ -25,7 +25,7 @@ export default async function TeacherSearchPage({
           take: 20,
         }),
         prisma.student.findMany({
-          where: { teacherId: teacher.id, approvedAt: { not: null }, name: { contains: q, mode: "insensitive" } },
+          where: { teacherId: teacher.id, NOT: { name: "anonymised" }, name: { contains: q, mode: "insensitive" } },
           select: { id: true, name: true },
           orderBy: { name: "asc" },
           take: 20,

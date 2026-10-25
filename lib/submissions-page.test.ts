@@ -5,6 +5,7 @@ import {
   sliceSubmissionPage,
   submissionCursorWhere,
   submissionsHref,
+  submissionsStudentWhere,
   SUBMISSIONS_PAGE_SIZE,
 } from "@/lib/submissions-page";
 
@@ -47,6 +48,19 @@ describe("submissionCursorWhere", () => {
       OR: [{ submittedAt: { lt: cursor.submittedAt } }, { submittedAt: cursor.submittedAt, id: { lt: "z" } }],
     });
     expect(submissionCursorWhere(null)).toEqual({});
+  });
+});
+
+describe("submissionsStudentWhere", () => {
+  it("does not hide unapproved students when there is no name search", () => {
+    expect(submissionsStudentWhere()).toEqual({});
+    expect(submissionsStudentWhere("  ")).toEqual({});
+  });
+
+  it("filters by name only", () => {
+    expect(submissionsStudentWhere("  An ")).toEqual({
+      student: { name: { contains: "An", mode: "insensitive" } },
+    });
   });
 });
 

@@ -14,8 +14,10 @@ import {
   sliceSubmissionPage,
   submissionCursorWhere,
   submissionsHref,
+  submissionsStudentWhere,
   SUBMISSIONS_PAGE_SIZE,
 } from "@/lib/submissions-page";
+import { approveStudentForm } from "@/app/teacher/actions";
 
 export default async function SubmissionsPage({
   searchParams,
@@ -66,9 +68,7 @@ export default async function SubmissionsPage({
             ...(kindFilter ? { kind: kindFilter } : { kind: { in: ["take", "overdub"] } }),
             ...(statusFilter ? { status: statusFilter } : {}),
             ...(submittedAt ? { submittedAt } : {}),
-            ...(q
-              ? { student: { name: { contains: q, mode: "insensitive" } } }
-              : { student: { approvedAt: { not: null } } }),
+            ...submissionsStudentWhere(q),
             ...(classId
               ? {
                   OR: [
@@ -89,7 +89,9 @@ export default async function SubmissionsPage({
         media: { select: { durationS: true } },
         student: {
           select: {
+            id: true,
             name: true,
+            approvedAt: true,
             memberships: { select: { class: { select: { id: true, name: true } } }, take: 1 },
           },
         },
@@ -133,6 +135,7 @@ export default async function SubmissionsPage({
     drafted: t.teacher.statusDrafted,
     answered: t.teacher.answered,
     skipped: t.teacher.skip,
+    pending: t.teacher.pending,
   };
 
   const filed = rows.map((row) => {
@@ -145,7 +148,9 @@ export default async function SubmissionsPage({
       submittedAt: row.submittedAt,
       status: row.status,
       kind: [kindLabels[row.kind] ?? row.kind, formatDuration(row.media.durationS)].filter(Boolean).join(" · "),
+      studentId: row.student.id,
       studentName: row.student.name,
+      approved: Boolean(row.student.approvedAt),
       pieceId: row.piece.id,
       pieceTitle: row.piece.title,
       classId: klass?.id ?? null,
@@ -155,10 +160,12 @@ export default async function SubmissionsPage({
 
   const folders = groupTakesByClassThenPiece(filed, t.teacher.noClassFolder);
   const inbox = filed
-    .filter((take) => isClaimableStatus(take.status))
+    .filter((take) => !take.approved || isClaimableStatus(take.status))
     .map((take) => ({
       id: take.id,
+      studentId: take.studentId,
       studentName: take.studentName,
+      approved: take.approved,
       when: formatWhen(take.submittedAt, locale),
       status: take.status,
       kind: take.kind,
@@ -171,7 +178,9 @@ export default async function SubmissionsPage({
       ...piece,
       takes: piece.takes.map((take) => ({
         id: take.id,
+        studentId: take.studentId,
         studentName: take.studentName,
+        approved: take.approved,
         when: formatWhen(take.submittedAt, locale),
         status: take.status,
         kind: take.kind,
@@ -253,7 +262,9 @@ export default async function SubmissionsPage({
             needsReply: t.teacher.needsReply,
             emptyQueue: t.teacher.emptyQueue,
             loadMore: t.teacher.loadMore,
+            approve: t.teacher.approve,
           }}
+          approveAction={approveStudentForm}
           statusLabels={statusLabels}
           moreHref={moreHref}
         />

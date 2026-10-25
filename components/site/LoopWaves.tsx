@@ -1,10 +1,14 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { sceneCopy } from "@/lib/site/studio";
-import type { Locale } from "@/lib/site/content";
-import { ParaIcon } from "@/components/site/ParaIcon";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type RefObject,
+} from "react";
 
 const GradientWaves = dynamic(
   () =>
@@ -16,20 +20,18 @@ const GradientWaves = dynamic(
 
 /** Atmosphere only. Never reads or writes the lesson's scroll/stage state. */
 export const LoopWaves = memo(function LoopWaves({
-  locale,
   active = true,
+  brightnessFactor,
 }: {
-  locale: Locale;
   active?: boolean;
+  brightnessFactor?: RefObject<number>;
 }) {
-  const copy = sceneCopy(locale);
   const host = useRef<HTMLDivElement>(null);
   const [requested, setRequested] = useState(false);
   const [ready, setReady] = useState(false);
   const [failure, setFailure] = useState<"unavailable" | "performance" | null>(
     null,
   );
-  const [paused, setPaused] = useState(false);
   const [config, setConfig] = useState({
     eligible: false,
     mobile: false,
@@ -105,14 +107,15 @@ export const LoopWaves = memo(function LoopWaves({
               relief={0.72}
               sheen={0.18}
               brightness={1.15}
+              brightnessFactor={brightnessFactor}
               grain={0}
               quality="low"
               intro={false}
-              mouseInteraction={!config.mobile && !paused && active}
+              mouseInteraction={!config.mobile && active}
               parallaxStrength={0.12}
               mouseStrength={0.16}
               swellOnClick={false}
-              paused={paused || !active}
+              paused={!active}
               dpr={config.mobile ? 0.65 : 0.85}
               maxWidth={config.mobile ? 720 : 1100}
               maxFps={config.mobile ? 24 : 30}
@@ -124,16 +127,6 @@ export const LoopWaves = memo(function LoopWaves({
         </div>
         <div className="loop-waves-scrim" />
       </div>
-      {enhanced && ready && (
-        <button
-          className="story-control loop-wave-control"
-          aria-pressed={paused}
-          onClick={() => setPaused((value) => !value)}
-        >
-          {paused ? copy.resume : copy.pause}
-          <ParaIcon name={paused ? "play" : "pause"} />
-        </button>
-      )}
     </>
   );
 });

@@ -31,7 +31,13 @@
  */
 "use client";
 
-import { useEffect, useMemo, useRef, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  type CSSProperties,
+  type RefObject,
+} from "react";
 
 export interface GradientWavesProps {
   horizonColor?: string;
@@ -53,6 +59,8 @@ export interface GradientWavesProps {
   lightAngle?: number;
   sheen?: number;
   brightness?: number;
+  /** PARA: unsmoothed document brightness, without React frame updates. */
+  brightnessFactor?: RefObject<number>;
   opacity?: number;
   grain?: number;
   quality?: "low" | "medium" | "high";
@@ -363,6 +371,7 @@ export default function GradientWaves({
   lightAngle = 120,
   sheen = 0,
   brightness = 1,
+  brightnessFactor,
   opacity = 1,
   grain = 0.2,
   quality = "medium",
@@ -614,7 +623,10 @@ export default function GradientWaves({
       gl.uniform1f(u.uZoom, s.zoom);
       gl.uniform2f(u.uLook, state.look[0], state.look[1]);
       gl.uniform1f(u.uFogDepth, s.fogDepth);
-      gl.uniform1f(u.uBrightness, s.brightness);
+      gl.uniform1f(
+        u.uBrightness,
+        s.brightness * (brightnessFactor?.current ?? 1),
+      );
       gl.uniform1f(u.uOpacity, s.opacity);
       gl.uniform1f(u.uGrain, s.grain);
       gl.uniform3fv(u.uHorizon, s.horizon);
@@ -754,6 +766,14 @@ export default function GradientWaves({
       state.raf = requestAnimationFrame(tick);
     };
     wakeRef.current = wake;
+    // A paused ambient field still responds directly to document brightness.
+    const onScrollBrightness = () => {
+      state.quiet = 0;
+      state.seen = null;
+      wake();
+    };
+    if (brightnessFactor)
+      window.addEventListener("scroll", onScrollBrightness, { passive: true });
 
     const local = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
@@ -850,6 +870,7 @@ export default function GradientWaves({
     state.raf = requestAnimationFrame(tick);
 
     return () => {
+      window.removeEventListener("scroll", onScrollBrightness);
       cancelAnimationFrame(state.raf);
       wakeRef.current = null;
       document.removeEventListener("visibilitychange", onVisibility);
@@ -865,7 +886,7 @@ export default function GradientWaves({
       gl.getExtension("WEBGL_lose_context")?.loseContext();
       canvas.remove();
     };
-  }, []);
+  }, [brightnessFactor]);
 
   return (
     <div

@@ -1,9 +1,16 @@
+"use client";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { content, homeHref, localePath, type Locale } from "@/lib/site/content";
+import { ProductCta } from "@/components/site/ProductCta";
 
 export function SiteFooter({ locale }: { locale: Locale }) {
+  const pathname = usePathname();
   const dictionary = content[locale];
+  // The homepage owns its final scene; secondary routes retain their footer.
+  if (pathname === "/" || pathname === "/vi" || pathname === "/vi/" || pathname === "/en" || pathname === "/en/")
+    return null;
   return (
     <footer className="footer">
       <div className="wrap">
@@ -26,9 +33,7 @@ export function SiteFooter({ locale }: { locale: Locale }) {
                 {label}
               </Link>
             ))}
-            <a href={homeHref(locale, "#waitlist")}>
-              {dictionary.navigation.waitlist}
-            </a>
+            <ProductCta locale={locale} size="compact" tone="ivory" />
           </nav>
         </div>
         <div className="footer-bottom">

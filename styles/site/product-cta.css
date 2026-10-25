@@ -1,0 +1,252 @@
+/* Approved Sandalwood / Smoke and Ivory Frost materials. The anchor's box
+   never moves. Elevation/press motion belongs only to decorative inner layers. */
+.para-site a.product-cta {
+  --cta-ink: var(--para-ivory);
+  --cta-solid: var(--para-espresso);
+  --cta-fill: 59 47 42 / 0.62;
+  --cta-gradient: linear-gradient(
+    115deg,
+    var(--para-espresso-strong),
+    var(--para-espresso) 52%,
+    var(--para-saddle-brown)
+  );
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 15px 26px;
+  border: 0;
+  border-radius: var(--para-glass-radius-control);
+  color: var(--cta-ink);
+  background: transparent;
+  font: 600 14px/1.5 var(--font-body);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  transform: none;
+  transition: none;
+}
+.para-site a.product-cta[data-tone="ivory"] {
+  --cta-ink: var(--para-espresso);
+  --cta-solid: var(--para-ivory);
+  --cta-fill: 243 237 226 / 0.76;
+  --cta-gradient: linear-gradient(
+    115deg,
+    var(--para-ivory),
+    var(--para-paper-soft) 52%,
+    var(--para-sand)
+  );
+}
+.para-site a.product-cta[data-size="compact"] {
+  min-height: 46px;
+  padding: 12px 18px;
+  font-size: 13px;
+  gap: 12px;
+}
+.para-site a.product-cta[data-size="large"] {
+  min-height: 64px;
+  padding: 20px 36px;
+  font-size: 16px;
+  gap: 24px;
+}
+/* Long Vietnamese navigation needs a tighter compact control just above the
+   existing menu breakpoint. Keep its height and label on a single line. */
+@media (min-width: 1101px) and (max-width: 1199px) {
+  .para-site .nav-links > a.product-cta[data-size="compact"] {
+    padding-inline: 12px;
+    gap: 8px;
+    font-size: 12px;
+  }
+}
+.para-site .product-cta-material,
+.para-site .product-cta-material > span {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+}
+.para-site .product-cta .product-cta-material {
+  z-index: 0;
+  background: var(--cta-solid);
+  box-shadow: 0 6px 16px rgb(59 47 42 / 0.19);
+  transition: transform 180ms var(--para-glass-easing);
+}
+.para-site .product-cta .product-cta-gradient {
+  background: var(--cta-gradient);
+  background-size: 180% 100%;
+  background-position: 10% 50%;
+  transition: background-position 200ms ease;
+}
+.para-site .product-cta .product-cta-glass {
+  background: var(--cta-solid);
+}
+@supports (
+  (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+  .para-site .product-cta .product-cta-glass {
+    background: rgb(var(--cta-fill));
+    -webkit-backdrop-filter: blur(6px) saturate(1);
+    backdrop-filter: blur(6px) saturate(1);
+  }
+}
+.para-site .product-cta .product-cta-grain {
+  background: url("/brand/para/glass/para-film-grain-256.png") repeat;
+  background-size: 256px 256px;
+  opacity: 0.065;
+}
+.para-site .product-cta .product-cta-edge {
+  border: 1px solid rgb(243 237 226 / 0.34);
+  box-shadow:
+    inset 0 1px 0 rgb(243 237 226 / 0.22),
+    inset 0 -1px 0 rgb(59 47 42 / 0.18);
+  background: linear-gradient(155deg, rgb(243 237 226 / 0.05), transparent 45%);
+}
+.para-site .product-cta[data-tone="ivory"] .product-cta-edge {
+  border-color: rgb(139 94 52 / 0.45);
+}
+.para-site .product-cta .product-cta-label,
+.para-site .product-cta > .para-icon {
+  position: relative;
+  z-index: 1;
+  opacity: 1;
+  filter: none;
+}
+.para-site .product-cta > .para-icon {
+  width: 18px;
+  height: 18px;
+  transition: transform 180ms var(--para-glass-easing);
+}
+.para-site a.product-cta:focus-visible {
+  outline: 2px solid var(--para-espresso);
+  outline-offset: 4px;
+  box-shadow: 0 0 0 4px var(--para-ivory);
+}
+@media (hover: hover) {
+  .para-site a.product-cta:hover .product-cta-material {
+    transform: translateY(-2px);
+  }
+  .para-site a.product-cta:hover .product-cta-gradient {
+    background-position: 90% 50%;
+  }
+  .para-site a.product-cta:hover > .para-icon {
+    transform: translateX(3px);
+  }
+}
+.para-site a.product-cta:active .product-cta-material {
+  transform: translateY(1px) scale(0.985);
+}
+.para-site a.product-cta:active > .para-icon {
+  transform: translateX(1px);
+}
+.para-site .studio-home .product-invitation {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 28px;
+  padding-block: 16px 32px;
+}
+.para-site .studio-home .product-invitation .scene-heading {
+  max-width: 100%;
+  text-wrap: balance;
+}
+.para-site .studio-home .scene-closing .product-invitation > p {
+  max-width: 46ch;
+  font-size: 17px;
+}
+.para-site .studio-home .product-invitation .product-cta {
+  margin-top: 8px;
+}
+.para-site .footer-links .product-cta {
+  justify-self: start;
+  align-self: start;
+}
+@media (prefers-color-scheme: dark) {
+  .para-site a.product-cta[data-tone="espresso"] {
+    --cta-ink: var(--para-espresso);
+    --cta-solid: var(--para-ivory);
+    --cta-fill: 243 237 226 / 0.76;
+    --cta-gradient: linear-gradient(
+      115deg,
+      var(--para-ivory),
+      var(--para-paper-soft) 52%,
+      var(--para-sand)
+    );
+  }
+  .para-site a.product-cta[data-tone="espresso"] .product-cta-edge {
+    border-color: rgb(139 94 52 / 0.45);
+  }
+}
+/* Beat legacy navigation hover colours without fading the foreground. */
+.para-site .nav-links > a.product-cta,
+.para-site .nav-links > a.product-cta:hover {
+  color: var(--cta-ink);
+}
+@media (max-width: 700px) {
+  .para-site .product-cta .product-cta-glass {
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+  }
+  .para-site .product-cta .product-cta-grain {
+    opacity: 0.04;
+  }
+  .para-site a.product-cta[data-size="large"] {
+    padding-inline: 28px;
+  }
+  .para-site .studio-home .product-invitation {
+    gap: 24px;
+  }
+  .para-site .studio-home .product-invitation .scene-heading {
+    max-width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site a.product-cta .product-cta-material,
+  .para-site a.product-cta > .para-icon {
+    transform: none !important;
+    transition: none;
+  }
+  .para-site .product-cta .product-cta-gradient {
+    transition: none;
+  }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .para-site .product-cta .product-cta-glass {
+    background: var(--cta-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .para-site .product-cta
+    :is(.product-cta-gradient, .product-cta-grain, .product-cta-edge) {
+    display: none;
+  }
+}
+.para-site [data-para-glass="solid"] .product-cta .product-cta-glass {
+  background: var(--cta-solid);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.para-site [data-para-glass="solid"]
+  .product-cta
+  :is(.product-cta-grain, .product-cta-edge) {
+  display: none;
+}
+@media (forced-colors: active) {
+  .para-site a.product-cta {
+    color: LinkText;
+    outline: 1px solid LinkText;
+  }
+  .para-site .product-cta .product-cta-material {
+    background: Canvas;
+    box-shadow: none;
+  }
+  .para-site .product-cta-material > span {
+    display: none;
+  }
+  .para-site a.product-cta:focus-visible {
+    outline: 2px solid Highlight;
+  }
+}

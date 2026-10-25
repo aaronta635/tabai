@@ -108,7 +108,7 @@
   line-height: 1.65;
   letter-spacing: 0;
 }
-.para-site .type-body {
+.type-.para-site {
   font-family: var(--font-body);
   font-weight: 400;
   font-size: clamp(16px, 1.11vw, 16px);
@@ -136,4 +136,3 @@
   line-height: 1.5;
   letter-spacing: 0.1em;
 }
-

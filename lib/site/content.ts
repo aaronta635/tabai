@@ -34,12 +34,11 @@ export const content = {
         ["People", "/people"],
         ["FAQ", "/faq"],
       ],
-      waitlist: "Build status",
     },
     metadata: {
       title: "PARA: See progress between music lessons",
       description:
-        "PARA is building a clearer way to connect music practice, teacher feedback and progress between lessons for students, teachers and families.",
+        "Explore PARA, a music learning platform connecting practice, teacher feedback and progress between lessons.",
     },
     home: {
       metadataTitle: "See progress between music lessons",
@@ -47,11 +46,10 @@ export const content = {
         eyebrow: "MUSIC LEARNING, BETWEEN LESSONS",
         title: "See the progress between lessons.",
         intro:
-          "PARA is being built to connect assignments, recordings, teacher feedback and next steps in one music learning journey.",
-        primary: "See the learning loop",
+          "PARA is a music learning platform connecting practice, teacher feedback and the next step.",
+        primary: "Try for free",
         secondary: "Product direction",
-        status:
-          "Currently in development · Shaped with music educators and families",
+        status: "Available to try at paramuzic.com",
         stages: ["Assign", "Practise", "Submit", "Respond", "Next step"],
         parentView: "Progress update",
         visualMessage: "One learning loop. A clearer view of progress.",
@@ -100,24 +98,10 @@ export const content = {
         "What to try again",
       ],
     },
-    waitlist: {
-      eyebrow: "STAY IN THE LOOP",
-      title: "Follow PARA as it takes shape.",
-      copy: "PARA is currently in development. Update registration will be available once the waitlist is connected.",
-      nameLabel: "Name",
-      namePlaceholder: "Your name",
-      emailLabel: "Email address",
-      emailPlaceholder: "you@example.com",
-      button: "Join the waitlist",
-      loading: "Checking availability…",
-      success: "You're in the loop. We'll keep you posted.",
-      consent:
-        "This form is a preview only. It does not collect or send personal information.",
-      unavailable:
-        "The waitlist is being connected. Submissions are not saved yet.",
-      error:
-        "The waitlist is not accepting submissions yet. Please check back soon.",
-      genericError: "Something went wrong. Please try again.",
+    conversion: {
+      title: "Your next step starts here.",
+      copy: "Explore PARA and bring your music learning together.",
+      button: "Try for free",
     },
     product: {
       metadataTitle: "Product",
@@ -147,7 +131,7 @@ export const content = {
         "Technology should carry a teacher's guidance forward, not replace it.",
       principleCopy:
         "PARA is being designed to organise the learning loop. The teacher remains responsible for direction, feedback and judgement.",
-      ctaTitle: "Help shape PARA",
+      ctaTitle: "Your next step starts here.",
     },
     howItWorks: {
       metadataTitle: "How it works",
@@ -183,7 +167,7 @@ export const content = {
         "Students should not need to learn a platform before they can submit their learning.",
       simpleFlow: "Open link → Choose recording → Submit",
       note: "The submission link is the easy starting point. The connected progress history is the continuing value.",
-      ctaTitle: "Follow the build",
+      ctaTitle: "Your next step starts here.",
     },
     why: {
       metadataTitle: "Why PARA",
@@ -204,7 +188,7 @@ export const content = {
       ],
       scatterAria:
         "Practice tasks, student recordings, teacher feedback and next steps connect into a learning loop.",
-      ctaTitle: "Share your perspective",
+      ctaTitle: "Your next step starts here.",
     },
     forYou: {
       metadataTitle: "For you",
@@ -245,7 +229,7 @@ export const content = {
           ],
         },
       ],
-      ctaTitle: "Help us understand what matters to you",
+      ctaTitle: "Your next step starts here.",
     },
     people: {
       metadataTitle: "People",
@@ -271,17 +255,17 @@ export const content = {
       whyTitle: "Learning does not stop when a lesson ends.",
       whyCopy:
         "We are building PARA to help teachers, students and families understand the work between lessons, starting with one simple way to submit practice and keeping the next step in view.",
-      ctaTitle: "Follow the journey",
+      ctaTitle: "Your next step starts here.",
     },
     faq: {
       metadataTitle: "FAQ",
       eyebrow: "GOOD QUESTIONS",
-      title: "What we know while PARA takes shape.",
-      note: "PARA is currently in development. These answers describe the intended direction, not a finished service.",
+      title: "Your questions about PARA.",
+      note: "PARA is available to try at paramuzic.com. Some ideas described here are still being explored.",
       items: [
         [
           "What is PARA?",
-          "PARA is a music learning progress platform in development. It aims to connect practice tasks, student recordings, teacher feedback and next steps between lessons.",
+          "PARA is a music learning platform focused on practice, teacher feedback and the next step between lessons.",
         ],
         [
           "Who is PARA for?",
@@ -289,7 +273,7 @@ export const content = {
         ],
         [
           "Is PARA available now?",
-          "Not yet. The product is currently in development, and the waitlist is not accepting submissions yet. The website describes the intended direction, not a finished service.",
+          "Yes. Visit paramuzic.com to try PARA for free.",
         ],
         [
           "How will students submit practice?",
@@ -309,17 +293,17 @@ export const content = {
         ],
         [
           "How much will PARA cost?",
-          "Pricing has not been decided. We are still validating who receives the strongest recurring value and who is most willing to pay.",
+          "Visit PARA for current product and pricing information.",
         ],
         [
-          "Is joining the waitlist free?",
-          "The planned waitlist will be free, but it is not accepting submissions yet. The preview form does not save or send your details.",
+          "Can I try PARA for free?",
+          "Yes. Visit paramuzic.com to try PARA for free.",
         ],
       ],
     },
     footer: {
       belief: "Feedback is a signal, not a verdict.",
-      status: "Currently in development",
+      status: "Available to try",
       pronunciation: "Music learning, made visible",
       contact: "Contact details coming soon",
       navigationLabel: "Footer navigation",
@@ -343,12 +327,11 @@ export const content = {
         ["Con người", "/people"],
         ["Câu hỏi thường gặp", "/faq"],
       ],
-      waitlist: "Tiến độ phát triển",
     },
     metadata: {
       title: "PARA: Nhìn thấy tiến bộ giữa những buổi học nhạc",
       description:
-        "PARA đang xây dựng một cách rõ ràng hơn để kết nối việc luyện tập, góp ý của giáo viên và hành trình tiến bộ giữa các buổi học cho học sinh, giáo viên và gia đình.",
+        "Khám phá PARA, nền tảng học nhạc kết nối luyện tập, góp ý của giáo viên và hành trình tiến bộ giữa các buổi học.",
     },
     home: {
       metadataTitle: "Nhìn thấy tiến bộ giữa những buổi học nhạc",
@@ -356,11 +339,10 @@ export const content = {
         eyebrow: "HỌC NHẠC, CẢ GIỮA NHỮNG BUỔI HỌC",
         title: "Thấy từng bước tiến giữa những buổi học.",
         intro:
-          "PARA đang được xây dựng để kết nối bài tập, bản thu, góp ý của giáo viên và bước luyện tập tiếp theo trong một hành trình học nhạc.",
-        primary: "Xem vòng học",
+          "PARA là nền tảng học nhạc kết nối luyện tập, góp ý của giáo viên và bước tiếp theo.",
+        primary: "Dùng thử miễn phí",
         secondary: "Định hướng sản phẩm",
-        status:
-          "Đang phát triển · Được hoàn thiện cùng giáo viên và gia đình học nhạc",
+        status: "Trải nghiệm tại paramuzic.com",
         stages: ["Giao bài", "Luyện tập", "Gửi bài", "Góp ý", "Bước tiếp theo"],
         parentView: "Cập nhật tiến bộ",
         visualMessage: "Một vòng học liền mạch. Tiến bộ được nhìn thấy rõ hơn.",
@@ -410,23 +392,10 @@ export const content = {
         "Điều nên thử lại",
       ],
     },
-    waitlist: {
-      eyebrow: "CÙNG THEO DÕI HÀNH TRÌNH",
-      title: "Cùng chờ xem PARA sẽ thành hình như thế nào.",
-      copy: "PARA hiện vẫn đang được phát triển. Bạn sẽ có thể đăng ký nhận cập nhật khi hệ thống đăng ký được kết nối.",
-      nameLabel: "Tên của bạn",
-      namePlaceholder: "Nhập tên của bạn",
-      emailLabel: "Email",
-      emailPlaceholder: "ban@example.com",
-      button: "Đăng ký nhận tin",
-      loading: "Đang kiểm tra…",
-      success: "Bạn đã vào nhịp cùng PARA. Chúng tôi sẽ sớm cập nhật.",
-      consent:
-        "Đây chỉ là biểu mẫu minh họa, không thu thập hay gửi thông tin cá nhân.",
-      unavailable:
-        "Hệ thống đăng ký đang được kết nối. Thông tin hiện chưa được lưu.",
-      error: "Hệ thống đăng ký chưa nhận thông tin. Vui lòng quay lại sau.",
-      genericError: "Đã có lỗi xảy ra. Vui lòng thử lại.",
+    conversion: {
+      title: "Bắt đầu bước tiếp theo cùng PARA.",
+      copy: "Khám phá PARA và kết nối hành trình học nhạc của bạn.",
+      button: "Dùng thử miễn phí",
     },
     product: {
       metadataTitle: "Sản phẩm",
@@ -456,7 +425,7 @@ export const content = {
         "Công nghệ nên giúp định hướng của giáo viên đi xa hơn, không thay thế giáo viên.",
       principleCopy:
         "PARA đang được thiết kế để giúp vòng học trở nên liền mạch. Giáo viên vẫn là người định hướng, góp ý và đưa ra đánh giá chuyên môn.",
-      ctaTitle: "Cùng góp phần hoàn thiện PARA",
+      ctaTitle: "Bắt đầu bước tiếp theo cùng PARA.",
     },
     howItWorks: {
       metadataTitle: "Cách hoạt động",
@@ -495,7 +464,7 @@ export const content = {
         "Học sinh không nên phải học cách dùng một nền tảng trước khi có thể gửi bài.",
       simpleFlow: "Mở link → Chọn bản thu → Gửi bài",
       note: "Đường link giúp việc bắt đầu thật đơn giản. Hành trình tiến bộ được kết nối mới là giá trị lâu dài.",
-      ctaTitle: "Theo dõi quá trình phát triển",
+      ctaTitle: "Bắt đầu bước tiếp theo cùng PARA.",
     },
     why: {
       metadataTitle: "Vì sao PARA",
@@ -518,7 +487,7 @@ export const content = {
       ],
       scatterAria:
         "Bài tập, bản thu của học sinh, góp ý của giáo viên và bước tiếp theo kết nối thành một vòng học.",
-      ctaTitle: "Chia sẻ góc nhìn của bạn",
+      ctaTitle: "Bắt đầu bước tiếp theo cùng PARA.",
     },
     forYou: {
       metadataTitle: "Dành cho bạn",
@@ -559,7 +528,7 @@ export const content = {
           ],
         },
       ],
-      ctaTitle: "Giúp chúng tôi hiểu điều gì quan trọng với bạn",
+      ctaTitle: "Bắt đầu bước tiếp theo cùng PARA.",
     },
     people: {
       metadataTitle: "Con người",
@@ -585,17 +554,17 @@ export const content = {
       whyTitle: "Việc học không dừng lại khi buổi học kết thúc.",
       whyCopy:
         "Chúng tôi xây dựng PARA để giáo viên, học sinh và gia đình hiểu rõ hơn việc học giữa các buổi học, bắt đầu từ một cách gửi bài đơn giản và giữ cho bước tiếp theo luôn rõ ràng.",
-      ctaTitle: "Theo dõi hành trình của PARA",
+      ctaTitle: "Bắt đầu bước tiếp theo cùng PARA.",
     },
     faq: {
       metadataTitle: "Câu hỏi thường gặp",
       eyebrow: "NHỮNG CÂU HỎI ĐÁNG ĐƯỢC TRẢ LỜI",
-      title: "Những điều chúng tôi có thể chia sẻ khi PARA đang thành hình.",
-      note: "PARA hiện vẫn đang được phát triển. Các câu trả lời dưới đây mô tả định hướng dự kiến, không phải một dịch vụ đã hoàn thiện.",
+      title: "Những câu hỏi của bạn về PARA.",
+      note: "Bạn có thể trải nghiệm PARA tại paramuzic.com. Một số ý tưởng được mô tả ở đây vẫn đang được tìm hiểu.",
       items: [
         [
           "PARA là gì?",
-          "PARA là nền tảng theo dõi hành trình tiến bộ trong học nhạc, hiện đang được phát triển. Sản phẩm hướng đến việc kết nối bài tập, bản thu của học sinh, góp ý từ giáo viên và bước luyện tập tiếp theo giữa các buổi học.",
+          "PARA là nền tảng học nhạc tập trung vào luyện tập, góp ý của giáo viên và bước tiếp theo giữa các buổi học.",
         ],
         [
           "PARA dành cho ai?",
@@ -603,7 +572,7 @@ export const content = {
         ],
         [
           "PARA đã có thể sử dụng chưa?",
-          "Chưa. Sản phẩm hiện vẫn đang được phát triển và hệ thống đăng ký chưa nhận thông tin. Website mô tả định hướng dự kiến, không phải một dịch vụ đã hoàn thiện.",
+          "Có. Truy cập paramuzic.com để dùng thử PARA miễn phí.",
         ],
         [
           "Học sinh sẽ gửi bài luyện tập như thế nào?",
@@ -623,17 +592,17 @@ export const content = {
         ],
         [
           "PARA sẽ có mức giá bao nhiêu?",
-          "Mức giá chưa được quyết định. Chúng tôi vẫn đang kiểm chứng ai nhận được giá trị thường xuyên rõ ràng nhất và ai sẵn sàng chi trả.",
+          "Truy cập PARA để xem thông tin sản phẩm và giá hiện tại.",
         ],
         [
-          "Đăng ký nhận tin có miễn phí không?",
-          "Việc đăng ký nhận tin dự kiến sẽ miễn phí, nhưng hệ thống hiện chưa nhận thông tin. Biểu mẫu minh họa không lưu hay gửi thông tin của bạn.",
+          "Tôi có thể dùng thử PARA miễn phí không?",
+          "Có. Truy cập paramuzic.com để dùng thử PARA miễn phí.",
         ],
       ],
     },
     footer: {
       belief: "Góp ý là tín hiệu để tiến bộ, không phải lời phán xét.",
-      status: "Hiện đang được phát triển",
+      status: "Đã có thể trải nghiệm",
       pronunciation: "Để tiến bộ được nhìn thấy",
       contact: "Thông tin liên hệ sẽ sớm được cập nhật",
       navigationLabel: "Điều hướng cuối trang",

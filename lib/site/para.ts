@@ -4,7 +4,7 @@ import type { Locale } from "@/lib/site/content";
 // for the product story, audience roles, FAQ and development qualifications.
 export const paraContent = {
   en: {
-    concept: "Conceptual learning story · Product in development",
+    concept: "Illustrative learning workflow",
     comparison:
       "Illustrative attempts · Teacher guidance · Not measured performance data",
     play: "Play story",
@@ -36,7 +36,7 @@ export const paraContent = {
     ],
   },
   vi: {
-    concept: "Minh họa ý tưởng · Sản phẩm đang phát triển",
+    concept: "Minh họa vòng học",
     comparison:
       "Minh họa các lần thử · Hướng dẫn của giáo viên · Không phải số liệu đo lường",
     play: "Xem hành trình",

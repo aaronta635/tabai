@@ -78,7 +78,7 @@ export function SubmissionFlow({
       aria-labelledby="submission-flow-heading"
     >
       <div className="loop-sticky wrap">
-        <LoopWaves locale={locale} active={waveActive} />
+        {!coordinated && <LoopWaves active={waveActive} />}
         <div className="loop-heading-slot">
           <h2
             id="submission-flow-heading"

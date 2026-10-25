@@ -529,14 +529,6 @@
   width: min(280px, 100%);
   min-width: 0;
 }
-.para-site .studio-home .waitlist-grid {
-  gap: 80px;
-}
-.para-site .studio-home .waitlist-form {
-  background: var(--color-background);
-  border-color: var(--color-control-border);
-  box-shadow: 0 8px 24px #3b2f2a08;
-}
 @keyframes material-drift {
   0%,
   100% {
@@ -625,9 +617,6 @@
   .para-site .studio-home .belief-emblem {
     width: 112px;
     height: 112px;
-  }
-  .para-site .studio-home .waitlist-grid {
-    gap: 40px;
   }
   .para-site .studio-home .closing-mark .brand-logo {
     left: 0;
@@ -894,4 +883,3 @@
     transform: none;
   }
 }
-

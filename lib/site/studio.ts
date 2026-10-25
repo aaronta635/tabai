@@ -5,9 +5,9 @@ export const studio = {
   en: {
     heroLines: ["See the progress", "between lessons."],
     platform:
-      "PARA is a music learning platform in development, connecting practice, teacher feedback and the next step.",
+      "PARA is a music learning platform connecting practice, teacher feedback and the next step.",
     discover: "Explore PARA",
-    concept: "Concept · Product in development",
+    concept: "Illustrative learning workflow",
     assignment: "Assignment link",
     recording: "Existing audio / video",
     feedback: "Teacher feedback",
@@ -36,19 +36,24 @@ export const studio = {
     ],
     parentNote:
       "An authorised view of progress, guided by the teacher. In exploration.",
+    session: {
+      passage: "One practice passage",
+      guidance: "Keep the pulse steady through this phrase.",
+      practice: "Practise this passage slowly, then try another recording.",
+      progress: "Working on a steadier pulse in this passage.",
+      support: "Ask what their teacher suggested trying next.",
+      supportLabel: "Support practice",
+    },
     beliefLines: ["Feedback is a signal,", "not a verdict."],
     beliefCopy: "Every attempt helps reveal the next step.",
-    closeLines: ["The next step", "is taking shape."],
-    closeCopy: "PARA is in development.",
-    closeAction: "Explore the product direction",
     openLoop: "An open loop, ready for what comes next.",
   },
   vi: {
     heroLines: ["Thấy từng bước tiến", "giữa những buổi học."],
     platform:
-      "PARA là nền tảng học nhạc đang phát triển, kết nối luyện tập, góp ý của giáo viên và bước tiếp theo.",
+      "PARA là nền tảng học nhạc kết nối luyện tập, góp ý của giáo viên và bước tiếp theo.",
     discover: "Khám phá PARA",
-    concept: "Minh họa quy trình · Sản phẩm đang phát triển",
+    concept: "Minh họa vòng học",
     assignment: "Liên kết giao bài",
     recording: "Bản thu âm / video đã có",
     feedback: "Góp ý của giáo viên",
@@ -77,11 +82,16 @@ export const studio = {
     ],
     parentNote:
       "Đang tìm hiểu một góc nhìn được cấp quyền, có định hướng từ giáo viên.",
+    session: {
+      passage: "Cùng một đoạn luyện tập",
+      guidance: "Giữ nhịp đều trong đoạn này.",
+      practice: "Luyện chậm đoạn này, rồi thử thu lại.",
+      progress: "Đang luyện giữ nhịp đều hơn trong đoạn này.",
+      support: "Hỏi xem giáo viên gợi ý con thử điều gì tiếp theo.",
+      supportLabel: "Đồng hành luyện tập",
+    },
     beliefLines: ["Góp ý là tín hiệu để tiến bộ,", "không phải lời phán xét."],
     beliefCopy: "Mỗi lần luyện tập giúp làm rõ bước tiếp theo.",
-    closeLines: ["Bước tiếp theo", "đang thành hình."],
-    closeCopy: "PARA đang được phát triển.",
-    closeAction: "Khám phá định hướng sản phẩm",
     openLoop: "Một vòng mở, sẵn sàng cho bước tiếp theo.",
   },
 } as const;

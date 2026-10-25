@@ -104,7 +104,7 @@
   transform-origin: 50% 50%;
   animation: studio-ribbon-breathe 11s ease-in-out infinite;
 }
-.para-site .studio-home .ribbon-body {
+.studio-home .ribbon-.para-site {
   stroke-width: 58;
   stroke-linecap: butt;
 }
@@ -850,10 +850,6 @@
   padding-block: 88px;
   background: var(--color-background);
 }
-.para-site .studio-home .waitlist-grid {
-  gap: 112px;
-  align-items: center;
-}
 .para-site .studio-home .closing-mark {
   width: min(320px, 100%);
   position: relative;
@@ -892,21 +888,6 @@
 }
 .para-site .studio-home .scene-closing .text-link {
   margin-top: 20px;
-}
-.para-site .studio-home .waitlist-form {
-  padding: 32px;
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: var(--color-background);
-}
-.para-site .studio-home .field input {
-  border-radius: 6px;
-}
-.para-site .studio-home .form-note {
-  font-size: 12px;
-}
-.para-site .studio-home .consent-note {
-  font-size: 11px;
 }
 
 @keyframes studio-line-in {
@@ -970,9 +951,6 @@
   }
   .para-site .studio-home .perspective-intro .scene-heading {
     font-size: 64px;
-  }
-  .para-site .studio-home .waitlist-grid {
-    gap: 56px;
   }
 }
 /* Vietnamese phrases are sized independently, avoiding a one-word final line. */
@@ -1060,10 +1038,6 @@
   }
   .para-site .studio-home .scene-belief .scene-heading {
     font-size: clamp(64px, 9vw, 90px);
-  }
-  .para-site .studio-home .waitlist-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
   }
 }
 @media (max-width: 640px) {
@@ -1292,19 +1266,12 @@
   .para-site .studio-home .scene-closing {
     padding-block: 48px;
   }
-  .para-site .studio-home .waitlist-grid {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 32px;
-  }
   .para-site .studio-home .closing-mark {
     width: 270px;
     margin-bottom: 28px;
   }
   .para-site .studio-home .scene-closing .scene-heading {
     font-size: 52px;
-  }
-  .para-site .studio-home .waitlist-form {
-    padding: 24px;
   }
 }
 @media (prefers-color-scheme: dark) {
@@ -1381,4 +1348,3 @@
     clip-path: none;
   }
 }
-

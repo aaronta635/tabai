@@ -178,10 +178,6 @@
 .para-site .studio-home .closing-mark {
   margin-left: -20px;
 }
-.para-site .studio-home .waitlist-form {
-  border-radius: 12px;
-  box-shadow: var(--para-glass-quiet-raised-shadow);
-}
 @media (hover: hover) {
   .para-site .text-link:hover .para-icon {
     transform: translateX(3px);
@@ -359,4 +355,3 @@
     display: none;
   }
 }
-

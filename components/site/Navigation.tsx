@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { ParaIcon } from "@/components/site/ParaIcon";
-import { GlassLayers } from "@/components/site/GlassSurface";
+import { ProductCta } from "@/components/site/ProductCta";
 import {
   content,
   homeHref,
@@ -51,7 +51,7 @@ export function Navigation({ locale }: { locale: Locale }) {
   }, [open]);
 
   useEffect(() => {
-    const media = matchMedia("(min-width: 1101px)");
+    const media = matchMedia("(min-width: 1281px)");
     const resize = () => {
       if (media.matches) setOpen(false);
     };
@@ -78,23 +78,19 @@ export function Navigation({ locale }: { locale: Locale }) {
     const links = Array.from(
       navigation.current!.querySelectorAll<HTMLElement>("a,button"),
     ).filter((node) => node.getClientRects().length);
-    const first = links[0],
-      last = links[links.length - 1];
-    if (event.shiftKey && document.activeElement === first) {
-      event.preventDefault();
-      last.focus();
-    } else if (!event.shiftKey && document.activeElement === last) {
-      event.preventDefault();
-      first.focus();
-    }
+    // Explicit traversal also includes anchors when Safari's keyboard setting
+    // would otherwise skip links. The modal menu owns focus while it is open.
+    const index = links.indexOf(document.activeElement as HTMLElement);
+    const direction = event.shiftKey ? -1 : 1;
+    event.preventDefault();
+    links[(index + direction + links.length) % links.length]?.focus();
   }
 
   return (
-    <header className="site-header para-glass para-glass--quiet">
-      <GlassLayers />
+    <header className="site-header integrated-header">
       <nav
         ref={navigation}
-        className="nav wrap para-glass__content"
+        className="nav"
         aria-label={dictionary.label}
         onKeyDown={handleKeys}
       >
@@ -121,13 +117,12 @@ export function Navigation({ locale }: { locale: Locale }) {
               </Link>
             );
           })}
-          <a
-            className="nav-cta button button-primary"
-            href={homeHref(locale, "#waitlist")}
+          <ProductCta
+            locale={locale}
+            size="compact"
+            className="nav-cta"
             onClick={() => setOpen(false)}
-          >
-            {dictionary.waitlist}
-          </a>
+          />
         </div>
         <a
           className="language-switch"

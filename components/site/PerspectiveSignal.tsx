@@ -1,7 +1,9 @@
 import { sceneCopy } from "@/lib/site/studio";
-import type { Locale } from "@/lib/site/content";
-import { ExpressiveIcon } from "@/components/site/ExpressiveIcon";
+import { content, type Locale } from "@/lib/site/content";
+import { ParaIcon } from "@/components/site/ParaIcon";
 
+/** One illustrative passage stays in place. Roles change its annotations,
+ * never the recording, timestamps or frame geometry. No player is simulated. */
 export function PerspectiveSignal({
   locale,
   active,
@@ -10,76 +12,113 @@ export function PerspectiveSignal({
   active: number;
 }) {
   const copy = sceneCopy(locale);
+  const sample = copy.session;
   return (
-    <figure className="perspective-signal" data-perspective={active}>
-      <div role="img" aria-label={copy.perspectives[active]}>
-        <div className="perspective-material" aria-hidden="true" />
-        <div className="perspective-emblems" aria-hidden="true">
-          {["feedback", "next-step", "review"].map((name, index) => (
-            <ExpressiveIcon
-              key={name}
-              name={name}
-              className={`perspective-emblem emblem-${index}`}
-            />
-          ))}
-        </div>
-        <svg viewBox="0 0 680 440" fill="none" aria-hidden="true">
+    <figure className="practice-session" data-perspective={active}>
+      <div className="session-topline">
+        <ParaIcon name="assignment" />
+        <span>{sample.passage}</span>
+      </div>
+      <div className="session-passage">
+        <p className="session-label">{copy.recording}</p>
+        <svg viewBox="0 0 680 240" fill="none" aria-hidden="true">
           <path
-            className="perspective-guide"
-            d="M40 110H640M40 220H640M40 330H640"
+            className="session-guide"
+            d="M24 60H656M24 120H656M24 180H656"
+          />
+          <rect
+            className="session-selected-passage"
+            x="403"
+            y="30"
+            width="253"
+            height="180"
+            rx="8"
           />
           <path
-            className="perspective-thread"
-            d="M40 240C160 240 180 140 300 210S480 320 600 245"
+            className="session-wave"
+            d="M24 120H80L94 74L110 166L128 44L145 185L160 95L178 140L195 66L212 165L230 97L249 137L268 71L287 170L306 89L325 143L345 110L366 158L383 88L399 140L416 64L433 174L450 99L468 137L485 82L502 152L519 108H656"
           />
-          <g className="perspective-view view-teacher">
-            <path
-              className="perspective-wave"
-              d="M40 240H80L94 194L110 286L128 164L145 305L160 215L178 260L195 186L212 285L230 217L249 257L268 191L287 290L306 209L325 263L345 230H600"
-            />
-            <path
-              className="perspective-markers"
-              d="M128 110V330M287 110V330M495 110V330"
-            />
-            <circle className="perspective-pin" cx="128" cy="240" r="11" />
-            <circle className="perspective-pin" cx="287" cy="240" r="11" />
-            <circle className="perspective-pin" cx="495" cy="240" r="11" />
+          <g className="session-feedback-pin">
+            <path d="M403 28V212" />
+            <circle cx="403" cy="120" r="8" />
           </g>
-          <g className="perspective-view view-student">
-            <path
-              className="perspective-next"
-              d="M70 290C210 290 170 110 340 180S480 330 600 180M577 182L604 176L600 204"
-            />
-            <circle className="perspective-pin" cx="340" cy="180" r="11" />
-            <path
-              className="perspective-wave"
-              d="M55 290H90L101 270L113 310L125 252L138 322L151 279L163 303H190"
-            />
-          </g>
-          <g className="perspective-view view-parent">
-            <path
-              className="perspective-history"
-              d="M110 260C200 260 230 180 330 180S470 260 575 145"
-            />
-            {[
-              ["110", "260"],
-              ["330", "180"],
-              ["575", "145"],
-            ].map(([x, y], i) => (
-              <g key={x} transform={`translate(${x} ${y})`}>
-                <circle className="history-ring" r="38" />
-                <path
-                  className="history-attempt"
-                  d="M-22 0H-12L-8-12L-2 15L5-17L12 8L17 0H25"
-                />
-                <text className="history-number" y="66" textAnchor="middle">
-                  0{i + 1}
-                </text>
-              </g>
-            ))}
-          </g>
-          <circle className="perspective-origin" cx="600" cy="245" r="7" />
+          <path
+            className="session-attempt-path"
+            d="M446 202H608M592 186L610 202L592 218"
+          />
         </svg>
+        <div className="session-timestamps" aria-hidden="true">
+          <span>0:00</span>
+          <span>0:24</span>
+          <span>0:40</span>
+        </div>
+      </div>
+      <div className="session-annotations">
+        {[0, 1, 2].map((role) => (
+          <div
+            key={role}
+            className={`session-annotation-panel ${active === role ? "active" : ""}`}
+            aria-hidden={active !== role}
+            inert={active !== role}
+          >
+            {role === 0 && (
+              <>
+                <div className="session-comment">
+                  <span className="session-time">0:24</span>
+                  <div>
+                    <p className="session-label">{copy.feedback}</p>
+                    <p>{sample.guidance}</p>
+                  </div>
+                </div>
+                <div className="session-next">
+                  <ParaIcon name="arrow-right" />
+                  <div>
+                    <p className="session-label">{copy.nextPractice}</p>
+                    <p>{sample.practice}</p>
+                  </div>
+                </div>
+              </>
+            )}
+            {role === 1 && (
+              <>
+                <div className="session-comment">
+                  <span className="session-time">0:24</span>
+                  <div>
+                    <p className="session-label">{copy.nextPractice}</p>
+                    <p>{sample.practice}</p>
+                  </div>
+                </div>
+                <div className="session-next">
+                  <ParaIcon name="arrow-right" />
+                  <div>
+                    <p className="session-label">{copy.continue}</p>
+                    <p>{copy.instruction}</p>
+                  </div>
+                </div>
+              </>
+            )}
+            {role === 2 && (
+              <>
+                <div className="session-comment">
+                  <ParaIcon name="review" />
+                  <div>
+                    <p className="session-label">
+                      {content[locale].home.hero.parentView}
+                    </p>
+                    <p>{sample.progress}</p>
+                  </div>
+                </div>
+                <div className="session-next">
+                  <ParaIcon name="arrow-right" />
+                  <div>
+                    <p className="session-label">{sample.supportLabel}</p>
+                    <p>{sample.support}</p>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        ))}
       </div>
       <figcaption>{copy.concept}</figcaption>
     </figure>

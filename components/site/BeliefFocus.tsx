@@ -1,28 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ParaIcon } from "@/components/site/ParaIcon";
-import { sceneCopy } from "@/lib/site/studio";
-import type { Locale } from "@/lib/site/content";
 
 const TRANSITION_MS = 400;
 const READ_MS = 3000;
 
-export function BeliefFocus({
-  labels,
-  locale,
-}: {
-  labels: readonly string[];
-  locale: Locale;
-}) {
+export function BeliefFocus({ labels }: { labels: readonly string[] }) {
   const root = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
   const [available, setAvailable] = useState(false);
-  const [paused, setPaused] = useState(false);
   const [hovering, setHovering] = useState(false);
   const [focused, setFocused] = useState(false);
-  const copy = sceneCopy(locale);
-  const playing = available && !paused && !hovering && !focused;
+  const playing = available && !hovering && !focused;
 
   useEffect(() => {
     const node = root.current;
@@ -91,7 +80,6 @@ export function BeliefFocus({
               onFocus={() => setActive(index)}
               onClick={() => {
                 setActive(index);
-                setPaused(true);
               }}
             >
               <span className="belief-phrase-index">0{index + 1}</span>
@@ -100,19 +88,6 @@ export function BeliefFocus({
           </li>
         ))}
       </ul>
-      <button
-        type="button"
-        className="story-control belief-cycle-control"
-        aria-pressed={paused}
-        onClick={() => {
-          setPaused((value) => !value);
-          setFocused(false);
-          setHovering(false);
-        }}
-      >
-        {paused ? copy.resume : copy.pause}
-        <ParaIcon name={paused ? "play" : "pause"} />
-      </button>
     </div>
   );
 }

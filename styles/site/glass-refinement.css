@@ -307,9 +307,6 @@
 .para-site .studio-home .scene-closing {
   padding-block: 80px;
 }
-.para-site .studio-home .waitlist-form {
-  box-shadow: none;
-}
 @keyframes glass-ground-drift {
   0%,
   100% {
@@ -484,4 +481,3 @@
     transition: none;
   }
 }
-

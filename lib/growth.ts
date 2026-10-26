@@ -106,6 +106,12 @@ export async function sendApprovedDraft(input: {
   return true;
 }
 
+export function shouldRelockAiDirect(recentSources: string[]) {
+  if (recentSources.length < 10) return false;
+  const overrides = recentSources.filter((source) => source !== "approved_draft").length / recentSources.length;
+  return overrides >= 0.3;
+}
+
 export async function maybeRelockAiDirect(pieceId: string) {
   const piece = await prisma.piece.findUnique({
     where: { id: pieceId },
@@ -120,9 +126,7 @@ export async function maybeRelockAiDirect(pieceId: string) {
     take: 20,
     select: { source: true },
   });
-  if (recent.length < 10) return false;
-  const overrides = recent.filter((row) => row.source !== "approved_draft").length / recent.length;
-  if (overrides < 0.3) return false;
+  if (!shouldRelockAiDirect(recent.map((row) => row.source))) return false;
   await prisma.piece.update({
     where: { id: pieceId },
     data: { aiDirectUnlockedAt: null },

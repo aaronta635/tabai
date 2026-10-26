@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { CONSENT_VERSION } from "@/lib/constants";
 import {
+  homeTeacherId,
   newStudentToken,
   setStudentAccountCookies,
   setStudentCookie,
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     const updated = await prisma.student.update({
       where: { id: current.id },
       data: {
-        teacherId: piece.teacherId,
+        teacherId: homeTeacherId(current.teacherId, piece.teacherId),
         stage: "in_class",
         name: nameTrim || current.name,
         ageBand: body.ageBand ?? current.ageBand,

@@ -95,7 +95,7 @@ export function StudioShell({
             <Link
               key={item.href}
               href={item.href}
-              prefetch
+              prefetch={false}
               aria-current={on ? "page" : undefined}
               className="studio-nav-link"
             >

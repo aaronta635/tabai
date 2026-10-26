@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { takeMediaIsShared } from "@/lib/deletion";
+import { shouldKeepTakeFile, takeMediaIsShared } from "@/lib/deletion";
 import { classForTake, groupTakesByClassThenPiece } from "@/lib/submission-folders";
 
 const piece = {
@@ -20,6 +20,46 @@ describe("takeMediaIsShared", () => {
 
   it("keeps media still used by another take", () => {
     expect(takeMediaIsShared({ mediaId: "take-9", otherSubmissionCount: 1, piece })).toBe(true);
+  });
+});
+
+describe("shouldKeepTakeFile", () => {
+  const owner = { teacherId: "t1", pieceId: "p1", studentId: "s1" };
+
+  it("keeps a teacher's tutorial even when the take points at it", () => {
+    expect(
+      shouldKeepTakeFile({
+        mediaId: "tut-1",
+        storagePath: "teachers/t1/pieces/p1/tutorial/m2.mp4",
+        otherSubmissionCount: 0,
+        ...owner,
+        piece,
+      }),
+    ).toBe(true);
+  });
+
+  it("keeps another student's upload", () => {
+    expect(
+      shouldKeepTakeFile({
+        mediaId: "take-9",
+        storagePath: "teachers/t1/pieces/p1/students/s2/m4",
+        otherSubmissionCount: 0,
+        ...owner,
+        piece,
+      }),
+    ).toBe(true);
+  });
+
+  it("drops this student's own take video", () => {
+    expect(
+      shouldKeepTakeFile({
+        mediaId: "take-9",
+        storagePath: "teachers/t1/pieces/p1/students/s1/m4",
+        otherSubmissionCount: 0,
+        ...owner,
+        piece,
+      }),
+    ).toBe(false);
   });
 });
 

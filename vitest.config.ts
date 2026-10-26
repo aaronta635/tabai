@@ -9,6 +9,7 @@ export default defineConfig({
     globals: false,
     setupFiles: ["./test/setup.ts"],
     include: [
+      "app/**/*.test.ts",
       "lib/**/*.test.ts",
       "worker/**/*.test.ts",
       "components/**/*.test.tsx",

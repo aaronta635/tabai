@@ -111,7 +111,7 @@ export async function approveMembership(membershipId: string) {
       data: { approvedAt: membership.student?.approvedAt ?? approvedAt, stage: "in_class" },
     });
     const pending = await prisma.submission.findMany({
-      where: { studentId: membership.studentId, status: "new" },
+      where: { studentId: membership.studentId, status: "new", piece: { teacherId: teacher.id } },
       select: { id: true },
     });
     for (const row of pending) {

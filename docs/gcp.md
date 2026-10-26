@@ -23,4 +23,8 @@ Lift web + worker to Cloud Run in `asia-northeast1`. Keep Supabase for Postgres,
 ## Audio flags
 
 - `ANALYZE_BACKEND=librosa` (Cloud Run worker default). `stdlib` forces the old RMS onsets.
-- `BASIC_PITCH=1` on the worker for measured pitch issues. Train runs Basic Pitch on the tutorial; analyze runs it on the take. Rebuild with `--build-arg INSTALL_BASIC_PITCH=true`.
+- `BASIC_PITCH=1` on the worker for measured pitch issues. Train runs Basic Pitch on the tutorial; analyze runs it on the take. `cloudbuild.yaml` builds with `INSTALL_BASIC_PITCH=true` and sets the flag; never set the flag on an image without it, or every take re-analyzes on each restart.
+
+## Job retries
+
+A job left `running` for 20 minutes goes back to `pending`, up to 3 attempts, then stays `failed`. A piece whose last 3 trains failed is not re-queued on worker start or on a take; a new teacher upload still trains it.

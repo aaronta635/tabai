@@ -191,7 +191,7 @@ export async function approveStudent(studentId: string) {
   });
 
   const pending = await prisma.submission.findMany({
-    where: { studentId, status: "new" },
+    where: { studentId, status: "new", piece: { teacherId: teacher.id } },
     select: { id: true },
   });
   for (const row of pending) {

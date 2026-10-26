@@ -38,6 +38,10 @@ export async function enqueueAnalyzeIfApproved(submissionId: string) {
   });
   if (!submission) return null;
   if (!submission.student.approvedAt) return null;
+  const open = await prisma.job.findFirst({
+    where: { type: "analyze", submissionId, status: { in: ["pending", "running"] } },
+  });
+  if (open) return open;
   return enqueueJob("analyze", { submissionId }, submissionId);
 }
 

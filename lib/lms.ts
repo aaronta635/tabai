@@ -1,5 +1,6 @@
 import { customAlphabet } from "nanoid";
 import { DEFAULT_PARTS } from "@/lib/curriculum";
+import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 
 export { DEFAULT_PARTS, shelfName } from "@/lib/curriculum";
@@ -17,6 +18,11 @@ export function displayClassCode(code: string) {
 
 export function classJoinPath(code: string) {
   return `/join/${code}`;
+}
+
+/** Class-code joins are already invited; keep an existing stamp or approve now. */
+export function classJoinApprovedAt(existing: Date | null | undefined, now = new Date()) {
+  return existing ?? now;
 }
 
 /** Optional invite box: one address per line, comma, or space. Invalid lines are skipped. */
@@ -163,7 +169,7 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
     });
   }
 
-  const approvedAt = student.approvedAt ?? null;
+  const approvedAt = classJoinApprovedAt(student.approvedAt ?? membership?.approvedAt);
   if (membership) {
     await prisma.classMembership.update({
       where: { id: membership.id },
@@ -185,8 +191,19 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
     data: {
       ...(student.teacherId ? {} : { teacherId: studioClass.teacherId }),
       stage: "in_class",
+      ...(student.approvedAt ? {} : { approvedAt }),
     },
   });
+
+  if (!student.approvedAt) {
+    const pending = await prisma.submission.findMany({
+      where: { studentId: student.id, status: "new" },
+      select: { id: true },
+    });
+    for (const row of pending) {
+      await enqueueAnalyzeIfApproved(row.id);
+    }
+  }
 
   return { class: studioClass };
 }

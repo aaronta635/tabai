@@ -52,7 +52,7 @@ export default async function TeacherDashboard() {
       select: {
         id: true,
         submittedAt: true,
-        student: { select: { name: true } },
+        student: { select: { name: true, approvedAt: true } },
         piece: { select: { title: true } },
       },
     }),
@@ -174,7 +174,7 @@ export default async function TeacherDashboard() {
                 title: row.student.name,
                 meta: row.piece.title,
                 when: waitLabel,
-                status: t.teacher.unanswered,
+                status: row.student.approvedAt ? t.teacher.unanswered : t.teacher.pending,
               };
             })}
           />

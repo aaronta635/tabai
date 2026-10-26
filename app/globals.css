@@ -1478,7 +1478,7 @@ a.tile:hover,
 
 .take-sleeve {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) auto auto auto;
+  grid-template-columns: minmax(0, 1.5fr) auto auto auto auto;
   gap: 0.75rem;
   align-items: center;
   border-top: 1px solid rgba(59, 47, 42, 0.06);
@@ -1521,9 +1521,18 @@ a.tile:hover,
   font-size: 0.8rem;
 }
 
+.take-sleeve-approve {
+  justify-self: end;
+  min-width: 4.5rem;
+}
+
+.take-sleeve-approve:empty {
+  min-width: 0;
+}
+
 @media (max-width: 720px) {
   .take-sleeve {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto auto auto;
   }
 
   .take-sleeve-kind {

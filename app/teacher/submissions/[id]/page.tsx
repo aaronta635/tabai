@@ -27,8 +27,13 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
   if (!row) notFound();
   const locale = await getLocale();
   const t = await getMessages(locale);
-  const kind =
-    row.status === "answered" ? ("answered" as const) : row.kind === "practice" ? ("practice" as const) : ("unanswered" as const);
+  const kind = !row.student.approvedAt
+    ? ("pending" as const)
+    : row.status === "answered"
+      ? ("answered" as const)
+      : row.kind === "practice"
+        ? ("practice" as const)
+        : ("unanswered" as const);
 
   return (
     <div>
@@ -45,7 +50,12 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
           answered: t.teacher.answered,
           practice: t.teacher.practice,
         }}
-        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        counts={{
+          unanswered: kind === "unanswered" ? 1 : 0,
+          pending: kind === "pending" ? 1 : 0,
+          answered: kind === "answered" ? 1 : 0,
+          practice: kind === "practice" ? 1 : 0,
+        }}
         items={[
           {
             id: row.id,

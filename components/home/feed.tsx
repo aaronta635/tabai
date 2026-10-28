@@ -64,6 +64,39 @@ export function StudioTitle({
   );
 }
 
+export function LessonList({
+  title,
+  empty,
+  rows,
+}: {
+  title: string;
+  empty: string;
+  rows: { href: string; time: string; title: string; meta: string }[];
+}) {
+  return (
+    <section className="studio-panel">
+      <h2 className="font-display">{title}</h2>
+      {rows.length === 0 ? (
+        <p className="mb-4 text-sm text-ink-soft">{empty}</p>
+      ) : (
+        <ul className="lesson-list">
+          {rows.map((row) => (
+            <li key={row.href + row.time + row.title}>
+              <Link href={row.href}>
+                <span className="lesson-list-time tabular">{row.time}</span>
+                <span className="min-w-0">
+                  <span className="block font-medium">{row.title}</span>
+                  {row.meta ? <span className="mt-0.5 block text-xs text-ink-soft">{row.meta}</span> : null}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function LessonCard({
   href,
   time,

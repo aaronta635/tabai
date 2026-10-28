@@ -874,6 +874,32 @@
   font-size: 13px;
   color: var(--color-text-muted);
 }
+.para-site .footer-legal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.para-site .footer-legal a:hover,
+.para-site .footer-bottom a:hover {
+  text-decoration: underline;
+}
+.para-site .legal-doc .wrap {
+  width: min(calc(100% - 48px), 46rem);
+}
+.para-site .legal-updated {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+.para-site .legal-doc h2 {
+  margin-top: 2.25rem;
+  font: 600 1.35rem/1.3 var(--font-body);
+}
+.para-site .legal-doc p {
+  margin-top: 0.85rem;
+}
+.para-site .legal-doc a {
+  text-decoration: underline;
+}
 .para-site .welcome {
   min-height: 100svh;
 }

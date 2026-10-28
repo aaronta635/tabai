@@ -277,3 +277,8 @@
 .student-ui.student-ui .schedule-event-time { font-size:11px; line-height:1.25; }
 .student-ui.student-ui .schedule-event-title { font-size:13px; line-height:1.3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .student-ui.student-ui .schedule-event-meta { font-size:11px; line-height:1.25; }
+
+/* Current main's class context remains reachable and keyboard-visible. */
+.student-ui.student-ui .class-switch { gap:8px; }
+.student-ui.student-ui .class-switch a { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border:1px solid var(--para-app-edge); border-radius:10px; color:var(--para-app-text); }
+.student-ui.student-ui .class-switch a[aria-current="page"] { font-weight:600; border-color:var(--para-app-border); box-shadow:inset 0 -3px var(--para-app-accent); }

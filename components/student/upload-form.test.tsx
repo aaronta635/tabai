@@ -88,3 +88,32 @@ describe("StudentUpload", () => {
     expect(screen.getByText("Saved as practice. No reply.")).toBeInTheDocument();
   });
 });
+
+it("student mode choices preserve the note and selected file without sending or exposing unsupported overdub", async () => {
+  const user = userEvent.setup();
+  const desk = { pieceTitle: "Exercise A", teacherName: "Teacher A", brief: "Instructions", tips: null, meta: null };
+  const view = renderWithIntl(<StudentUpload variant="studio" code="song1" needsProfile={false} desk={desk} />, ["student"]);
+  expect(screen.getByRole("button", { name: "Send to teacher" })).toBeDisabled();
+  expect(screen.queryByRole("button", { name: "Record over teacher's clip" })).toBeNull();
+  await user.type(screen.getByRole("textbox", { name: "Note to teacher" }), "Keep this note");
+  await user.upload(screen.getByLabelText("Browse files"), new File(["video"], "take.webm", { type: "video/webm" }));
+  await user.click(screen.getByRole("button", { name: "Send a practice take", pressed: false }));
+  expect(screen.getByRole("button", { name: "Send a practice take", pressed: true })).toHaveAttribute("type", "button");
+  expect(screen.getByRole("button", { name: "Send a take" })).toHaveAttribute("aria-pressed", "false");
+  expect(screen.getByRole("textbox", { name: "Note to teacher" })).toHaveValue("Keep this note");
+  expect(screen.getByText("take.webm")).toBeInTheDocument();
+  expect(view.container.querySelector('button[type="submit"]')).not.toBeDisabled();
+  expect(screen.getByText("Saved as practice. No reply.")).toBeInTheDocument();
+});
+
+it("offers the existing overdub mode only with a teacher clip and keeps final sending gated on media", async () => {
+  const user = userEvent.setup();
+  const view = renderWithIntl(
+    <StudentUpload variant="studio" code="song1" needsProfile={false} clipUrl="/synthetic-clip.webm"
+      desk={{ pieceTitle: "Exercise A", teacherName: "Teacher A", brief: null, tips: null, meta: null }} />,
+    ["student"],
+  );
+  await user.click(screen.getByRole("button", { name: "Record over teacher's clip", pressed: false }));
+  expect(screen.getByRole("button", { name: "Record over teacher's clip", pressed: true })).toHaveAttribute("type", "button");
+  expect(view.container.querySelector('button[type="submit"]')).toBeDisabled();
+});

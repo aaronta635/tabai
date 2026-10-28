@@ -2,15 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { ParaIcon } from "@/components/ui/para-icon";
 
 export function ThemeToggle({
   theme,
   labels,
   className = "",
+  variant,
 }: {
   theme: "light" | "dark";
   labels: { light: string; dark: string };
   className?: string;
+  variant?: "student";
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -42,8 +45,8 @@ export function ThemeToggle({
         className={`theme-toggle-btn rounded-l-full px-2.5 py-2 ${theme === "light" ? "theme-toggle-active" : "theme-toggle-idle"}`}
         title={labels.light}
       >
-        <span aria-hidden>☀</span>
-        <span className="sr-only">{labels.light}</span>
+        {variant ? <ParaIcon name="sun" /> : <span aria-hidden>☀</span>}
+        <span className={variant ? "" : "sr-only"}>{labels.light}</span>
       </button>
       <button
         type="button"
@@ -53,8 +56,8 @@ export function ThemeToggle({
         className={`theme-toggle-btn rounded-r-full px-2.5 py-2 ${theme === "dark" ? "theme-toggle-active" : "theme-toggle-idle"}`}
         title={labels.dark}
       >
-        <span aria-hidden>☾</span>
-        <span className="sr-only">{labels.dark}</span>
+        {variant ? <ParaIcon name="moon" /> : <span aria-hidden>☾</span>}
+        <span className={variant ? "" : "sr-only"}>{labels.dark}</span>
       </button>
     </div>
   );

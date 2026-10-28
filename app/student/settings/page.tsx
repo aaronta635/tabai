@@ -13,11 +13,11 @@ export default async function StudentSettingsPage() {
   const t = await getMessages(locale);
 
   return (
-    <div className="space-y-5">
+    <div className="student-settings space-y-5">
       <h1 className="font-display">{t.student.settingsTitle}</h1>
       <section className="studio-panel space-y-4 pb-4">
         <h2>{t.theme.appearance}</h2>
-        <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <ThemeToggle variant="student" theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
       </section>
     </div>
   );

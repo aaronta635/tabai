@@ -8,7 +8,7 @@ import {
   eventLayout,
   slotStartsAt,
 } from "@/lib/schedule";
-import { formatDay, formatTime } from "@/lib/when";
+import { formatDay, formatTime, formatWhen } from "@/lib/when";
 
 export type CalendarEvent = {
   id: string;
@@ -29,6 +29,7 @@ type Props = {
   onSlotClick: (startsAt: string) => void;
   onEventClick: (event: CalendarEvent) => void;
   readOnly?: boolean;
+  label?: string;
 };
 
 const HOURS = Array.from(
@@ -43,6 +44,7 @@ export function WeekCalendar({
   onSlotClick,
   onEventClick,
   readOnly = false,
+  label = "Week schedule",
 }: Props) {
   const weekStart = new Date(weekStartIso);
   const days = dayLabels(locale);
@@ -55,7 +57,7 @@ export function WeekCalendar({
   }
 
   return (
-    <div className="schedule-calendar" role="grid" aria-label="Week schedule">
+    <div className="schedule-calendar" role={readOnly ? "region" : "grid"} aria-label={label}>
       <div className="schedule-head" aria-hidden>
         <div className="schedule-time-gutter" />
         {days.map((label, i) => {
@@ -94,15 +96,20 @@ export function WeekCalendar({
               key={`events-${dayIndex}`}
               className="schedule-day-events"
               style={{ left: `${(dayIndex * 100) / 7}%`, width: `${100 / 7}%` }}
-              aria-hidden
+              aria-hidden={readOnly ? undefined : true}
             >
               {byDay[dayIndex].map((event) => {
                 const layout = eventLayout(new Date(event.startsAt), event.endsAt ? new Date(event.endsAt) : null);
+                const eventLabel = readOnly
+                  ? [formatWhen(new Date(event.startsAt), locale), event.title || event.className, event.className, event.teacherName].filter(Boolean).join(" · ")
+                  : undefined;
                 return (
                   <button
                     key={event.id}
                     type="button"
                     className="schedule-event"
+                    aria-label={eventLabel}
+                    title={eventLabel}
                     style={{ top: `${layout.topPct}%`, height: `${layout.heightPct}%` }}
                     onClick={(e) => {
                       e.stopPropagation();

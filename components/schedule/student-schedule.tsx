@@ -7,6 +7,7 @@ import { StudentSessionPanel } from "@/components/schedule/session-panel";
 import { WeekCalendar, type CalendarEvent } from "@/components/schedule/week-calendar";
 import { addUtcDays, weekParam } from "@/lib/schedule";
 import { formatDay } from "@/lib/when";
+import { ParaIcon } from "@/components/ui/para-icon";
 
 type SessionRow = {
   id: string;
@@ -30,6 +31,7 @@ export function StudentSchedule({
   sessions: SessionRow[];
 }) {
   const t = useTranslations("student");
+  const report = useTranslations("report");
   const weekStart = new Date(weekStartIso);
   const prevWeek = weekParam(addUtcDays(weekStart, -7));
   const nextWeek = weekParam(addUtcDays(weekStart, 7));
@@ -60,12 +62,12 @@ export function StudentSchedule({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
-        <Link href={`/student/schedule?w=${prevWeek}`} className="btn btn-quiet px-3 py-1.5 text-sm">
-          ←
+        <Link href={`/student/schedule?w=${prevWeek}`} aria-label={report("previous")} className="btn btn-quiet px-3 py-1.5 text-sm">
+          <ParaIcon name="chevron-left" />
         </Link>
         <p className="font-ui tabular text-sm text-ink-soft">{weekLabel}</p>
-        <Link href={`/student/schedule?w=${nextWeek}`} className="btn btn-quiet px-3 py-1.5 text-sm">
-          →
+        <Link href={`/student/schedule?w=${nextWeek}`} aria-label={report("next")} className="btn btn-quiet px-3 py-1.5 text-sm">
+          <ParaIcon name="chevron-right" />
         </Link>
       </div>
       <p className="text-sm text-ink-soft">{t("scheduleHelp")}</p>
@@ -79,6 +81,7 @@ export function StudentSchedule({
           onSlotClick={() => {}}
           onEventClick={setActive}
           readOnly
+          label={t("scheduleTitle")}
         />
       )}
       <StudentSessionPanel

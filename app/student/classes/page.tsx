@@ -1,3 +1,4 @@
+import { ParaIcon } from "@/components/ui/para-icon";
 import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
@@ -22,7 +23,7 @@ export default async function StudentClassesPage() {
         <p className="page-meta">{t.student.activeCount.replace("{n}", String(classes.length))}</p>
       </header>
 
-      <AddPanel label={t.student.joinClass} open={classes.length === 0}>
+      <AddPanel icon={<ParaIcon name="plus" />} label={t.student.joinClass} open={classes.length === 0}>
         <JoinClassForm
           placeholder={t.home.codePlaceholder}
           submit={t.student.joinClass}
@@ -46,6 +47,7 @@ export default async function StudentClassesPage() {
                 chip={t.student.openGroup}
                 meterLabel={t.student.countClassmates.replace("{n}", "").trim()}
                 meterValue={String(row.class._count.memberships)}
+                showMeter={false}
                 meterWidth={meterWidth(row.class._count.memberships, fullest)}
                 actions={[
                   { href: "/student/schedule", label: t.student.navSchedule },

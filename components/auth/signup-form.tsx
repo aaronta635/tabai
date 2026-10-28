@@ -50,7 +50,7 @@ export function SignupForm({
     setInfo(null);
     setBusy(true);
     try {
-      await startSocial(provider, role, next);
+      await startSocial(provider, role, next, "signup");
     } catch {
       setError(labels.providerFailed);
       setBusy(false);

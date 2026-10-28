@@ -106,8 +106,10 @@ describe("LoginForm", () => {
     expect(screen.queryByRole("heading", { name: "Create your practice room" })).not.toBeInTheDocument();
   });
 
-  it("starts Google, Facebook, and Zalo from the same bars", async () => {
+  it("starts Google through Supabase and Facebook and Zalo through PARA", async () => {
     signInWithOAuth.mockResolvedValue({ error: null });
+    const assign = vi.fn();
+    vi.stubGlobal("location", Object.assign(window.location, { assign }));
     const user = userEvent.setup();
     const cases = ["Google", "Facebook", "Zalo"] as const;
 
@@ -117,8 +119,8 @@ describe("LoginForm", () => {
       view.unmount();
     }
 
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      1,
+    expect(signInWithOAuth).toHaveBeenCalledTimes(1);
+    expect(signInWithOAuth).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: "google",
         options: expect.objectContaining({
@@ -128,13 +130,13 @@ describe("LoginForm", () => {
         }),
       }),
     );
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ provider: "facebook" }),
+    expect(assign).toHaveBeenNthCalledWith(
+      1,
+      "/api/auth/social/facebook/start?role=student&next=%2Fstudent&from=login",
     );
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({ provider: "custom:zalo" }),
+    expect(assign).toHaveBeenNthCalledWith(
+      2,
+      "/api/auth/social/zalo/start?role=student&next=%2Fstudent&from=login",
     );
   });
 });

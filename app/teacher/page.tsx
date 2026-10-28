@@ -5,15 +5,14 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { cachedClassPulseForTeacher } from "@/lib/class-pulse";
-import { classColor } from "@/lib/class-color";
 import { formatTime, formatWait, formatWhen } from "@/lib/when";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
 import { displayClassCode } from "@/lib/lms";
+import { ActiveClass } from "@/components/studio-shell";
 import {
   AssignmentList,
-  ClassChips,
-  LessonCard,
+  LessonList,
   PracticeLog,
   ReviewTable,
   SideNote,
@@ -109,13 +108,26 @@ export default async function TeacherDashboard() {
   const practice = weekPractice(practiceRows, now);
   const latestClass = classes[0];
   const next = nextLessons[0];
-  const meta = next
-    ? `${next.class.name} · ${formatWhen(next.startsAt, locale)}`
-    : `${t.teacher.classCount} ${classes.length}`;
+  const focus = next?.class ?? latestClass;
+  const hello = t.teacher.dashHello.replace("{name}", teacher.name);
 
   return (
     <div className="space-y-6">
-      <StudioTitle title={t.teacher.dashHello.replace("{name}", teacher.name)} meta={classes.length ? meta : undefined} />
+      {focus ? <ActiveClass name={focus.name} /> : null}
+      <StudioTitle title={focus ? focus.name : hello} meta={focus ? hello : undefined} />
+      {classes.length > 1 ? (
+        <nav className="class-switch" aria-label={t.teacher.navClasses}>
+          {classes.map((row) => (
+            <Link
+              key={row.id}
+              href={`/teacher/classes/${row.id}`}
+              aria-current={focus && row.id === focus.id ? "page" : undefined}
+            >
+              {row.name}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
 
       {classes.length === 0 ? (
         <section className="tile">
@@ -128,36 +140,16 @@ export default async function TeacherDashboard() {
       ) : (
         <div className="dash">
           <div className="space-y-6">
-          <ClassChips
-            label={t.teacher.navClasses}
-            chips={classes.map((row) => ({
-              id: row.id,
-              name: row.name,
-              href: `/teacher/classes/${row.id}`,
-              color: classColor(row.id),
+          <LessonList
+            title={t.teacher.nextLessons}
+            empty={t.teacher.noNextSession}
+            rows={nextLessons.map((session) => ({
+              href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
+              time: formatTime(session.startsAt, locale),
+              title: session.title || session.class.name,
+              meta: session.class.name,
             }))}
           />
-
-          <section className="space-y-3">
-            <h2 className="font-display text-base">{t.teacher.nextLessons}</h2>
-            {nextLessons.length === 0 ? (
-              <p className="text-sm text-ink-soft">{t.teacher.noNextSession}</p>
-            ) : (
-              <div className="lesson-card-row">
-                {nextLessons.map((session, index) => (
-                  <LessonCard
-                    key={session.id}
-                    href={`/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`}
-                    time={formatTime(session.startsAt, locale)}
-                    title={session.title || session.class.name}
-                    meta={session.class.name}
-                    status={t.teacher.upcoming}
-                    next={index === 0}
-                  />
-                ))}
-              </div>
-            )}
-          </section>
 
           <ReviewTable
             title={t.teacher.unanswered}
@@ -216,7 +208,7 @@ export default async function TeacherDashboard() {
               <span>
                 {t.teacher.studentLink}: {latestClass.name}
               </span>
-              <span className="font-display tracking-[0.22em] text-ink">{displayClassCode(latestClass.code)}</span>
+              <span className="tabular text-ink">{displayClassCode(latestClass.code)}</span>
             </p>
           ) : null}
           </div>

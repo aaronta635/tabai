@@ -99,7 +99,7 @@
 }
 .para-site .studio-home
   .scene-belief
-  :is(.scene-heading, .headline-mask:last-child, .belief-phrase), .para-site .studio-home .final-utilities button {
+  :is(.scene-heading, .headline-mask:last-child, .belief-phrase), .para-site .studio-home .final-utilities a {
   color: var(--wave-ink);
 }
 .para-site .studio-home .scene-belief :is(.eyebrow, .belief-phrase-index) {
@@ -122,7 +122,7 @@
 .para-site .studio-home .belief-signal :is(path, circle) {
   stroke: var(--wave-muted);
 }
-.para-site .studio-home .final-utilities button:focus-visible {
+.para-site .studio-home .final-utilities a:focus-visible {
   outline-color: var(--wave-ink);
 }
 @media (prefers-color-scheme: dark) {

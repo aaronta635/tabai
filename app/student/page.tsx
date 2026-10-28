@@ -6,17 +6,16 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsForStudent } from "@/lib/lms";
 import { formatDueLabel } from "@/lib/practice";
 import { studentClasses } from "@/lib/student-view";
-import { classColor } from "@/lib/class-color";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
 import { formatTime, formatWhen } from "@/lib/when";
 import { prisma } from "@/lib/prisma";
 import { JoinClassForm } from "@/components/student/join-class-form";
 import { AddPanel } from "@/components/disclosure";
+import { ActiveClass } from "@/components/studio-shell";
 import {
   AssignmentList,
-  ClassChips,
-  LessonCard,
+  LessonList,
   PracticeLog,
   ReviewTable,
   SideNote,
@@ -89,11 +88,15 @@ export default async function StudentHomePage() {
   const practice = weekPractice(practiceRows, now);
   const latestReply = replies[0];
 
+  const focus = nextLesson?.class ?? classes[0]?.class;
+  const hello = t.student.homeHello.replace("{name}", student.name);
+
   return (
     <div className="space-y-6">
+      {focus ? <ActiveClass name={focus.name} /> : null}
       <StudioTitle
-        title={t.student.homeHello.replace("{name}", student.name)}
-        meta={nextLesson ? `${nextLesson.class.name} · ${formatWhen(nextLesson.startsAt, locale)}` : undefined}
+        title={focus ? focus.name : hello}
+        meta={focus ? hello : undefined}
         action={
           classes.length > 0 ? (
             <Link href={submitHref} className="btn submit-jump">
@@ -102,6 +105,19 @@ export default async function StudentHomePage() {
           ) : undefined
         }
       />
+      {classes.length > 1 ? (
+        <nav className="class-switch" aria-label={t.student.navClasses}>
+          {classes.map((row) => (
+            <Link
+              key={row.class.id}
+              href={`/student/classes/${row.class.id}`}
+              aria-current={focus && row.class.id === focus.id ? "page" : undefined}
+            >
+              {row.class.name}
+            </Link>
+          ))}
+        </nav>
+      ) : null}
 
       {classes.length === 0 ? (
         <section className="tile">
@@ -118,33 +134,22 @@ export default async function StudentHomePage() {
       ) : (
         <div className="dash">
           <div className="space-y-6">
-            <ClassChips
-              label={t.student.navClasses}
-              chips={classes.map((row) => ({
-                id: row.class.id,
-                name: row.class.name,
-                href: `/student/classes/${row.class.id}`,
-                color: classColor(row.class.id),
-              }))}
+            <LessonList
+              title={t.student.nextLesson}
+              empty={t.student.noLessonYet}
+              rows={
+                nextLesson
+                  ? [
+                      {
+                        href: `/student/schedule?w=${weekParam(nextLesson.startsAt)}`,
+                        time: formatTime(nextLesson.startsAt, locale),
+                        title: nextLesson.title || nextLesson.class.name,
+                        meta: `${nextLesson.class.name} · ${nextLesson.class.teacher.name}`,
+                      },
+                    ]
+                  : []
+              }
             />
-
-            <section className="space-y-3">
-              <h2 className="font-display text-base">{t.student.nextLesson}</h2>
-              {nextLesson ? (
-                <div className="lesson-card-row">
-                  <LessonCard
-                    href={`/student/schedule?w=${weekParam(nextLesson.startsAt)}`}
-                    time={formatTime(nextLesson.startsAt, locale)}
-                    title={nextLesson.title || nextLesson.class.name}
-                    meta={`${nextLesson.class.name} · ${nextLesson.class.teacher.name}`}
-                    status={t.student.upcoming}
-                    next
-                  />
-                </div>
-              ) : (
-                <p className="text-sm text-ink-soft">{t.student.noLessonYet}</p>
-              )}
-            </section>
 
             <AssignmentList
               title={t.student.assignedPieces}

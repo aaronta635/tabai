@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { createContext, Suspense, useContext, useEffect, useState } from "react";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { initialsOf } from "@/lib/initials";
@@ -13,6 +13,17 @@ export type NavItem = {
   exact?: boolean;
 };
 export type MenuLink = { href: string; label: string };
+
+const ActiveClassContext = createContext<(name: string | null) => void>(() => {});
+
+export function ActiveClass({ name }: { name: string }) {
+  const setName = useContext(ActiveClassContext);
+  useEffect(() => {
+    setName(name);
+    return () => setName(null);
+  }, [name, setName]);
+  return null;
+}
 
 function StudioSearch({ action, placeholder }: { action: string; placeholder: string }) {
   const pathname = usePathname();
@@ -60,6 +71,7 @@ export function StudioShell({
 }) {
   const pathname = usePathname();
   const [railOpen, setRailOpen] = useState(false);
+  const [activeClass, setActiveClass] = useState<string | null>(null);
 
   useEffect(() => {
     setRailOpen(false);
@@ -87,6 +99,7 @@ export function StudioShell({
           <BrandMark />
         </Link>
         <p className="studio-kicker">{kicker}</p>
+        {activeClass ? <p className="studio-active-class">{activeClass}</p> : null}
       </div>
       <nav className="flex flex-1 flex-col gap-0.5">
         {items.map((item) => {
@@ -133,6 +146,7 @@ export function StudioShell({
   );
 
   return (
+    <ActiveClassContext.Provider value={setActiveClass}>
     <div className="studio-shell flex min-h-dvh">
       <aside className="studio-rail hidden w-60 shrink-0 lg:block">{rail}</aside>
 
@@ -182,5 +196,6 @@ export function StudioShell({
         </main>
       </div>
     </div>
+    </ActiveClassContext.Provider>
   );
 }

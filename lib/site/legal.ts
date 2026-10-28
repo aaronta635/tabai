@@ -46,6 +46,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
           paragraphs: [
             "We collect the name and email on an account, and whether the account is a teacher or a student. A student also gives a Zalo or Messenger contact and an age band: under 18, or adult. We do not ask for a date of birth.",
             "We keep the classes a person belongs to, attendance, assignments, teacher notes, and the practice recordings a student sends.",
+            "We do not sell personal information.",
           ],
         },
         {
@@ -77,7 +78,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
         {
           heading: "Payments",
           paragraphs: [
-            "We do not sell personal information. We do not charge students, and we do not take student payments. A payment link a teacher adds is between that teacher and the student.",
+            "If a payment is made, it is processed by a valid, legitimate payment platform.",
           ],
         },
         {
@@ -113,7 +114,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
             "You create classes, invite students, and upload sheet music, tutorials, and reference recordings. You are responsible for having the right to upload that material.",
             "You review feedback before a student relies on it. An AI service may draft that feedback, and a draft can be wrong.",
             "You are responsible, with a parent, for the consent of a student under 18 who joins your class. You do not place a student under 18 on a public wall.",
-            "PARA does not charge your students and does not take their payments. If you collect fees, including through a payment link you add, that arrangement is between you and the student.",
+            "If a payment is made, it is processed by a valid, legitimate payment platform.",
           ],
         },
         {
@@ -195,6 +196,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
           paragraphs: [
             "Chúng tôi lưu tên và email của tài khoản, và tài khoản đó là giáo viên hay học viên. Học viên còn cho một liên hệ Zalo hoặc Messenger, và một nhóm tuổi: dưới 18, hoặc người lớn. Chúng tôi không hỏi ngày sinh.",
             "Chúng tôi lưu lớp mà một người thuộc về, điểm danh, bài được giao, ghi chú của giáo viên, và các bản ghi luyện tập mà học viên gửi.",
+            "Chúng tôi không bán thông tin cá nhân.",
           ],
         },
         {
@@ -226,7 +228,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
         {
           heading: "Thanh toán",
           paragraphs: [
-            "Chúng tôi không bán thông tin cá nhân. Chúng tôi không thu phí học viên và không nhận thanh toán của học viên. Liên kết thanh toán mà giáo viên thêm là việc giữa giáo viên đó và học viên.",
+            "Nếu có thanh toán, khoản đó được xử lý qua một nền tảng thanh toán hợp lệ và hợp pháp.",
           ],
         },
         {
@@ -262,7 +264,7 @@ export const legal: Record<Locale, { privacy: LegalDocument; terms: LegalDocumen
             "Bạn tạo lớp, mời học viên, và tải lên bản nhạc, bài hướng dẫn và bản ghi tham chiếu. Bạn chịu trách nhiệm về quyền tải những tài liệu đó lên.",
             "Bạn đọc góp ý trước khi học viên dựa vào lời đó. Một dịch vụ trí tuệ nhân tạo có thể soạn bản nháp góp ý, và bản nháp có thể sai.",
             "Bạn, cùng với cha mẹ, chịu trách nhiệm về sự đồng ý của học viên dưới 18 khi em vào lớp của bạn. Bạn không đưa học viên dưới 18 lên tường công khai.",
-            "PARA không thu phí học viên của bạn và không nhận thanh toán của các em. Nếu bạn thu học phí, kể cả qua liên kết thanh toán bạn thêm, việc đó là giữa bạn và học viên.",
+            "Nếu có thanh toán, khoản đó được xử lý qua một nền tảng thanh toán hợp lệ và hợp pháp.",
           ],
         },
         {

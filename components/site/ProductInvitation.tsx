@@ -1,4 +1,6 @@
-import type { Locale } from "@/lib/site/content";
+import Link from "next/link";
+import { localePath, type Locale } from "@/lib/site/content";
+import { LEGAL_EMAIL } from "@/lib/site/legal";
 import { ScrollScene } from "@/components/site/ScrollScene";
 import { ProductCta } from "@/components/site/ProductCta";
 import { PerformanceReel } from "@/components/site/PerformanceReel";
@@ -8,12 +10,24 @@ const ending = {
   en: {
     availableLines: ["PARA is", "available now"],
     nextLines: ["Your next", "step starts", "here"],
-    utilities: ["Social", "Contact", "Privacy", "Terms"],
+    utilities: [
+      [{ label: "Contact", href: `mailto:${LEGAL_EMAIL}` }],
+      [
+        { label: "Privacy", href: "/privacy" },
+        { label: "Terms", href: "/terms" },
+      ],
+    ],
   },
   vi: {
     availableLines: ["PARA đã", "sẵn sàng"],
     nextLines: ["Bắt đầu", "bước tiếp theo", "cùng PARA"],
-    utilities: ["Mạng xã hội", "Liên hệ", "Quyền riêng tư", "Điều khoản"],
+    utilities: [
+      [{ label: "Liên hệ", href: `mailto:${LEGAL_EMAIL}` }],
+      [
+        { label: "Quyền riêng tư", href: "/privacy" },
+        { label: "Điều khoản", href: "/terms" },
+      ],
+    ],
   },
 };
 
@@ -50,17 +64,21 @@ export function ProductInvitation({ locale }: { locale: Locale }) {
       </div>
       <StudioEntry locale={locale} />
       <footer className="final-utilities">
-        {[copy.utilities.slice(0, 2), copy.utilities.slice(2)].map(
-          (group, index) => (
-            <div key={index}>
-              {group.map((label) => (
-                <button type="button" key={label}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          ),
-        )}
+        {copy.utilities.map((group, index) => (
+          <div key={index}>
+            {group.map((item) =>
+              item.href.startsWith("mailto:") ? (
+                <a key={item.label} href={item.href}>
+                  {item.label}
+                </a>
+              ) : (
+                <Link key={item.label} href={localePath(locale, item.href)} prefetch={false}>
+                  {item.label}
+                </Link>
+              ),
+            )}
+          </div>
+        ))}
       </footer>
     </ScrollScene>
   );

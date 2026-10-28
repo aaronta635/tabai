@@ -17,11 +17,13 @@ export async function prepareAuthPage(role: AccountRole, search: { next?: string
   const theme = await getTheme();
   const t = await getMessages(locale);
   const initialError =
-    search.error === "role_mismatch"
-      ? role === "student"
-        ? t.auth.wrongRoleTutor
-        : t.auth.wrongRoleStudent
-      : null;
+    search.error === "provider"
+      ? t.auth.providerFailed
+      : search.error === "role_mismatch"
+        ? role === "student"
+          ? t.auth.wrongRoleTutor
+          : t.auth.wrongRoleStudent
+        : null;
 
   return { role, next, locale, theme, t, initialError };
 }

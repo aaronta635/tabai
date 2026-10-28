@@ -7,6 +7,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { displayClassCode, mailtoInvite } from "@/lib/lms";
 import { formatWhen } from "@/lib/when";
 import { AddPanel, SectionPanel } from "@/components/disclosure";
+import { ActiveClass } from "@/components/studio-shell";
 import { approveMembershipForm, inviteByEmail, renameClass } from "@/app/teacher/lms-actions";
 
 const CLASS_ASSIGNMENT_CAP = 40;
@@ -41,6 +42,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
 
   return (
     <div className="space-y-5">
+      <ActiveClass name={studioClass.name} />
       <header>
         <Link href="/teacher/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.teacher.navClasses}

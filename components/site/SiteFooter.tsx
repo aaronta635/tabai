@@ -41,8 +41,16 @@ export function SiteFooter({ locale }: { locale: Locale }) {
             © {new Date().getFullYear()} PARA ·{" "}
             {dictionary.footer.pronunciation}
           </span>
+          <nav className="footer-legal" aria-label={dictionary.footer.legalLabel}>
+            {dictionary.footer.legal.map(([label, href]) => (
+              <Link href={localePath(locale, href)} key={href} prefetch={false}>
+                {label}
+              </Link>
+            ))}
+          </nav>
           <span>
-            {dictionary.footer.status} · {dictionary.footer.contact}
+            {dictionary.footer.status} ·{" "}
+            <a href={`mailto:${dictionary.footer.contact}`}>{dictionary.footer.contact}</a>
           </span>
         </div>
       </div>

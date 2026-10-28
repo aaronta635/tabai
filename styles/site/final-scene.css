@@ -205,7 +205,9 @@
   display: flex;
   gap: clamp(12px, 2vw, 32px);
 }
-.para-site .final-utilities button {
+.para-site .final-utilities a {
+  display: inline-flex;
+  align-items: center;
   border: 0;
   background: transparent;
   color: var(--para-espresso);
@@ -215,10 +217,10 @@
   cursor: pointer;
   text-underline-offset: 5px;
 }
-.para-site .final-utilities button:hover {
+.para-site .final-utilities a:hover {
   text-decoration: underline;
 }
-.para-site .final-utilities button:focus-visible {
+.para-site .final-utilities a:focus-visible {
   outline: 2px solid var(--para-espresso);
   outline-offset: 3px;
   border-radius: 4px;
@@ -258,7 +260,7 @@
   .para-site .final-utilities > div:last-child {
     margin-left: auto;
   }
-  .para-site .final-utilities button {
+  .para-site .final-utilities a {
     font-size: 12px;
   }
   .para-site .integrated-header :is(.brand, .language-switch, .menu-toggle) {

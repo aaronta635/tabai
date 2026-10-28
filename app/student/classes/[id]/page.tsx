@@ -9,6 +9,7 @@ import { weekParam } from "@/lib/schedule";
 import { studentClass } from "@/lib/student-view";
 import { AssignmentMeta } from "@/components/student/assignment-meta";
 import { SectionPanel } from "@/components/disclosure";
+import { ActiveClass } from "@/components/studio-shell";
 
 export default async function StudentClassPage({ params }: { params: Promise<{ id: string }> }) {
   const student = await readStudentSession();
@@ -23,6 +24,7 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
 
   return (
     <div className="space-y-5">
+      <ActiveClass name={studioClass.name} />
       <header>
         <Link href="/student/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.student.navClasses}

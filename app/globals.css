@@ -2578,12 +2578,12 @@ body:has(.auth-split) {
   margin-bottom: 1rem;
 }
 
-/* Theme toggle (light default) */
+/* Theme toggle. Emoji pair, inset in the settings card. */
 .theme-toggle {
   background: var(--color-cream);
   color: var(--color-ink);
-  outline: 1px solid rgba(59, 47, 42, 0.1);
-  box-shadow: 0 8px 18px -16px rgba(59, 47, 42, 0.75);
+  outline: 1px solid rgba(59, 47, 42, 0.16);
+  box-shadow: none;
 }
 
 .theme-toggle-active {
@@ -2940,8 +2940,7 @@ body:has(.auth-split) {
 [data-theme="dark"] .landing-nav-cta,
 [data-theme="dark"] .landing-cta-secondary,
 [data-theme="dark"] .landing-code-form,
-[data-theme="dark"] .landing-locale,
-[data-theme="dark"] .theme-toggle {
+[data-theme="dark"] .landing-locale {
   background:
     linear-gradient(180deg, rgba(59, 47, 42, 0.94), rgba(48, 39, 34, 0.9)) padding-box,
     linear-gradient(135deg, #D6B98C 0%, #D6B98C 42%, #3B2F2A 100%) border-box;
@@ -2967,13 +2966,20 @@ body:has(.auth-split) {
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
 }
 
+[data-theme="dark"] .theme-toggle {
+  background: #302722;
+  color: #F3EDE2;
+  outline-color: rgba(243, 237, 226, 0.16);
+  box-shadow: none;
+}
+
 [data-theme="dark"] .theme-toggle-active {
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: #F3EDE2;
+  color: #3B2F2A;
 }
 
 [data-theme="dark"] .theme-toggle-idle {
-  color: var(--color-ink);
+  color: #D6B98C;
 }
 
 .report-frame {
@@ -3260,4 +3266,107 @@ body:has(.auth-split) {
 
 @media (prefers-reduced-motion: reduce) {
   .report-slide { animation: none; }
+}
+
+/* PARA class desk. Sandalwood stays on :root. This block is layout and type only. */
+.studio-shell,
+.auth-split {
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", ui-monospace, monospace;
+}
+
+.studio-page-head h1,
+.lesson-card-title,
+.studio-panel h2,
+.studio-active-class,
+.auth-brand-copy h2,
+.auth-form h1 {
+  font-family: var(--font-ui), "Be Vietnam Pro", sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.studio-page-head h1,
+.auth-form h1 {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+
+.studio-panel {
+  padding-bottom: 1rem;
+}
+
+.studio-nav-link {
+  min-height: 36px;
+  border-radius: 4px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.875rem;
+}
+
+.studio-active-class {
+  margin-top: 0.45rem;
+  font-size: 1rem;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+.studio-panel,
+.side-card,
+.lesson-card,
+.submit-card,
+.studio-shell .tile {
+  border-radius: 8px;
+}
+
+.studio-shell .btn,
+.studio-shell .btn-quiet,
+.studio-shell .field,
+.auth-submit,
+.auth-field,
+.auth-roles a,
+.auth-roles button,
+.auth-social button {
+  border-radius: 4px;
+}
+
+.class-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+}
+
+.class-switch a {
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+}
+
+.class-switch a[aria-current="page"] {
+  color: var(--color-ink);
+}
+
+.lesson-list {
+  margin: 0 0 0.6rem;
+}
+
+.lesson-list a {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 0.75rem;
+  align-items: baseline;
+  border-top: 1px solid rgba(59, 47, 42, 0.12);
+  padding: 0.55rem 0.1rem;
+  color: inherit;
+}
+
+.lesson-list-time {
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+}
+
+.auth-brand-copy {
+  margin-bottom: 8vh;
+}
+
+.auth-brand-copy h2 {
+  font-size: 1.35rem;
+  font-weight: 400;
 }

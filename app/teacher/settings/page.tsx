@@ -8,6 +8,7 @@ import { getTheme } from "@/lib/theme";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { SectionPanel } from "@/components/disclosure";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { deleteTeacherAccountAction } from "@/app/account/actions";
 
 export default async function SettingsPage() {
   const teacher = await requireTeacher();
@@ -27,6 +28,17 @@ export default async function SettingsPage() {
         <h2>{t.theme.appearance}</h2>
         <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
       </section>
+      <form action={deleteTeacherAccountAction} className="studio-panel space-y-3 pb-4">
+        <h2>{t.teacher.deleteAccount}</h2>
+        <p className="text-sm leading-relaxed">{t.teacher.deleteAccountBody}</p>
+        <label className="flex items-start gap-2 text-sm">
+          <input type="checkbox" name="confirm" value="yes" required className="mt-1" />
+          <span>{t.teacher.deleteAccountConfirm}</span>
+        </label>
+        <button type="submit" className="btn">
+          {t.teacher.deleteAccount}
+        </button>
+      </form>
       <form action={updateDelivery} className="studio-panel space-y-3 pb-4">
         <label className="block">
           <span className="field-label">{t.teacher.delivery}</span>

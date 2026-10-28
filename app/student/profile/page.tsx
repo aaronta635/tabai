@@ -1,3 +1,4 @@
+import { ParaIcon } from "@/components/ui/para-icon";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
@@ -22,7 +23,7 @@ export default async function StudentProfilePage() {
       : {};
 
   return (
-    <div className="space-y-5">
+    <div className="student-profile space-y-5">
       <header className="flex items-center gap-4">
         <span className="avatar-btn font-ui" aria-hidden>
           {initialsOf(student.name)}
@@ -63,7 +64,7 @@ export default async function StudentProfilePage() {
         </div>
       </section>
 
-      <AddPanel label={t.student.joinAnother}>
+      <AddPanel icon={<ParaIcon name="plus" />} label={t.student.joinAnother}>
         <JoinClassForm
           placeholder={t.home.codePlaceholder}
           submit={t.student.joinClass}

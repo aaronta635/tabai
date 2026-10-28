@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { notFound, redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
@@ -58,15 +59,16 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
         </section>
       ) : null}
 
-      <SectionPanel title={t.student.assignedPieces} count={studioClass.assignments.length}>
+      <SectionPanel title={t.student.assignedPieces} count={studioClass.assignments.length} open chevron={<ParaIcon name="chevron-right" />}>
         {studioClass.assignments.length === 0 ? (
           <p className="text-sm text-ink-soft">{t.student.noWork}</p>
         ) : (
           <table className="studio-table">
+            <caption className="sr-only">{t.student.assignedPieces}</caption>
             <thead>
               <tr>
-                <th>{t.student.thisPiece}</th>
-                <th>{t.student.due}</th>
+                <th scope="col">{t.student.thisPiece}</th>
+                <th scope="col">{t.student.due}</th>
               </tr>
             </thead>
             <tbody>
@@ -91,7 +93,7 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
         )}
       </SectionPanel>
 
-      <SectionPanel title={t.student.nextLesson} count={studioClass.sessions.length}>
+      <SectionPanel title={t.student.nextLesson} count={studioClass.sessions.length} chevron={<ParaIcon name="chevron-right" />}>
         {studioClass.sessions.length === 0 ? (
           <p className="text-sm text-ink-soft">{t.student.noLessonYet}</p>
         ) : (

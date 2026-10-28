@@ -6,16 +6,17 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsForStudent } from "@/lib/lms";
 import { formatDueLabel } from "@/lib/practice";
 import { studentClasses } from "@/lib/student-view";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
-import { formatTime, formatWhen } from "@/lib/when";
+import { formatWhen } from "@/lib/when";
 import { prisma } from "@/lib/prisma";
 import { JoinClassForm } from "@/components/student/join-class-form";
 import { AddPanel } from "@/components/disclosure";
 import { ActiveClass } from "@/components/studio-shell";
 import {
   AssignmentList,
-  LessonList,
+  LessonCard,
   PracticeLog,
   ReviewTable,
   SideNote,
@@ -98,7 +99,7 @@ export default async function StudentHomePage() {
         title={focus ? focus.name : hello}
         meta={focus ? hello : undefined}
         action={
-          classes.length > 0 ? (
+          classes.length > 0 && !nextPiece ? (
             <Link href={submitHref} className="btn submit-jump">
               {t.student.submitVideo}
             </Link>
@@ -134,27 +135,22 @@ export default async function StudentHomePage() {
       ) : (
         <div className="dash">
           <div className="space-y-6">
-            <LessonList
-              title={t.student.nextLesson}
-              empty={t.student.noLessonYet}
-              rows={
-                nextLesson
-                  ? [
-                      {
-                        href: `/student/schedule?w=${weekParam(nextLesson.startsAt)}`,
-                        time: formatTime(nextLesson.startsAt, locale),
-                        title: nextLesson.title || nextLesson.class.name,
-                        meta: `${nextLesson.class.name} · ${nextLesson.class.teacher.name}`,
-                      },
-                    ]
-                  : []
-              }
-            />
+            {nextPiece ? (
+              <section className="studio-panel student-current-piece">
+                <p className="page-meta">{t.student.assignedPieces}</p>
+                <h2>{nextPiece.title}</h2>
+                <p className="text-sm">{t.student.teacherLabel}: {nextPiece.teacher.name}</p>
+                <div className="student-actions">
+                  <Link href={submitHref} className="btn">{t.student.submitVideo}</Link>
+                </div>
+              </section>
+            ) : null}
 
             <AssignmentList
               title={t.student.assignedPieces}
               empty={t.student.noWork}
               track
+              historyLabel={t.student.sentBefore}
               rows={pieces.slice(0, 5).flatMap((row) =>
                 row.piece
                   ? [
@@ -184,7 +180,7 @@ export default async function StudentHomePage() {
               }))}
             />
 
-            <AddPanel label={t.student.joinAnother}>
+            <AddPanel icon={<ParaIcon name="plus" />} label={t.student.joinAnother}>
               <JoinClassForm
                 placeholder={t.home.codePlaceholder}
                 submit={t.student.joinClass}
@@ -193,16 +189,24 @@ export default async function StudentHomePage() {
             </AddPanel>
           </div>
           <aside className="space-y-3">
-            <SideNote
-              kicker={t.student.nextLesson}
-              title={nextLesson ? nextLesson.title || nextLesson.class.name : t.student.noLessonYet}
-              meta={
-                nextLesson
-                  ? `${nextLesson.class.teacher.name} · ${formatTime(nextLesson.startsAt, locale)}`
-                  : undefined
-              }
-              href={nextLesson ? `/student/schedule?w=${weekParam(nextLesson.startsAt)}` : "/student/schedule"}
-            />
+            <section className="studio-panel space-y-3">
+              <h2 className="font-display text-base"><ParaIcon name="calendar" /> {t.student.nextLesson}</h2>
+              {nextLesson ? (
+                <div className="lesson-card-row">
+                  <LessonCard
+                    href={`/student/schedule?w=${weekParam(nextLesson.startsAt)}`}
+                    time={formatWhen(nextLesson.startsAt, locale)}
+                    title={nextLesson.title || nextLesson.class.name}
+                    meta={`${nextLesson.class.name} · ${nextLesson.class.teacher.name}`}
+                    status={t.student.upcoming}
+                    next
+                  />
+                </div>
+              ) : (
+                <Link href="/student/schedule" className="text-sm underline underline-offset-4">{t.student.noLessonYet}</Link>
+              )}
+            </section>
+
             <SideNote
               kicker={t.student.recentFeedback}
               title={latestReply ? latestReply.submission.piece.title : t.student.noFeedback}

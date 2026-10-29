@@ -125,7 +125,7 @@ export async function runAnalyze(submissionId: string) {
     include: { student: true, media: true, piece: true },
   });
   if (!submission) throw new Error("submission not found");
-  if (!submission.student.approvedAt) {
+  if (!submission.piece.demo && !submission.student.approvedAt) {
     throw new Error("student not approved — refusing analyze");
   }
 

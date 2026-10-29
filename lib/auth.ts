@@ -483,11 +483,14 @@ export function homeTeacherId(current: string | null | undefined, pieceTeacherId
 }
 
 /** Guest token cookie or logged-in student session for this teacher's piece. */
-export async function studentForPiece(teacherId: string) {
+export async function studentForPiece(teacherId: string, options?: { demo?: boolean }) {
   const session = await readStudentSession();
   if (session) {
     const account = await prisma.student.findUnique({ where: { id: session.id } });
     if (account) {
+      if (options?.demo) {
+        return { student: account, otherClass: false, fromSession: true as const };
+      }
       const sameStudio = !account.teacherId || account.teacherId === teacherId;
       const inClass =
         sameStudio ||
@@ -505,7 +508,9 @@ export async function studentForPiece(teacherId: string) {
   }
   const token = await getStudentTokenFromCookie();
   if (!token) return { student: null, otherClass: false, fromSession: false as const };
-  const student = await prisma.student.findFirst({ where: { token, teacherId } });
+  const student = await prisma.student.findFirst({
+    where: options?.demo ? { token, OR: [{ teacherId }, { teacherId: null }] } : { token, teacherId },
+  });
   return { student, otherClass: false, fromSession: false as const };
 }
 

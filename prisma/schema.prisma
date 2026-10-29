@@ -171,6 +171,7 @@ model Piece {
   goal               String?
   dueAt              DateTime?
   archived           Boolean   @default(false)
+  demo               Boolean   @default(false)
   // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts
   aiDirectUnlockedAt DateTime?
   createdAt          DateTime  @default(now())
@@ -181,6 +182,7 @@ model Piece {
   assignments      Assignment[]
 
   @@index([teacherId, archived])
+  @@index([demo, archived])
   @@index([partId])
 }
 

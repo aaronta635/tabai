@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { newInviteToken, requireAdmin } from "@/lib/auth";
+import { newInviteToken, newPieceCode, requireAdmin } from "@/lib/auth";
+import { linkPieceAssets, enqueueTrainPiece } from "@/lib/catalog";
+import { ensureDemoTeacherId } from "@/lib/demo-teacher";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { deleteStudentData } from "@/lib/deletion";
 import { logEvent } from "@/lib/events";
@@ -101,6 +103,62 @@ export async function toggleVoice(id: string) {
     data: { active: !sample.active },
   });
   revalidatePath("/admin/voices");
+}
+
+export async function createDemoPiece(title: string) {
+  await adminOrThrow();
+  const name = title.trim();
+  if (!name) return { error: "title_required" as const };
+  const teacherId = await ensureDemoTeacherId();
+  const piece = await prisma.piece.create({
+    data: { teacherId, code: newPieceCode(), title: name, demo: true },
+    select: { id: true, code: true },
+  });
+  revalidatePath("/admin");
+  revalidatePath("/student");
+  return piece;
+}
+
+export async function saveDemoPiece(input: {
+  pieceId: string;
+  title?: string;
+  sheetMediaId?: string | null;
+  tutorialMediaId?: string | null;
+}) {
+  await adminOrThrow();
+  const piece = await prisma.piece.findFirst({
+    where: { id: input.pieceId, demo: true, archived: false },
+  });
+  if (!piece) throw new Error("not found");
+  const title = input.title?.trim();
+  if (input.title != null && !title) return { error: "title_required" as const };
+
+  const prefix = `teachers/${piece.teacherId}/pieces/${piece.id}/`;
+  async function owned(mediaId: string | null | undefined, folder: "sheet" | "tutorial") {
+    if (!mediaId) return;
+    const media = await prisma.media.findUnique({ where: { id: mediaId } });
+    if (!media || media.storagePath === "pending") throw new Error("media not ready");
+    if (!media.storagePath.startsWith(`${prefix}${folder}/`)) throw new Error("media mismatch");
+  }
+  await owned(input.sheetMediaId, "sheet");
+  await owned(input.tutorialMediaId, "tutorial");
+
+  if (title) {
+    await prisma.piece.update({ where: { id: piece.id }, data: { title } });
+  }
+  if (input.sheetMediaId || input.tutorialMediaId) {
+    const updated = await linkPieceAssets({
+      pieceId: piece.id,
+      sheetMediaId: input.sheetMediaId ?? undefined,
+      tutorialMediaId: input.tutorialMediaId ?? undefined,
+    });
+    if (updated.sheetMediaId || updated.tutorialMediaId) {
+      await enqueueTrainPiece(updated.id);
+    }
+  }
+  revalidatePath("/admin");
+  revalidatePath("/student");
+  return { id: piece.id, code: piece.code };
 }
 
 export async function deleteStudent(formData: FormData) {

@@ -18,6 +18,7 @@ describe("enqueueAnalyzeIfApproved", () => {
     submission.findUnique.mockResolvedValueOnce({
       id: "sub-1",
       student: { approvedAt: new Date("2026-10-22") },
+      piece: { demo: false },
     });
     const open = { id: "job-open", status: "running" };
     job.findFirst.mockResolvedValueOnce(open);
@@ -30,6 +31,7 @@ describe("enqueueAnalyzeIfApproved", () => {
     submission.findUnique.mockResolvedValueOnce({
       id: "sub-1",
       student: { approvedAt: new Date("2026-10-22") },
+      piece: { demo: false },
     });
     job.findFirst.mockResolvedValueOnce(null);
     job.create.mockResolvedValueOnce({ id: "job-new", status: "pending" });
@@ -44,10 +46,23 @@ describe("enqueueAnalyzeIfApproved", () => {
     submission.findUnique.mockResolvedValueOnce({
       id: "sub-1",
       student: { approvedAt: null },
+      piece: { demo: false },
     });
 
     await expect(enqueueAnalyzeIfApproved("sub-1")).resolves.toBeNull();
     expect(job.findFirst).not.toHaveBeenCalled();
     expect(job.create).not.toHaveBeenCalled();
+  });
+
+  it("queues a demo take that has not been approved", async () => {
+    submission.findUnique.mockResolvedValueOnce({
+      id: "sub-1",
+      student: { approvedAt: null },
+      piece: { demo: true },
+    });
+    job.findFirst.mockResolvedValueOnce(null);
+    job.create.mockResolvedValueOnce({ id: "job-demo", status: "pending" });
+
+    await expect(enqueueAnalyzeIfApproved("sub-1")).resolves.toMatchObject({ id: "job-demo" });
   });
 });

@@ -2,6 +2,8 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { teacherMetrics } from "@/lib/metrics-data";
 import { createTeacher, deleteStudent } from "@/app/admin/actions";
+import { DemoSongs } from "@/components/admin/demo-songs";
+import { DEMO_TEACHER_NAME } from "@/lib/demo-teacher";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { appOrigin } from "@/lib/origin";
 
@@ -27,7 +29,19 @@ export default async function AdminHome() {
     );
   }
 
-  const teachers = await prisma.teacher.findMany({ orderBy: { createdAt: "asc" } });
+  const [teachers, demoSongs] = await Promise.all([
+    prisma.teacher.findMany({ where: { name: { not: DEMO_TEACHER_NAME } }, orderBy: { createdAt: "asc" } }),
+    prisma.piece.findMany({
+      where: { demo: true, archived: false },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        code: true,
+        models: { where: { status: "ready" }, take: 1, select: { id: true } },
+      },
+    }),
+  ]);
   const origin = await appOrigin();
   const rows = await Promise.all(
     teachers.map(async (teacher) => ({
@@ -44,6 +58,29 @@ export default async function AdminHome() {
           {t.admin.deck}
         </a>
       </div>
+
+      <DemoSongs
+        labels={{
+          title: t.admin.demoTitle,
+          help: t.admin.demoHelp,
+          name: t.admin.demoName,
+          sheet: t.admin.demoSheet,
+          video: t.admin.demoVideo,
+          save: t.admin.demoSave,
+          replace: t.admin.demoReplace,
+          ready: t.admin.demoReady,
+          training: t.admin.demoTraining,
+          needSheet: t.admin.demoNeedSheet,
+          tooBig: t.admin.demoTooBig,
+          failed: t.admin.demoFailed,
+        }}
+        songs={demoSongs.map((song) => ({
+          id: song.id,
+          title: song.title,
+          code: song.code,
+          ready: song.models.length > 0,
+        }))}
+      />
 
       <form action={createTeacher} className="flex gap-2 rounded-2xl bg-night-card p-4">
         <input name="name" placeholder="Tên thầy" className="flex-1 rounded-xl bg-night px-3 py-3" />

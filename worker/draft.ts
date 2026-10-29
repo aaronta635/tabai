@@ -97,14 +97,14 @@ export async function runDraft(submissionId: string) {
     },
   });
   if (!submission) throw new Error("submission not found");
-  if (!submission.student.approvedAt) {
+  if (!submission.piece.demo && !submission.student.approvedAt) {
     throw new Error("student not approved — refusing draft");
   }
   if (submission.kind === "practice") return;
   const skip = whyDraftNotReady({
     kind: submission.kind,
     status: submission.status,
-    approved: Boolean(submission.student.approvedAt),
+    approved: submission.piece.demo || Boolean(submission.student.approvedAt),
     observations: submission.analyses[0]?.observationsJson,
   });
   if (skip) {

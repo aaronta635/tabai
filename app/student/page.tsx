@@ -31,7 +31,7 @@ export default async function StudentHomePage() {
   const t = await getMessages(locale);
   const now = new Date();
   const { start, end } = weekRangeUtc(now);
-  const [classes, assigned, replies, nextLesson, takes, sentPieces, practiceRows] = await Promise.all([
+  const [classes, assigned, replies, nextLesson, takes, sentPieces, practiceRows, demoPieces] = await Promise.all([
     studentClasses(student.id),
     assignmentsForStudent(student.id),
     prisma.reply.findMany({
@@ -78,13 +78,22 @@ export default async function StudentHomePage() {
       where: { studentId: student.id, startedAt: { gte: start, lt: end } },
       select: { seconds: true, startedAt: true },
     }),
+    prisma.piece.findMany({
+      where: { demo: true, archived: false },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, title: true, code: true },
+    }),
   ]);
 
   const pieces = assigned.filter((row) => row.piece);
   const sentPieceIds = new Set(sentPieces.map((row) => row.pieceId));
   const nextPiece =
     pieces.find((row) => row.piece && !sentPieceIds.has(row.piece.id))?.piece ?? pieces.find((row) => row.piece)?.piece;
-  const submitHref = nextPiece ? `/student/work/${nextPiece.code}` : "/student/work";
+  const submitHref = nextPiece
+    ? `/student/work/${nextPiece.code}`
+    : demoPieces[0]
+      ? `/student/work/${demoPieces[0].code}`
+      : "/student/work";
   const practice = weekPractice(practiceRows, now);
   const latestReply = replies[0];
 
@@ -98,7 +107,7 @@ export default async function StudentHomePage() {
         title={focus ? focus.name : hello}
         meta={focus ? hello : undefined}
         action={
-          classes.length > 0 ? (
+          classes.length > 0 || demoPieces.length > 0 ? (
             <Link href={submitHref} className="btn submit-jump">
               {t.student.submitVideo}
             </Link>
@@ -117,6 +126,19 @@ export default async function StudentHomePage() {
             </Link>
           ))}
         </nav>
+      ) : null}
+
+      {demoPieces.length > 0 ? (
+        <AssignmentList
+          title={t.student.demoSongs}
+          empty={t.student.demoSongsHelp}
+          rows={demoPieces.map((piece) => ({
+            href: `/student/work/${piece.code}`,
+            title: piece.title,
+            meta: "",
+            status: t.student.demoOpen,
+          }))}
+        />
       ) : null}
 
       {classes.length === 0 ? (

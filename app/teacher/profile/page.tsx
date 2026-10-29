@@ -23,7 +23,7 @@ export default async function TeacherProfilePage() {
     : "some";
 
   return (
-    <div className="space-y-6">
+    <div className="teacher-profile space-y-6">
       <header className="flex items-center gap-4">
         <span className="avatar-btn font-ui" aria-hidden>
           {initialsOf(teacher.name)}

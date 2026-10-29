@@ -65,7 +65,7 @@ export function StudioShell({
 }: {
   name: string;
   theme?: "light" | "dark";
-  variant?: "student";
+  variant?: "student" | "teacher";
   home: string;
   kicker: string;
   items: NavItem[];
@@ -84,7 +84,7 @@ export function StudioShell({
   const drawerId = useId();
 
   useEffect(() => {
-    if (variant !== "student" || !railOpen) return;
+    if (!variant || !railOpen) return;
     const drawer = drawerRef.current;
     const content = contentRef.current;
     const overflow = document.body.style.overflow;
@@ -154,7 +154,7 @@ export function StudioShell({
               aria-current={on ? "page" : undefined}
               className="studio-nav-link"
             >
-              {variant === "student" && item.icon ? <ParaIcon name={item.icon} /> : null}
+              {Boolean(variant) && item.icon ? <ParaIcon name={item.icon} /> : null}
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
             </Link>
           );
@@ -190,21 +190,21 @@ export function StudioShell({
 
   return (
     <ActiveClassContext.Provider value={setActiveClass}>
-    <div className={`studio-shell flex min-h-dvh${variant === "student" ? " student-ui" : ""}`}>
+    <div className={`studio-shell flex min-h-dvh${Boolean(variant) ? ` student-ui${variant === "teacher" ? " teacher-ui" : ""}` : ""}`}>
       <aside className="studio-rail hidden w-60 shrink-0 lg:block">{rail}</aside>
 
       {railOpen ? (
-        <div className="fixed inset-0 z-50 lg:hidden" role={variant === "student" ? "dialog" : undefined} aria-modal={variant === "student" ? true : undefined} aria-label={variant === "student" ? labels.menu : undefined}>
+        <div className="fixed inset-0 z-50 lg:hidden" role={Boolean(variant) ? "dialog" : undefined} aria-modal={Boolean(variant) ? true : undefined} aria-label={Boolean(variant) ? labels.menu : undefined}>
           <button
             type="button"
-            className={`absolute inset-0 bg-void/40${variant === "student" ? " student-nav-backdrop" : ""}`}
+            className={`absolute inset-0 bg-void/40${Boolean(variant) ? " student-nav-backdrop" : ""}`}
             aria-label={labels.close}
             onClick={() => setRailOpen(false)}
           />
           <aside ref={drawerRef} id={drawerId} className="studio-rail relative h-full w-64 max-w-[80vw]">
             <div className="flex justify-end px-3 pt-3">
               <button type="button" className="studio-signout" onClick={() => setRailOpen(false)}>
-                {variant === "student" ? <ParaIcon name="close" /> : null}
+                {Boolean(variant) ? <ParaIcon name="close" /> : null}
                 {labels.close}
               </button>
             </div>
@@ -215,8 +215,8 @@ export function StudioShell({
 
       <div ref={contentRef} className="flex min-h-0 min-w-0 flex-1 flex-col">
         <div className="studio-mobile-bar lg:hidden">
-          <button ref={menuRef} type="button" className="studio-menu" aria-label={labels.menu} aria-expanded={variant === "student" ? railOpen : undefined} aria-controls={variant === "student" && railOpen ? drawerId : undefined} onClick={() => setRailOpen(true)}>
-            {variant === "student" ? <ParaIcon name="menu" /> : "☰"}
+          <button ref={menuRef} type="button" className="studio-menu" aria-label={labels.menu} aria-expanded={Boolean(variant) ? railOpen : undefined} aria-controls={Boolean(variant) && railOpen ? drawerId : undefined} onClick={() => setRailOpen(true)}>
+            {Boolean(variant) ? <ParaIcon name="menu" /> : "☰"}
           </button>
           <Link href={home} aria-label="PARA">
             <BrandMark compact />
@@ -228,12 +228,12 @@ export function StudioShell({
               <Suspense
                 fallback={
                   <form action={search.action} className="studio-search" method="get">
-                    {variant === "student" ? <ParaIcon name="search" /> : null}
+                    {Boolean(variant) ? <ParaIcon name="search" /> : null}
                     <input name="q" placeholder={search.placeholder} aria-label={search.placeholder} className="field" />
                   </form>
                 }
               >
-                <StudioSearch action={search.action} placeholder={search.placeholder} student={variant === "student"} />
+                <StudioSearch action={search.action} placeholder={search.placeholder} student={Boolean(variant)} />
               </Suspense>
             ) : null}
             {children}

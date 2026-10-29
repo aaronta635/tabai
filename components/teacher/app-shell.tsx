@@ -30,17 +30,18 @@ export function TeacherAppShell({
 }) {
   return (
     <StudioShell
+      variant="teacher"
       name={teacherName}
       home="/teacher"
       kicker={labels.kicker}
       items={[
-        { href: "/teacher", label: labels.general, exact: true },
-        { href: "/teacher/schedule", label: labels.schedule },
-        { href: "/teacher/classes", label: labels.classes },
-        { href: "/teacher/curriculum", label: labels.curriculum },
-        { href: "/teacher/submissions", label: labels.submissions },
-        { href: "/teacher/roster", label: labels.roster },
-        { href: "/teacher/settings", label: labels.settings },
+        { href: "/teacher", icon: "home", label: labels.general, exact: true },
+        { href: "/teacher/schedule", icon: "calendar", label: labels.schedule },
+        { href: "/teacher/classes", icon: "class", label: labels.classes },
+        { href: "/teacher/curriculum", icon: "assignment", label: labels.curriculum },
+        { href: "/teacher/submissions", icon: "video", label: labels.submissions },
+        { href: "/teacher/roster", icon: "class", label: labels.roster },
+        { href: "/teacher/settings", icon: "settings", label: labels.settings },
       ]}
       menuLinks={[{ href: "/teacher/profile", label: labels.profile }]}
       signOutAction={logoutTeacher}

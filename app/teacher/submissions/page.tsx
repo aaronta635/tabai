@@ -191,11 +191,11 @@ export default async function SubmissionsPage({
   const done = Math.max(0, filed.length - inbox.length);
 
   return (
-    <div className="space-y-5">
+    <div className="teacher-inbox space-y-5">
       <header>
         <h1 className="font-display">{t.teacher.submissionsTitle}</h1>
         <p className="page-meta">
-          {t.teacher.queueMeta
+          {t.teacher.pageScope} · {t.teacher.queueMeta
             .replace("{waiting}", String(inbox.length))
             .replace("{done}", String(done))}
         </p>

@@ -1,0 +1,56 @@
+@import "../student/student.css";
+/* Reuse the existing student-ui material contract unchanged. TeacherAppShell
+   opts in alongside teacher-ui; all teacher layout overrides remain here. */
+.teacher-ui.teacher-ui .studio-main { max-width:1600px; }
+.teacher-ui.teacher-ui :is(.studio-panel,.panel,.lms-card,.add-panel,.schedule-sheet) { --student-alpha:var(--para-app-material-reading-alpha); --student-blur:4px; }
+.teacher-ui.teacher-ui .lms-card { background:var(--para-app-field); color:var(--para-app-text); border:1px solid var(--para-app-edge); border-radius:20px; padding:24px; box-shadow:0 4px 18px var(--para-app-shadow); }
+.teacher-ui.teacher-ui :is(.studio-table,.lesson-list,.teacher-feedback,.fact-bars) { color:var(--para-app-text); }
+.teacher-ui.teacher-ui .studio-table { table-layout:auto; }
+.teacher-ui.teacher-ui .studio-table :is(th,td) { padding:12px 10px; }
+.teacher-ui.teacher-ui .studio-table th { white-space:normal; }
+.teacher-ui.teacher-ui .studio-table td { overflow-wrap:anywhere; }
+.teacher-ui.teacher-ui .lesson-list a { min-height:56px; grid-template-columns:minmax(60px,auto) minmax(0,1fr); border-color:var(--para-app-edge); }
+.teacher-ui.teacher-ui .lesson-list-time { color:var(--para-app-text); }
+.teacher-ui.teacher-ui :is(button,.desk-action,.chip,.add-trigger) { min-height:44px; transition:background-color 140ms ease-out,border-color 140ms ease-out,box-shadow 140ms ease-out; }
+.teacher-ui.teacher-ui :is(.desk-action,.chip,.add-trigger) { display:inline-flex; align-items:center; gap:8px; padding:10px 12px; color:var(--para-app-text); border:1px solid var(--para-app-border); border-radius:10px; background:transparent; }
+.teacher-ui.teacher-ui :is(.desk-action,.chip,.add-trigger,button[aria-pressed]):hover:not(:disabled) { background:rgb(var(--para-app-surface-rgb) / .6); }
+.teacher-ui.teacher-ui :is(.desk-action,.chip,.add-trigger):active:not(:disabled) { box-shadow:inset 0 2px 4px var(--para-app-shadow); }
+.teacher-ui.teacher-ui [aria-pressed="true"] { background:var(--para-app-field); color:var(--para-app-text); border-color:var(--para-app-accent); box-shadow:inset 0 -3px var(--para-app-accent); font-weight:600; }
+.teacher-ui.teacher-ui .desk-actions { display:flex; flex-wrap:wrap; gap:12px; border-top:1px solid var(--para-app-edge); margin-top:24px; padding-top:20px; }
+.teacher-ui.teacher-ui :is(.is-danger,.teacher-danger button) { color:var(--student-danger-text); border:1px solid currentColor; background:transparent; }
+.teacher-ui.teacher-ui :is(.teacher-profile,.teacher-settings) { max-width:800px; }
+.teacher-ui.teacher-ui :is(.teacher-profile,.teacher-settings) form { max-width:760px; }
+.teacher-ui.teacher-ui .teacher-review { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; align-items:start; }
+.teacher-ui.teacher-ui .teacher-review > * { min-width:0; margin-top:0; }
+.teacher-ui.teacher-ui .teacher-review video { width:100%; max-height:65vh; object-fit:contain; }
+.teacher-ui.teacher-ui .teacher-feedback { padding:24px; background:var(--para-app-field); border:1px solid var(--para-app-edge); border-radius:16px; }
+.teacher-ui.teacher-ui .teacher-feedback textarea { min-height:96px; resize:vertical; }
+.teacher-ui.teacher-ui .fact-draft-wait { color:var(--para-app-text); background:var(--para-app-field); border-color:var(--para-app-edge); }
+.teacher-ui.teacher-ui :is(.shelf,.shelf-piece,.piece-row) { border-color:var(--para-app-edge); color:var(--para-app-text); }
+.teacher-ui.teacher-ui .shelf-name { max-width:100%; font-size:20px; font-weight:600; }
+.teacher-ui.teacher-ui .schedule-calendar { max-height:72vh; }
+.teacher-ui.teacher-ui .schedule-cell:not(:disabled):hover { background:rgb(var(--para-app-surface-rgb) / .55); box-shadow:inset 0 0 0 1px var(--para-app-accent); }
+.teacher-ui.teacher-ui .schedule-sheet { width:min(760px,calc(100vw - 32px)); }
+.teacher-ui.teacher-ui .teacher-inbox > .panel { margin-bottom:24px; }
+@media(min-width:1200px) {
+ .teacher-ui.teacher-ui .teacher-review { grid-template-columns:minmax(0,1.1fr) minmax(360px,1fr); column-gap:28px; }
+ .teacher-ui.teacher-ui .teacher-review > * { grid-column:1; }
+ .teacher-ui.teacher-ui .teacher-review > .teacher-feedback { grid-column:2; grid-row:1 / span 8; }
+ .teacher-ui.teacher-ui .teacher-review > .desk-actions { grid-column:1 / -1; }
+}
+@media(max-width:640px) {
+ .teacher-ui.teacher-ui .lms-card,.teacher-ui.teacher-ui .teacher-feedback { padding:16px; }
+ .teacher-ui.teacher-ui .studio-table { font-size:13px; }
+ .teacher-ui.teacher-ui .studio-table :is(th,td) { padding:12px 6px; }
+ .teacher-ui.teacher-ui .schedule-sheet { padding:20px; }
+ .teacher-ui.teacher-ui .studio-panel { overflow-wrap:anywhere; }
+}
+@media(prefers-reduced-motion:reduce) { .teacher-ui.teacher-ui * { animation:none!important; transition:none!important; } }
+
+.teacher-ui.teacher-ui :is(.shelf,.fact-bars,.model-desk,.piece-row) { background:var(--para-app-field); color:var(--para-app-text); border-color:var(--para-app-edge); }
+.teacher-ui.teacher-ui :is(.shelf-piece,.shelf-piece-head) { background:transparent; color:var(--para-app-text); }
+.teacher-ui.teacher-ui :is(.fact-true,.fact-false,.fact-neutral) { color:var(--para-app-text); }
+.teacher-ui.teacher-ui .studio-table :is(a,button) { min-height:44px; }
+
+.teacher-ui.teacher-ui .add-trigger i { display:inline-flex; align-items:center; justify-content:center; background:var(--para-app-accent); color:var(--para-app-on-accent); border-radius:50%; width:24px; height:24px; }
+.teacher-ui.teacher-ui .add-trigger i svg { width:16px; height:16px; flex-basis:16px; }

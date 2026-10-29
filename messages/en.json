@@ -299,6 +299,7 @@
     "saved": "Saved"
   },
   "teacher": {
+    "pageScope": "This page",
     "pieces": "Pieces",
     "navDashboard": "Overview",
     "navInvite": "Invite students",

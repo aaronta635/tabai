@@ -140,17 +140,6 @@ export default async function TeacherDashboard() {
       ) : (
         <div className="dash">
           <div className="space-y-6">
-          <LessonList
-            title={t.teacher.nextLessons}
-            empty={t.teacher.noNextSession}
-            rows={nextLessons.map((session) => ({
-              href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
-              time: formatTime(session.startsAt, locale),
-              title: session.title || session.class.name,
-              meta: session.class.name,
-            }))}
-          />
-
           <ReviewTable
             title={t.teacher.unanswered}
             empty={t.teacher.noUnanswered}
@@ -213,16 +202,17 @@ export default async function TeacherDashboard() {
           ) : null}
           </div>
           <aside className="space-y-3">
-            <SideNote
-              kicker={t.teacher.nextLessons}
-              title={next ? next.title || next.class.name : t.teacher.noNextSession}
-              meta={next ? `${next.class.name} · ${formatTime(next.startsAt, locale)}` : undefined}
-              href={
-                next
-                  ? `/teacher/schedule?w=${weekParam(next.startsAt)}&session=${next.id}`
-                  : "/teacher/schedule"
-              }
-            />
+          <LessonList
+            title={t.teacher.nextLessons}
+            empty={t.teacher.noNextSession}
+            rows={nextLessons.map((session) => ({
+              href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
+              time: formatTime(session.startsAt, locale),
+              title: session.title || session.class.name,
+              meta: session.class.name,
+            }))}
+          />
+
             <SideNote
               kicker={t.teacher.reviewQueue}
               title={waiting.length ? String(waiting.length) : t.teacher.noUnanswered}

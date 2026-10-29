@@ -107,7 +107,7 @@ export default async function StudentHomePage() {
         title={focus ? focus.name : hello}
         meta={focus ? hello : undefined}
         action={
-          classes.length > 0 || demoPieces.length > 0 ? (
+          (classes.length > 0 || demoPieces.length > 0) && !nextPiece ? (
             <Link href={submitHref} className="btn submit-jump">
               {t.student.submitVideo}
             </Link>

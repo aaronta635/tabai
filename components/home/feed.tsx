@@ -174,11 +174,13 @@ export function AssignmentList({
   empty,
   rows,
   track = false,
+  historyLabel,
 }: {
   title: string;
   empty: string;
   rows: { href: string; title: string; meta: string; status: string; progress?: number; fraction?: string }[];
   track?: boolean;
+  historyLabel?: string;
 }) {
   return (
     <section className="studio-panel">
@@ -197,10 +199,10 @@ export function AssignmentList({
                 <span className="flex shrink-0 items-center gap-3">
                   {track ? (
                     <span className="meter-row">
-                      <span>{row.fraction ?? "—"}</span>
-                      <span className="meter is-slot" aria-hidden>
+                      <span>{historyLabel ? `${historyLabel}: ` : ""}{row.fraction ?? "—"}</span>
+                      {!historyLabel ? <span className="meter is-slot" aria-hidden>
                         <span style={{ width: `${Math.round((row.progress ?? 0) * 100)}%` }} />
-                      </span>
+                      </span> : null}
                     </span>
                   ) : null}
                   <span className="status-chip">{row.status}</span>

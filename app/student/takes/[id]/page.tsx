@@ -7,6 +7,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { signedMediaUrl } from "@/lib/media-view";
 import { prisma } from "@/lib/prisma";
 import { formatWhen } from "@/lib/when";
+import { ParaIcon } from "@/components/ui/para-icon";
 
 export default async function StudentTakePage({ params }: { params: Promise<{ id: string }> }) {
   const student = await readStudentSession();
@@ -34,8 +35,8 @@ export default async function StudentTakePage({ params }: { params: Promise<{ id
   const reply = take.replies[0];
 
   return (
-    <div className="space-y-6">
-      <header>
+    <div className="student-detail space-y-6">
+      <header className="student-material student-reading">
         <h1 className="font-display">{take.piece.title}</h1>
         <p className="page-meta">{formatWhen(take.submittedAt, locale)}</p>
         {take.studentNote ? <p className="mt-3 whitespace-pre-wrap leading-relaxed">{take.studentNote}</p> : null}
@@ -45,21 +46,24 @@ export default async function StudentTakePage({ params }: { params: Promise<{ id
       ) : (
         <p className="text-sm text-ink-soft">{t.student.videoPending}</p>
       )}
-      <section className="studio-panel space-y-3 pb-4">
+      <section className="studio-panel student-reading space-y-3 pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <h2>{reply ? t.student.replied : t.student.waitingReply}</h2>
           {reply?.grade ? <span className="status-chip">{reply.grade}</span> : null}
         </div>
         {reply ? <p className="whitespace-pre-wrap leading-relaxed">{reply.text}</p> : null}
       </section>
-      <DeleteTakeButton
-        submissionId={take.id}
-        label={t.student.deleteTake}
-        confirmLabel={t.student.deleteTakeConfirm}
-        className="delete-take"
-        afterHref="/student/takes"
-        remove={deleteOwnTake}
-      />
+      <div className="student-destructive-zone">
+        <DeleteTakeButton
+          icon={<ParaIcon name="trash" />}
+          submissionId={take.id}
+          label={t.student.deleteTake}
+          confirmLabel={t.student.deleteTakeConfirm}
+          className="delete-take"
+          afterHref="/student/takes"
+          remove={deleteOwnTake}
+        />
+      </div>
     </div>
   );
 }

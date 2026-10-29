@@ -1,3 +1,4 @@
+import "@/styles/student/student.css";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { readStudentSession, studioOnboarded } from "@/lib/auth";

@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FilePicker } from "@/components/file-picker";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS } from "@/lib/constants";
 import { requiredText, submissionNote } from "@/lib/forms";
 
@@ -21,6 +22,8 @@ type Props = {
   needsProfile: boolean;
   clipUrl?: string | null;
   desk?: SubmitDesk | null;
+  /** Student workspace presentation; public/guest upload keeps its existing layout. */
+  variant?: "studio";
 };
 
 type JsonBag = {
@@ -56,8 +59,9 @@ async function mediaDuration(file: File) {
   }
 }
 
-export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
+export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Props) {
   const t = useTranslations("student");
+  const fieldId = useId();
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
   const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
   const [busy, setBusy] = useState(false);
@@ -228,17 +232,18 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
   ];
 
   const modeRow = (
-    <div className="flex flex-wrap gap-2">
+    <div className={variant ? "student-modes" : "flex flex-wrap gap-2"}>
       {modes
         .filter((mode) => mode.show)
         .map((mode) => (
           <button
             key={mode.id}
             type="button"
-            className={kind === mode.id ? "btn px-3 py-1.5 text-sm" : "btn btn-quiet px-3 py-1.5 text-sm"}
+            className={variant ? "student-mode" : kind === mode.id ? "btn px-3 py-1.5 text-sm" : "btn btn-quiet px-3 py-1.5 text-sm"}
+            aria-pressed={variant ? kind === mode.id : undefined}
             onClick={() => setKind(mode.id)}
           >
-            {mode.label}
+            {variant ? <ParaIcon name={kind === mode.id ? "check" : "video"} /> : null}{mode.label}
           </button>
         ))}
     </div>
@@ -262,19 +267,21 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
   );
   const recordButton = recordSupported ? (
     <button type="button" onClick={recording ? stopRecord : startRecord} className="btn btn-quiet">
-      {recording ? "Stop" : t("record")}
+      {variant ? <ParaIcon name={recording ? "stop" : "record"} /> : null}
+      {recording ? (variant ? t("stopPractice") : "Stop") : t("record")}
     </button>
   ) : null;
-  const sendLabel = busy ? "…" : kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
+  const actionLabel = kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
+  const sendLabel = busy ? "…" : actionLabel;
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className={variant ? "student-upload space-y-5" : "space-y-5"} aria-busy={variant ? busy : undefined}>
       {needsProfile ? (
         <div className="space-y-4 rounded-2xl bg-white/70 p-4">
           <label className="block text-sm">
             {t("name")}
-            <input required name="name" className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3" />
-            {fieldError.name ? <p className="mt-1 text-sm text-danger">{fieldError.name}</p> : null}
+            <input required name="name" aria-invalid={variant && fieldError.name ? true : undefined} aria-describedby={variant && fieldError.name ? `${fieldId}-name` : undefined} className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3" />
+            {fieldError.name ? <p id={variant ? `${fieldId}-name` : undefined} className="mt-1 text-sm text-danger">{fieldError.name}</p> : null}
           </label>
           <fieldset className="text-sm">
             <legend>{t("age")}</legend>
@@ -322,10 +329,13 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
             <input
               required
               name="contactHandle"
+              aria-label={variant ? t("contact") : undefined}
+              aria-invalid={variant && fieldError.contactHandle ? true : undefined}
+              aria-describedby={variant && fieldError.contactHandle ? `${fieldId}-contact` : undefined}
               placeholder={contactType === "zalo" ? t("zalo") : t("messenger")}
               className="mt-2 w-full rounded-xl border border-ink/15 bg-white px-3 py-3"
             />
-            {fieldError.contactHandle ? <p className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
+            {fieldError.contactHandle ? <p id={variant ? `${fieldId}-contact` : undefined} className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
           </fieldset>
           <p className="text-sm leading-relaxed text-ink-soft">{t("consent")}</p>
           <p className="text-sm text-ink-soft">{t("under18Line")}</p>
@@ -340,7 +350,31 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         </div>
       ) : null}
 
-      {desk ? (
+      {variant && desk ? (
+        <section className="submit-card space-y-5">
+          <div className="submit-card-head">
+            <h2>{t("newSubmission")}</h2>
+            <p>{t("dropHint")}</p>
+          </div>
+          {modeRow}
+          {help}
+          <FilePicker
+            dropIcon={<ParaIcon name="upload" />}
+            accept="video/*"
+            capture="environment"
+            file={video}
+            onFile={setVideo}
+            buttonLabel={t("browseFiles")}
+            changeLabel={t("changeFile")}
+            dropTitle={t("dropHere")}
+            dropHint={t("dropHint")}
+          />
+          {recordButton}
+          {noteField}
+          {error ? <p className="text-sm text-danger" role="alert">{error}</p> : null}
+          <button type="submit" disabled={busy || !video} aria-label={actionLabel} aria-busy={busy} className="btn submit-send">{sendLabel}</button>
+        </section>
+      ) : desk ? (
         <section className="submit-card">
           <div className="submit-card-head">
             <h2>{t("newSubmission")}</h2>

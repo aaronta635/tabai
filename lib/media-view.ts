@@ -3,9 +3,10 @@ import { cachedById } from "@/lib/teacher-cache";
 
 type StoredMedia = { storagePath: string };
 
-export function sheetView(path: string): "pdf" | "image" | "file" {
+export function sheetView(path: string): "pdf" | "image" | "musicxml" | "file" {
   const name = path.split("/").pop()?.split("?")[0]?.toLowerCase() ?? "";
   if (/\.(png|jpe?g|webp)$/.test(name)) return "image";
+  if (name.endsWith(".xml") || name.endsWith(".musicxml")) return "musicxml";
   if (name.endsWith(".pdf") || !name.includes(".")) return "pdf";
   return "file";
 }

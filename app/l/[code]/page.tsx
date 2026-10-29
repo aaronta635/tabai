@@ -7,6 +7,7 @@ import { formatDueLabel } from "@/lib/practice";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { AssignmentMeta } from "@/components/student/assignment-meta";
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
+import { MusicXmlSheet } from "@/components/student/musicxml-sheet";
 import { SyncedTutorial } from "@/components/student/synced-tutorial";
 import { PracticeTimer } from "@/components/student/practice-timer";
 import { StudentUpload } from "@/components/student/upload-form";
@@ -27,7 +28,7 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
   const follow =
     room.sheetSync?.confidence === "ok" &&
     room.sheetSync.points.length > 0 &&
-    room.sheetKind === "file" &&
+    room.sheetKind === "musicxml" &&
     room.sheetUrl &&
     room.tutorialUrl
       ? { tutorialUrl: room.tutorialUrl, sheetUrl: room.sheetUrl, points: room.sheetSync.points }
@@ -77,7 +78,9 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
       {follow ? null : room.sheetUrl ? (
         <div className="mt-5">
           <p className="mb-2 text-sm">{t.student.sheet}</p>
-          {room.sheetKind === "image" ? (
+          {room.sheetKind === "musicxml" ? (
+            <MusicXmlSheet sheetUrl={room.sheetUrl} openSheet={t.student.openSheet} />
+          ) : room.sheetKind === "image" ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={room.sheetUrl} alt="" className="w-full rounded-2xl bg-white" />
           ) : room.sheetKind === "pdf" ? (

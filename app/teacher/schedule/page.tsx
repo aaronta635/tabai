@@ -4,6 +4,7 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { parseWeekParam, weekParam, weekRangeUtc } from "@/lib/schedule";
+import { StudioTitle } from "@/components/home/feed";
 import { TeacherSchedule } from "@/components/schedule/teacher-schedule";
 
 export default async function SchedulePage({
@@ -75,10 +76,10 @@ export default async function SchedulePage({
 
   return (
     <div className="space-y-7">
-      <header>
-        <h1 className="font-display">{t.teacher.scheduleTitle}</h1>
-        <p className="page-meta">{t.teacher.countSessions.replace("{n}", String(sessions.length))}</p>
-      </header>
+      <StudioTitle
+        title={t.teacher.scheduleTitle}
+        meta={t.teacher.countSessions.replace("{n}", String(sessions.length))}
+      />
       <TeacherSchedule
         locale={locale}
         weekStartIso={start.toISOString()}

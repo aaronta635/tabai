@@ -60,11 +60,7 @@ export function Navigation({ locale }: { locale: Locale }) {
   }, []);
 
   const plainPath = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
-  const languageHref = languageChoiceHref(
-    locale === "en" ? "vi" : "en",
-    plainPath,
-    plainPath === "/" ? hash : "",
-  );
+  const languageHash = plainPath === "/" ? hash : "";
 
   function handleKeys(event: React.KeyboardEvent<HTMLElement>) {
     if (!open) return;
@@ -124,16 +120,20 @@ export function Navigation({ locale }: { locale: Locale }) {
             onClick={() => setOpen(false)}
           />
         </div>
-        <a
-          className="language-switch"
-          href={languageHref}
-          hrefLang={locale === "en" ? "vi" : "en"}
-          lang={locale === "en" ? "vi" : "en"}
-          aria-label={dictionary.languageLabel}
-          onClick={() => setOpen(false)}
-        >
-          EN / VI
-        </a>
+        <div className="language-switch" role="group" aria-label={dictionary.languageLabel}>
+          {(["en", "vi"] as const).map((choice) => (
+            <a
+              key={choice}
+              href={languageChoiceHref(choice, plainPath, languageHash)}
+              hrefLang={choice}
+              lang={choice}
+              aria-current={locale === choice ? "true" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {choice === "en" ? "EN" : "VI"}
+            </a>
+          ))}
+        </div>
         <button
           ref={toggle}
           className="menu-toggle"

@@ -6,6 +6,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
 import { ensureReportToken } from "@/lib/weekly-report";
+import { StudioTitle } from "@/components/home/feed";
 import { CopyLink } from "@/components/teacher/copy-link";
 import { approveStudentForm } from "@/app/teacher/actions";
 
@@ -37,10 +38,10 @@ export default async function TeacherRosterPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-display">{t.teacher.rosterTitle}</h1>
-        <p className="page-meta">{t.teacher.rosterCount.replace("{n}", String(students.length))}</p>
-      </header>
+      <StudioTitle
+        title={t.teacher.rosterTitle}
+        meta={t.teacher.rosterCount.replace("{n}", String(students.length))}
+      />
       {students.length === 0 ? (
         <p className="text-ink-soft">{t.teacher.rosterEmpty}</p>
       ) : (

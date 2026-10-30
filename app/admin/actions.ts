@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { newInviteToken, newPieceCode, requireAdmin } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { clearAdminCookie, newInviteToken, newPieceCode, requireAdmin } from "@/lib/auth";
 import { linkPieceAssets, enqueueTrainPiece } from "@/lib/catalog";
 import { ensureDemoTeacherId } from "@/lib/demo-teacher";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
@@ -12,6 +13,11 @@ import { prisma } from "@/lib/prisma";
 async function adminOrThrow() {
   const ok = await requireAdmin();
   if (!ok) throw new Error("unauthorized");
+}
+
+export async function logoutAdmin() {
+  await clearAdminCookie();
+  redirect("/admin");
 }
 
 export async function createTeacher(formData: FormData) {

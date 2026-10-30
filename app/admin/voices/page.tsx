@@ -3,7 +3,9 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { pasteVoiceSamples } from "@/app/admin/actions";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { StudioTitle } from "@/components/home/feed";
 import { VoiceToggle, CurateButton } from "@/components/admin/voice-actions";
+import { DEMO_TEACHER_NAME, senderName } from "@/lib/demo-teacher";
 
 export default async function VoicesPage() {
   const ok = await requireAdmin();
@@ -12,6 +14,7 @@ export default async function VoicesPage() {
   const t = await getMessages(locale);
 
   const teachers = await prisma.teacher.findMany({
+    where: { name: { not: DEMO_TEACHER_NAME } },
     include: { voiceSamples: { orderBy: { createdAt: "desc" } } },
   });
 
@@ -23,28 +26,23 @@ export default async function VoicesPage() {
   });
 
   return (
-    <div className="space-y-10">
-      <h1 className="font-display text-3xl">{t.admin.voices}</h1>
+    <div className="space-y-6">
+      <StudioTitle title={t.admin.voices} />
       {teachers.map((teacher) => (
-        <section key={teacher.id} className="space-y-3">
-          <h2 className="font-display text-xl">{teacher.name}</h2>
-          <form action={pasteVoiceSamples} className="space-y-2 rounded-2xl bg-night-card p-4">
+        <section key={teacher.id} className="studio-panel space-y-3">
+          <h2 className="font-display">{teacher.name}</h2>
+          <form action={pasteVoiceSamples} className="space-y-2">
             <input type="hidden" name="teacherId" value={teacher.id} />
-            <textarea
-              name="samples"
-              rows={8}
-              placeholder={t.admin.pasteSamples}
-              className="w-full rounded-xl bg-night p-3"
-            />
-            <button className="rounded-xl bg-forest px-4 py-3 text-white" type="submit">
+            <textarea name="samples" rows={8} placeholder={t.admin.pasteSamples} className="field" />
+            <button className="btn" type="submit">
               {t.admin.saveSamples}
             </button>
           </form>
-          <ul className="space-y-2">
+          <ul className="divide-y divide-ink/10">
             {teacher.voiceSamples.map((sample) => (
-              <li key={sample.id} className="rounded-xl bg-night-card p-3 text-sm">
+              <li key={sample.id} className="py-3 text-sm">
                 <p className="leading-relaxed">{sample.text}</p>
-                <p className="mt-2 text-xs text-bone/40">
+                <p className="page-meta">
                   {sample.source} {sample.active ? `· ${t.admin.active}` : ""}
                 </p>
                 <VoiceToggle id={sample.id} />
@@ -54,14 +52,14 @@ export default async function VoicesPage() {
         </section>
       ))}
 
-      <section>
-        <h2 className="font-display text-xl">Curation</h2>
-        <ul className="mt-3 space-y-3">
+      <section className="studio-panel space-y-3">
+        <h2 className="font-display">{t.admin.curation}</h2>
+        <ul className="divide-y divide-ink/10">
           {recent.map((reply) => (
-            <li key={reply.id} className="rounded-2xl bg-night-card p-4 text-sm">
-              <p className="text-xs text-bone/50">
-                {reply.teacher.name} · {reply.submission.piece.title} · {reply.submission.student.name} ·{" "}
-                {reply.source}
+            <li key={reply.id} className="py-3 text-sm">
+              <p className="page-meta">
+                {senderName(reply.teacher.name, reply.submission.piece.demo)} · {reply.submission.piece.title} ·{" "}
+                {reply.submission.student.name} · {reply.source}
               </p>
               <p className="mt-2 leading-relaxed">{reply.text}</p>
               <CurateButton id={reply.id} label={t.admin.curate} />

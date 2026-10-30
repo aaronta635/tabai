@@ -4,6 +4,7 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDuration, formatWhen } from "@/lib/when";
+import { StudioTitle } from "@/components/home/feed";
 import { SectionPanel } from "@/components/disclosure";
 import { SubmissionCabinet } from "@/components/teacher/submission-cabinet";
 import { isClaimableStatus } from "@/lib/forms";
@@ -192,14 +193,12 @@ export default async function SubmissionsPage({
 
   return (
     <div className="space-y-5">
-      <header>
-        <h1 className="font-display">{t.teacher.submissionsTitle}</h1>
-        <p className="page-meta">
-          {t.teacher.queueMeta
-            .replace("{waiting}", String(inbox.length))
-            .replace("{done}", String(done))}
-        </p>
-      </header>
+      <StudioTitle
+        title={t.teacher.submissionsTitle}
+        meta={t.teacher.queueMeta
+          .replace("{waiting}", String(inbox.length))
+          .replace("{done}", String(done))}
+      />
 
       <SectionPanel title={t.teacher.filter} count={activeFilters || undefined} open={activeFilters > 0}>
         <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

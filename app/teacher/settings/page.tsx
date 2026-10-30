@@ -6,8 +6,10 @@ import { addVoiceSamples, retireVoice, updateDelivery } from "@/app/teacher/acti
 import { getLocale, getMessages } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
+import { StudioTitle } from "@/components/home/feed";
 import { SectionPanel } from "@/components/disclosure";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { ReplayTour } from "@/components/studio/replay-tour";
 import { deleteTeacherAccountAction } from "@/app/account/actions";
 
 export default async function SettingsPage() {
@@ -23,12 +25,13 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-5">
-      <h1 className="font-display">{t.teacher.settings}</h1>
+      <StudioTitle title={t.teacher.settings} />
       <section className="studio-panel space-y-4 pb-4">
         <h2>{t.theme.appearance}</h2>
-        <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <ThemeToggle variant="student" theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <ReplayTour label={t.tour.again} />
       </section>
-      <form action={deleteTeacherAccountAction} className="studio-panel space-y-3 pb-4">
+      <form action={deleteTeacherAccountAction} className="studio-panel student-destructive-zone space-y-3 pb-4">
         <h2>{t.teacher.deleteAccount}</h2>
         <p className="text-sm leading-relaxed">{t.teacher.deleteAccountBody}</p>
         <label className="flex items-start gap-2 text-sm">

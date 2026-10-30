@@ -6,13 +6,14 @@ import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { cachedClassPulseForTeacher } from "@/lib/class-pulse";
 import { formatTime, formatWait, formatWhen } from "@/lib/when";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
 import { displayClassCode } from "@/lib/lms";
 import { ActiveClass } from "@/components/studio-shell";
 import {
   AssignmentList,
-  LessonList,
+  LessonCard,
   PracticeLog,
   ReviewTable,
   SideNote,
@@ -140,16 +141,24 @@ export default async function TeacherDashboard() {
       ) : (
         <div className="dash">
           <div className="space-y-6">
-          <LessonList
-            title={t.teacher.nextLessons}
-            empty={t.teacher.noNextSession}
-            rows={nextLessons.map((session) => ({
-              href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
-              time: formatTime(session.startsAt, locale),
-              title: session.title || session.class.name,
-              meta: session.class.name,
-            }))}
-          />
+          <section className="studio-panel space-y-3">
+            <h2 className="font-display text-base"><ParaIcon name="calendar" /> {t.teacher.nextLessons}</h2>
+            {nextLessons.length === 0 ? (
+              <Link href="/teacher/schedule" className="text-sm underline underline-offset-4">{t.teacher.noNextSession}</Link>
+            ) : (
+              nextLessons.map((session) => (
+                <div key={session.id} className="lesson-card-row">
+                  <LessonCard
+                    href={`/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`}
+                    time={formatTime(session.startsAt, locale)}
+                    title={session.title || session.class.name}
+                    meta={session.class.name}
+                    status={t.teacher.upcoming}
+                  />
+                </div>
+              ))
+            )}
+          </section>
 
           <ReviewTable
             title={t.teacher.unanswered}
@@ -213,16 +222,23 @@ export default async function TeacherDashboard() {
           ) : null}
           </div>
           <aside className="space-y-3">
-            <SideNote
-              kicker={t.teacher.nextLessons}
-              title={next ? next.title || next.class.name : t.teacher.noNextSession}
-              meta={next ? `${next.class.name} · ${formatTime(next.startsAt, locale)}` : undefined}
-              href={
-                next
-                  ? `/teacher/schedule?w=${weekParam(next.startsAt)}&session=${next.id}`
-                  : "/teacher/schedule"
-              }
-            />
+            <section className="studio-panel space-y-3">
+              <h2 className="font-display text-base"><ParaIcon name="calendar" /> {t.teacher.nextLessons}</h2>
+              {next ? (
+                <div className="lesson-card-row">
+                  <LessonCard
+                    href={`/teacher/schedule?w=${weekParam(next.startsAt)}&session=${next.id}`}
+                    time={formatTime(next.startsAt, locale)}
+                    title={next.title || next.class.name}
+                    meta={next.class.name}
+                    status={t.teacher.upcoming}
+                    next
+                  />
+                </div>
+              ) : (
+                <Link href="/teacher/schedule" className="text-sm underline underline-offset-4">{t.teacher.noNextSession}</Link>
+              )}
+            </section>
             <SideNote
               kicker={t.teacher.reviewQueue}
               title={waiting.length ? String(waiting.length) : t.teacher.noUnanswered}

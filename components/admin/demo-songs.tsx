@@ -46,17 +46,17 @@ async function uploadAsset(pieceId: string, kind: "sheet" | "tutorial", file: Fi
 
 export function DemoSongs({ labels, songs }: { labels: Labels; songs: Song[] }) {
   return (
-    <section className="space-y-4 rounded-2xl bg-night-card p-4">
+    <section id="songs" className="studio-panel space-y-4">
       <div>
-        <h2 className="font-display text-xl">{labels.title}</h2>
-        <p className="mt-1 text-sm text-bone/60">{labels.help}</p>
+        <h2 className="font-display">{labels.title}</h2>
+        <p className="page-meta">{labels.help}</p>
       </div>
       <SongForm labels={labels} />
       <ul className="space-y-3">
         {songs.map((song) => (
-          <li key={song.id} className="rounded-xl bg-night px-3 py-3">
+          <li key={song.id} className="rounded-xl border border-ink/10 px-3 py-3">
             <p className="font-medium">{song.title}</p>
-            <p className="mt-1 text-xs text-bone/50">
+            <p className="page-meta">
               {song.code} · {song.ready ? labels.ready : labels.training}
             </p>
             <SongForm labels={labels} pieceId={song.id} defaultTitle={song.title} />
@@ -133,22 +133,20 @@ function SongForm({
 
   return (
     <form onSubmit={onSubmit} className="mt-3 space-y-2">
-      <input
-        name="title"
-        defaultValue={defaultTitle}
-        placeholder={labels.name}
-        className="w-full rounded-xl bg-night px-3 py-3"
-      />
-      <label className="block text-xs text-bone/50">
-        {labels.sheet}
-        <input name="sheet" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.musicxml,.xml" className="mt-1 block w-full text-sm" />
+      <label className="block">
+        <span className="field-label">{labels.name}</span>
+        <input name="title" defaultValue={defaultTitle} className="field mt-1.5" />
       </label>
-      <label className="block text-xs text-bone/50">
-        {labels.video}
-        <input name="video" type="file" accept=".mp4,.webm,.mov,.m4v,video/*" className="mt-1 block w-full text-sm" />
+      <label className="block">
+        <span className="field-label">{labels.sheet}</span>
+        <input name="sheet" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.musicxml,.xml" className="field mt-1.5" />
+      </label>
+      <label className="block">
+        <span className="field-label">{labels.video}</span>
+        <input name="video" type="file" accept=".mp4,.webm,.mov,.m4v,video/*" className="field mt-1.5" />
       </label>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
-      <button className="rounded-xl bg-forest px-4 py-3 text-white" type="submit" disabled={busy}>
+      <button className="btn" type="submit" disabled={busy}>
         {busy ? "…" : pieceId ? labels.replace : labels.save}
       </button>
     </form>

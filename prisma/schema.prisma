@@ -125,6 +125,8 @@ model Teacher {
   answersJson    Json?
   onboardedAt    DateTime?
   feedbackLocale String    @default("vi")
+  consentAt      DateTime?
+  consentVersion String?
   paymentUrl     String?
   createdAt      DateTime      @default(now())
 
@@ -198,6 +200,7 @@ model Student {
   reportToken    String?       @unique
   email          String?
   authUserId     String?       @unique
+  avatarUrl      String?
   stage          StudentStage?
   answersJson    Json?
   onboardedAt    DateTime?

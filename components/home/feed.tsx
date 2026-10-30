@@ -175,15 +175,17 @@ export function AssignmentList({
   rows,
   track = false,
   historyLabel,
+  tourId,
 }: {
   title: string;
   empty: string;
   rows: { href: string; title: string; meta: string; status: string; progress?: number; fraction?: string }[];
   track?: boolean;
   historyLabel?: string;
+  tourId?: string;
 }) {
   return (
-    <section className="studio-panel">
+    <section className="studio-panel" data-tour={tourId}>
       <h2 className="font-display">{title}</h2>
       {rows.length === 0 ? (
         <p className="mb-4 text-sm text-ink-soft">{empty}</p>

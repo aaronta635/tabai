@@ -129,18 +129,17 @@ export default async function StudentHomePage() {
         </nav>
       ) : null}
 
-      {demoPieces.length > 0 ? (
-        <AssignmentList
-          title={t.student.demoSongs}
-          empty={t.student.demoSongsHelp}
-          rows={demoPieces.map((piece) => ({
-            href: `/student/work/${piece.code}`,
-            title: piece.title,
-            meta: "",
-            status: t.student.demoOpen,
-          }))}
-        />
-      ) : null}
+      <AssignmentList
+        tourId="student-demo"
+        title={t.student.demoSongs}
+        empty={t.student.demoSongsHelp}
+        rows={demoPieces.map((piece) => ({
+          href: `/student/work/${piece.code}`,
+          title: piece.title,
+          meta: "",
+          status: t.student.demoOpen,
+        }))}
+      />
 
       {classes.length === 0 ? (
         <section className="tile">

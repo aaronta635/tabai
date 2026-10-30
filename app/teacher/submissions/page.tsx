@@ -6,6 +6,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDuration, formatWhen } from "@/lib/when";
 import { StudioTitle } from "@/components/home/feed";
 import { SectionPanel } from "@/components/disclosure";
+import { PrefetchTakeVideos } from "@/components/teacher/prefetch-take-videos";
 import { SubmissionCabinet } from "@/components/teacher/submission-cabinet";
 import { isClaimableStatus } from "@/lib/forms";
 import { classForTake, groupTakesByClassThenPiece } from "@/lib/submission-folders";
@@ -84,6 +85,7 @@ export default async function SubmissionsPage({
       },
       select: {
         id: true,
+        mediaId: true,
         submittedAt: true,
         status: true,
         kind: true,
@@ -146,6 +148,7 @@ export default async function SubmissionsPage({
     });
     return {
       id: row.id,
+      mediaId: row.mediaId,
       submittedAt: row.submittedAt,
       status: row.status,
       kind: [kindLabels[row.kind] ?? row.kind, formatDuration(row.media.durationS)].filter(Boolean).join(" · "),
@@ -189,10 +192,15 @@ export default async function SubmissionsPage({
     })),
   }));
 
+  const inboxIds = new Set(inbox.map((take) => take.id));
+  const prefetchIds = [...filed.filter((take) => inboxIds.has(take.id)), ...filed.filter((take) => !inboxIds.has(take.id))]
+    .map((take) => take.mediaId)
+    .filter((id): id is string => Boolean(id));
   const done = Math.max(0, filed.length - inbox.length);
 
   return (
     <div className="teacher-inbox space-y-5">
+      <PrefetchTakeVideos mediaIds={prefetchIds} />
       <StudioTitle
         title={t.teacher.submissionsTitle}
         meta={`${t.teacher.pageScope} · ${t.teacher.queueMeta

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   destinationAfterAuth,
   inviteTokenFromReturn,
+  onboardingNext,
   safeReturn,
   signInPath,
   studioReturn,
@@ -63,6 +64,14 @@ describe("signInPath", () => {
   });
 });
 
+describe("onboardingNext", () => {
+  it("keeps a class code for a student and drops it for a teacher", () => {
+    expect(onboardingNext("student", "/join/kmprt")).toBe("/join/kmprt");
+    expect(onboardingNext("tutor", "/join/kmprt")).toBeNull();
+    expect(onboardingNext("student", "/student/profile")).toBe("/student/profile");
+  });
+});
+
 describe("destinationAfterAuth", () => {
   it("sends an onboarded student back to the page they opened", () => {
     expect(
@@ -100,5 +109,24 @@ describe("destinationAfterAuth", () => {
         home: "/onboarding",
       }),
     ).toBe("/onboarding");
+  });
+
+  it("holds a class code through signup until the student can join", () => {
+    expect(
+      destinationAfterAuth({
+        role: "student",
+        onboarded: false,
+        requested: "/join/kmprt",
+        home: "/onboarding",
+      }),
+    ).toBe("/onboarding?next=%2Fjoin%2Fkmprt");
+    expect(
+      destinationAfterAuth({
+        role: "student",
+        onboarded: true,
+        requested: "/join/kmprt",
+        home: "/student",
+      }),
+    ).toBe("/join/kmprt");
   });
 });

@@ -60,6 +60,18 @@ export function studioReturn(role: AccountRole, path: string | null | undefined)
   return under(pathname, STUDIO[role]) ? safe : null;
 }
 
+/** A class code the student still needs to join after they have an account. */
+export function classJoinReturn(path: string | null | undefined): string | null {
+  const safe = safeReturn("student", path);
+  if (!safe || !/^\/join\/[a-z0-9]{4,32}$/.test(safe)) return null;
+  return safe;
+}
+
+/** Studio page, or a class-code link that should survive student signup. */
+export function onboardingNext(role: AccountRole, path: string | null | undefined): string | null {
+  return studioReturn(role, path) ?? (role === "student" ? classJoinReturn(path) : null);
+}
+
 export function inviteTokenFromReturn(path: string | null | undefined): string | null {
   const safe = safeReturn("tutor", path);
   if (!safe) return null;
@@ -98,8 +110,8 @@ export function destinationAfterAuth(input: {
   const safe = safeReturn(input.role, input.requested);
   const landing = safe && !safe.startsWith("/t/") ? safe : null;
   if (!input.onboarded) {
-    const studio = studioReturn(input.role, input.requested);
-    return studio ? `/onboarding?next=${encodeURIComponent(studio)}` : "/onboarding";
+    const next = onboardingNext(input.role, input.requested);
+    return next ? `/onboarding?next=${encodeURIComponent(next)}` : "/onboarding";
   }
   return landing ?? input.home;
 }

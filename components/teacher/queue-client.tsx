@@ -17,6 +17,7 @@ import { FactBars } from "@/components/teacher/fact-bars";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
 import { requiredText } from "@/lib/forms";
 import { formatClock, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
+import { fetchTakeVideo, readTakeVideo } from "@/lib/take-video-link";
 
 export type QueueItem = {
   id: string;
@@ -72,11 +73,19 @@ export function QueueClient({
   const verdictTicket = useRef<Record<number, number>>({});
   const verdictItem = useRef<string | null>(null);
   const [pending, start] = useTransition();
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoState, setVideoState] = useState<{ mediaId: string | null; url: string | null }>({
+    mediaId: null,
+    url: null,
+  });
   const [actionError, setActionError] = useState<string | null>(null);
   const [verdicts, setVerdicts] = useState<Record<number, FactVerdict>>({});
 
   const item = items[index] ?? null;
+  const mediaId = item?.mediaId ?? null;
+  if (videoState.mediaId !== mediaId) {
+    setVideoState({ mediaId, url: mediaId ? readTakeVideo(mediaId) : null });
+  }
+  const videoUrl = videoState.mediaId === mediaId ? videoState.url : mediaId ? readTakeVideo(mediaId) : null;
 
   const factsReady =
     !item ||
@@ -155,25 +164,15 @@ export function QueueClient({
   }, [item?.id, item?.submissionId, factsReady, item?.markers.length]);
 
   useEffect(() => {
-    if (!item?.mediaId) {
-      setVideoUrl(null);
-      return;
-    }
-    const mediaId = item.mediaId;
+    if (!mediaId || readTakeVideo(mediaId)) return;
     let cancelled = false;
-    setVideoUrl(null);
-    void fetch(`/api/media/url?mediaId=${encodeURIComponent(mediaId)}`)
-      .then((res) => res.json() as Promise<{ url?: string }>)
-      .then((data) => {
-        if (!cancelled && typeof data.url === "string") setVideoUrl(data.url);
-      })
-      .catch(() => {
-        if (!cancelled) setVideoUrl(null);
-      });
+    void fetchTakeVideo(mediaId).then((url) => {
+      if (!cancelled) setVideoState({ mediaId, url });
+    });
     return () => {
       cancelled = true;
     };
-  }, [item?.id, item?.mediaId]);
+  }, [mediaId]);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = fast ? 1.5 : 1;

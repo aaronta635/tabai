@@ -4,6 +4,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { QueueClient, type QueueItem } from "@/components/teacher/queue-client";
+import { writeTakeVideo } from "@/lib/take-video-link";
 import { renderWithIntl } from "@/test/render";
 
 const sendReply = vi.fn();
@@ -212,6 +213,24 @@ describe("QueueClient", () => {
       highlightStartS: 5.05,
       keyPoint: "The chorus sits in time.",
     });
+  });
+
+  it("shows a prefetched video without asking for the link again", () => {
+    writeTakeVideo("media-9", "https://media.example/ready.webm");
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { container } = renderWithIntl(
+      <QueueClient
+        tab="unanswered"
+        labels={labels}
+        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        items={[{ ...item, mediaId: "media-9" }]}
+      />,
+    );
+    expect(container.querySelector("video")?.getAttribute("src")).toBe("https://media.example/ready.webm");
+    expect(fetchMock).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
+    sessionStorage.clear();
   });
 
   it("takes back a sent reply after confirm", async () => {

@@ -8,6 +8,7 @@ import { MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS } from "@/lib/cons
 import { requiredText, submissionNote } from "@/lib/forms";
 
 type Kind = "take" | "practice" | "overdub";
+type SendPhase = "sign" | "upload" | "save";
 
 export type SubmitDesk = {
   pieceTitle: string;
@@ -49,9 +50,20 @@ async function mediaDuration(file: File) {
   try {
     return await new Promise<number>((resolve, reject) => {
       const video = document.createElement("video");
+      const timer = window.setTimeout(() => {
+        video.onloadedmetadata = null;
+        video.onerror = null;
+        reject(new Error("duration"));
+      }, 4000);
       video.preload = "metadata";
-      video.onloadedmetadata = () => resolve(video.duration || 0);
-      video.onerror = () => reject(new Error("duration"));
+      video.onloadedmetadata = () => {
+        window.clearTimeout(timer);
+        resolve(video.duration || 0);
+      };
+      video.onerror = () => {
+        window.clearTimeout(timer);
+        reject(new Error("duration"));
+      };
       video.src = url;
     });
   } finally {
@@ -61,10 +73,12 @@ async function mediaDuration(file: File) {
 
 export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Props) {
   const t = useTranslations("student");
+  const onboarding = useTranslations("onboarding");
   const fieldId = useId();
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
   const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
   const [busy, setBusy] = useState(false);
+  const [phase, setPhase] = useState<SendPhase>("sign");
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ name?: string; contactHandle?: string }>({});
@@ -120,19 +134,22 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
       setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
       return;
     }
-    try {
-      const duration = await mediaDuration(picked);
-      const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
-      if (duration > maxSeconds) {
-        setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
-        return;
-      }
-    } catch {
-      // duration is best-effort; size already checked
-    }
 
+    setPhase("sign");
     setBusy(true);
+    let leaving = false;
     try {
+      try {
+        const duration = await mediaDuration(picked);
+        const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
+        if (duration > maxSeconds) {
+          setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
+          return;
+        }
+      } catch {
+        // duration is best-effort; size already checked
+      }
+
       if (needsProfile) {
         const nameRaw = String(data.get("name") ?? "");
         const contactRaw = String(data.get("contactHandle") ?? "");
@@ -160,6 +177,10 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
         });
         const registerJson = await readJson(register);
         if (!register.ok) {
+          if (registerJson.error === "phone_taken") {
+            setFieldError({ contactHandle: onboarding("phoneTaken") });
+            throw new Error(onboarding("phoneTaken"));
+          }
           setFieldError({
             name: registerJson.fields?.name ? t("nameRequired") : undefined,
             contactHandle: registerJson.fields?.contactHandle ? t("contactRequired") : undefined,
@@ -186,6 +207,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
         throw new Error("sign failed");
       }
 
+      setPhase("upload");
       const put = await fetch(signed.signedUrl, {
         method: "PUT",
         headers: { "Content-Type": picked.type || "video/mp4" },
@@ -200,6 +222,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
         return;
       }
 
+      setPhase("save");
       const complete = await fetch(`/api/l/${code}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -210,6 +233,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
         throw new Error(finished.error === "note too long" ? t("noteTooLong") : (finished.error ?? "complete failed"));
       }
       if (typeof finished.page === "string") {
+        leaving = true;
         window.location.href = finished.page;
         return;
       }
@@ -217,7 +241,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
     } catch (err) {
       setError(err instanceof Error ? err.message : "error");
     } finally {
-      setBusy(false);
+      if (!leaving) setBusy(false);
     }
   }
 
@@ -272,10 +296,25 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
     </button>
   ) : null;
   const actionLabel = kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
-  const sendLabel = busy ? "…" : actionLabel;
+  const phaseLabel = phase === "upload" ? t("sendingUpload") : phase === "save" ? t("sendingSave") : t("sending");
+  const sendLabel = busy ? phaseLabel : actionLabel;
+  const sendStatus = busy ? (
+    <div className="send-status" role="status">
+      <div className="send-strings" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <i className="send-pick" />
+      </div>
+      <p>{phaseLabel}</p>
+    </div>
+  ) : null;
 
   return (
-    <form onSubmit={onSubmit} className={variant ? "student-upload space-y-5" : "space-y-5"} aria-busy={variant ? busy : undefined}>
+    <form onSubmit={onSubmit} className={`${variant ? "student-upload space-y-5" : "space-y-5"}${busy ? " is-sending" : ""}`} aria-busy={busy}>
       {needsProfile ? (
         <div className="space-y-4 rounded-2xl bg-white/70 p-4">
           <label className="block text-sm">
@@ -372,6 +411,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           {recordButton}
           {noteField}
           {error ? <p className="text-sm text-danger" role="alert">{error}</p> : null}
+          {sendStatus}
           <button type="submit" disabled={busy || !video} aria-label={actionLabel} aria-busy={busy} className="btn submit-send">{sendLabel}</button>
         </section>
       ) : desk ? (
@@ -415,7 +455,8 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
               {help}
               {noteField}
               {error ? <p className="text-sm text-danger">{error}</p> : null}
-              <button type="submit" disabled={busy || !video} className="btn submit-send disabled:opacity-60">
+              {sendStatus}
+              <button type="submit" disabled={busy || !video} aria-busy={busy} className="btn submit-send disabled:opacity-60">
                 {sendLabel}
               </button>
             </div>
@@ -440,7 +481,8 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           {recordButton}
           {noteField}
           {error ? <p className="text-sm text-danger">{error}</p> : null}
-          <button type="submit" disabled={busy} className="btn disabled:opacity-60">
+          {sendStatus}
+          <button type="submit" disabled={busy} aria-busy={busy} className="btn disabled:opacity-60">
             {sendLabel}
           </button>
         </>

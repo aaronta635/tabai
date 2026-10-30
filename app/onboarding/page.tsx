@@ -5,7 +5,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { LocaleSwitch } from "@/components/locale-switch";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
-import { studioReturn } from "@/lib/return-path";
+import { onboardingNext } from "@/lib/return-path";
 
 export const dynamic = "force-dynamic";
 
@@ -19,8 +19,8 @@ export default async function OnboardingPage({
   const student = teacher ? null : await requireStudentAccount();
   if (!teacher && !student) redirect("/login");
   const back = teacher
-    ? studioReturn("tutor", nextParam)
-    : studioReturn("student", nextParam);
+    ? onboardingNext("tutor", nextParam)
+    : onboardingNext("student", nextParam);
   if (teacher?.onboardedAt) redirect(back ?? "/teacher");
   if (student?.onboardedAt) redirect(back ?? "/student");
 
@@ -90,6 +90,8 @@ export default async function OnboardingPage({
                 workExam: o.workExam,
                 phone: o.phone,
                 phonePlaceholder: o.phonePlaceholder,
+                phoneRequired: o.phoneRequired,
+                phoneTaken: o.phoneTaken,
                 continue: o.continue,
                 incomplete: o.incomplete,
                 badCode: o.badCode,

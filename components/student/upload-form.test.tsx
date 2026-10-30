@@ -142,6 +142,9 @@ it.each(["take", "practice", "overdub"] as const)("studio %s submits the existin
   await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
   expect(send).toBeDisabled();
   expect(send).toHaveAttribute("aria-busy", "true");
+  expect(await screen.findByRole("status")).toHaveTextContent("Saving the take…");
+  expect(view.container.querySelector(".send-pick")).toBeTruthy();
+  expect(view.container.querySelectorAll(".send-strings span")).toHaveLength(6);
   await user.click(send);
   expect(fetchMock).toHaveBeenCalledTimes(3);
   expect(fetchMock.mock.calls[0][0]).toBe("/api/l/song1/upload-url");

@@ -10,8 +10,10 @@ import {
 import { shouldAttachTeacher } from "@/lib/demo-piece";
 import { logEvent } from "@/lib/events";
 import { registerFieldErrors } from "@/lib/forms";
+import { phoneKey } from "@/lib/phone";
 import { prisma } from "@/lib/prisma";
 import { newReportToken } from "@/lib/report";
+import { phoneIsTaken } from "@/lib/student-phone";
 
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
   const { code } = await context.params;
@@ -41,6 +43,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     const current = bound.student;
     const publicOk =
       (body.ageBand ?? current.ageBand) === "under18" ? false : body.publicOk ?? current.publicOk;
+    const nextPhone = contactTrim ? phoneKey(contactTrim) : null;
+    if (nextPhone && (await phoneIsTaken(nextPhone, current.id))) {
+      return NextResponse.json({ error: "phone_taken" }, { status: 409 });
+    }
     const updated = await prisma.student.update({
       where: { id: current.id },
       data: {
@@ -50,6 +56,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
         ageBand: body.ageBand ?? current.ageBand,
         contactType: body.contactType ?? current.contactType,
         contactHandle: contactTrim || current.contactHandle,
+        ...(nextPhone ? { phoneKey: nextPhone } : {}),
         publicOk,
       },
     });
@@ -95,6 +102,10 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
 
   const publicOk = ageBand === "under18" ? false : Boolean(body.publicOk);
   const token = newStudentToken();
+  const nextPhone = phoneKey(parsed.contactHandle);
+  if (nextPhone && (await phoneIsTaken(nextPhone))) {
+    return NextResponse.json({ error: "phone_taken" }, { status: 409 });
+  }
   const student = await prisma.student.create({
     data: {
       teacherId: shouldAttachTeacher(piece.demo, null) ? piece.teacherId : null,
@@ -102,6 +113,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
       ageBand,
       contactType,
       contactHandle: parsed.contactHandle,
+      ...(nextPhone ? { phoneKey: nextPhone } : {}),
       token,
       reportToken: newReportToken(),
       consentAt: new Date(),

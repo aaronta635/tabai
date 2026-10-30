@@ -9,6 +9,7 @@ import { formatTime, formatWait, formatWhen } from "@/lib/when";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
 import { displayClassCode } from "@/lib/lms";
+import { PrefetchTakeVideos } from "@/components/teacher/prefetch-take-videos";
 import { ActiveClass } from "@/components/studio-shell";
 import {
   AssignmentList,
@@ -50,6 +51,7 @@ export default async function TeacherDashboard() {
       relationLoadStrategy: "join",
       select: {
         id: true,
+        mediaId: true,
         submittedAt: true,
         student: { select: { name: true, approvedAt: true } },
         piece: { select: { title: true } },
@@ -113,6 +115,7 @@ export default async function TeacherDashboard() {
 
   return (
     <div className="space-y-6">
+      <PrefetchTakeVideos mediaIds={waiting.flatMap((row) => (row.mediaId ? [row.mediaId] : []))} />
       {focus ? <ActiveClass name={focus.name} /> : null}
       <StudioTitle title={focus ? focus.name : hello} meta={focus ? hello : undefined} />
       {classes.length > 1 ? (

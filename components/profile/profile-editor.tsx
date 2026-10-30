@@ -84,12 +84,24 @@ export function StudentProfileForm({
   const student = useTranslations("student");
   const teacher = useTranslations("teacher");
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   return (
     <form
       className="tile space-y-5"
       action={async (form) => {
-        await updateStudentProfile(form);
+        const result = await updateStudentProfile(form);
+        if (result?.error === "phone_taken") {
+          setSaved(false);
+          setError(t("phoneTaken"));
+          return;
+        }
+        if (result?.error) {
+          setSaved(false);
+          setError(t("phoneRequired"));
+          return;
+        }
+        setError(null);
         setSaved(true);
       }}
     >
@@ -128,9 +140,19 @@ export function StudentProfileForm({
       />
       <SkillPicks skills={skills} weaknesses={weaknesses} />
       <label className="block">
-        <span className="field-label">{student("contact")}</span>
-        <input name="contactHandle" defaultValue={contactHandle} className="field mt-1.5" />
+        <span className="field-label">{t("phone")}</span>
+        <input
+          required
+          name="contactHandle"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          placeholder={t("phonePlaceholder")}
+          defaultValue={contactHandle}
+          className="field mt-1.5"
+        />
       </label>
+      {error ? <p className="setup-error">{error}</p> : null}
       <div className="flex items-center gap-3">
         <button type="submit" className="btn">
           {teacher("saveProfile")}

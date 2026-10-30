@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { saveStudentOnboarding, saveTutorOnboarding } from "@/app/onboarding/actions";
+import { phoneKey } from "@/lib/phone";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { PickMany, PickOne } from "@/components/profile/picks";
 
@@ -324,6 +325,8 @@ export function StudentOnboardingForm({
     workExam: string;
     phone: string;
     phonePlaceholder: string;
+    phoneRequired: string;
+    phoneTaken: string;
     continue: string;
     incomplete: string;
     badCode: string;
@@ -335,10 +338,23 @@ export function StudentOnboardingForm({
   const [playing, setPlaying] = useState("");
   const [work, setWork] = useState("");
   const [ageBand, setAgeBand] = useState("adult");
+  const [phone, setPhone] = useState("");
   const [consent, setConsent] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const total = 10;
-  const ready = [name.trim().length > 0, true, true, true, playing !== "", work !== "", true, true, true, consent];
+  const classCode = /^\/join\/([a-z0-9]{4,32})$/.exec(returnTo ?? "")?.[1] ?? "";
+  const ready = [
+    name.trim().length > 0,
+    true,
+    true,
+    true,
+    playing !== "",
+    work !== "",
+    true,
+    true,
+    phoneKey(phone) !== null,
+    consent,
+  ];
 
   return (
     <form
@@ -347,6 +363,12 @@ export function StudentOnboardingForm({
         if (result?.error === "code") {
           setStep(3);
           setError(labels.badCode);
+        } else if (result?.error === "phone_taken") {
+          setStep(8);
+          setError(labels.phoneTaken);
+        } else if (result?.error === "phone") {
+          setStep(8);
+          setError(labels.phoneRequired);
         } else if (result?.error) setError(labels.incomplete);
       }}
       className="setup"
@@ -385,7 +407,13 @@ export function StudentOnboardingForm({
         />
       </Question>
       <Question hidden={step !== 3} prompt={labels.q1}>
-        <input name="code" placeholder={labels.codePlaceholder} autoComplete="off" className="setup-field" />
+        <input
+          name="code"
+          defaultValue={classCode}
+          placeholder={labels.codePlaceholder}
+          autoComplete="off"
+          className="setup-field"
+        />
       </Question>
       <Question hidden={step !== 4} prompt={labels.q2}>
         <Choices
@@ -442,7 +470,9 @@ export function StudentOnboardingForm({
           type="tel"
           inputMode="tel"
           autoComplete="tel"
+          value={phone}
           placeholder={labels.phonePlaceholder}
+          onChange={(event) => setPhone(event.target.value)}
           className="setup-field"
         />
         <input type="hidden" name="contactType" value="zalo" />

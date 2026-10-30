@@ -5,6 +5,7 @@ import { signInPath } from "@/lib/return-path";
 import { requireStudentAccount } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { signedMediaUrl } from "@/lib/media-view";
+import { phoneKey } from "@/lib/phone";
 import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { stringList, SKILLS, WEAKNESSES } from "@/lib/profile";
 import { studentClasses } from "@/lib/student-view";
@@ -46,7 +47,7 @@ export default async function StudentProfilePage() {
         work={answers.work === "chords" || answers.work === "exam" ? answers.work : "song"}
         skills={stringList(answers.skills, SKILLS)}
         weaknesses={stringList(answers.weaknesses, WEAKNESSES)}
-        contactHandle={student.contactHandle}
+        contactHandle={phoneKey(student.contactHandle) ? student.contactHandle : ""}
       />
 
       <section className="tile space-y-3">

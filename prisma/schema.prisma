@@ -196,6 +196,7 @@ model Student {
   ageBand        AgeBand
   contactType    ContactType
   contactHandle  String
+  phoneKey       String?       @unique
   token          String        @unique
   reportToken    String?       @unique
   email          String?

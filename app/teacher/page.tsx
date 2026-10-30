@@ -202,17 +202,16 @@ export default async function TeacherDashboard() {
           ) : null}
           </div>
           <aside className="space-y-3">
-          <LessonList
-            title={t.teacher.nextLessons}
-            empty={t.teacher.noNextSession}
-            rows={nextLessons.map((session) => ({
-              href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
-              time: formatTime(session.startsAt, locale),
-              title: session.title || session.class.name,
-              meta: session.class.name,
-            }))}
-          />
-
+            <LessonList
+              title={t.teacher.nextLessons}
+              empty={t.teacher.noNextSession}
+              rows={nextLessons.map((session) => ({
+                href: `/teacher/schedule?w=${weekParam(session.startsAt)}&session=${session.id}`,
+                time: formatTime(session.startsAt, locale),
+                title: session.title || session.class.name,
+                meta: session.class.name,
+              }))}
+            />
             <SideNote
               kicker={t.teacher.reviewQueue}
               title={waiting.length ? String(waiting.length) : t.teacher.noUnanswered}

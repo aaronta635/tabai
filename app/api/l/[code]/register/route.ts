@@ -7,6 +7,7 @@ import {
   setStudentCookie,
   studentForPiece,
 } from "@/lib/auth";
+import { shouldAttachTeacher } from "@/lib/demo-piece";
 import { logEvent } from "@/lib/events";
 import { registerFieldErrors } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   const nameTrim = body.name?.trim() ?? "";
   const contactTrim = body.contactHandle?.trim() ?? "";
 
-  const bound = await studentForPiece(piece.teacherId);
+  const bound = await studentForPiece(piece.teacherId, { demo: piece.demo });
   if (bound.otherClass) {
     return NextResponse.json({ error: "other class" }, { status: 409 });
   }
@@ -43,8 +44,8 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     const updated = await prisma.student.update({
       where: { id: current.id },
       data: {
-        teacherId: homeTeacherId(current.teacherId, piece.teacherId),
-        stage: "in_class",
+        teacherId: piece.demo ? current.teacherId : homeTeacherId(current.teacherId, piece.teacherId),
+        stage: piece.demo ? current.stage : "in_class",
         name: nameTrim || current.name,
         ageBand: body.ageBand ?? current.ageBand,
         contactType: body.contactType ?? current.contactType,
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   const token = newStudentToken();
   const student = await prisma.student.create({
     data: {
-      teacherId: piece.teacherId,
+      teacherId: shouldAttachTeacher(piece.demo, null) ? piece.teacherId : null,
       name: parsed.name,
       ageBand,
       contactType,
@@ -106,7 +107,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
       consentAt: new Date(),
       consentVersion: CONSENT_VERSION,
       publicOk,
-      stage: "in_class",
+      stage: piece.demo ? "exploring" : "in_class",
     },
   });
 

@@ -5,7 +5,10 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { createContext, Suspense, useContext, useEffect, useState, useRef, useId } from "react";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { initialsOf } from "@/lib/initials";
+import { AvatarMark } from "@/components/profile/avatar-mark";
+import { LocaleSwitch } from "@/components/locale-switch";
+import { StudioTour, type TourCopy } from "@/components/studio/studio-tour";
+import { createBrowserSupabase } from "@/lib/supabase/client";
 
 import { ParaIcon, type ParaIconName } from "@/components/ui/para-icon";
 
@@ -18,6 +21,31 @@ export type NavItem = {
 export type MenuLink = { href: string; label: string };
 
 const ActiveClassContext = createContext<(name: string | null) => void>(() => {});
+
+function SignOutControl({ action, label }: { action: () => Promise<void>; label: string }) {
+  const [pending, setPending] = useState(false);
+  return (
+    <button
+      type="button"
+      className="studio-signout"
+      disabled={pending}
+      onClick={() => {
+        setPending(true);
+        sessionStorage.removeItem("howl0-session-bound");
+        void (async () => {
+          try {
+            await createBrowserSupabase().auth.signOut({ scope: "local" });
+          } catch {
+            // The server action still expires the cookies.
+          }
+          await action();
+        })();
+      }}
+    >
+      {label}
+    </button>
+  );
+}
 
 export function ActiveClass({ name }: { name: string }) {
   const setName = useContext(ActiveClassContext);
@@ -52,6 +80,7 @@ function StudioSearch({ action, placeholder, student = false }: { action: string
  */
 export function StudioShell({
   name,
+  avatarSrc,
   theme,
   variant,
   home,
@@ -60,10 +89,12 @@ export function StudioShell({
   menuLinks,
   signOutAction,
   search,
+  tour,
   labels,
   children,
 }: {
   name: string;
+  avatarSrc?: string | null;
   theme?: "light" | "dark";
   variant?: "student" | "teacher";
   home: string;
@@ -72,7 +103,17 @@ export function StudioShell({
   menuLinks: MenuLink[];
   signOutAction: () => Promise<void>;
   search?: { action: string; placeholder: string };
-  labels: { signOut: string; menu: string; close: string; themeLight: string; themeDark: string };
+  tour?: TourCopy;
+  labels: {
+    signOut: string;
+    menu: string;
+    close: string;
+    themeLight: string;
+    themeDark: string;
+    language?: string;
+    localeEn?: string;
+    localeVi?: string;
+  };
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
@@ -153,6 +194,7 @@ export function StudioShell({
               prefetch={false}
               aria-current={on ? "page" : undefined}
               className="studio-nav-link"
+              data-tour={item.href}
             >
               {Boolean(variant) && item.icon ? <ParaIcon name={item.icon} /> : null}
               <span className="min-w-0 flex-1 truncate">{item.label}</span>
@@ -161,16 +203,17 @@ export function StudioShell({
         })}
       </nav>
       <div className="studio-rail-foot">
+        {labels.language && labels.localeEn && labels.localeVi ? (
+          <LocaleSwitch labels={{ language: labels.language, en: labels.localeEn, vi: labels.localeVi }} />
+        ) : null}
         {theme ? (
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <ThemeToggle theme={theme} labels={{ light: labels.themeLight, dark: labels.themeDark }} />
           </div>
         ) : null}
         {profile ? (
-          <Link href={profile.href} className="studio-profile">
-            <span className="avatar-btn" aria-hidden>
-              {initialsOf(name)}
-            </span>
+          <Link href={profile.href} className="studio-profile" data-tour={profile.href}>
+            <AvatarMark name={name} src={avatarSrc} />
             <span className="min-w-0">
               <span className="studio-profile-name block truncate">{name}</span>
               <span className="block truncate text-xs text-ink-soft">{profile.label}</span>
@@ -179,11 +222,7 @@ export function StudioShell({
         ) : (
           <p className="studio-profile-name px-1">{name}</p>
         )}
-        <form action={signOutAction}>
-          <button type="submit" className="studio-signout">
-            {labels.signOut}
-          </button>
-        </form>
+        <SignOutControl action={signOutAction} label={labels.signOut} />
       </div>
     </div>
   );
@@ -221,6 +260,9 @@ export function StudioShell({
           <Link href={home} aria-label="PARA">
             <BrandMark compact />
           </Link>
+          {labels.language && labels.localeEn && labels.localeVi ? (
+            <LocaleSwitch labels={{ language: labels.language, en: labels.localeEn, vi: labels.localeVi }} />
+          ) : null}
         </div>
         <main className="min-w-0 flex-1">
           <div className="studio-main px-4 py-6 lg:px-8 lg:py-7">
@@ -240,6 +282,7 @@ export function StudioShell({
           </div>
         </main>
       </div>
+      {tour ? <StudioTour tour={tour} /> : null}
     </div>
     </ActiveClassContext.Provider>
   );

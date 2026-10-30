@@ -3,8 +3,7 @@ import Link from "next/link";
 import { requireStudentAccount, requireTeacher } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { getTheme } from "@/lib/theme";
+import { LocaleSwitch } from "@/components/locale-switch";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
 import { studioReturn } from "@/lib/return-path";
 
@@ -26,46 +25,27 @@ export default async function OnboardingPage({
   if (student?.onboardedAt) redirect(back ?? "/student");
 
   const locale = await getLocale();
-  const theme = await getTheme();
   const t = await getMessages(locale);
   const o = t.onboarding;
 
   return (
-    <main className={teacher ? "teacher-onboard setup-page min-h-dvh" : "student-shell setup-page min-h-dvh"}>
-      {teacher ? (
-        <header className="flex items-center justify-between px-6 py-4">
-          <Link href="/" aria-label={t.brand}>
-            <BrandMark light />
-          </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-          </div>
-        </header>
-      ) : (
-        <div className="mx-auto flex max-w-md items-center justify-between px-6 pt-12">
-          <Link href="/" aria-label={t.brand}>
-            <BrandMark />
-          </Link>
-          <div className="flex items-center gap-2">
-            <ThemeToggle theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-          </div>
-        </div>
-      )}
+    <main className="setup-wash setup-page min-h-dvh">
+      <div className="mx-auto flex max-w-md items-center justify-between px-6 pt-8">
+        <Link href="/" aria-label={t.brand}>
+          <BrandMark />
+        </Link>
+        <LocaleSwitch labels={{ language: t.theme.language, en: t.locale.en, vi: t.locale.vi }} />
+      </div>
       <div className="mx-auto max-w-md px-6 py-10">
-        <p className={`text-xs tracking-[0.18em] uppercase ${teacher ? "text-white/55" : "text-ink-soft"}`}>
+        <p className="text-xs tracking-[0.18em] uppercase text-ink-soft">
           {teacher ? t.auth.tutorKicker : t.auth.studentKicker}
-        </p>
-        <h1 className={`font-display mt-2 text-3xl ${teacher ? "text-paper" : ""}`}>
-          {teacher ? o.tutorTitle : o.studentTitle}
-        </h1>
-        <p className={`mt-3 ${teacher ? "text-white/70" : "text-ink-soft"}`}>
-          {teacher ? o.tutorBody : o.studentBody}
         </p>
         <div className="setup-sheet">
           {teacher ? (
             <TutorOnboardingForm
               defaultName={teacher.name}
               returnTo={back ?? undefined}
+              locale={locale === "en" ? "en" : "vi"}
               initialLocale={locale === "en" ? "en" : "vi"}
               labels={{
                 name: o.name,
@@ -92,6 +72,7 @@ export default async function OnboardingPage({
             <StudentOnboardingForm
               defaultName={student.name}
               returnTo={back ?? undefined}
+              locale={locale === "en" ? "en" : "vi"}
               labels={{
                 name: o.name,
                 age: t.student.age,

@@ -5,7 +5,7 @@ import { revalidateTeacherHotPath } from "@/lib/teacher-cache";
 import { revalidateStudentHotPath } from "@/lib/student-cache";
 import { redirect } from "next/navigation";
 import type { Prisma } from "@prisma/client";
-import { newPieceCode, requireTeacher, signOutTeacher } from "@/lib/auth";
+import { newPieceCode, requireAdmin, requireTeacher, signOutTeacher } from "@/lib/auth";
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
 import { maybeRelockAiDirect, maybeUnlockAiDirect } from "@/lib/growth";
@@ -31,6 +31,41 @@ function revalidateTeacherQueue(teacherId: string, studentId?: string) {
   if (studentId) revalidateStudentHotPath(studentId);
   revalidatePath("/teacher");
   revalidatePath("/teacher/submissions");
+  revalidatePath("/admin/submissions");
+}
+
+async function reviewSubmission(submissionId: string) {
+  const teacher = await requireTeacher();
+  if (teacher) {
+    const owned = await teacherSubmission(teacher.id, submissionId);
+    if (owned) {
+      return {
+        teacherId: teacher.id,
+        actorType: "teacher" as const,
+        actorId: teacher.id,
+        submission: owned,
+      };
+    }
+  }
+  if (!(await requireAdmin())) throw new Error("unauthorized");
+  const submission = await prisma.submission.findFirst({
+    where: { id: submissionId, piece: { demo: true } },
+    include: {
+      student: true,
+      piece: true,
+      media: true,
+      drafts: { orderBy: { createdAt: "desc" }, take: 1 },
+      replies: { orderBy: { createdAt: "desc" }, take: 1 },
+      analyses: { orderBy: { createdAt: "desc" }, take: 1 },
+    },
+  });
+  if (!submission) throw new Error("not found");
+  return {
+    teacherId: submission.piece.teacherId,
+    actorType: "admin" as const,
+    actorId: "admin",
+    submission,
+  };
 }
 
 export async function createPiece(formData: FormData) {
@@ -220,9 +255,7 @@ export async function approveStudent(studentId: string) {
 }
 
 export async function markOpened(submissionId: string) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, submissionId);
-  if (!submission) throw new Error("not found");
+  const { submission } = await reviewSubmission(submissionId);
   if (!submission.reviewOpenedAt) {
     await prisma.submission.update({
       where: { id: submissionId },
@@ -241,9 +274,9 @@ export async function sendReply(input: {
   keyPoint?: string | null;
   nextStep?: string | null;
 }) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, input.submissionId);
-  if (!submission) throw new Error("not found");
+  const review = await reviewSubmission(input.submissionId);
+  const teacher = { id: review.teacherId };
+  const submission = review.submission;
   const grade = replyGrade(input.grade);
   if (grade === undefined) return { error: "bad_grade" as const };
   const progressNote = (input.progressNote ?? "").trim() || null;
@@ -303,9 +336,9 @@ export async function sendReply(input: {
 
   await logEvent({
     name: "reply.sent",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
+    actorType: review.actorType,
+    actorId: review.actorId,
+    teacherId: review.teacherId,
     props: {
       submissionId: submission.id,
       source,
@@ -316,13 +349,15 @@ export async function sendReply(input: {
   await maybeUnlockAiDirect(submission.pieceId);
   await maybeRelockAiDirect(submission.pieceId);
   revalidateTeacherQueue(teacher.id, submission.studentId);
+  revalidatePath(`/admin/submissions/${submission.id}`);
+  revalidatePath(`/student/takes/${submission.id}`);
   return { ok: true as const };
 }
 
 export async function revertReply(submissionId: string) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, submissionId);
-  if (!submission) throw new Error("not found");
+  const review = await reviewSubmission(submissionId);
+  const teacher = { id: review.teacherId };
+  const submission = review.submission;
   const reply = submission.replies[0];
   if (submission.status !== "answered" || !reply) return { error: "stale_item" as const };
 
@@ -348,14 +383,15 @@ export async function revertReply(submissionId: string) {
 
   await logEvent({
     name: "reply.reverted",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
+    actorType: review.actorType,
+    actorId: review.actorId,
+    teacherId: review.teacherId,
     props: { submissionId: submission.id },
   });
   revalidateTeacherQueue(teacher.id, submission.studentId);
   revalidatePath(`/teacher/submissions/${submission.id}`);
   revalidatePath("/student/takes");
+  revalidatePath(`/admin/submissions/${submission.id}`);
   revalidatePath(`/student/takes/${submission.id}`);
   return { ok: true as const };
 }
@@ -365,9 +401,8 @@ export async function setIssueVerdict(input: {
   issueIndex: number;
   verdict: "true" | "false" | null;
 }) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, input.submissionId);
-  if (!submission) throw new Error("not found");
+  const review = await reviewSubmission(input.submissionId);
+  const submission = review.submission;
   const analysis = submission.analyses[0];
   if (!analysis?.observationsJson) return { error: "no_facts" as const };
   const next = await prisma.$transaction(async (tx) => {
@@ -396,9 +431,9 @@ export async function setIssueVerdict(input: {
       : null;
   await logEvent({
     name: "fact.verdict",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
+    actorType: review.actorType,
+    actorId: review.actorId,
+    teacherId: review.teacherId,
     props: {
       submissionId: submission.id,
       pieceId: submission.pieceId,
@@ -419,17 +454,13 @@ export async function setIssueVerdict(input: {
 }
 
 export async function requestDraft(submissionId: string) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, submissionId);
-  if (!submission) throw new Error("not found");
+  const { submission } = await reviewSubmission(submissionId);
   const job = await enqueueDraftWhenReady(submission.id);
   return { ok: true as const, draftQueued: Boolean(job) };
 }
 
 export async function peekDraft(submissionId: string) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, submissionId);
-  if (!submission) throw new Error("not found");
+  await reviewSubmission(submissionId);
   const draft = await prisma.draft.findFirst({
     where: { submissionId },
     orderBy: { createdAt: "desc" },
@@ -442,21 +473,22 @@ export async function peekDraft(submissionId: string) {
 }
 
 export async function skipSubmission(submissionId: string, reason: string) {
-  const teacher = await teacherOrThrow();
-  const submission = await teacherSubmission(teacher.id, submissionId);
-  if (!submission) throw new Error("not found");
+  const review = await reviewSubmission(submissionId);
+  const teacher = { id: review.teacherId };
+  const submission = review.submission;
   await prisma.submission.update({
     where: { id: submissionId },
     data: { status: "skipped", skipReason: reason.trim() || "skipped" },
   });
   await logEvent({
     name: "submission.skipped",
-    actorType: "teacher",
-    actorId: teacher.id,
-    teacherId: teacher.id,
+    actorType: review.actorType,
+    actorId: review.actorId,
+    teacherId: review.teacherId,
     props: { submissionId, reason },
   });
   revalidateTeacherQueue(teacher.id, submission.studentId);
+  revalidatePath(`/admin/submissions/${submission.id}`);
 }
 
 export async function deleteTeacherTake(submissionId: string) {

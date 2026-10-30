@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatWhen } from "@/lib/when";
+import { StudioTitle } from "@/components/home/feed";
 import { CopyLink } from "@/components/teacher/copy-link";
 import { SectionPanel } from "@/components/disclosure";
 import { PieceForm } from "@/components/teacher/piece-form";
@@ -70,22 +71,20 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="teacher-piece space-y-5">
-      <header>
-        <Link href="/teacher/curriculum" className="font-ui text-sm text-ink-soft hover:text-ink">
-          ← {t.teacher.navCurriculum}
-        </Link>
-        <h1 className="font-display mt-3 text-3xl">{piece.title}</h1>
-        <p className="font-ui mt-2 text-xs tracking-[0.04em] text-ink-soft">
-          {[piece.part?.name, files.length > 0 ? files.join(" · ") : t.teacher.noAttachments]
-            .filter(Boolean)
-            .join(" · ")}
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="code-chip">/l/{piece.code}</span>
-          <CopyLink url={studentUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
-          <AssignDialog pieceId={piece.id} classes={classes} students={students} />
-        </div>
-      </header>
+      <Link href="/teacher/curriculum" className="font-ui text-sm text-ink-soft hover:text-ink">
+        ← {t.teacher.navCurriculum}
+      </Link>
+      <StudioTitle
+        title={piece.title}
+        meta={[piece.part?.name, files.length > 0 ? files.join(" · ") : t.teacher.noAttachments]
+          .filter(Boolean)
+          .join(" · ")}
+      />
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="code-chip">/l/{piece.code}</span>
+        <CopyLink url={studentUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
+        <AssignDialog pieceId={piece.id} classes={classes} students={students} />
+      </div>
 
       <PieceModelPanel
         model={piece.models[0] ?? null}

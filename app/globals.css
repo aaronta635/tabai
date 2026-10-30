@@ -3095,6 +3095,118 @@ body:has(.auth-split) {
   color: var(--color-ink);
 }
 
+.setup-wash {
+  min-height: 100dvh;
+  color: #3b2f2a;
+  background:
+    radial-gradient(ellipse 78% 52% at 8% -8%, #d6b98c 0%, transparent 58%),
+    radial-gradient(ellipse 64% 48% at 108% 8%, #8b5e34 0%, transparent 52%),
+    linear-gradient(165deg, #f3ede2 0%, #e7d3b0 46%, #c4a06a 100%);
+}
+
+html:has(.setup-wash),
+body:has(.setup-wash) {
+  background: #e7d3b0;
+}
+
+.setup-question {
+  display: block;
+  margin-bottom: 1rem;
+  font-family: var(--font-serif), "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-transform: none;
+}
+
+.setup .field-label {
+  font-family: var(--font-serif), "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-transform: none;
+  color: #3b2f2a;
+}
+
+.setup-photo {
+  display: grid;
+  gap: 0.8rem;
+  justify-items: start;
+}
+
+.setup-photo input[type="file"] {
+  width: auto;
+  max-width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font-family: var(--font-ui), sans-serif;
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.avatar-photo {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 999px;
+  object-fit: cover;
+}
+
+.avatar-photo-lg,
+.avatar-btn-lg {
+  width: 4.5rem;
+  height: 4.5rem;
+  font-size: 1.1rem;
+}
+
+.setup-agree {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.setup-agree a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.setup-nav {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.setup-progress {
+  margin: 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b5344;
+}
+
+.setup-nav-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.setup-back {
+  background: transparent;
+  color: #3b2f2a;
+  border: 1.5px solid #3b2f2a;
+}
+
+.setup-go:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .setup-sheet {
   margin-top: 2rem;
 }
@@ -3117,6 +3229,10 @@ body:has(.auth-split) {
   padding: 0;
   border: 0;
   min-width: 0;
+}
+
+.setup [hidden] {
+  display: none !important;
 }
 
 .teacher-onboard .setup {
@@ -3221,6 +3337,16 @@ body:has(.auth-split) {
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+}
+
+.setup legend.field-label {
+  font-family: var(--font-serif), "Plus Jakarta Sans", sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.15rem);
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-transform: none;
+  color: #3b2f2a;
 }
 
 .teacher-onboard .setup .field-label {

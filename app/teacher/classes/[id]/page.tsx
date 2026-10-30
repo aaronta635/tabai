@@ -7,6 +7,7 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { displayClassCode, mailtoInvite } from "@/lib/lms";
 import { formatWhen } from "@/lib/when";
 import { AddPanel, SectionPanel } from "@/components/disclosure";
+import { StudioTitle } from "@/components/home/feed";
 import { ActiveClass } from "@/components/studio-shell";
 import { approveMembershipForm, inviteByEmail, renameClass } from "@/app/teacher/lms-actions";
 
@@ -43,18 +44,14 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="space-y-5">
       <ActiveClass name={studioClass.name} />
-      <header>
-        <Link href="/teacher/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
-          ← {t.teacher.navClasses}
-        </Link>
-        <h1 className="font-display mt-3">{studioClass.name}</h1>
-        <p className="page-meta">
-          {t.teacher.countStudents.replace("{n}", String(roster.length))}
-          {" · "}
-          {t.teacher.countAssigned.replace("{n}", String(studioClass.assignments.length))}
-        </p>
-        <p className="mt-3 font-display text-2xl tracking-[0.28em]">{classCode}</p>
-      </header>
+      <Link href="/teacher/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
+        ← {t.teacher.navClasses}
+      </Link>
+      <StudioTitle
+        title={studioClass.name}
+        meta={`${t.teacher.countStudents.replace("{n}", String(roster.length))} · ${t.teacher.countAssigned.replace("{n}", String(studioClass.assignments.length))}`}
+      />
+      <p className="font-display text-2xl tracking-[0.28em]">{classCode}</p>
 
       <AddPanel label={t.teacher.inviteEmail}>
         <form action={inviteByEmail} className="flex flex-wrap items-end gap-2">

@@ -4,9 +4,11 @@ import { readStudentSession } from "@/lib/auth";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDueLabel } from "@/lib/practice";
+import { senderName } from "@/lib/demo-teacher";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { AssignmentMeta } from "@/components/student/assignment-meta";
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
+import { MusicXmlSheet } from "@/components/student/musicxml-sheet";
 import { SyncedTutorial } from "@/components/student/synced-tutorial";
 import { PracticeTimer } from "@/components/student/practice-timer";
 import { StudentUpload } from "@/components/student/upload-form";
@@ -27,7 +29,7 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
   const follow =
     room.sheetSync?.confidence === "ok" &&
     room.sheetSync.points.length > 0 &&
-    room.sheetKind === "file" &&
+    room.sheetKind === "musicxml" &&
     room.sheetUrl &&
     room.tutorialUrl
       ? { tutorialUrl: room.tutorialUrl, sheetUrl: room.sheetUrl, points: room.sheetSync.points }
@@ -38,7 +40,7 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
       <Link href="/" aria-label={t.brand} className="mb-6 inline-flex">
         <BrandMark />
       </Link>
-      <p className="text-xs tracking-[0.2em] text-ink-soft uppercase">{room.piece.teacher.name}</p>
+      <p className="text-xs tracking-[0.2em] text-ink-soft uppercase">{senderName(room.piece.teacher.name, room.piece.demo)}</p>
       <h1 className="font-display mt-2 text-3xl">{room.piece.title}</h1>
       {blurb ? <p className="mt-3 text-ink-soft">{blurb}</p> : null}
       {room.piece.tips ? <p className="mt-2 text-sm">{room.piece.tips}</p> : null}
@@ -77,7 +79,9 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
       {follow ? null : room.sheetUrl ? (
         <div className="mt-5">
           <p className="mb-2 text-sm">{t.student.sheet}</p>
-          {room.sheetKind === "image" ? (
+          {room.sheetKind === "musicxml" ? (
+            <MusicXmlSheet sheetUrl={room.sheetUrl} openSheet={t.student.openSheet} />
+          ) : room.sheetKind === "image" ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={room.sheetUrl} alt="" className="w-full rounded-2xl bg-white" />
           ) : room.sheetKind === "pdf" ? (

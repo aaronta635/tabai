@@ -1,57 +1,64 @@
+"use client";
+
 import { logoutTeacher } from "@/app/teacher/actions";
 import { StudioShell } from "@/components/studio-shell";
-
-type Labels = {
-  general: string;
-  classes: string;
-  curriculum: string;
-  submissions: string;
-  roster: string;
-  schedule: string;
-  settings: string;
-  search: string;
-  profile: string;
-  kicker: string;
-  signOut: string;
-  menu: string;
-  close: string;
-  themeLight: string;
-  themeDark: string;
-};
+import { useStudioMessages } from "@/components/studio/use-studio-messages";
 
 export function TeacherAppShell({
   teacherName,
-  labels,
+  avatarSrc,
+  locale,
   children,
 }: {
   teacherName: string;
-  labels: Labels;
+  avatarSrc?: string | null;
+  locale: "en" | "vi";
   children: React.ReactNode;
 }) {
+  const t = useStudioMessages(locale);
   return (
     <StudioShell
       variant="teacher"
       name={teacherName}
+      avatarSrc={avatarSrc}
+      tour={{
+        role: "teacher",
+        back: t.tour.back,
+        next: t.tour.next,
+        close: t.tour.close,
+        done: t.tour.done,
+        progress: t.tour.progress,
+        steps: [
+          { href: "/teacher", title: t.tour.teacherHomeTitle, body: t.tour.teacherHomeBody },
+          { href: "/teacher/classes", title: t.tour.teacherClassesTitle, body: t.tour.teacherClassesBody },
+          { href: "/teacher/curriculum", title: t.tour.teacherCurriculumTitle, body: t.tour.teacherCurriculumBody },
+          { href: "/teacher/submissions", title: t.tour.teacherSubmissionsTitle, body: t.tour.teacherSubmissionsBody },
+          { href: "/teacher/schedule", title: t.tour.teacherScheduleTitle, body: t.tour.teacherScheduleBody },
+        ],
+      }}
       home="/teacher"
-      kicker={labels.kicker}
+      kicker={t.studio.kicker}
       items={[
-        { href: "/teacher", icon: "home", label: labels.general, exact: true },
-        { href: "/teacher/schedule", icon: "calendar", label: labels.schedule },
-        { href: "/teacher/classes", icon: "class", label: labels.classes },
-        { href: "/teacher/curriculum", icon: "assignment", label: labels.curriculum },
-        { href: "/teacher/submissions", icon: "video", label: labels.submissions },
-        { href: "/teacher/roster", icon: "class", label: labels.roster },
-        { href: "/teacher/settings", icon: "settings", label: labels.settings },
+        { href: "/teacher", icon: "home", label: t.teacher.navGeneral, exact: true },
+        { href: "/teacher/schedule", icon: "calendar", label: t.teacher.navSchedule },
+        { href: "/teacher/classes", icon: "class", label: t.teacher.navClasses },
+        { href: "/teacher/curriculum", icon: "assignment", label: t.teacher.navCurriculum },
+        { href: "/teacher/submissions", icon: "video", label: t.teacher.navSubmissions },
+        { href: "/teacher/roster", icon: "progress", label: t.teacher.navRoster },
+        { href: "/teacher/settings", icon: "settings", label: t.teacher.settings },
       ]}
-      menuLinks={[{ href: "/teacher/profile", label: labels.profile }]}
+      search={{ action: "/teacher/search", placeholder: t.studio.search }}
+      menuLinks={[{ href: "/teacher/profile", label: t.teacher.navProfile }]}
       signOutAction={logoutTeacher}
-      search={{ action: "/teacher/search", placeholder: labels.search }}
       labels={{
-        signOut: labels.signOut,
-        menu: labels.menu,
-        close: labels.close,
-        themeLight: labels.themeLight,
-        themeDark: labels.themeDark,
+        signOut: t.auth.signOut,
+        menu: t.teacher.menu,
+        close: t.teacher.close,
+        themeLight: t.theme.light,
+        themeDark: t.theme.dark,
+        language: t.theme.language,
+        localeEn: t.locale.en,
+        localeVi: t.locale.vi,
       }}
     >
       {children}

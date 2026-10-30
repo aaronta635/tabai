@@ -73,7 +73,10 @@ export function SignupForm({
     }
     const supabase = createBrowserSupabase();
     try {
-      const { error: signError } = await supabase.auth.signUp({
+      // A leftover session must not survive into this signup. signUp does not
+      // replace it when the new account has no session yet.
+      await supabase.auth.signOut({ scope: "local" });
+      const { data: created, error: signError } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -82,17 +85,18 @@ export function SignupForm({
         },
       });
       if (signError) throw signError;
-      setInfo(labels.checkEmail);
-      const { data: sessionData } = await supabase.auth.getSession();
-      if (sessionData.session) {
-        const dest = await bindLocalSession({
-          role,
-          next,
-          wrongRoleTutor: labels.wrongRoleTutor,
-          wrongRoleStudent: labels.wrongRoleStudent,
-        });
-        enterStudio(dest);
+      const signedUp = created.session?.user.email?.toLowerCase() === email.toLowerCase();
+      if (!signedUp) {
+        setInfo(labels.checkEmail);
+        return;
       }
+      const dest = await bindLocalSession({
+        role,
+        next,
+        wrongRoleTutor: labels.wrongRoleTutor,
+        wrongRoleStudent: labels.wrongRoleStudent,
+      });
+      enterStudio(dest);
     } catch (err) {
       setError(err instanceof Error ? err.message : "auth failed");
     } finally {

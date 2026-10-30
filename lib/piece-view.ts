@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { studentForPiece } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { canSubmitPiece } from "@/lib/demo-piece";
 import { assignmentForStudentPiece } from "@/lib/lms";
 import { mediaStoragePath, sheetView, signedMediaUrl } from "@/lib/media-view";
 import { parseSheetSync } from "@/lib/score-model";
@@ -17,6 +18,7 @@ export async function loadPieceClassroom(code: string) {
       goal: true,
       dueAt: true,
       archived: true,
+      demo: true,
       teacherId: true,
       teacher: { select: { name: true } },
       sheetMedia: { select: { storagePath: true } },
@@ -27,7 +29,7 @@ export async function loadPieceClassroom(code: string) {
   });
   if (!piece || piece.archived) notFound();
 
-  const bound = await studentForPiece(piece.teacherId);
+  const bound = await studentForPiece(piece.teacherId, { demo: piece.demo });
   const student = bound.student;
   const assigned =
     student && !bound.otherClass
@@ -39,7 +41,12 @@ export async function loadPieceClassroom(code: string) {
       : null;
   const member = student && !bound.otherClass ? Boolean(assigned) : false;
   const needsProfile = !student;
-  const canSubmit = !bound.otherClass && (needsProfile || member);
+  const canSubmit = canSubmitPiece({
+    demo: piece.demo,
+    otherClass: bound.otherClass,
+    needsProfile,
+    member,
+  });
 
   const tutorialPath =
     mediaStoragePath(piece.tutorialMedia) ?? mediaStoragePath(piece.referenceMedia);

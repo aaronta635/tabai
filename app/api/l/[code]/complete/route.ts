@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { studentForPiece } from "@/lib/auth";
+import { shouldAttachTeacher } from "@/lib/demo-piece";
 import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     return NextResponse.json({ error: "piece not found" }, { status: 404 });
   }
 
-  const bound = await studentForPiece(piece.teacherId);
+  const bound = await studentForPiece(piece.teacherId, { demo: piece.demo });
   if (bound.otherClass) {
     return NextResponse.json({ error: "other class" }, { status: 409 });
   }
@@ -23,7 +24,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   if (!student) {
     return NextResponse.json({ error: "register first" }, { status: 401 });
   }
-  if (!student.teacherId) {
+  if (shouldAttachTeacher(piece.demo, student.teacherId)) {
     student = await prisma.student.update({
       where: { id: student.id },
       data: { teacherId: piece.teacherId, stage: "in_class" },

@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { requireStudentAccount } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { initialsOf } from "@/lib/initials";
+import { signedMediaUrl } from "@/lib/media-view";
+import { AvatarUpload } from "@/components/profile/avatar-upload";
 import { stringList, SKILLS, WEAKNESSES } from "@/lib/profile";
 import { studentClasses } from "@/lib/student-view";
 import { StudentProfileForm } from "@/components/profile/profile-editor";
@@ -17,6 +18,7 @@ export default async function StudentProfilePage() {
   const locale = await getLocale();
   const t = await getMessages(locale);
   const classes = await studentClasses(student.id);
+  const avatarSrc = await signedMediaUrl(student.avatarUrl);
   const answers =
     student.answersJson && typeof student.answersJson === "object" && !Array.isArray(student.answersJson)
       ? (student.answersJson as Record<string, unknown>)
@@ -24,12 +26,18 @@ export default async function StudentProfilePage() {
 
   return (
     <div className="student-profile space-y-5">
-      <header className="flex items-center gap-4">
-        <span className="avatar-btn font-ui" aria-hidden>
-          {initialsOf(student.name)}
-        </span>
+      <header>
         <h1 className="font-display text-3xl">{student.name}</h1>
       </header>
+      <AvatarUpload
+        role="student"
+        name={student.name}
+        current={avatarSrc}
+        label={t.onboarding.photo}
+        help={t.onboarding.photoHelp}
+        tooBig={t.onboarding.photoTooBig}
+        failed={t.onboarding.photoFailed}
+      />
 
       <StudentProfileForm
         name={student.name}

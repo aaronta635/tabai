@@ -29,10 +29,8 @@ export default async function TeacherProfilePage() {
     : "some";
 
   return (
-    <div className="space-y-6">
-      <header>
-        <StudioTitle title={teacher.name} />
-      </header>
+    <div className="teacher-profile space-y-6">
+      <StudioTitle title={teacher.name} />
       <AvatarUpload
         role="teacher"
         name={teacher.name}

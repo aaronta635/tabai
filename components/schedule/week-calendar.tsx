@@ -96,7 +96,7 @@ export function WeekCalendar({
               key={`events-${dayIndex}`}
               className="schedule-day-events"
               style={{ left: `${(dayIndex * 100) / 7}%`, width: `${100 / 7}%` }}
-              aria-hidden={readOnly ? undefined : true}
+
             >
               {byDay[dayIndex].map((event) => {
                 const layout = eventLayout(new Date(event.startsAt), event.endsAt ? new Date(event.endsAt) : null);

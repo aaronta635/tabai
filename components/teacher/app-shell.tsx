@@ -18,7 +18,7 @@ export function TeacherAppShell({
   const t = useStudioMessages(locale);
   return (
     <StudioShell
-      variant="student"
+      variant="teacher"
       name={teacherName}
       avatarSrc={avatarSrc}
       tour={{
@@ -47,6 +47,7 @@ export function TeacherAppShell({
         { href: "/teacher/roster", icon: "progress", label: t.teacher.navRoster },
         { href: "/teacher/settings", icon: "settings", label: t.teacher.settings },
       ]}
+      search={{ action: "/teacher/search", placeholder: t.studio.search }}
       menuLinks={[{ href: "/teacher/profile", label: t.teacher.navProfile }]}
       signOutAction={logoutTeacher}
       labels={{

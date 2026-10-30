@@ -192,12 +192,12 @@ export default async function SubmissionsPage({
   const done = Math.max(0, filed.length - inbox.length);
 
   return (
-    <div className="space-y-5">
+    <div className="teacher-inbox space-y-5">
       <StudioTitle
         title={t.teacher.submissionsTitle}
-        meta={t.teacher.queueMeta
+        meta={`${t.teacher.pageScope} · ${t.teacher.queueMeta
           .replace("{waiting}", String(inbox.length))
-          .replace("{done}", String(done))}
+          .replace("{done}", String(done))}`}
       />
 
       <SectionPanel title={t.teacher.filter} count={activeFilters || undefined} open={activeFilters > 0}>

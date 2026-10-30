@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useId } from "react";
+import { useWorkspaceDialogFocus } from "@/components/ui/use-workspace-dialog-focus";
 import { useStudentDialogFocus } from "@/components/student/use-dialog-focus";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -49,6 +50,9 @@ export function TeacherSessionPanel({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState(false);
   const [draft, setDraft] = useState<Draft | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const titleId = useId();
+  useWorkspaceDialogFocus(dialogRef, open && Boolean(draft), onClose);
 
   useEffect(() => {
     if (!open) {
@@ -92,11 +96,11 @@ export function TeacherSessionPanel({
   const saved = Boolean(draft.id);
 
   return (
-    <div className="schedule-overlay" role="dialog" aria-modal="true">
-      <button type="button" className="schedule-overlay-backdrop" aria-label={t("closePanel")} onClick={onClose} />
+    <div ref={dialogRef} className="schedule-overlay" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+      <button type="button" tabIndex={-1} className="schedule-overlay-backdrop" aria-label={t("closePanel")} onClick={onClose} />
       <div className="schedule-sheet">
         <header className="schedule-sheet-head">
-          <h2 className="font-display text-xl">{saved ? t("editSession") : t("createSession")}</h2>
+          <h2 id={titleId} className="font-display text-xl">{saved ? t("editSession") : t("createSession")}</h2>
           <button type="button" className="btn btn-quiet px-3 py-1.5 text-sm" onClick={onClose}>
             {t("closePanel")}
           </button>

@@ -249,7 +249,7 @@ export function QueueClient({
       {!item ? (
         <p className="mt-10 text-ink-soft">{tab === "pending" ? t("emptyPending") : t("emptyQueue")}</p>
       ) : (
-        <article className="lms-card mt-6 p-4">
+        <article className="lms-card teacher-review mt-6 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-display text-2xl">{item.studentName}</p>
@@ -319,7 +319,7 @@ export function QueueClient({
           />
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" className="rounded-full border border-ink/20 px-3 py-1 text-sm" onClick={() => setFast((v) => !v)}>
+            <button type="button" aria-pressed={fast} className="teacher-speed rounded-full border border-ink/20 px-3 py-1 text-sm" onClick={() => setFast((v) => !v)}>
               {t("speed")} {fast ? "on" : "off"}
             </button>
             {item.nudgeUrl ? (
@@ -352,7 +352,7 @@ export function QueueClient({
           ) : null}
 
           {item.kind === "unanswered" ? (
-            <div className="mt-5 space-y-3">
+            <div className="teacher-feedback mt-5 space-y-3">
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"

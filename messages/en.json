@@ -347,6 +347,7 @@
     "teacherScheduleBody": "Put a lesson on the calendar."
   },
   "teacher": {
+    "pageScope": "This page",
     "pieces": "Pieces",
     "navDashboard": "Overview",
     "navInvite": "Invite students",

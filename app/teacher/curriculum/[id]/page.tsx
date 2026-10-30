@@ -70,7 +70,7 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
   ].filter(Boolean);
 
   return (
-    <div className="space-y-5">
+    <div className="teacher-piece space-y-5">
       <Link href="/teacher/curriculum" className="font-ui text-sm text-ink-soft hover:text-ink">
         ← {t.teacher.navCurriculum}
       </Link>

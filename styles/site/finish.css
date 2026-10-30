@@ -182,7 +182,7 @@
   .para-site .text-link:hover .para-icon {
     transform: translateX(3px);
   }
-  .para-site .language-switch:hover,
+  .para-site .language-switch a:hover,
   .para-site .menu-toggle:hover {
     background-color: color-mix(in srgb, var(--color-text) 6%, transparent);
   }

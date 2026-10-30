@@ -21,7 +21,7 @@ export default async function StudentTakePage({ params }: { params: Promise<{ id
       id: true,
       submittedAt: true,
       studentNote: true,
-      piece: { select: { title: true } },
+      piece: { select: { title: true, demo: true } },
       media: { select: { storagePath: true } },
       replies: {
         orderBy: { sentAt: "desc" },
@@ -51,6 +51,7 @@ export default async function StudentTakePage({ params }: { params: Promise<{ id
           <h2>{reply ? t.student.replied : t.student.waitingReply}</h2>
           {reply?.grade ? <span className="status-chip">{reply.grade}</span> : null}
         </div>
+        {reply && take.piece.demo ? <p className="page-meta">{t.student.letterFromPara}</p> : null}
         {reply ? <p className="whitespace-pre-wrap leading-relaxed">{reply.text}</p> : null}
       </section>
       <div className="student-destructive-zone">

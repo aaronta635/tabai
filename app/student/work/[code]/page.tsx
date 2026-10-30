@@ -5,6 +5,7 @@ import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDueLabel } from "@/lib/practice";
+import { senderName } from "@/lib/demo-teacher";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { prisma } from "@/lib/prisma";
 import { formatWhen } from "@/lib/when";
@@ -26,6 +27,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
   const brief = room.piece.description || room.piece.note;
   const tips = room.piece.tips && room.piece.tips !== brief ? room.piece.tips : null;
   const meta = [dueLabel ? `${t.student.due} ${dueLabel}` : null, goal].filter(Boolean).join(" · ");
+  const teacherName = senderName(room.piece.teacher.name, room.piece.demo);
   const history = room.bound.student
     ? await prisma.submission.findMany({
         where: { studentId: room.bound.student.id, pieceId: room.piece.id },
@@ -57,7 +59,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
         <div>
           <p className="field-label">{t.student.thisPiece}</p>
           <h2>{room.piece.title}</h2>
-          <p className="mt-2 text-sm">{t.student.teacherLabel}: {room.piece.teacher.name}</p>
+          <p className="mt-2 text-sm">{t.student.teacherLabel}: {teacherName}</p>
           {meta ? <p className="page-meta">{meta}</p> : null}
         </div>
         {brief ? <div><h3 className="field-label">{t.student.brief}</h3><p className="whitespace-pre-wrap leading-relaxed">{brief}</p></div> : null}
@@ -92,7 +94,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
             clipUrl={room.clipUrl}
             desk={{
               pieceTitle: room.piece.title,
-              teacherName: room.piece.teacher.name,
+              teacherName,
               brief,
               tips,
               meta: meta || null,

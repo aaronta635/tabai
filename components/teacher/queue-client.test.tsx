@@ -89,7 +89,7 @@ describe("QueueClient", () => {
     sendReply.mockResolvedValue({ error: "stale_item" });
     renderQueue();
 
-    await user.type(screen.getByLabelText("How did you progress"), "Keep the beat.");
+    await user.type(screen.getByLabelText("Letter"), "Keep the beat.");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     expect(await screen.findByText("This take was already answered. Refresh the queue.")).toBeInTheDocument();
@@ -137,11 +137,11 @@ describe("QueueClient", () => {
       verdict: "true",
     });
     expect(sendReply).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: "Send" })).not.toBeInTheDocument();
-    expect(screen.getByText("Writing the letter from the true bars…")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Letter")).toBeInTheDocument();
   });
 
-  it("hides a premature letter until every fact is marked", () => {
+  it("shows the draft before every fact is marked", () => {
     renderWithIntl(
       <QueueClient
         tab="unanswered"
@@ -169,13 +169,12 @@ describe("QueueClient", () => {
       />,
     );
 
-    expect(screen.queryByDisplayValue(/Old letter/)).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Send" })).not.toBeInTheDocument();
-    expect(screen.getByText("Mark every bar true or false, then the letter is written.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Write it yourself" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Letter")).toHaveValue("Old letter about a slide the tutor has not checked.");
+    expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Write it yourself" })).not.toBeInTheDocument();
   });
 
-  it("opens the letter when the teacher writes it without the fact bars", async () => {
+  it("sends the edited letter and the marked moment", async () => {
     const user = userEvent.setup();
     sendReply.mockResolvedValue({ ok: true });
     renderWithIntl(
@@ -203,20 +202,15 @@ describe("QueueClient", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Write it yourself" }));
     await user.click(screen.getByRole("button", { name: "Use 0:05" }));
-    await user.type(screen.getByLabelText("How did you progress"), "The chorus sits in time.");
-    await user.type(screen.getByLabelText("Key point"), "Keep the chorus quieter.");
-    await user.type(screen.getByLabelText("Next step"), "Play the verse once slowly.");
+    await user.type(screen.getByLabelText("Letter"), "The chorus sits in time.");
     await user.click(screen.getByRole("button", { name: "Send" }));
     expect(sendReply).toHaveBeenCalledWith({
       submissionId: "sub-1",
-      text: "The chorus sits in time.\n\nKeep the chorus quieter.\n\nPlay the verse once slowly.",
+      text: "The chorus sits in time.",
       grade: null,
       highlightStartS: 5.05,
-      progressNote: "The chorus sits in time.",
-      keyPoint: "Keep the chorus quieter.",
-      nextStep: "Play the verse once slowly.",
+      keyPoint: "The chorus sits in time.",
     });
   });
 

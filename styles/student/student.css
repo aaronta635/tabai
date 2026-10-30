@@ -184,6 +184,13 @@
 .student-ui.student-ui .student-detail { max-width:960px; margin-inline:auto; }
 .student-ui.student-ui .student-detail > video { max-width:100%; max-height:65vh; object-fit:contain; border:1px solid var(--para-app-edge); }
 .student-ui.student-ui .student-destructive-zone { padding:20px 0; border-top:1px solid var(--para-app-edge); }
+.student-ui.student-ui .student-settings .student-settings-card { display:flex; flex-direction:column; align-items:flex-start; gap:16px; }
+.student-ui.student-ui .student-settings .student-settings-row { display:grid; grid-template-columns:7.5rem minmax(0,max-content); gap:12px 16px; align-items:center; width:100%; max-width:28rem; }
+.student-ui.student-ui .student-settings .student-settings-row p { margin:0; }
+.student-ui.student-ui .student-settings .student-destructive-zone { display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:24px; border-top:0; }
+.student-ui.student-ui .student-delete-copy { max-width:36rem; margin:0; text-wrap:pretty; line-height:1.6; }
+.student-ui.student-ui .student-delete-confirm { display:flex; align-items:flex-start; gap:8px; max-width:36rem; }
+.student-ui.student-ui .student-delete-confirm input { margin-top:0.2rem; }
 .student-ui.student-ui .delete-take { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--para-app-color-danger-existing); border-radius:10px; background:transparent; color:var(--para-app-color-danger-existing); font-size:14px; transition:background-color 140ms ease-out; }
 .student-ui.student-ui .delete-take:hover:not(:disabled) { background:var(--para-app-field); }
 .student-ui.student-ui .group-card-title { font-family:var(--font-serif); font-size:22px; line-height:1.5; }
@@ -282,3 +289,17 @@
 .student-ui.student-ui .class-switch { gap:8px; }
 .student-ui.student-ui .class-switch a { display:inline-flex; align-items:center; min-height:44px; padding:8px 12px; border:1px solid var(--para-app-edge); border-radius:10px; color:var(--para-app-text); }
 .student-ui.student-ui .class-switch a[aria-current="page"] { font-weight:600; border-color:var(--para-app-border); box-shadow:inset 0 -3px var(--para-app-accent); }
+
+.locale-switch { display:inline-flex; gap:4px; align-items:center; }
+.locale-switch a { display:inline-flex; align-items:center; justify-content:center; min-width:40px; min-height:36px; padding:0 8px; border-radius:8px; border:1px solid transparent; font-size:13px; font-weight:600; }
+.locale-switch a[aria-current="true"] { border-color:var(--para-app-border, #3b2f2a); background:var(--para-app-field, #fff); }
+.student-ui .studio-mobile-bar .locale-switch { margin-inline-start:auto; }
+html.tour-open .studio-rail { position:relative; z-index:80; }
+.studio-tour-dim { position:fixed; inset:0; z-index:70; background:rgb(59 47 42 / .46); }
+.studio-tour-card { position:fixed; z-index:90; left:50%; bottom:24px; width:min(420px, calc(100vw - 32px)); transform:translateX(-50%); padding:20px; border-radius:20px; background:#f3ede2; color:#3b2f2a; box-shadow:0 16px 40px rgb(59 47 42 / .2); }
+.studio-tour-card h2 { margin:0 0 8px; font-size:1.35rem; }
+.studio-tour-progress { margin:0 0 8px; font-size:12px; letter-spacing:.08em; text-transform:uppercase; }
+.studio-tour-actions { display:flex; justify-content:space-between; gap:12px; margin-top:16px; }
+.studio-tour-move { display:flex; gap:8px; }
+.studio-nav-link.is-tour-target, .studio-profile.is-tour-target { outline:2px solid #8b5e34; outline-offset:2px; border-radius:10px; background:rgb(243 237 226 / .9); }
+@media (prefers-reduced-motion: reduce) { .studio-tour-card { transition:none; animation:none; } }

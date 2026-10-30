@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { analyzeAllowed, canSubmitPiece, shouldAttachTeacher } from "@/lib/demo-piece";
+import { senderName } from "@/lib/demo-teacher";
 
 describe("demo pieces", () => {
   it("lets any student send a take without an assignment", () => {
@@ -21,5 +22,10 @@ describe("demo pieces", () => {
     expect(analyzeAllowed(true, null)).toBe(true);
     expect(analyzeAllowed(false, null)).toBe(false);
     expect(analyzeAllowed(false, new Date())).toBe(true);
+  });
+
+  it("shows PARA on a demo song and the teacher's name on a class song", () => {
+    expect(senderName("PARA practice", true)).toBe("PARA");
+    expect(senderName("Minh", false)).toBe("Minh");
   });
 });

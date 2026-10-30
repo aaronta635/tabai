@@ -10,6 +10,9 @@ import { ParaIcon } from "@/components/ui/para-icon";
 const router = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => router, usePathname: () => "/vi/student/work/song1", useSearchParams: () => new URLSearchParams("q=gam") }));
 vi.mock("@/app/teacher/actions", () => ({ deleteTeacherTake: vi.fn() }));
+vi.mock("@/lib/supabase/client", () => ({
+  createBrowserSupabase: () => ({ auth: { signOut: vi.fn(async () => ({ error: null })) } }),
+}));
 const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student/work", label: "Assigned work", icon: "assignment" as const }], menuLinks: [{ href: "/student/profile", label: "Profile" }], labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeLight: "Light", themeDark: "Dark" } };
 beforeEach(() => {
   sessionStorage.setItem("howl0-session-bound", "1");
@@ -17,17 +20,13 @@ beforeEach(() => {
 });
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); delete document.documentElement.dataset.theme; });
 
-it("retains locale-aware selection, native search, profile, logout and main's active class context", async () => {
+it("retains locale-aware selection, profile, logout and main's active class context", async () => {
   const user = userEvent.setup(); const signOut = vi.fn(async () => {});
-  const view = render(<StudioShell {...shell} variant="student" signOutAction={signOut} search={{ action: "/student/search", placeholder: "Search" }}><ActiveClass name="Class A" /></StudioShell>);
+  const view = render(<StudioShell {...shell} variant="student" signOutAction={signOut}><ActiveClass name="Class A" /></StudioShell>);
   expect(screen.getByRole("link", { name: "Assigned work" })).toHaveAttribute("href", "/student/work");
   expect(screen.getByRole("link", { name: "Assigned work" })).toHaveAttribute("aria-current", "page");
   expect(screen.getByRole("link", { name: /Student A Profile/ })).toHaveAttribute("href", "/student/profile");
-  const search = screen.getByRole("textbox", { name: "Search" });
-  expect(search).toHaveValue("gam");
-  expect(search).toHaveAttribute("name", "q");
-  expect(search.closest("form")).toHaveAttribute("action", "/student/search");
-  expect(search.closest("form")).toHaveAttribute("method", "get");
+  expect(screen.queryByRole("searchbox")).toBeNull();
   expect(view.container.querySelector(".studio-active-class")).toHaveTextContent("Class A");
   await user.click(screen.getByRole("button", { name: "Sign out" }));
   await waitFor(() => expect(signOut).toHaveBeenCalledOnce());

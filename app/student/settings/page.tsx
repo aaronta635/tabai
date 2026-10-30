@@ -5,6 +5,8 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import { StudioTitle } from "@/components/home/feed";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LocaleSwitch } from "@/components/locale-switch";
+import { ReplayTour } from "@/components/studio/replay-tour";
 import { deleteStudentAccount } from "@/app/account/actions";
 
 export default async function StudentSettingsPage() {
@@ -17,15 +19,26 @@ export default async function StudentSettingsPage() {
   return (
     <div className="student-settings space-y-6">
       <StudioTitle title={t.student.settingsTitle} />
-      <section className="studio-panel space-y-4 pb-4">
+      <section className="studio-panel student-settings-card">
         <h2 className="font-ui">{t.theme.appearance}</h2>
         <ThemeToggle variant="student" theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <div className="student-settings-row">
+          <p>{t.theme.language}</p>
+          <LocaleSwitch
+            labels={{ language: t.theme.language, en: t.locale.en, vi: t.locale.vi }}
+          />
+        </div>
+        <div className="student-settings-row">
+          <p>{t.tour.guide}</p>
+          <ReplayTour label={t.tour.again} />
+        </div>
       </section>
-      <form action={deleteStudentAccount} className="studio-panel student-destructive-zone space-y-3 pb-4">
+      <form action={deleteStudentAccount} className="studio-panel student-destructive-zone">
         <h2 className="font-ui">{t.student.deleteAccount}</h2>
-        <p className="text-sm leading-relaxed">{t.student.deleteAccountBody}</p>
-        <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" name="confirm" value="yes" required className="mt-1" />
+        <p className="student-delete-copy">{t.student.deleteAccountBody}</p>
+        <p className="student-delete-copy">{t.student.deleteAccountKept}</p>
+        <label className="student-delete-confirm">
+          <input type="checkbox" name="confirm" value="yes" required />
           <span>{t.student.deleteAccountConfirm}</span>
         </label>
         <button type="submit" className="btn btn-quiet text-danger">

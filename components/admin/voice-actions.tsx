@@ -9,7 +9,7 @@ export function VoiceToggle({ id }: { id: string }) {
     <button
       type="button"
       disabled={pending}
-      className="mt-2 text-xs text-brass"
+      className="btn btn-quiet mt-2"
       onClick={() => start(async () => toggleVoice(id))}
     >
       toggle
@@ -23,7 +23,7 @@ export function CurateButton({ id, label }: { id: string; label: string }) {
     <button
       type="button"
       disabled={pending}
-      className="mt-3 rounded-full border border-brass/40 px-3 py-1 text-xs text-brass"
+      className="btn btn-quiet mt-3"
       onClick={() => start(async () => curateReply(id))}
     >
       {label}

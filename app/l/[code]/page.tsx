@@ -4,6 +4,7 @@ import { readStudentSession } from "@/lib/auth";
 import { BrandMark } from "@/components/landing/brand-mark";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDueLabel } from "@/lib/practice";
+import { senderName } from "@/lib/demo-teacher";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { AssignmentMeta } from "@/components/student/assignment-meta";
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
@@ -39,7 +40,7 @@ export default async function PieceLinkPage({ params }: { params: Promise<{ code
       <Link href="/" aria-label={t.brand} className="mb-6 inline-flex">
         <BrandMark />
       </Link>
-      <p className="text-xs tracking-[0.2em] text-ink-soft uppercase">{room.piece.teacher.name}</p>
+      <p className="text-xs tracking-[0.2em] text-ink-soft uppercase">{senderName(room.piece.teacher.name, room.piece.demo)}</p>
       <h1 className="font-display mt-2 text-3xl">{room.piece.title}</h1>
       {blurb ? <p className="mt-3 text-ink-soft">{blurb}</p> : null}
       {room.piece.tips ? <p className="mt-2 text-sm">{room.piece.tips}</p> : null}

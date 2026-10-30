@@ -40,6 +40,7 @@ export async function saveTutorOnboarding(form: FormData) {
   const videos = str(form, "videos") as TutorAnswers["videos"];
   const size = str(form, "size") as TutorAnswers["size"];
   const focus = str(form, "focus") as TutorAnswers["focus"];
+  if (str(form, "consent") !== "yes") return { error: "incomplete" };
   if (!["zalo", "in_person", "none"].includes(videos)) return { error: "incomplete" };
   if (!["few", "class", "many"].includes(size)) return { error: "incomplete" };
   if (!["beat", "notes", "both"].includes(focus)) return { error: "incomplete" };
@@ -60,6 +61,8 @@ export async function saveTutorOnboarding(form: FormData) {
       stage,
       answersJson: answers,
       onboardedAt: new Date(),
+      consentAt: new Date(),
+      consentVersion: CONSENT_VERSION,
       feedbackLocale: feedbackLocaleFrom(str(form, "feedbackLocale")),
       deliveryType: videos === "zalo" ? "zalo" : teacher.deliveryType,
     },
@@ -79,6 +82,7 @@ export async function saveStudentOnboarding(form: FormData) {
   const code = str(form, "code").toLowerCase();
   const contactType = str(form, "contactType") === "messenger" ? "messenger" : "zalo";
   const contactHandle = str(form, "contactHandle") || student.contactHandle;
+  if (str(form, "consent") !== "yes") return { error: "incomplete" };
   if (!["weeks", "months", "years"].includes(playing)) return { error: "incomplete" };
   if (!["chords", "song", "exam"].includes(work)) return { error: "incomplete" };
 
@@ -108,8 +112,8 @@ export async function saveStudentOnboarding(form: FormData) {
       stage,
       answersJson: answers,
       onboardedAt: new Date(),
-      consentAt: student.consentAt ?? new Date(),
-      consentVersion: student.consentVersion || CONSENT_VERSION,
+      consentAt: new Date(),
+      consentVersion: CONSENT_VERSION,
     },
   });
   await setStudentAccountCookies(updated.id, updated.name, updated.token, true, updated.authUserId);
@@ -198,6 +202,24 @@ export async function guestJoinClass(form: FormData) {
   if ("error" in joined) return { error: joined.error };
   await setStudentAccountCookies(student.id, student.name, token, true, student.authUserId);
   redirect("/student");
+}
+
+export async function saveAvatar(path: string, role: "teacher" | "student") {
+  const clean = path.trim();
+  if (role === "teacher") {
+    const teacher = await requireTeacher();
+    if (!teacher || !clean.startsWith(`avatars/teachers/${teacher.id}/`)) return { error: "unauthorized" as const };
+    await prisma.teacher.update({ where: { id: teacher.id }, data: { avatarUrl: clean } });
+    revalidatePath("/teacher", "layout");
+    revalidatePath("/teacher/profile");
+    return { ok: true as const };
+  }
+  const student = await requireStudentAccount();
+  if (!student || !clean.startsWith(`avatars/students/${student.id}/`)) return { error: "unauthorized" as const };
+  await prisma.student.update({ where: { id: student.id }, data: { avatarUrl: clean } });
+  revalidatePath("/student", "layout");
+  revalidatePath("/student/profile");
+  return { ok: true as const };
 }
 
 export async function logoutAccount() {

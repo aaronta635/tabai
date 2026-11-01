@@ -1,5 +1,4 @@
 import { notFound } from "next/navigation";
-import { AuthEntrance } from "@/components/auth/auth-entrance";
 import { AuthShell } from "@/components/auth/auth-shell";
 import { SignupForm } from "@/components/auth/signup-form";
 import { prepareAuthPage } from "@/lib/auth-page";
@@ -28,18 +27,6 @@ export default async function SignupRolePage({
       theme={ready.theme}
       themeLabels={{ light: t.theme.light, dark: t.theme.dark }}
     >
-      <AuthEntrance
-        kind="signup"
-        role={ready.role}
-        next={ready.next}
-        labels={{
-          eyebrow: t.auth.doorEyebrow,
-          prompt: t.auth.doorPrompt,
-          student: t.auth.student,
-          teacher: t.auth.teacher,
-          hint: t.auth.doorHint,
-        }}
-      >
       <SignupForm
         initialRole={ready.role}
         next={ready.next}
@@ -67,7 +54,6 @@ export default async function SignupRolePage({
           providerFailed: t.auth.providerFailed,
         }}
       />
-      </AuthEntrance>
     </AuthShell>
   );
 }

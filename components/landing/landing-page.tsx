@@ -7,6 +7,8 @@ import { BrandMark } from "@/components/landing/brand-mark";
 import { BeatBar } from "@/components/landing/beat-bar";
 import { TakePreview } from "@/components/landing/take-preview";
 import { PieceCodeForm } from "@/components/landing/piece-code-form";
+import { isLocalhostOrigin } from "@/lib/app-origin";
+import { appOrigin } from "@/lib/origin";
 import { productOrigin } from "@/lib/sites";
 
 export async function LandingPage() {
@@ -16,7 +18,8 @@ export async function LandingPage() {
   const t = messages.home;
   const teacher = await getTeacherFromCookie();
   const student = await getStudentFromCookie();
-  const app = productOrigin();
+  const here = await appOrigin();
+  const app = isLocalhostOrigin(here) ? "" : productOrigin();
   const signedInPath = teacher ? "/teacher" : student ? "/student" : "/login";
   const tutorPath = teacher ? "/teacher" : "/login/teacher";
   const studentPath = student ? "/student" : "/login/student";

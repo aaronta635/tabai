@@ -27,6 +27,7 @@ export type QueueItem = {
   pieceTitle: string;
   waitingMs: number;
   mediaId: string | null;
+  videoUrl?: string | null;
   draft: string | null;
   draftAt?: string | null;
   reply: string | null;
@@ -79,13 +80,16 @@ export function QueueClient({
   });
   const [actionError, setActionError] = useState<string | null>(null);
   const [verdicts, setVerdicts] = useState<Record<number, FactVerdict>>({});
+  const [draftTimedOut, setDraftTimedOut] = useState(false);
 
   const item = items[index] ?? null;
   const mediaId = item?.mediaId ?? null;
+  const providedUrl = item?.videoUrl ?? null;
+  const knownUrl = providedUrl ?? (mediaId ? readTakeVideo(mediaId) : null);
   if (videoState.mediaId !== mediaId) {
-    setVideoState({ mediaId, url: mediaId ? readTakeVideo(mediaId) : null });
+    setVideoState({ mediaId, url: knownUrl });
   }
-  const videoUrl = videoState.mediaId === mediaId ? videoState.url : mediaId ? readTakeVideo(mediaId) : null;
+  const videoUrl = videoState.mediaId === mediaId ? videoState.url : knownUrl;
 
   const factsReady =
     !item ||
@@ -163,8 +167,20 @@ export function QueueClient({
     return () => window.clearInterval(id);
   }, [item?.id, item?.submissionId, factsReady, item?.markers.length]);
 
+  const draftingLetter =
+    item?.kind === "unanswered" && item.markers.length > 0 && factsReady && !letter.trim();
+
   useEffect(() => {
-    if (!mediaId || readTakeVideo(mediaId)) return;
+    if (!draftingLetter) {
+      setDraftTimedOut(false);
+      return;
+    }
+    const id = window.setTimeout(() => setDraftTimedOut(true), 25000);
+    return () => window.clearTimeout(id);
+  }, [draftingLetter, item?.id]);
+
+  useEffect(() => {
+    if (!mediaId || providedUrl || readTakeVideo(mediaId)) return;
     let cancelled = false;
     void fetchTakeVideo(mediaId).then((url) => {
       if (!cancelled) setVideoState({ mediaId, url });
@@ -172,7 +188,7 @@ export function QueueClient({
     return () => {
       cancelled = true;
     };
-  }, [mediaId]);
+  }, [mediaId, providedUrl]);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = fast ? 1.5 : 1;
@@ -378,6 +394,23 @@ export function QueueClient({
               </div>
               {highlightAt != null ? (
                 <p className="text-sm">{t("highlightAt", { time: formatClock(highlightAt) })}</p>
+              ) : null}
+              {item.markers.length > 0 && !factsReady ? (
+                <p className="fact-draft-wait">{t("factDraftGate")}</p>
+              ) : null}
+              {item.markers.length > 0 && factsReady && !letter.trim() ? (
+                <div className="letter-draft">
+                  <p className="fact-draft-wait">{draftTimedOut ? t("factDraftTimeout") : t("factDraftWait")}</p>
+                  <div
+                    className="letter-draft-track"
+                    role="progressbar"
+                    aria-label={t("factDraftWait")}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                  >
+                    <span className="letter-draft-fill" />
+                  </div>
+                </div>
               ) : null}
               <label className="block">
                 <span className="field-label">{t("letterLabel")}</span>

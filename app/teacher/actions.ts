@@ -10,6 +10,7 @@ import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
 import { maybeRelockAiDirect, maybeUnlockAiDirect } from "@/lib/growth";
 import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
+import { runDraft } from "@/worker/draft";
 import { prisma } from "@/lib/prisma";
 import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
 import { highlightStart, joinStoryLetter } from "@/lib/report";
@@ -18,12 +19,39 @@ import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
 import { teacherSubmission } from "@/lib/scope";
 import { deleteTeacherTake as removeTeacherTake } from "@/lib/deletion";
-import { applyIssueVerdict, latestFactVerdictAt, observationMarkers, parseCompareObservations } from "@/lib/score-model";
+import { applyIssueVerdict, draftCoversFactVerdicts, latestFactVerdictAt, observationMarkers, parseCompareObservations } from "@/lib/score-model";
 
 async function teacherOrThrow() {
   const teacher = await requireTeacher();
   if (!teacher) throw new Error("unauthorized");
   return teacher;
+}
+
+const demoDrafts = new Set<string>();
+
+function writeDemoLetter(
+  submission: {
+    id: string;
+    piece: { demo: boolean };
+    student: { approvedAt: Date | null };
+    drafts: { createdAt: Date }[];
+    analyses: { observationsJson: unknown }[];
+  },
+  observations?: unknown,
+) {
+  if (!submission.piece.demo || submission.student.approvedAt) return;
+  if (demoDrafts.has(submission.id)) return;
+  const markers = observationMarkers(observations ?? submission.analyses[0]?.observationsJson);
+  const draftAt = submission.drafts[0]?.createdAt.toISOString() ?? null;
+  if (draftCoversFactVerdicts(draftAt, latestFactVerdictAt(markers), markers.length)) return;
+  demoDrafts.add(submission.id);
+  void runDraft(submission.id)
+    .catch((error) => {
+      console.error("demo draft", error instanceof Error ? error.message : error);
+    })
+    .finally(() => {
+      demoDrafts.delete(submission.id);
+    });
 }
 
 function revalidateTeacherQueue(teacherId: string, studentId?: string) {
@@ -423,6 +451,7 @@ export async function setIssueVerdict(input: {
   });
   if (!next) return { error: "no_facts" as const };
   const job = await enqueueDraftWhenReady(submission.id);
+  if (job) writeDemoLetter(submission, next);
   const issue = next.issues[input.issueIndex];
   const metrics = analysis.metricsJson;
   const overlayVersion =
@@ -456,6 +485,7 @@ export async function setIssueVerdict(input: {
 export async function requestDraft(submissionId: string) {
   const { submission } = await reviewSubmission(submissionId);
   const job = await enqueueDraftWhenReady(submission.id);
+  if (job) writeDemoLetter(submission);
   return { ok: true as const, draftQueued: Boolean(job) };
 }
 

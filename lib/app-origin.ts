@@ -13,16 +13,22 @@ export function isLocalhostOrigin(value: string) {
   }
 }
 
+function deployedProcess() {
+  return Boolean(process.env.VERCEL) || process.env.NODE_ENV === "production";
+}
+
 /**
- * Never let a localhost env URL override the host the user actually hit.
- * Production with a missing/localhost env falls back to paramuzic.com.
+ * A public host wins over a localhost env URL.
+ * Local next dev stays on the host you opened, even when APP_URL is the live site.
+ * A deployed process with a missing or localhost env falls back to paramuzic.com.
  */
 export function resolveAppOrigin(requestOrigin?: string | null) {
   const env = stripOriginSlash(process.env.NEXT_PUBLIC_APP_URL?.trim() ?? "");
   const incoming = requestOrigin ? stripOriginSlash(requestOrigin) : "";
   if (incoming && !isLocalhostOrigin(incoming)) return incoming;
+  if (incoming && isLocalhostOrigin(incoming) && !deployedProcess()) return incoming;
   if (env && !isLocalhostOrigin(env)) return env;
-  if (process.env.VERCEL || process.env.NODE_ENV === "production") return PRODUCTION_APP_ORIGIN;
+  if (deployedProcess()) return PRODUCTION_APP_ORIGIN;
   return incoming || env || "http://localhost:3000";
 }
 

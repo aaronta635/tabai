@@ -4,12 +4,15 @@ import { isLocalhostOrigin, PRODUCTION_APP_ORIGIN, stripOriginSlash } from "@/li
 export const OAUTH_BIND_COOKIE = "howl0_oauth_bind";
 
 /**
- * Google returns here after consent. Localhost is not on the Supabase allowlist, so a
- * local click would skip Google and drop onto Site URL (paramuzic.com).
+ * Google returns to the origin that started sign-in.
+ * A deployed process still refuses a localhost callback, which Supabase would replace
+ * with the Site URL.
  */
 export function oauthCallbackUrl(pageOrigin: string) {
-  const origin = isLocalhostOrigin(pageOrigin) ? PRODUCTION_APP_ORIGIN : stripOriginSlash(pageOrigin);
-  return `${origin}/auth/callback`;
+  const origin = stripOriginSlash(pageOrigin);
+  const deployed = Boolean(process.env.VERCEL) || process.env.NODE_ENV === "production";
+  if (origin && !(isLocalhostOrigin(origin) && deployed)) return `${origin}/auth/callback`;
+  return `${PRODUCTION_APP_ORIGIN}/auth/callback`;
 }
 
 export function oauthRedirectTo(pageOrigin: string, role: AccountRole, next: string) {

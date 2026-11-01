@@ -23,6 +23,13 @@ describe("resolveAppOrigin", () => {
     expect(resolveAppOrigin("http://localhost:3000")).toBe("http://localhost:3000");
   });
 
+  it("keeps a local request when the env URL is the live site", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://paramuzic.com");
+    vi.stubEnv("VERCEL", "");
+    expect(resolveAppOrigin("http://localhost:3000")).toBe("http://localhost:3000");
+    expect(resolveAppOrigin("http://127.0.0.1:3000")).toBe("http://127.0.0.1:3000");
+  });
+
   it("reads x-forwarded-host from the request", () => {
     vi.stubEnv("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
     const origin = originFromRequest({

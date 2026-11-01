@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { nudgeHref } from "@/lib/deep-links";
+import { signedMediaUrl } from "@/lib/media-view";
 import { heardExtractFromMetrics, observationMarkers, observationPositives, parseCompareObservations } from "@/lib/score-model";
 import { StudioTitle } from "@/components/home/feed";
 import { QueueClient } from "@/components/teacher/queue-client";
@@ -22,9 +23,11 @@ export default async function AdminSubmissionPage({ params }: { params: Promise<
       drafts: { orderBy: { createdAt: "desc" }, take: 1 },
       replies: { orderBy: { createdAt: "desc" }, take: 1 },
       analyses: { orderBy: { createdAt: "desc" }, take: 1 },
+      media: { select: { storagePath: true } },
     },
   });
   if (!row) notFound();
+  const videoUrl = await signedMediaUrl(row.media.storagePath);
   const locale = await getLocale();
   const t = await getMessages(locale);
   const kind = row.status === "answered" ? ("answered" as const) : ("unanswered" as const);
@@ -59,6 +62,7 @@ export default async function AdminSubmissionPage({ params }: { params: Promise<
             pieceTitle: row.piece.title,
             waitingMs: Date.now() - row.submittedAt.getTime(),
             mediaId: row.mediaId,
+            videoUrl,
             draft: row.drafts[0]?.text ?? null,
             draftAt: row.drafts[0]?.createdAt.toISOString() ?? null,
             reply: row.replies[0]?.text ?? null,

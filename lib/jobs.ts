@@ -46,14 +46,14 @@ export async function enqueueAnalyzeIfApproved(submissionId: string) {
   return enqueueJob("analyze", { submissionId }, submissionId);
 }
 
-/** After a PieceModel is ready, re-run takes that never got score-compare, take extract, or this pitch overlay version. */
+/** After a PieceModel is ready, re-run takes that never got score-compare, take extract, or this pitch overlay version. A demo take is included before the student is approved. */
 export async function enqueueTakesNeedingCompare(pieceId: string) {
   const takes = await prisma.submission.findMany({
     where: {
       pieceId,
       kind: { in: ["take", "overdub"] },
       status: { in: [...CLAIMABLE_SUBMISSION_STATUSES] },
-      student: { approvedAt: { not: null } },
+      OR: [{ student: { approvedAt: { not: null } } }, { piece: { demo: true } }],
     },
     select: {
       id: true,
@@ -111,6 +111,7 @@ export async function enqueueDraftWhenReady(submissionId: string) {
     select: {
       status: true,
       kind: true,
+      piece: { select: { demo: true } },
       student: { select: { approvedAt: true } },
       analyses: { orderBy: { createdAt: "desc" }, take: 1, select: { observationsJson: true } },
     },
@@ -122,7 +123,7 @@ export async function enqueueDraftWhenReady(submissionId: string) {
   const skip = whyDraftNotReady({
     kind: submission.kind,
     status: submission.status,
-    approved: Boolean(submission.student.approvedAt),
+    approved: analyzeAllowed(submission.piece.demo, submission.student.approvedAt),
     observations: submission.analyses[0]?.observationsJson,
   });
   if (skip) {

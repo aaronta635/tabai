@@ -126,7 +126,7 @@ describe("LoginForm", () => {
         options: expect.objectContaining({
           skipBrowserRedirect: true,
           queryParams: { prompt: "select_account" },
-          redirectTo: "https://paramuzic.com/auth/callback?role=student&next=%2Fstudent",
+          redirectTo: `${window.location.origin}/auth/callback?role=student&next=%2Fstudent`,
         }),
       }),
     );

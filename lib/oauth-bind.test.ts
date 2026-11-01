@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   encodeOAuthBind,
   isOAuthProviderRedirect,
@@ -8,16 +8,25 @@ import {
 } from "@/lib/oauth-bind";
 
 describe("oauthCallbackUrl", () => {
-  it("sends Google back to paramuzic even when the click started on localhost", () => {
-    expect(oauthCallbackUrl("https://paramuzic.com")).toBe("https://paramuzic.com/auth/callback");
-    expect(oauthCallbackUrl("https://paramuzic.com/")).toBe("https://paramuzic.com/auth/callback");
-    expect(oauthCallbackUrl("http://localhost:3000")).toBe("https://paramuzic.com/auth/callback");
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
-  it("keeps role on the callback so a localhost cookie is not required after Google", () => {
+  it("returns to the site that started sign-in, including localhost", () => {
+    expect(oauthCallbackUrl("https://paramuzic.com")).toBe("https://paramuzic.com/auth/callback");
+    expect(oauthCallbackUrl("https://paramuzic.com/")).toBe("https://paramuzic.com/auth/callback");
+    expect(oauthCallbackUrl("http://localhost:3000")).toBe("http://localhost:3000/auth/callback");
+  });
+
+  it("keeps role and next on a local callback", () => {
     expect(oauthRedirectTo("http://localhost:3000", "student", "/student")).toBe(
-      "https://paramuzic.com/auth/callback?role=student&next=%2Fstudent",
+      "http://localhost:3000/auth/callback?role=student&next=%2Fstudent",
     );
+  });
+
+  it("refuses a localhost callback once the process is deployed", () => {
+    vi.stubEnv("VERCEL", "1");
+    expect(oauthCallbackUrl("http://localhost:3000")).toBe("https://paramuzic.com/auth/callback");
   });
 
   it("accepts Google and rejects a bounce to the app site", () => {

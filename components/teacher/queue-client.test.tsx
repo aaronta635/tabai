@@ -171,8 +171,38 @@ describe("QueueClient", () => {
     );
 
     expect(screen.getByLabelText("Letter")).toHaveValue("Old letter about a slide the tutor has not checked.");
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Write it yourself" })).not.toBeInTheDocument();
+  });
+
+  it("shows a drafting bar once every notable fact is marked", () => {
+    renderWithIntl(
+      <QueueClient
+        tab="unanswered"
+        labels={labels}
+        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        items={[
+          {
+            ...item,
+            markers: [0, 1, 2].map((index) => ({
+              index,
+              tStart: index + 1,
+              type: "pitch" as const,
+              label: "pitch",
+              expected: "G",
+              observed: "G",
+              verdict: "true" as const,
+              verdictAt: "2026-10-30T00:00:00.000Z",
+            })),
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("progressbar", { name: "Writing the letter from the true bars…" })).toBeInTheDocument();
+    expect(screen.getByText("Writing the letter from the true bars…")).toBeInTheDocument();
+    expect(screen.getByLabelText("Letter")).toHaveValue("");
   });
 
   it("sends the edited letter and the marked moment", async () => {
@@ -213,6 +243,22 @@ describe("QueueClient", () => {
       highlightStartS: 5.05,
       keyPoint: "The chorus sits in time.",
     });
+  });
+
+  it("shows a video signed on the server without asking the teacher route", () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const { container } = renderWithIntl(
+      <QueueClient
+        tab="unanswered"
+        labels={labels}
+        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        items={[{ ...item, mediaId: "media-9", videoUrl: "https://media.example/admin.webm" }]}
+      />,
+    );
+    expect(container.querySelector("video")?.getAttribute("src")).toBe("https://media.example/admin.webm");
+    expect(fetchMock).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
 
   it("shows a prefetched video without asking for the link again", () => {

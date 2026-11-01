@@ -1,5 +1,6 @@
 import { customAlphabet } from "nanoid";
 import { DEFAULT_PARTS } from "@/lib/curriculum";
+import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 
 export { DEFAULT_PARTS, shelfName } from "@/lib/curriculum";
@@ -17,6 +18,11 @@ export function displayClassCode(code: string) {
 
 export function classJoinPath(code: string) {
   return `/join/${code}`;
+}
+
+/** Class-code joins are already invited; keep an existing stamp or approve now. */
+export function classJoinApprovedAt(existing: Date | null | undefined, now = new Date()) {
+  return existing ?? now;
 }
 
 /** Optional invite box: one address per line, comma, or space. Invalid lines are skipped. */
@@ -149,9 +155,6 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
 
   const student = await prisma.student.findUnique({ where: { id: studentId } });
   if (!student) return { error: "code" as const };
-  if (student.teacherId && student.teacherId !== studioClass.teacherId) {
-    return { error: "otherClass" as const };
-  }
 
   let membership = await prisma.classMembership.findFirst({
     where: { classId: studioClass.id, studentId: student.id },
@@ -166,7 +169,7 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
     });
   }
 
-  const approvedAt = student.approvedAt ?? null;
+  const approvedAt = classJoinApprovedAt(student.approvedAt ?? membership?.approvedAt);
   if (membership) {
     await prisma.classMembership.update({
       where: { id: membership.id },
@@ -186,10 +189,21 @@ export async function bindStudentToClass(studentId: string, classCode: string) {
   await prisma.student.update({
     where: { id: student.id },
     data: {
-      teacherId: studioClass.teacherId,
+      ...(student.teacherId ? {} : { teacherId: studioClass.teacherId }),
       stage: "in_class",
+      ...(student.approvedAt ? {} : { approvedAt }),
     },
   });
+
+  if (!student.approvedAt) {
+    const pending = await prisma.submission.findMany({
+      where: { studentId: student.id, status: "new" },
+      select: { id: true },
+    });
+    for (const row of pending) {
+      await enqueueAnalyzeIfApproved(row.id);
+    }
+  }
 
   return { class: studioClass };
 }

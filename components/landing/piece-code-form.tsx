@@ -11,7 +11,7 @@ export function PieceCodeForm({
 }: {
   placeholder: string;
   submit: string;
-  variant?: "hero" | "bar" | "studio";
+  variant?: "hero" | "bar" | "studio" | "site";
   productOrigin?: string;
 }) {
   const router = useRouter();
@@ -27,6 +27,27 @@ export function PieceCodeForm({
       return;
     }
     router.push(path);
+  }
+
+  if (variant === "site") {
+    return (
+      <form onSubmit={onSubmit} className="studio-entry">
+        <div className="site-field">
+          <label htmlFor="class-code">{placeholder}</label>
+          <input
+            id="class-code"
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            aria-label={placeholder}
+            autoComplete="off"
+            spellCheck={false}
+          />
+        </div>
+        <button className="button button-primary form-submit" type="submit">
+          {submit}
+        </button>
+      </form>
+    );
   }
 
   const shell =

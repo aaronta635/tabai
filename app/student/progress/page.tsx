@@ -47,21 +47,16 @@ export default async function StudentProgressPage() {
       </header>
 
       <section className="studio-panel">
-        <table className="studio-table">
-          <tbody>
+        <dl className="student-stat-grid">
             {stats.map((stat) => (
-              <tr key={stat.label}>
-                <td>{stat.label}</td>
-                <td className="text-right font-semibold tabular">{stat.value}</td>
-              </tr>
+              <div key={stat.label}><dt>{stat.label}</dt><dd className="tabular">{stat.value}</dd></div>
             ))}
-          </tbody>
-        </table>
+        </dl>
       </section>
 
       <section className="studio-panel">
         <h2>{t.student.heatmapLong}</h2>
-        <PracticeHeatmap days={heatmapCounts(activity, 28)} label={t.student.heatmapLong} />
+        <PracticeHeatmap days={heatmapCounts(activity, 28)} label={`${t.student.practice} · ${t.student.practiceVideos}`} locale={locale} />
       </section>
     </div>
   );

@@ -64,6 +64,39 @@ export function StudioTitle({
   );
 }
 
+export function LessonList({
+  title,
+  empty,
+  rows,
+}: {
+  title: string;
+  empty: string;
+  rows: { href: string; time: string; title: string; meta: string }[];
+}) {
+  return (
+    <section className="studio-panel">
+      <h2 className="font-display">{title}</h2>
+      {rows.length === 0 ? (
+        <p className="mb-4 text-sm text-ink-soft">{empty}</p>
+      ) : (
+        <ul className="lesson-list">
+          {rows.map((row) => (
+            <li key={row.href + row.time + row.title}>
+              <Link href={row.href}>
+                <span className="lesson-list-time tabular">{row.time}</span>
+                <span className="min-w-0">
+                  <span className="block font-medium">{row.title}</span>
+                  {row.meta ? <span className="mt-0.5 block text-xs text-ink-soft">{row.meta}</span> : null}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}
+
 export function LessonCard({
   href,
   time,
@@ -141,14 +174,18 @@ export function AssignmentList({
   empty,
   rows,
   track = false,
+  historyLabel,
+  tourId,
 }: {
   title: string;
   empty: string;
   rows: { href: string; title: string; meta: string; status: string; progress?: number; fraction?: string }[];
   track?: boolean;
+  historyLabel?: string;
+  tourId?: string;
 }) {
   return (
-    <section className="studio-panel">
+    <section className="studio-panel" data-tour={tourId}>
       <h2 className="font-display">{title}</h2>
       {rows.length === 0 ? (
         <p className="mb-4 text-sm text-ink-soft">{empty}</p>
@@ -164,10 +201,10 @@ export function AssignmentList({
                 <span className="flex shrink-0 items-center gap-3">
                   {track ? (
                     <span className="meter-row">
-                      <span>{row.fraction ?? "—"}</span>
-                      <span className="meter is-slot" aria-hidden>
+                      <span>{historyLabel ? `${historyLabel}: ` : ""}{row.fraction ?? "—"}</span>
+                      {!historyLabel ? <span className="meter is-slot" aria-hidden>
                         <span style={{ width: `${Math.round((row.progress ?? 0) * 100)}%` }} />
-                      </span>
+                      </span> : null}
                     </span>
                   ) : null}
                   <span className="status-chip">{row.status}</span>

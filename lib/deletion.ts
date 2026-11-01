@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
-import { removeMedia } from "@/lib/storage";
+import { removeMedia, supabaseAdmin } from "@/lib/storage";
 import { logEvent } from "@/lib/events";
+import { isOwnTakeMedia } from "@/lib/take-media";
 
 export function takeMediaIsShared(input: {
   mediaId: string;
@@ -22,9 +23,52 @@ export function takeMediaIsShared(input: {
   return ids.includes(input.mediaId);
 }
 
+/** Keep the file when another take uses it, or when it is not this student's own upload. */
+export function shouldKeepTakeFile(input: {
+  mediaId: string;
+  storagePath: string;
+  otherSubmissionCount: number;
+  teacherId: string;
+  pieceId: string;
+  studentId: string;
+  piece: {
+    sheetMediaId: string | null;
+    tutorialMediaId: string | null;
+    clipMediaId: string | null;
+    referenceMediaId: string | null;
+  };
+}) {
+  return (
+    takeMediaIsShared({
+      mediaId: input.mediaId,
+      otherSubmissionCount: input.otherSubmissionCount,
+      piece: input.piece,
+    }) ||
+    !isOwnTakeMedia(input.storagePath, {
+      teacherId: input.teacherId,
+      pieceId: input.pieceId,
+      studentId: input.studentId,
+    })
+  );
+}
+
+async function deleteStored(path: string) {
+  try {
+    await removeMedia(path);
+  } catch {
+    // The file may already be gone.
+  }
+}
+
+async function deleteAuthUser(authUserId: string | null | undefined) {
+  if (!authUserId) return;
+  const { error } = await supabaseAdmin().auth.admin.deleteUser(authUserId);
+  if (error && !/not found/i.test(error.message)) throw error;
+}
+
 /**
- * Admin deletion: strip identity and media, keep anonymised analysis metrics.
- * Drafts and replies are removed so the student's words/video cannot be reconstructed.
+ * Removes the student, their recordings, and their sign-in.
+ * No user row is kept.
  */
 export async function deleteStudentData(studentId: string) {
   const student = await prisma.student.findUnique({
@@ -35,40 +79,91 @@ export async function deleteStudentData(studentId: string) {
   });
   if (!student) throw new Error("student not found");
 
+  const dropMedia: string[] = [];
   for (const submission of student.submissions) {
-    try {
-      await removeMedia(submission.media.storagePath);
-    } catch {
-      // storage object may already be gone
+    const otherSubmissionCount = await prisma.submission.count({
+      where: { mediaId: submission.mediaId, id: { not: submission.id } },
+    });
+    const keep = shouldKeepTakeFile({
+      mediaId: submission.mediaId,
+      storagePath: submission.media.storagePath,
+      otherSubmissionCount,
+      teacherId: submission.piece.teacherId,
+      pieceId: submission.pieceId,
+      studentId: submission.studentId,
+      piece: submission.piece,
+    });
+    await deleteStored(`derived/${submission.id}/audio.wav`);
+    if (!keep) {
+      await deleteStored(submission.media.storagePath);
+      dropMedia.push(submission.mediaId);
     }
-    await prisma.draft.deleteMany({ where: { submissionId: submission.id } });
-    await prisma.reply.deleteMany({ where: { submissionId: submission.id } });
-    await prisma.job.deleteMany({ where: { submissionId: submission.id } });
   }
 
-  await prisma.student.update({
-    where: { id: studentId },
-    data: {
-      name: "anonymised",
-      contactHandle: "",
-      token: `deleted_${studentId}`,
-      reportToken: null,
-      publicOk: false,
-      approvedAt: null,
+  await prisma.job.deleteMany({
+    where: { submissionId: { in: student.submissions.map((submission) => submission.id) } },
+  });
+  await prisma.event.deleteMany({ where: { actorId: student.id } });
+  await deleteAuthUser(student.authUserId);
+  await prisma.student.delete({ where: { id: student.id } });
+  if (dropMedia.length > 0) {
+    await prisma.media.deleteMany({ where: { id: { in: dropMedia } } });
+  }
+}
+
+/**
+ * Removes the teacher and their studio. Student accounts are detached, not deleted.
+ * No teacher user row is kept.
+ */
+export async function deleteTeacherAccount(teacherId: string) {
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: teacherId },
+    include: {
+      pieces: {
+        include: {
+          submissions: { include: { media: true } },
+          referenceMedia: true,
+          sheetMedia: true,
+          tutorialMedia: true,
+          clipMedia: true,
+        },
+      },
     },
   });
+  if (!teacher) throw new Error("teacher not found");
 
-  await logEvent({
-    name: "student.deleted",
-    actorType: "admin",
-    teacherId: student.teacherId ?? undefined,
-    actorId: studentId,
-    props: { keptAnalyses: true },
+  const mediaIds = new Set<string>();
+  const submissionIds: string[] = [];
+  for (const piece of teacher.pieces) {
+    for (const media of [piece.referenceMedia, piece.sheetMedia, piece.tutorialMedia, piece.clipMedia]) {
+      if (!media) continue;
+      mediaIds.add(media.id);
+      await deleteStored(media.storagePath);
+    }
+    for (const submission of piece.submissions) {
+      submissionIds.push(submission.id);
+      mediaIds.add(submission.mediaId);
+      await deleteStored(submission.media.storagePath);
+      await deleteStored(`derived/${submission.id}/audio.wav`);
+    }
+  }
+
+  await prisma.job.deleteMany({ where: { submissionId: { in: submissionIds } } });
+  await prisma.student.updateMany({ where: { teacherId }, data: { teacherId: null } });
+  await prisma.event.deleteMany({
+    where: { OR: [{ teacherId }, { actorId: teacherId }] },
   });
+  await deleteAuthUser(teacher.authUserId);
+  await prisma.teacher.delete({ where: { id: teacherId } });
+  if (mediaIds.size > 0) {
+    await prisma.media.deleteMany({ where: { id: { in: [...mediaIds] } } });
+  }
 }
 
 type DroppableTake = {
   id: string;
+  pieceId: string;
+  studentId: string;
   mediaId: string;
   media: { storagePath: string };
   piece: {
@@ -80,14 +175,18 @@ type DroppableTake = {
   };
 };
 
-/** Drop the take, its jobs, and the video unless another piece still uses that file. */
+/** Drop the take, its jobs, and the video unless the file is shared or not this student's upload. */
 async function dropTake(submission: DroppableTake) {
   const otherSubmissionCount = await prisma.submission.count({
     where: { mediaId: submission.mediaId, id: { not: submission.id } },
   });
-  const shared = takeMediaIsShared({
+  const shared = shouldKeepTakeFile({
     mediaId: submission.mediaId,
+    storagePath: submission.media.storagePath,
     otherSubmissionCount,
+    teacherId: submission.piece.teacherId,
+    pieceId: submission.pieceId,
+    studentId: submission.studentId,
     piece: submission.piece,
   });
 

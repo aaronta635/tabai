@@ -1,9 +1,11 @@
+import { ParaIcon } from "@/components/ui/para-icon";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDueLabel } from "@/lib/practice";
+import { senderName } from "@/lib/demo-teacher";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { prisma } from "@/lib/prisma";
 import { formatWhen } from "@/lib/when";
@@ -25,6 +27,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
   const brief = room.piece.description || room.piece.note;
   const tips = room.piece.tips && room.piece.tips !== brief ? room.piece.tips : null;
   const meta = [dueLabel ? `${t.student.due} ${dueLabel}` : null, goal].filter(Boolean).join(" · ");
+  const teacherName = senderName(room.piece.teacher.name, room.piece.demo);
   const history = room.bound.student
     ? await prisma.submission.findMany({
         where: { studentId: room.bound.student.id, pieceId: room.piece.id },
@@ -40,7 +43,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
     : [];
 
   return (
-    <div className="space-y-5">
+    <div className="student-assignment space-y-5">
       <header className="studio-page-head">
         <Link href="/student/work" className="font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.student.navWork}
@@ -52,37 +55,55 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
       {room.bound.otherClass ? <p className="tile text-sm">{t.student.otherClass}</p> : null}
       {!room.canSubmit && room.bound.student ? <p className="tile text-sm">{t.student.joinHelp}</p> : null}
 
-      <PieceMedia
-        compact
-        tutorialUrl={room.tutorialUrl}
-        clipUrl={room.clipUrl}
-        sheetUrl={room.sheetUrl}
-        sheetKind={room.sheetKind}
-        sheetSync={room.sheetSync}
-        labels={{
-          reference: t.student.reference,
-          clip: t.student.clip,
-          sheet: t.student.sheet,
-          openSheet: t.student.openSheet,
-        }}
-      />
+      {room.canSubmit ? <section className="student-material student-context space-y-4">
+        <div>
+          <p className="field-label">{t.student.thisPiece}</p>
+          <h2>{room.piece.title}</h2>
+          <p className="mt-2 text-sm">{t.student.teacherLabel}: {teacherName}</p>
+          {meta ? <p className="page-meta">{meta}</p> : null}
+        </div>
+        {brief ? <div><h3 className="field-label">{t.student.brief}</h3><p className="whitespace-pre-wrap leading-relaxed">{brief}</p></div> : null}
+        {tips ? <p className="whitespace-pre-wrap text-sm leading-relaxed">{tips}</p> : null}
+      </section> : null}
 
-      {room.canSubmit ? (
-        <StudentUpload
-          code={code}
-          needsProfile={room.needsProfile}
-          clipUrl={room.clipUrl}
-          desk={{
-            pieceTitle: room.piece.title,
-            teacherName: room.piece.teacher.name,
-            brief,
-            tips,
-            meta: meta || null,
-          }}
-        />
-      ) : null}
+      <div className="student-assignment-desk">
+        {room.tutorialUrl || room.clipUrl || room.sheetUrl ? (
+          <div className="student-material student-reference">
+            <PieceMedia
+              compact
+              tutorialUrl={room.tutorialUrl}
+              clipUrl={room.clipUrl}
+              sheetUrl={room.sheetUrl}
+              sheetKind={room.sheetKind}
+              sheetSync={room.sheetSync}
+              labels={{
+                reference: t.student.reference,
+                clip: t.student.clip,
+                sheet: t.student.sheet,
+                openSheet: t.student.openSheet,
+              }}
+            />
+          </div>
+        ) : null}
 
-      <section>
+        {room.canSubmit ? (
+          <StudentUpload
+            variant="studio"
+            code={code}
+            needsProfile={room.needsProfile}
+            clipUrl={room.clipUrl}
+            desk={{
+              pieceTitle: room.piece.title,
+              teacherName,
+              brief,
+              tips,
+              meta: meta || null,
+            }}
+          />
+        ) : null}
+      </div>
+
+      <section className="student-material student-reading">
         <h2 className="font-display text-base">{t.student.sentBefore}</h2>
         {history.length === 0 ? (
           <p className="mt-2 text-sm text-ink-soft">{t.student.noSentBefore}</p>
@@ -107,7 +128,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
       </section>
 
       {room.canSubmit && !room.needsProfile ? (
-        <AddPanel label={t.student.practice}>
+        <AddPanel icon={<ParaIcon name="plus" />} label={t.student.practice}>
           <PracticeTimer code={code} />
         </AddPanel>
       ) : null}

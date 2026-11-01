@@ -14,6 +14,7 @@ type Props = {
   size?: "md" | "lg";
   dropTitle?: string;
   dropHint?: string;
+  dropIcon?: React.ReactNode;
 };
 
 function formatBytes(n: number) {
@@ -34,6 +35,7 @@ export function FilePicker({
   size = "md",
   dropTitle,
   dropHint,
+  dropIcon,
 }: Props) {
   const id = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -101,7 +103,7 @@ export function FilePicker({
       ) : drop ? (
         <label htmlFor={id} className={`submit-drop${over ? " is-over" : ""}`} {...dropEvents}>
           <span className="submit-drop-mark" aria-hidden>
-            ↑
+            {dropIcon ?? "↑"}
           </span>
           <span className="submit-drop-title">{dropTitle}</span>
           {dropHint ? <span className="submit-drop-hint">{dropHint}</span> : null}

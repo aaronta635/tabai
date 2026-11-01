@@ -1,8 +1,16 @@
 import type { Metadata } from "next";
+import { JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { I18nProvider, getLocale } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import "./globals.css";
+
+const mono = JetBrains_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-jetbrains",
+});
 
 const headline = localFont({
   src: "../public/fonts/PlusJakartaSans-wght.woff2",
@@ -33,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html
       lang={locale}
       data-theme={theme}
-      className={`${headline.variable} ${body.variable}`}
+      className={`${headline.variable} ${body.variable} ${mono.variable}`}
       suppressHydrationWarning
     >
       <body className="antialiased">

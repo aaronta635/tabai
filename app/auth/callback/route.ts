@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   }
   const bound = await bindAuthSession(role, carried);
   if (isRoleMismatch(bound)) {
-    await signOutAccount();
+    if (code) await signOutAccount();
     const auth = new URL(role ? signInPath(role, carried) : "/login", origin);
     auth.searchParams.set("error", "role_mismatch");
     return redirectHome(auth);

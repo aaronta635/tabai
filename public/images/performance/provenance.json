@@ -1,0 +1,29 @@
+{
+  "source": "design-resources/images",
+  "assets": [
+    {
+      "source": "Grainy Nirvana Guitar Stage Lights.png",
+      "file": "guitar-stage.webp",
+      "sourceSha256": "77b0e3e97b8a3171eac74edbde8e7dfb75b7157706b225ecaa941c0e3cf6ba71",
+      "width": 1436,
+      "height": 1095,
+      "bytes": 419400
+    },
+    {
+      "source": "Grainy Retro Guitar Duo on Stage.png",
+      "file": "stage-duo.webp",
+      "sourceSha256": "110146a99a8c6d38254a59742f852607e4e7b296bff1ca2e9cf8ca5af6232ed3",
+      "width": 900,
+      "height": 1358,
+      "bytes": 249414
+    },
+    {
+      "source": "Grainy Bassist in Sunlit Crowd.png",
+      "file": "bass-performance.webp",
+      "sourceSha256": "0b74d843f6ed1c98bfbf398768f6adaafb746ffe5ad0d368f5e4b77861eab4a0",
+      "width": 800,
+      "height": 1421,
+      "bytes": 193956
+    }
+  ]
+}

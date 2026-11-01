@@ -51,7 +51,7 @@ export default async function StudentWorkPage() {
           const heading = rows[0]?.class?.name ?? t.student.assignedPieces;
           const teacher = rows[0]?.piece?.teacher?.name;
           return (
-            <section key={key} className="studio-panel">
+            <section key={key} className="studio-panel student-work-list">
               <h2>{heading}</h2>
               {teacher ? (
                 <p className="page-meta">
@@ -59,11 +59,12 @@ export default async function StudentWorkPage() {
                 </p>
               ) : null}
               <table className="studio-table mt-2">
+                <caption className="sr-only">{heading}</caption>
                 <thead>
                   <tr>
-                    <th>{t.student.thisPiece}</th>
-                    <th>{t.student.due}</th>
-                    <th></th>
+                    <th scope="col">{t.student.thisPiece}</th>
+                    <th scope="col">{t.student.due}</th>
+                    <th scope="col"></th>
                   </tr>
                 </thead>
                 <tbody>

@@ -4,7 +4,9 @@ import { isClaimableStatus } from "@/lib/forms";
 
 export type CabinetTake = {
   id: string;
+  studentId?: string;
   studentName: string;
+  approved?: boolean;
   when: string;
   status: string;
   kind: string;
@@ -29,6 +31,7 @@ export type CabinetCopy = {
   needsReply: string;
   emptyQueue: string;
   loadMore?: string;
+  approve?: string;
 };
 
 function statusLabel(status: string, labels: Record<string, string>) {
@@ -38,11 +41,16 @@ function statusLabel(status: string, labels: Record<string, string>) {
 function TakeRow({
   take,
   statusLabels,
+  copy,
+  approveAction,
 }: {
   take: CabinetTake;
   statusLabels: Record<string, string>;
+  copy: CabinetCopy;
+  approveAction?: (formData: FormData) => Promise<void>;
 }) {
-  const waiting = isClaimableStatus(take.status);
+  const needsApproval = take.approved === false;
+  const waiting = needsApproval || isClaimableStatus(take.status);
   return (
     <li className={`take-sleeve${waiting ? " is-waiting" : ""}`}>
       <Link href={`/teacher/submissions/${take.id}`} className="take-sleeve-main">
@@ -52,8 +60,18 @@ function TakeRow({
       <span className="take-sleeve-when tabular text-sm text-ink-soft">{take.when}</span>
       <span className="take-sleeve-kind text-sm text-ink-soft">{take.kind}</span>
       <span className={`status-chip${waiting ? "" : " is-quiet"}`}>
-        {statusLabel(take.status, statusLabels)}
+        {needsApproval ? statusLabels.pending ?? statusLabel(take.status, statusLabels) : statusLabel(take.status, statusLabels)}
       </span>
+      {needsApproval && take.studentId && approveAction && copy.approve ? (
+        <form action={approveAction} className="take-sleeve-approve">
+          <input type="hidden" name="studentId" value={take.studentId} />
+          <button type="submit" className="btn px-3 py-1.5 text-xs">
+            {copy.approve}
+          </button>
+        </form>
+      ) : (
+        <span className="take-sleeve-approve" />
+      )}
     </li>
   );
 }
@@ -64,12 +82,14 @@ export function SubmissionCabinet({
   copy,
   statusLabels,
   moreHref,
+  approveAction,
 }: {
   inbox: CabinetTake[];
   folders: CabinetClass[];
   copy: CabinetCopy;
   statusLabels: Record<string, string>;
   moreHref?: string | null;
+  approveAction?: (formData: FormData) => Promise<void>;
 }) {
   return (
     <div className="space-y-4">
@@ -79,7 +99,13 @@ export function SubmissionCabinet({
         ) : (
           <ul className="space-y-2">
             {inbox.map((take) => (
-              <TakeRow key={take.id} take={take} statusLabels={statusLabels} />
+              <TakeRow
+                key={take.id}
+                take={take}
+                statusLabels={statusLabels}
+                copy={copy}
+                approveAction={approveAction}
+              />
             ))}
           </ul>
         )}
@@ -110,7 +136,13 @@ export function SubmissionCabinet({
                   </summary>
                   <ul className="mt-2 space-y-2">
                     {piece.takes.map((take) => (
-                      <TakeRow key={take.id} take={take} statusLabels={statusLabels} />
+                      <TakeRow
+                        key={take.id}
+                        take={take}
+                        statusLabels={statusLabels}
+                        copy={copy}
+                        approveAction={approveAction}
+                      />
                     ))}
                   </ul>
                 </details>

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { ensureDefaultCurriculum } from "@/lib/lms";
 import { formatWhen } from "@/lib/when";
+import { StudioTitle } from "@/components/home/feed";
 import { CurriculumBoard, type PieceStat } from "@/components/teacher/curriculum-board";
 import { ClassDropList } from "@/components/teacher/class-drop-list";
 
@@ -79,10 +80,10 @@ export default async function CurriculumPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-display">{t.teacher.curriculumTitle}</h1>
-        <p className="page-meta">{t.teacher.countPieces.replace("{n}", String(pieceCount))}</p>
-      </header>
+      <StudioTitle
+        title={t.teacher.curriculumTitle}
+        meta={t.teacher.countPieces.replace("{n}", String(pieceCount))}
+      />
 
       <CurriculumBoard parts={parts} classes={classes} students={students} stats={stats} />
 

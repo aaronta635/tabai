@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FilePicker } from "@/components/file-picker";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS } from "@/lib/constants";
 import { requiredText, submissionNote } from "@/lib/forms";
 
 type Kind = "take" | "practice" | "overdub";
+type SendPhase = "sign" | "upload" | "save";
 
 export type SubmitDesk = {
   pieceTitle: string;
@@ -21,6 +23,8 @@ type Props = {
   needsProfile: boolean;
   clipUrl?: string | null;
   desk?: SubmitDesk | null;
+  /** Student workspace presentation; public/guest upload keeps its existing layout. */
+  variant?: "studio";
 };
 
 type JsonBag = {
@@ -46,9 +50,20 @@ async function mediaDuration(file: File) {
   try {
     return await new Promise<number>((resolve, reject) => {
       const video = document.createElement("video");
+      const timer = window.setTimeout(() => {
+        video.onloadedmetadata = null;
+        video.onerror = null;
+        reject(new Error("duration"));
+      }, 4000);
       video.preload = "metadata";
-      video.onloadedmetadata = () => resolve(video.duration || 0);
-      video.onerror = () => reject(new Error("duration"));
+      video.onloadedmetadata = () => {
+        window.clearTimeout(timer);
+        resolve(video.duration || 0);
+      };
+      video.onerror = () => {
+        window.clearTimeout(timer);
+        reject(new Error("duration"));
+      };
       video.src = url;
     });
   } finally {
@@ -56,11 +71,14 @@ async function mediaDuration(file: File) {
   }
 }
 
-export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
+export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Props) {
   const t = useTranslations("student");
+  const onboarding = useTranslations("onboarding");
+  const fieldId = useId();
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
   const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
   const [busy, setBusy] = useState(false);
+  const [phase, setPhase] = useState<SendPhase>("sign");
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ name?: string; contactHandle?: string }>({});
@@ -116,19 +134,22 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
       setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
       return;
     }
-    try {
-      const duration = await mediaDuration(picked);
-      const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
-      if (duration > maxSeconds) {
-        setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
-        return;
-      }
-    } catch {
-      // duration is best-effort; size already checked
-    }
 
+    setPhase("sign");
     setBusy(true);
+    let leaving = false;
     try {
+      try {
+        const duration = await mediaDuration(picked);
+        const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
+        if (duration > maxSeconds) {
+          setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
+          return;
+        }
+      } catch {
+        // duration is best-effort; size already checked
+      }
+
       if (needsProfile) {
         const nameRaw = String(data.get("name") ?? "");
         const contactRaw = String(data.get("contactHandle") ?? "");
@@ -156,6 +177,10 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         });
         const registerJson = await readJson(register);
         if (!register.ok) {
+          if (registerJson.error === "phone_taken") {
+            setFieldError({ contactHandle: onboarding("phoneTaken") });
+            throw new Error(onboarding("phoneTaken"));
+          }
           setFieldError({
             name: registerJson.fields?.name ? t("nameRequired") : undefined,
             contactHandle: registerJson.fields?.contactHandle ? t("contactRequired") : undefined,
@@ -182,6 +207,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         throw new Error("sign failed");
       }
 
+      setPhase("upload");
       const put = await fetch(signed.signedUrl, {
         method: "PUT",
         headers: { "Content-Type": picked.type || "video/mp4" },
@@ -196,6 +222,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         return;
       }
 
+      setPhase("save");
       const complete = await fetch(`/api/l/${code}/complete`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -206,6 +233,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         throw new Error(finished.error === "note too long" ? t("noteTooLong") : (finished.error ?? "complete failed"));
       }
       if (typeof finished.page === "string") {
+        leaving = true;
         window.location.href = finished.page;
         return;
       }
@@ -213,7 +241,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
     } catch (err) {
       setError(err instanceof Error ? err.message : "error");
     } finally {
-      setBusy(false);
+      if (!leaving) setBusy(false);
     }
   }
 
@@ -228,17 +256,18 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
   ];
 
   const modeRow = (
-    <div className="flex flex-wrap gap-2">
+    <div className={variant ? "student-modes" : "flex flex-wrap gap-2"}>
       {modes
         .filter((mode) => mode.show)
         .map((mode) => (
           <button
             key={mode.id}
             type="button"
-            className={kind === mode.id ? "btn px-3 py-1.5 text-sm" : "btn btn-quiet px-3 py-1.5 text-sm"}
+            className={variant ? "student-mode" : kind === mode.id ? "btn px-3 py-1.5 text-sm" : "btn btn-quiet px-3 py-1.5 text-sm"}
+            aria-pressed={variant ? kind === mode.id : undefined}
             onClick={() => setKind(mode.id)}
           >
-            {mode.label}
+            {variant ? <ParaIcon name={kind === mode.id ? "check" : "video"} /> : null}{mode.label}
           </button>
         ))}
     </div>
@@ -262,19 +291,36 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
   );
   const recordButton = recordSupported ? (
     <button type="button" onClick={recording ? stopRecord : startRecord} className="btn btn-quiet">
-      {recording ? "Stop" : t("record")}
+      {variant ? <ParaIcon name={recording ? "stop" : "record"} /> : null}
+      {recording ? (variant ? t("stopPractice") : "Stop") : t("record")}
     </button>
   ) : null;
-  const sendLabel = busy ? "…" : kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
+  const actionLabel = kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
+  const phaseLabel = phase === "upload" ? t("sendingUpload") : phase === "save" ? t("sendingSave") : t("sending");
+  const sendLabel = busy ? phaseLabel : actionLabel;
+  const sendStatus = busy ? (
+    <div className="send-status" role="status">
+      <div className="send-strings" aria-hidden="true">
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <span />
+        <i className="send-pick" />
+      </div>
+      <p>{phaseLabel}</p>
+    </div>
+  ) : null;
 
   return (
-    <form onSubmit={onSubmit} className="space-y-5">
+    <form onSubmit={onSubmit} className={`${variant ? "student-upload space-y-5" : "space-y-5"}${busy ? " is-sending" : ""}`} aria-busy={busy}>
       {needsProfile ? (
         <div className="space-y-4 rounded-2xl bg-white/70 p-4">
           <label className="block text-sm">
             {t("name")}
-            <input required name="name" className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3" />
-            {fieldError.name ? <p className="mt-1 text-sm text-danger">{fieldError.name}</p> : null}
+            <input required name="name" aria-invalid={variant && fieldError.name ? true : undefined} aria-describedby={variant && fieldError.name ? `${fieldId}-name` : undefined} className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3" />
+            {fieldError.name ? <p id={variant ? `${fieldId}-name` : undefined} className="mt-1 text-sm text-danger">{fieldError.name}</p> : null}
           </label>
           <fieldset className="text-sm">
             <legend>{t("age")}</legend>
@@ -322,10 +368,13 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
             <input
               required
               name="contactHandle"
+              aria-label={variant ? t("contact") : undefined}
+              aria-invalid={variant && fieldError.contactHandle ? true : undefined}
+              aria-describedby={variant && fieldError.contactHandle ? `${fieldId}-contact` : undefined}
               placeholder={contactType === "zalo" ? t("zalo") : t("messenger")}
               className="mt-2 w-full rounded-xl border border-ink/15 bg-white px-3 py-3"
             />
-            {fieldError.contactHandle ? <p className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
+            {fieldError.contactHandle ? <p id={variant ? `${fieldId}-contact` : undefined} className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
           </fieldset>
           <p className="text-sm leading-relaxed text-ink-soft">{t("consent")}</p>
           <p className="text-sm text-ink-soft">{t("under18Line")}</p>
@@ -340,7 +389,32 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
         </div>
       ) : null}
 
-      {desk ? (
+      {variant && desk ? (
+        <section className="submit-card space-y-5">
+          <div className="submit-card-head">
+            <h2>{t("newSubmission")}</h2>
+            <p>{t("dropHint")}</p>
+          </div>
+          {modeRow}
+          {help}
+          <FilePicker
+            dropIcon={<ParaIcon name="upload" />}
+            accept="video/*"
+            capture="environment"
+            file={video}
+            onFile={setVideo}
+            buttonLabel={t("browseFiles")}
+            changeLabel={t("changeFile")}
+            dropTitle={t("dropHere")}
+            dropHint={t("dropHint")}
+          />
+          {recordButton}
+          {noteField}
+          {error ? <p className="text-sm text-danger" role="alert">{error}</p> : null}
+          {sendStatus}
+          <button type="submit" disabled={busy || !video} aria-label={actionLabel} aria-busy={busy} className="btn submit-send">{sendLabel}</button>
+        </section>
+      ) : desk ? (
         <section className="submit-card">
           <div className="submit-card-head">
             <h2>{t("newSubmission")}</h2>
@@ -381,7 +455,8 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
               {help}
               {noteField}
               {error ? <p className="text-sm text-danger">{error}</p> : null}
-              <button type="submit" disabled={busy || !video} className="btn submit-send disabled:opacity-60">
+              {sendStatus}
+              <button type="submit" disabled={busy || !video} aria-busy={busy} className="btn submit-send disabled:opacity-60">
                 {sendLabel}
               </button>
             </div>
@@ -406,7 +481,8 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk }: Props) {
           {recordButton}
           {noteField}
           {error ? <p className="text-sm text-danger">{error}</p> : null}
-          <button type="submit" disabled={busy} className="btn disabled:opacity-60">
+          {sendStatus}
+          <button type="submit" disabled={busy} aria-busy={busy} className="btn disabled:opacity-60">
             {sendLabel}
           </button>
         </>

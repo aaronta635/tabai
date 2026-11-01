@@ -37,6 +37,13 @@ export function submissionCursorWhere(cursor: SubmissionCursor | null) {
   };
 }
 
+/** Name search is extra; unapproved students stay in the default list. */
+export function submissionsStudentWhere(q?: string) {
+  const name = q?.trim();
+  if (!name) return {};
+  return { student: { name: { contains: name, mode: "insensitive" as const } } };
+}
+
 export function submissionsHref(params: {
   classId?: string;
   status?: string;

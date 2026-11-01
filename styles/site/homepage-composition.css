@@ -1,0 +1,175 @@
+/* Reading measures and scene composition measures are deliberately separate. */
+.para-site .studio-home {
+  --composition-gutter: clamp(24px, 4vw, 160px);
+  --composition-width: 2880px;
+}
+.para-site .studio-home .belief-abstract {
+  padding-block: clamp(64px, 6vw, 128px);
+}
+.para-site .studio-home .belief-abstract .belief-statement {
+  position: relative;
+  z-index: 2;
+}
+.para-site .studio-home .belief-abstract .belief-copy {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: minmax(0, 1fr) clamp(80px, 6vw, 176px);
+  gap: 24px;
+}
+.para-site .studio-home .belief-abstract .belief-copy .scene-heading {
+  max-width: 32ch;
+  font-size: clamp(48px, min(5.2vw, 10svh), 152px);
+  line-height: 1.24;
+  padding: 0;
+}
+html[lang="vi"] .para-site .studio-home .belief-abstract .belief-copy .scene-heading {
+  font-size: clamp(44px, min(4.8vw, 9svh), 140px);
+  line-height: 1.4;
+}
+.para-site .studio-home .belief-abstract .belief-emblem-surface {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+}
+.para-site .studio-home .belief-abstract .belief-emblem {
+  width: 90%;
+  height: 90%;
+}
+@media (min-width: 901px) {
+  .para-site .studio-home
+    :is(
+      .simple-hero .hero-grid,
+      .perspective-scene-grid,
+      .belief-statement,
+      .loop-sticky.wrap
+    ) {
+    width: min(
+      calc(100% - var(--composition-gutter) * 2),
+      var(--composition-width)
+    );
+    max-width: var(--composition-width);
+  }
+  .para-site .studio-home .simple-hero .hero-grid {
+    padding-block: clamp(32px, 4svh, 72px);
+  }
+  .para-site .studio-home .simple-hero .hero-copy h1 {
+    font-size: clamp(56px, min(7.5vw, 12svh), 208px);
+    line-height: 1.17;
+  }
+  html[lang="vi"] .para-site .studio-home .simple-hero .hero-copy h1 {
+    font-size: clamp(52px, min(6.8vw, 11svh), 192px);
+    line-height: 1.3;
+  }
+  .para-site .studio-home .hero-lead {
+    font-size: clamp(18px, 1.1vw, 26px);
+    max-width: 55ch;
+  }
+  .para-site .studio-home .simple-hero .eyebrow {
+    font-size: clamp(12px, 0.6vw, 18px);
+  }
+  .para-site .studio-home .loop-heading-slot {
+    min-height: clamp(140px, 12svh, 220px);
+  }
+  .para-site .studio-home .loop-current-heading {
+    font-size: clamp(44px, min(4.4vw, 7svh), 108px);
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(
+      54vw,
+      calc((100svh - var(--header-height) - 260px) * 1.25926),
+      1120px
+    );
+  }
+  .para-site .studio-home .perspective-intro .scene-heading {
+    font-size: clamp(48px, min(4vw, 7svh), 104px);
+  }
+  .para-site .studio-home .perspective-workspace {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 0.9fr);
+  }
+  .para-site .studio-home .perspective-signal {
+    max-width: min(1500px, 115svh);
+  }
+  .para-site .studio-home .perspective-reading {
+    max-width: 850px;
+    width: calc(100% - 48px);
+    justify-self: end;
+  }
+  .para-site .studio-home .perspective-pane h3 {
+    font-size: clamp(26px, 1.5vw, 46px);
+    max-width: 30ch;
+  }
+  .para-site .studio-home .belief-phrase {
+    font-size: clamp(19px, 1.1vw, 28px);
+    min-height: 144px;
+  }
+}
+@media (min-width: 901px) and (max-height: 740px) {
+  .para-site .studio-home .loop-sticky {
+    flex-direction: row;
+    gap: 24px;
+  }
+  .para-site .studio-home .loop-heading-slot {
+    width: 45%;
+  }
+  .para-site .studio-home .loop-composition {
+    width: min(
+      48%,
+      calc((100svh - var(--header-height) - 100px) * 1.25926),
+      720px
+    );
+  }
+}
+@media (min-width: 2000px) {
+  .para-site .integrated-header .brand-logo img {
+    width: 180px;
+  }
+  .para-site .integrated-header .nav-links > a:not(.product-cta),
+  .para-site .integrated-header .language-switch {
+    font-size: 16px;
+  }
+  .para-site .integrated-header a.product-cta[data-size="compact"] {
+    font-size: 15px;
+    min-height: 52px;
+  }
+  .para-site .studio-home .loop-symbols {
+    width: 144px;
+    height: 144px;
+  }
+  .para-site .studio-home .loop-symbols .loop-symbol {
+    width: 100%;
+    height: 100%;
+  }
+  .para-site .studio-home .loop-task-capsule {
+    font-size: 16px;
+    padding: 16px 22px;
+  }
+  .para-site .studio-home
+    :is(
+      .loop-record-label,
+      .loop-response-label,
+      .loop-timestamp,
+      .loop-return-label
+    ) {
+    font-size: 14px;
+  }
+  .para-site .studio-home .loop-next-instruction {
+    font-size: 24px;
+  }
+}
+@media (max-width: 700px) {
+  .para-site .studio-home .belief-abstract .belief-copy {
+    grid-template-columns: minmax(0, 1fr) 64px;
+    gap: 16px;
+  }
+  .para-site .studio-home .belief-abstract .belief-copy .scene-heading {
+    font-size: clamp(34px, 9vw, 50px);
+  }
+  html[lang="vi"] .para-site .studio-home .belief-abstract .belief-copy .scene-heading {
+    font-size: clamp(32px, 8.4vw, 46px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .loop-composition {
+    width: min(85%, 1000px);
+  }
+}

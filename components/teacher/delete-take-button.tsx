@@ -12,6 +12,7 @@ export function DeleteTakeButton({
   className,
   onDeleted,
   remove = deleteTeacherTake,
+  icon,
 }: {
   submissionId: string;
   label: string;
@@ -20,6 +21,7 @@ export function DeleteTakeButton({
   className?: string;
   onDeleted?: () => void;
   remove?: (submissionId: string) => Promise<void>;
+  icon?: React.ReactNode;
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
@@ -41,7 +43,7 @@ export function DeleteTakeButton({
         });
       }}
     >
-      {label}
+      {icon}{label}
     </button>
   );
 }

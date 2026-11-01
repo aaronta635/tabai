@@ -1,5 +1,6 @@
 import type { JobStatus, JobType, Prisma } from "@prisma/client";
 import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
+import { analyzeAllowed } from "@/lib/demo-piece";
 import { CLAIMABLE_SUBMISSION_STATUSES } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
 import { needsPitchOverlay } from "@/lib/pitch-overlay";
@@ -34,10 +35,14 @@ export async function enqueueTrainPiece(pieceId: string) {
 export async function enqueueAnalyzeIfApproved(submissionId: string) {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },
-    include: { student: true },
+    include: { student: true, piece: { select: { demo: true } } },
   });
   if (!submission) return null;
-  if (!submission.student.approvedAt) return null;
+  if (!analyzeAllowed(submission.piece.demo, submission.student.approvedAt)) return null;
+  const open = await prisma.job.findFirst({
+    where: { type: "analyze", submissionId, status: { in: ["pending", "running"] } },
+  });
+  if (open) return open;
   return enqueueJob("analyze", { submissionId }, submissionId);
 }
 

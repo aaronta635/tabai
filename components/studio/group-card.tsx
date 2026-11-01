@@ -9,6 +9,7 @@ export function GroupCard({
   meterValue,
   meterWidth,
   actions,
+  showMeter = true,
 }: {
   href: string;
   title: string;
@@ -18,6 +19,7 @@ export function GroupCard({
   meterValue: string;
   meterWidth: number;
   actions: { href: string; label: string }[];
+  showMeter?: boolean;
 }) {
   return (
     <article className="group-card">
@@ -35,9 +37,9 @@ export function GroupCard({
           <span>{meterLabel}</span>
           <span className="tabular">{meterValue}</span>
         </p>
-        <span className="meter" aria-hidden>
+        {showMeter ? <span className="meter" aria-hidden>
           <span style={{ width: `${meterWidth}%` }} />
-        </span>
+        </span> : null}
       </div>
       {actions.length > 0 ? (
         <div className="group-actions">

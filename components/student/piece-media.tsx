@@ -1,4 +1,5 @@
 import { LoopSpeedPlayer } from "@/components/student/loop-speed-player";
+import { MusicXmlSheet } from "@/components/student/musicxml-sheet";
 import { SyncedTutorial } from "@/components/student/synced-tutorial";
 import type { SheetSyncJson } from "@/lib/score-model";
 
@@ -14,7 +15,7 @@ export function PieceMedia({
   tutorialUrl: string | null;
   clipUrl: string | null;
   sheetUrl: string | null;
-  sheetKind: "pdf" | "image" | "file";
+  sheetKind: "pdf" | "image" | "musicxml" | "file";
   sheetSync?: SheetSyncJson | null;
   labels: { reference: string; clip: string; sheet: string; openSheet: string };
   compact?: boolean;
@@ -22,7 +23,7 @@ export function PieceMedia({
   const synced =
     sheetSync?.confidence === "ok" &&
     sheetSync.points.length > 0 &&
-    sheetKind === "file" &&
+    sheetKind === "musicxml" &&
     sheetUrl &&
     tutorialUrl
       ? { tutorialUrl, sheetUrl, points: sheetSync.points }
@@ -51,7 +52,13 @@ export function PieceMedia({
           <LoopSpeedPlayer src={clipUrl} label={labels.clip} compact={compact} />
         </section>
       ) : null}
-      {!synced && sheetUrl ? (
+      {!synced && sheetUrl && sheetKind === "musicxml" ? (
+        <section className={compact ? undefined : "tile"}>
+          {compact ? null : <p className="mb-2 text-sm">{labels.sheet}</p>}
+          <MusicXmlSheet sheetUrl={sheetUrl} openSheet={labels.openSheet} />
+        </section>
+      ) : null}
+      {!synced && sheetUrl && sheetKind !== "musicxml" ? (
         compact ? (
           <a href={sheetUrl} target="_blank" rel="noreferrer" className="btn btn-quiet self-center">
             {labels.openSheet}

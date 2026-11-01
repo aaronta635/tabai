@@ -57,24 +57,24 @@ export function AssignDialog({
         router.refresh();
       }}
     >
-      <select name="classId" className="field">
+      <label className="block"><span className="field-label">{t("assignClass")}</span><select name="classId" className="field">
         <option value="">{t("assignClass")}</option>
         {classes.map((row) => (
           <option key={row.id} value={row.id}>
             {row.name}
           </option>
         ))}
-      </select>
-      <select name="studentId" className="field">
+      </select></label>
+      <label className="block"><span className="field-label">{t("assignStudent")}</span><select name="studentId" className="field">
         <option value="">{t("assignStudent")}</option>
         {students.map((row) => (
           <option key={row.id} value={row.id}>
             {row.name}
           </option>
         ))}
-      </select>
-      <input type="date" name="dueAt" className="field" />
-      <input name="goal" placeholder={t("goal")} className="field" />
+      </select></label>
+      <label className="block"><span className="field-label">{t("due")}</span><input type="date" name="dueAt" className="field" /></label>
+      <label className="block"><span className="field-label">{t("goal")}</span><input name="goal" placeholder={t("goal")} className="field" /></label>
       {error ? <p className="text-danger">{error}</p> : null}
       <div className="flex gap-2">
         <button type="submit" disabled={busy} className="btn px-3 py-2 text-xs">

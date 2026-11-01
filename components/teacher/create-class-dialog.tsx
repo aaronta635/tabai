@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
+import { useWorkspaceDialogFocus } from "@/components/ui/use-workspace-dialog-focus";
+import { ParaIcon } from "@/components/ui/para-icon";
 import { useFormStatus } from "react-dom";
 import { useTranslations } from "next-intl";
 import { createClass } from "@/app/teacher/lms-actions";
@@ -21,25 +23,18 @@ export function CreateClassDialog() {
   const titleId = useId();
   const nameRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    nameRef.current?.focus();
-    function onKey(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
-    }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open]);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  useWorkspaceDialogFocus(dialogRef, open, () => setOpen(false));
 
   return (
     <>
       <button type="button" className="add-trigger" onClick={() => setOpen(true)}>
-        <i aria-hidden>+</i>
+        <i aria-hidden><ParaIcon name="plus" /></i>
         <span>{t("createClass")}</span>
       </button>
       {open ? (
-        <div className="schedule-overlay" role="dialog" aria-modal="true" aria-labelledby={titleId}>
-          <button type="button" className="schedule-overlay-backdrop" aria-label={t("closePanel")} onClick={() => setOpen(false)} />
+        <div ref={dialogRef} className="schedule-overlay" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+          <button type="button" tabIndex={-1} className="schedule-overlay-backdrop" aria-label={t("closePanel")} onClick={() => setOpen(false)} />
           <div className="schedule-sheet">
             <header className="schedule-sheet-head">
               <div>

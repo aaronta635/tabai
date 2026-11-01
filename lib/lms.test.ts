@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { DEFAULT_PARTS, classJoinPath, displayClassCode, inviteEmailsFrom, mailtoInvite, newClassCode, shelfName, shouldBackfillOrphanPieces } from "@/lib/lms";
+import { DEFAULT_PARTS, classJoinApprovedAt, classJoinPath, displayClassCode, inviteEmailsFrom, mailtoInvite, newClassCode, shelfName, shouldBackfillOrphanPieces } from "@/lib/lms";
 
 describe("lms helpers", () => {
   it("issues a five-letter class code without i, l, or o", () => {
@@ -45,6 +45,13 @@ describe("lms helpers", () => {
   it("skips orphan piece backfill when every piece already has a part", () => {
     expect(shouldBackfillOrphanPieces(0)).toBe(false);
     expect(shouldBackfillOrphanPieces(2)).toBe(true);
+  });
+
+  it("approves a class-code join now, and keeps an existing stamp", () => {
+    const now = new Date("2026-10-22T03:48:00.000Z");
+    expect(classJoinApprovedAt(null, now)).toEqual(now);
+    const existing = new Date("2026-09-21T00:00:00.000Z");
+    expect(classJoinApprovedAt(existing, now)).toBe(existing);
   });
 
   it("loads a student's assignments in one query", async () => {

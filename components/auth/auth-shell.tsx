@@ -28,7 +28,6 @@ export function AuthShell({
           <BrandMark light priority />
         </Link>
         <div className="auth-brand-copy">
-          <div className="auth-staff" aria-hidden />
           <h2>{manifesto}</h2>
           <p>{kicker}</p>
         </div>

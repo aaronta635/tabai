@@ -52,7 +52,7 @@ export function LoginForm({
     setInfo(null);
     setBusy(true);
     try {
-      await startSocial(provider, role, next);
+      await startSocial(provider, role, next, "login");
     } catch {
       setError(labels.providerFailed);
       setBusy(false);
@@ -110,7 +110,7 @@ export function LoginForm({
 
   return (
     <div className="auth-form">
-      <h1>{labels.welcome}</h1>
+      <h1>{labels.signInAs.replace("{role}", roleName)}</h1>
       <p className="auth-lead">{labels.welcomeSub}</p>
       <RolePicker
         kind="login"

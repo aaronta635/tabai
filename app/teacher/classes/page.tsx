@@ -3,6 +3,7 @@ import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { StudioTitle } from "@/components/home/feed";
 import { CreateClassDialog } from "@/components/teacher/create-class-dialog";
 import { GroupCard, meterWidth } from "@/components/studio/group-card";
 
@@ -27,15 +28,11 @@ export default async function ClassesPage() {
 
   return (
     <div className="space-y-6">
-      <header className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="font-display">{t.teacher.classesTitle}</h1>
-          <p className="page-meta">
-            {t.teacher.activeCount.replace("{n}", String(classes.length))}
-          </p>
-        </div>
-        <CreateClassDialog />
-      </header>
+      <StudioTitle
+        title={t.teacher.classesTitle}
+        meta={t.teacher.activeCount.replace("{n}", String(classes.length))}
+        action={<CreateClassDialog />}
+      />
 
       {classes.length === 0 ? (
         <p className="text-ink-soft">{t.teacher.classesEmpty}</p>

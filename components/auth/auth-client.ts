@@ -4,6 +4,17 @@ import type { AccountRole } from "@/lib/onboarding";
 import { authPath } from "@/lib/return-path";
 
 export type Social = "google" | "facebook" | "zalo";
+export type SocialFrom = "login" | "signup";
+
+export function socialStartPath(
+  provider: "facebook" | "zalo",
+  role: AccountRole,
+  next: string,
+  from: SocialFrom,
+) {
+  const params = new URLSearchParams({ role, next, from });
+  return `/api/auth/social/${provider}/start?${params.toString()}`;
+}
 
 function stashOAuthBind(role: AccountRole, next: string) {
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
@@ -51,10 +62,19 @@ export function enterStudio(dest: string) {
   window.location.assign(dest);
 }
 
-export async function startSocial(provider: Social, role: AccountRole, next: string) {
+export async function startSocial(
+  provider: Social,
+  role: AccountRole,
+  next: string,
+  from: SocialFrom = "login",
+) {
+  if (provider === "facebook" || provider === "zalo") {
+    window.location.assign(socialStartPath(provider, role, next, from));
+    return;
+  }
   const supabase = createBrowserSupabase();
   const { data, error: oauthError } = await supabase.auth.signInWithOAuth({
-    provider: provider === "zalo" ? ("custom:zalo" as "google") : provider,
+    provider,
     options: {
       redirectTo: oauthReturn(role, next),
       skipBrowserRedirect: true,

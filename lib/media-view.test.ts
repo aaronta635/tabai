@@ -7,7 +7,8 @@ describe("sheetView", () => {
     expect(sheetView("teachers/a/sheet.png")).toBe("image");
     expect(sheetView("teachers/a/sheet.PDF")).toBe("pdf");
     expect(sheetView("teachers/a/sheet")).toBe("pdf");
-    expect(sheetView("teachers/a/sheet.musicxml")).toBe("file");
+    expect(sheetView("teachers/a/sheet.musicxml")).toBe("musicxml");
+    expect(sheetView("teachers/a/sheet.xml")).toBe("musicxml");
   });
 });
 

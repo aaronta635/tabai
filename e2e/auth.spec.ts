@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("login is its own page", async ({ page }) => {
   await page.goto("/login/student");
-  await expect(page.getByRole("heading", { name: /Chào lại|Welcome back/ })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Đăng nhập vai Học viên|Sign in as Student/ })).toBeVisible();
   await expect(page.getByLabel(/Email/i)).toBeVisible();
   await expect(page.getByRole("link", { name: /Tạo tài khoản|Create an account/ })).toHaveAttribute(
     "href",

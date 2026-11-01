@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readTeacherSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
+import { StudioTitle } from "@/components/home/feed";
 import { prisma } from "@/lib/prisma";
 
 export default async function TeacherSearchPage({
@@ -25,7 +26,7 @@ export default async function TeacherSearchPage({
           take: 20,
         }),
         prisma.student.findMany({
-          where: { teacherId: teacher.id, approvedAt: { not: null }, name: { contains: q, mode: "insensitive" } },
+          where: { teacherId: teacher.id, NOT: { name: "anonymised" }, name: { contains: q, mode: "insensitive" } },
           select: { id: true, name: true },
           orderBy: { name: "asc" },
           take: 20,
@@ -47,7 +48,7 @@ export default async function TeacherSearchPage({
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display">{t.studio.search}</h1>
+      <StudioTitle title={t.studio.search} />
       {!q ? <p className="text-ink-soft">{t.studio.searchPrompt}</p> : null}
       {q && groups.length === 0 ? <p className="text-ink-soft">{t.studio.searchEmpty}</p> : null}
       {groups.map((group) => (

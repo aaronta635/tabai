@@ -1,0 +1,71 @@
+/* PARA Music — Warm Signal v1.0.0. Use alongside examples/para-components.css */
+:root {
+  --para-raspberry: #A92E5D;
+  --para-cocoa: #35242D;
+  --para-paper: #FFF7F2;
+  --para-apricot: #F0A06B;
+  --para-butter: #F5CF59;
+  --para-white: #FFFFFF;
+  --para-black: #000000;
+  --para-raspberry-hover: #8F234D;
+  --para-raspberry-pressed: #741B3E;
+  --para-rose: #F6E5EC;
+  --para-muted: #73646D;
+  --para-border: #D9C8CC;
+  --para-control-border: #9B7D8A;
+  --para-disabled: #EBDDE2;
+  --color-background: var(--para-paper);
+  --color-surface: var(--para-white);
+  --color-text: var(--para-cocoa);
+  --color-text-muted: var(--para-muted);
+  --color-action: var(--para-raspberry);
+  --color-action-hover: var(--para-raspberry-hover);
+  --color-action-pressed: var(--para-raspberry-pressed);
+  --color-on-action: var(--para-white);
+  --color-border: var(--para-border);
+  --color-focus: var(--para-cocoa);
+  --color-inverse-background: var(--para-cocoa);
+  --color-inverse-text: var(--para-paper);
+  --color-error: var(--para-raspberry);
+  --color-success: var(--para-cocoa);
+  --color-disabled-background: var(--para-disabled);
+  --color-disabled-text: var(--para-muted);
+  --color-control-border: var(--para-control-border);
+  --space-0: 0px;
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+  --space-40: 40px;
+  --space-48: 48px;
+  --space-64: 64px;
+  --space-80: 80px;
+  --space-96: 96px;
+  --space-120: 120px;
+  --radius-none: 0px;
+  --radius-control: 4px;
+  --radius-panel: 8px;
+  --radius-round: 999px;
+  --font-display: "Cormorant Garamond", Georgia, serif;
+  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  --container-max: 1248px;
+  --gutter: 24px;
+  --ease-phrase: cubic-bezier(.22,.61,.36,1);
+  --duration-feedback: 140ms;
+  --duration-tab: 220ms;
+  --duration-entrance: 480ms;
+  --shadow-menu: 0 12px 32px #35242D14;
+}
+@media (min-width: 1024px) { :root { --gutter: 48px; } }
+.type-display {font-family:var(--font-display);font-weight:500;font-size:clamp(48px, 6.11vw, 88px);line-height:1.06;letter-spacing:-0.02em;}
+.type-h1 {font-family:var(--font-display);font-weight:500;font-size:clamp(44px, 5.0vw, 72px);line-height:1.1;letter-spacing:-0.015em;}
+.type-h2 {font-family:var(--font-display);font-weight:500;font-size:clamp(38px, 3.89vw, 56px);line-height:1.15;letter-spacing:-0.01em;}
+.type-h3 {font-family:var(--font-display);font-weight:500;font-size:clamp(28px, 2.22vw, 32px);line-height:1.2;letter-spacing:0;}
+.type-lead {font-family:var(--font-body);font-weight:400;font-size:clamp(18px, 1.39vw, 20px);line-height:1.65;letter-spacing:0;}
+.type-body {font-family:var(--font-body);font-weight:400;font-size:clamp(16px, 1.11vw, 16px);line-height:1.7;letter-spacing:0;}
+.type-label {font-family:var(--font-body);font-weight:500;font-size:clamp(14px, 0.97vw, 14px);line-height:1.5;letter-spacing:0;}
+.type-caption {font-family:var(--font-body);font-weight:400;font-size:clamp(13px, 0.9vw, 13px);line-height:1.6;letter-spacing:0;}
+.type-eyebrow {font-family:var(--font-body);font-weight:600;font-size:clamp(12px, 0.83vw, 12px);line-height:1.5;letter-spacing:0.10em;}

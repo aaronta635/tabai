@@ -52,13 +52,14 @@ export default async function StudentTakesPage() {
       {takes.length === 0 ? (
         <p className="text-ink-soft">{t.student.noTakes}</p>
       ) : (
-        <section className="studio-panel">
+        <section className="studio-panel student-history">
           <table className="studio-table is-dense">
+            <caption className="sr-only">{t.student.takesTitle}</caption>
             <thead>
               <tr>
-                <th>{t.student.thisPiece}</th>
-                <th>{t.student.colWhen}</th>
-                <th>{t.student.colStatus}</th>
+                <th scope="col">{t.student.thisPiece}</th>
+                <th scope="col">{t.student.colWhen}</th>
+                <th scope="col">{t.student.colStatus}</th>
               </tr>
             </thead>
             <tbody>

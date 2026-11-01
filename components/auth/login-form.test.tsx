@@ -106,8 +106,10 @@ describe("LoginForm", () => {
     expect(screen.queryByRole("heading", { name: "Create your practice room" })).not.toBeInTheDocument();
   });
 
-  it("starts Google, Facebook, and Zalo from the same bars", async () => {
+  it("starts Google through Supabase and Facebook and Zalo through PARA", async () => {
     signInWithOAuth.mockResolvedValue({ error: null });
+    const assign = vi.fn();
+    vi.stubGlobal("location", Object.assign(window.location, { assign }));
     const user = userEvent.setup();
     const cases = ["Google", "Facebook", "Zalo"] as const;
 
@@ -117,8 +119,8 @@ describe("LoginForm", () => {
       view.unmount();
     }
 
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      1,
+    expect(signInWithOAuth).toHaveBeenCalledTimes(1);
+    expect(signInWithOAuth).toHaveBeenCalledWith(
       expect.objectContaining({
         provider: "google",
         options: expect.objectContaining({
@@ -128,13 +130,13 @@ describe("LoginForm", () => {
         }),
       }),
     );
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      2,
-      expect.objectContaining({ provider: "facebook" }),
+    expect(assign).toHaveBeenNthCalledWith(
+      1,
+      "/api/auth/social/facebook/start?role=student&next=%2Fstudent&from=login",
     );
-    expect(signInWithOAuth).toHaveBeenNthCalledWith(
-      3,
-      expect.objectContaining({ provider: "custom:zalo" }),
+    expect(assign).toHaveBeenNthCalledWith(
+      2,
+      "/api/auth/social/zalo/start?role=student&next=%2Fstudent&from=login",
     );
   });
 });
@@ -216,5 +218,51 @@ describe("SignupForm", () => {
 
     expect(await screen.findByText("Those passwords do not match.")).toBeInTheDocument();
     expect(signUp).not.toHaveBeenCalled();
+  });
+
+  it("does not bind a leftover session when the new account has no session yet", async () => {
+    signOut.mockResolvedValue({ error: null });
+    signUp.mockResolvedValue({ data: { session: null }, error: null });
+    const fetchMock = vi.fn();
+    vi.stubGlobal("fetch", fetchMock);
+    const user = userEvent.setup();
+    render(
+      <SignupForm
+        initialRole="student"
+        next="/student"
+        labels={{
+          createTitle: "Create your practice room",
+          createSub: "Teachers and students start in different rooms.",
+          iAm: "I am a",
+          teacher: "Teacher",
+          student: "Student",
+          email: "Email",
+          password: "Password",
+          confirmPassword: "Confirm password",
+          passwordMismatch: "Those passwords do not match.",
+          signUpAs: "Create a {role} account",
+          checkEmail: "Check email",
+          wrongRoleTutor: "teacher",
+          wrongRoleStudent: "student",
+          google: "Google",
+          facebook: "Facebook",
+          zalo: "Zalo",
+          orWithEmail: "or with email",
+          haveAccount: "Already have an account?",
+          signInLink: "Sign in",
+          providerFailed: "That sign-in did not start.",
+        }}
+      />,
+    );
+
+    await user.type(screen.getByLabelText("Email"), "new@studio.test");
+    await user.type(screen.getByLabelText("Password"), "secret1");
+    await user.type(screen.getByLabelText("Confirm password"), "secret1");
+    await user.click(screen.getByRole("button", { name: "Create a Student account" }));
+
+    expect(await screen.findByText("Check email")).toBeInTheDocument();
+    expect(signOut).toHaveBeenCalledWith({ scope: "local" });
+    expect(signUp).toHaveBeenCalled();
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -2,6 +2,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   currentTeacherSession,
+  homeTeacherId,
   signStudentSession,
   signTeacherSession,
   TEACHER_SESSION_VERSION,
@@ -57,5 +58,12 @@ describe("student session claims", () => {
     const token = await signStudentSession("student-b", "Binh", true);
     const { payload } = await jwtVerify(token, secret);
     expect(payload.authUserId).toBeUndefined();
+  });
+});
+
+describe("homeTeacherId", () => {
+  it("keeps the student's home studio when they open another teacher's piece", () => {
+    expect(homeTeacherId("teacher-a", "teacher-b")).toBe("teacher-a");
+    expect(homeTeacherId(null, "teacher-b")).toBe("teacher-b");
   });
 });

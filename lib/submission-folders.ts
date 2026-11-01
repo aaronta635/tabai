@@ -5,7 +5,9 @@ export type FolderTake = {
   submittedAt: Date;
   status: string;
   kind: string;
+  studentId: string;
   studentName: string;
+  approved: boolean;
   pieceId: string;
   pieceTitle: string;
   classId: string | null;

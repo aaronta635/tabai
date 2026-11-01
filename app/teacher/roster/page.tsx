@@ -6,7 +6,9 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
 import { ensureReportToken } from "@/lib/weekly-report";
+import { StudioTitle } from "@/components/home/feed";
 import { CopyLink } from "@/components/teacher/copy-link";
+import { approveStudentForm } from "@/app/teacher/actions";
 
 export default async function TeacherRosterPage() {
   const teacher = await readTeacherSession();
@@ -14,11 +16,12 @@ export default async function TeacherRosterPage() {
   const locale = await getLocale();
   const t = await getMessages(locale);
   const rows = await prisma.student.findMany({
-    where: { teacherId: teacher.id, approvedAt: { not: null } },
+    where: { teacherId: teacher.id, NOT: { name: "anonymised" } },
     orderBy: { name: "asc" },
     select: {
       id: true,
       name: true,
+      approvedAt: true,
       memberships: {
         where: { class: { teacherId: teacher.id, archived: false } },
         select: { class: { select: { id: true, name: true } } },
@@ -35,10 +38,10 @@ export default async function TeacherRosterPage() {
 
   return (
     <div className="space-y-6">
-      <header>
-        <h1 className="font-display">{t.teacher.rosterTitle}</h1>
-        <p className="page-meta">{t.teacher.rosterCount.replace("{n}", String(students.length))}</p>
-      </header>
+      <StudioTitle
+        title={t.teacher.rosterTitle}
+        meta={t.teacher.rosterCount.replace("{n}", String(students.length))}
+      />
       {students.length === 0 ? (
         <p className="text-ink-soft">{t.teacher.rosterEmpty}</p>
       ) : (
@@ -49,6 +52,7 @@ export default async function TeacherRosterPage() {
                 <th>{t.teacher.navProfile}</th>
                 <th>{t.teacher.navClasses}</th>
                 <th>{t.teacher.parentReport}</th>
+                <th />
               </tr>
             </thead>
             <tbody>
@@ -69,6 +73,18 @@ export default async function TeacherRosterPage() {
                       <CopyLink url={student.reportUrl} copy={t.teacher.copyLink} copied={t.teacher.linkCopied} />
                     ) : (
                       "—"
+                    )}
+                  </td>
+                  <td>
+                    {student.approvedAt ? (
+                      <span className="font-ui text-xs text-ink-soft">{t.teacher.approved}</span>
+                    ) : (
+                      <form action={approveStudentForm}>
+                        <input type="hidden" name="studentId" value={student.id} />
+                        <button type="submit" className="btn px-3 py-1.5 text-xs">
+                          {t.teacher.approve}
+                        </button>
+                      </form>
                     )}
                   </td>
                 </tr>

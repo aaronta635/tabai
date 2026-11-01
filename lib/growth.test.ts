@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { routeSubmission, shouldUnlockAiDirect, wallVisible } from "@/lib/growth";
+import { routeSubmission, shouldRelockAiDirect, shouldUnlockAiDirect, wallVisible } from "@/lib/growth";
 
 describe("growth gates", () => {
   it("unlocks AI-direct only after volume and untouched drafts", () => {
@@ -12,6 +12,13 @@ describe("growth gates", () => {
     expect(routeSubmission({ aiDirectUnlockedAt: new Date(), confidence: 0.79 })).toBe("teacher");
     expect(routeSubmission({ aiDirectUnlockedAt: new Date(), confidence: 0.8 })).toBe("ai_direct");
     expect(routeSubmission({ aiDirectUnlockedAt: null, confidence: 0.99 })).toBe("teacher");
+  });
+
+  it("relocks AI-direct after enough rewritten letters", () => {
+    const approved = Array.from({ length: 10 }, () => "approved_draft");
+    expect(shouldRelockAiDirect(approved)).toBe(false);
+    expect(shouldRelockAiDirect([...approved.slice(0, 7), "edited", "edited", "manual"])).toBe(true);
+    expect(shouldRelockAiDirect(["edited", "edited", "manual"])).toBe(false);
   });
 
   it("hides under-18 takes from the wall", () => {

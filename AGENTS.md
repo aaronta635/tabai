@@ -1,9 +1,9 @@
 ## Learned User Preferences
 - Plan first, then implement; when a plan is attached, finish its todos and do not edit the plan file.
-- Keep `main` untouched; everyday work and PRs go through `dev`.
+- Start from an updated `main`: checkout `main`, pull, then a new branch. Do not commit on `main`.
 - Run commands and choose recommendations without waiting; proceed after a reproduced issue.
 - UI must work in Vietnamese and English with a font that renders both scripts evenly; avoid “AI-looking” display type (Charis SIL is the requested studio face).
-- Keep Howl0 branding: the Howl0 palette, a luxury mixed-palette landing background, and the original dog logo (not a substitute icon).
+- User-facing name is PARA. Studio is a class-first desk on the Sandalwood palette (ivory, espresso, saddle, sand), with Be Vietnam Pro for titles and controls, and the original dog logo. Do not restyle the landing in the same pass.
 - Teacher and student are separate roles with different onboarding; signing in on the student path must not open a teacher account even if the email belongs to a teacher.
 - LMS chrome should match across teacher and student: class-first, one page title, “+” to open create flows, submissions as a normal dashboard section (not a separate vertical pipeline).
 - Split landing vs studio; landing may live on a separate Vercel/GitHub from the app.

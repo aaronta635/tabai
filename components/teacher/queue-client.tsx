@@ -10,21 +10,14 @@ import {
   requestDraft,
   sendReply,
   setIssueVerdict,
-  skipSubmission,
 } from "@/app/teacher/actions";
 import { DeleteTakeButton } from "@/components/teacher/delete-take-button";
 import { RevertReplyButton } from "@/components/teacher/revert-reply-button";
 import { FactBars } from "@/components/teacher/fact-bars";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
 import { requiredText } from "@/lib/forms";
-import { joinStoryLetter } from "@/lib/report";
-import {
-  draftCoversFactVerdicts,
-  formatClock,
-  latestFactVerdictAt,
-  type FactVerdict,
-  type ObservationMarker,
-} from "@/lib/score-model";
+import { formatClock, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
+import { fetchTakeVideo, readTakeVideo } from "@/lib/take-video-link";
 
 export type QueueItem = {
   id: string;
@@ -70,31 +63,29 @@ export function QueueClient({
 }) {
   const t = useTranslations("teacher");
   const [index, setIndex] = useState(0);
-  const [progressNote, setProgressNote] = useState("");
-  const [keyPoint, setKeyPoint] = useState("");
-  const [nextStep, setNextStep] = useState("");
+  const [letter, setLetter] = useState("");
   const [highlightAt, setHighlightAt] = useState<number | null>(null);
-  const [grade, setGrade] = useState("");
   const [fast, setFast] = useState(false);
-  const [skipOpen, setSkipOpen] = useState(false);
-  const [skipReason, setSkipReason] = useState("");
   const videoRef = useRef<HTMLVideoElement>(null);
-  const progressRef = useRef<HTMLTextAreaElement>(null);
+  const letterRef = useRef<HTMLTextAreaElement>(null);
+  const letterDirty = useRef(false);
   const verdictQueue = useRef(Promise.resolve());
   const verdictTicket = useRef<Record<number, number>>({});
   const verdictItem = useRef<string | null>(null);
   const [pending, start] = useTransition();
-  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [videoState, setVideoState] = useState<{ mediaId: string | null; url: string | null }>({
+    mediaId: null,
+    url: null,
+  });
   const [actionError, setActionError] = useState<string | null>(null);
   const [verdicts, setVerdicts] = useState<Record<number, FactVerdict>>({});
-  const [polledDraft, setPolledDraft] = useState<{ text: string; createdAt: string } | null>(null);
-  const [localLatestVerdictAt, setLocalLatestVerdictAt] = useState<string | null>(null);
-  const [minDraftAt, setMinDraftAt] = useState<string | null>(null);
-  const [waitStarted, setWaitStarted] = useState<number | null>(null);
-  const [nowTick, setNowTick] = useState(0);
-  const [ownLetter, setOwnLetter] = useState(false);
 
   const item = items[index] ?? null;
+  const mediaId = item?.mediaId ?? null;
+  if (videoState.mediaId !== mediaId) {
+    setVideoState({ mediaId, url: mediaId ? readTakeVideo(mediaId) : null });
+  }
+  const videoUrl = videoState.mediaId === mediaId ? videoState.url : mediaId ? readTakeVideo(mediaId) : null;
 
   const factsReady =
     !item ||
@@ -103,40 +94,18 @@ export function QueueClient({
       const verdict = verdicts[marker.index] ?? marker.verdict;
       return verdict === "true" || verdict === "false";
     });
-  const latestVerdictAt = localLatestVerdictAt ?? (item ? latestFactVerdictAt(item.markers) : null);
-  const shownDraftAt = polledDraft?.createdAt ?? item?.draftAt ?? null;
-  const hasFreshDraft = Boolean(
-    item &&
-      draftCoversFactVerdicts(shownDraftAt, latestVerdictAt, item.markers.length) &&
-      (!minDraftAt || (shownDraftAt && shownDraftAt > minDraftAt)),
-  );
-  const waitingForDraft = Boolean(item && item.kind === "unanswered" && item.markers.length > 0 && factsReady && !hasFreshDraft);
-  const timedOut = Boolean(waitStarted && nowTick >= 0 && Date.now() - waitStarted > 90_000);
-  const letterLocked = Boolean(
-    item && item.kind === "unanswered" && item.markers.length > 0 && (!factsReady || (!hasFreshDraft && !timedOut)),
-  );
-  const letterOpen = !letterLocked || ownLetter;
-  const letterText = polledDraft?.text ?? (hasFreshDraft ? item?.draft ?? "" : "");
 
-  const submitReply = useCallback(async (
-    submissionId: string,
-    lines: { progress: string; keyPoint: string; nextStep: string },
-    mark: string,
-    moment: number | null,
-  ) => {
-    const letter = joinStoryLetter({ progress: lines.progress, keyPoint: lines.keyPoint, nextStep: lines.nextStep });
-    if (!requiredText(letter)) {
+  const submitReply = useCallback(async (submissionId: string, text: string, moment: number | null) => {
+    if (!requiredText(text)) {
       setActionError(t("replyRequired"));
       return;
     }
     const result = await sendReply({
       submissionId,
-      text: letter,
-      grade: mark || null,
+      text,
+      grade: null,
       highlightStartS: moment,
-      progressNote: lines.progress,
-      keyPoint: lines.keyPoint,
-      nextStep: lines.nextStep,
+      keyPoint: text,
     });
     if (result && "error" in result) {
       setActionError(
@@ -157,16 +126,9 @@ export function QueueClient({
     const next: Record<number, FactVerdict> = {};
     for (const marker of item.markers) next[marker.index] = marker.verdict ?? null;
     setVerdicts(next);
-    setPolledDraft(null);
-    setLocalLatestVerdictAt(null);
-    setMinDraftAt(null);
-    setWaitStarted(null);
-    setOwnLetter(false);
-    setProgressNote("");
-    setKeyPoint("");
-    setNextStep("");
+    letterDirty.current = false;
+    setLetter(item.draft ?? "");
     setHighlightAt(null);
-    setGrade("");
     setActionError(null);
     if (item.submissionId && item.kind === "unanswered") {
       void markOpened(item.submissionId);
@@ -174,24 +136,13 @@ export function QueueClient({
   }, [item?.id]);
 
   useEffect(() => {
-    if (waitingForDraft && waitStarted == null) setWaitStarted(Date.now());
-    if (!waitingForDraft) setWaitStarted(null);
-  }, [waitingForDraft, waitStarted]);
-
-  useEffect(() => {
-    if (!waitingForDraft) return;
-    const id = window.setInterval(() => setNowTick((tick) => tick + 1), 5000);
-    return () => window.clearInterval(id);
-  }, [waitingForDraft]);
-
-  useEffect(() => {
-    if (!item?.submissionId || !waitingForDraft) return;
+    if (!item?.submissionId || item.kind !== "unanswered") return;
     let cancelled = false;
     const tick = async () => {
+      if (letterDirty.current) return;
       const latest = await peekDraft(item.submissionId!);
-      if (cancelled || !latest.createdAt || !latest.text) return;
-      if (!draftCoversFactVerdicts(latest.createdAt, latestVerdictAt, item.markers.length)) return;
-      setPolledDraft({ text: latest.text, createdAt: latest.createdAt });
+      if (cancelled || letterDirty.current || !latest.text) return;
+      setLetter(latest.text);
     };
     void tick();
     const id = window.setInterval(() => void tick(), 2000);
@@ -199,38 +150,29 @@ export function QueueClient({
       cancelled = true;
       window.clearInterval(id);
     };
-  }, [item?.id, item?.submissionId, waitingForDraft, latestVerdictAt, item?.markers.length]);
+  }, [item?.id, item?.submissionId, item?.kind]);
 
   useEffect(() => {
-    if (!item?.submissionId) return;
-    if (!factsReady || item.markers.length === 0 || hasFreshDraft) return;
+    if (!item?.submissionId || !factsReady || item.markers.length === 0) return;
+    if (letterDirty.current) return;
     void requestDraft(item.submissionId);
     const id = window.setInterval(() => {
+      if (letterDirty.current) return;
       void requestDraft(item.submissionId!);
     }, 8000);
     return () => window.clearInterval(id);
-  }, [item?.id, item?.submissionId, factsReady, item?.markers.length, hasFreshDraft]);
+  }, [item?.id, item?.submissionId, factsReady, item?.markers.length]);
 
   useEffect(() => {
-    if (!item?.mediaId) {
-      setVideoUrl(null);
-      return;
-    }
-    const mediaId = item.mediaId;
+    if (!mediaId || readTakeVideo(mediaId)) return;
     let cancelled = false;
-    setVideoUrl(null);
-    void fetch(`/api/media/url?mediaId=${encodeURIComponent(mediaId)}`)
-      .then((res) => res.json() as Promise<{ url?: string }>)
-      .then((data) => {
-        if (!cancelled && typeof data.url === "string") setVideoUrl(data.url);
-      })
-      .catch(() => {
-        if (!cancelled) setVideoUrl(null);
-      });
+    void fetchTakeVideo(mediaId).then((url) => {
+      if (!cancelled) setVideoState({ mediaId, url });
+    });
     return () => {
       cancelled = true;
     };
-  }, [item?.id, item?.mediaId]);
+  }, [mediaId]);
 
   useEffect(() => {
     if (videoRef.current) videoRef.current.playbackRate = fast ? 1.5 : 1;
@@ -247,29 +189,23 @@ export function QueueClient({
         if (video.paused) void video.play();
         else video.pause();
       }
-      if (event.key === "e" && !inField && letterOpen) {
+      if (event.key === "e" && !inField && item?.kind === "unanswered") {
         event.preventDefault();
-        queueMicrotask(() => progressRef.current?.focus());
+        queueMicrotask(() => letterRef.current?.focus());
       }
       if (event.key === "Enter" && !event.shiftKey) {
         if (inField && !event.metaKey && !event.ctrlKey) return;
-        if (!letterOpen) return;
         if (item?.kind === "unanswered" && item.submissionId) {
           event.preventDefault();
           start(async () => {
-            await submitReply(
-              item.submissionId!,
-              { progress: progressNote, keyPoint, nextStep },
-              grade,
-              highlightAt,
-            );
+            await submitReply(item.submissionId!, letter, highlightAt);
           });
         }
       }
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [item, progressNote, keyPoint, nextStep, highlightAt, grade, submitReply, letterOpen]);
+  }, [item, letter, highlightAt, submitReply]);
 
   const grouped = useMemo(() => {
     const map = new Map<string, number>();
@@ -312,7 +248,7 @@ export function QueueClient({
       {!item ? (
         <p className="mt-10 text-ink-soft">{tab === "pending" ? t("emptyPending") : t("emptyQueue")}</p>
       ) : (
-        <article className="lms-card mt-6 p-4">
+        <article className="lms-card teacher-review mt-6 p-4">
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-display text-2xl">{item.studentName}</p>
@@ -362,7 +298,6 @@ export function QueueClient({
                     const submissionId = item.submissionId!;
                     const itemId = item.id;
                     setVerdicts((prev) => ({ ...prev, [issueIndex]: verdict }));
-                    setPolledDraft(null);
                     const mine = (verdictTicket.current[issueIndex] ?? 0) + 1;
                     verdictTicket.current[issueIndex] = mine;
                     verdictItem.current = itemId;
@@ -370,8 +305,8 @@ export function QueueClient({
                       try {
                         const result = await setIssueVerdict({ submissionId, issueIndex, verdict });
                         if (verdictItem.current !== itemId || verdictTicket.current[issueIndex] !== mine) return;
-                        if (result && "latestVerdictAt" in result && result.latestVerdictAt) {
-                          setLocalLatestVerdictAt(result.latestVerdictAt);
+                        if (result && "latestVerdictAt" in result && result.latestVerdictAt && !letterDirty.current) {
+                          void requestDraft(submissionId);
                         }
                       } catch {
                         if (verdictItem.current !== itemId || verdictTicket.current[issueIndex] !== mine) return;
@@ -383,7 +318,7 @@ export function QueueClient({
           />
 
           <div className="mt-3 flex flex-wrap gap-2">
-            <button type="button" className="rounded-full border border-ink/20 px-3 py-1 text-sm" onClick={() => setFast((v) => !v)}>
+            <button type="button" aria-pressed={fast} className="teacher-speed rounded-full border border-ink/20 px-3 py-1 text-sm" onClick={() => setFast((v) => !v)}>
               {t("speed")} {fast ? "on" : "off"}
             </button>
             {item.nudgeUrl ? (
@@ -416,108 +351,48 @@ export function QueueClient({
           ) : null}
 
           {item.kind === "unanswered" ? (
-            <div className="mt-5 space-y-3">
-              {!letterOpen ? (
-                <p className="fact-draft-wait">
-                  {factsReady ? t("factDraftWait") : t("factDraftGate")}
-                </p>
-              ) : (
-                <>
-                  {timedOut && !hasFreshDraft ? (
-                    <p className="fact-draft-wait">{t("factDraftTimeout")}</p>
-                  ) : null}
-                  {letterText ? (
-                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink-soft">{letterText}</p>
-                  ) : null}
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      className="chip"
-                      disabled={!videoUrl}
-                      onClick={() => {
-                        const video = videoRef.current;
-                        if (!video) return;
-                        setHighlightAt(video.currentTime || 0);
-                      }}
-                    >
-                      {t("markMoment")}
-                    </button>
-                    {item.markers.map((marker) => (
-                      <button
-                        key={marker.index}
-                        type="button"
-                        className="chip"
-                        onClick={() => setHighlightAt(marker.tStart)}
-                      >
-                        {t("useMoment", { time: formatClock(marker.tStart) })}
-                      </button>
-                    ))}
-                  </div>
-                  {highlightAt != null ? (
-                    <p className="text-sm">{t("highlightAt", { time: formatClock(highlightAt) })}</p>
-                  ) : null}
-                  <label className="block">
-                    <span className="field-label">{t("progressLine")}</span>
-                    <textarea
-                      ref={progressRef}
-                      value={progressNote}
-                      onChange={(event) => setProgressNote(event.target.value)}
-                      rows={2}
-                      className="field mt-1.5 w-full"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="field-label">{t("keyLine")}</span>
-                    <textarea
-                      value={keyPoint}
-                      onChange={(event) => setKeyPoint(event.target.value)}
-                      rows={2}
-                      className="field mt-1.5 w-full"
-                    />
-                  </label>
-                  <label className="block">
-                    <span className="field-label">{t("nextLine")}</span>
-                    <textarea
-                      value={nextStep}
-                      onChange={(event) => setNextStep(event.target.value)}
-                      rows={2}
-                      className="field mt-1.5 w-full"
-                    />
-                  </label>
-                </>
-              )}
-              {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
-              {!letterOpen ? (
+            <div className="teacher-feedback mt-5 space-y-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
-                  className="desk-action"
+                  className="chip"
+                  disabled={!videoUrl}
                   onClick={() => {
-                    setOwnLetter(true);
-                    setProgressNote("");
-                    setKeyPoint("");
-                    setNextStep("");
-                    queueMicrotask(() => progressRef.current?.focus());
+                    const video = videoRef.current;
+                    if (!video) return;
+                    setHighlightAt(video.currentTime || 0);
                   }}
                 >
-                  {t("writeYourself")}
+                  {t("markMoment")}
                 </button>
-              ) : (
-              <>
+                {item.markers.map((marker) => (
+                  <button
+                    key={marker.index}
+                    type="button"
+                    className="chip"
+                    onClick={() => setHighlightAt(marker.tStart)}
+                  >
+                    {t("useMoment", { time: formatClock(marker.tStart) })}
+                  </button>
+                ))}
+              </div>
+              {highlightAt != null ? (
+                <p className="text-sm">{t("highlightAt", { time: formatClock(highlightAt) })}</p>
+              ) : null}
               <label className="block">
-                <span className="field-label">{t("grade")}</span>
-                <select
-                  className="field mt-1.5"
-                  value={grade}
-                  onChange={(event) => setGrade(event.target.value)}
-                >
-                  <option value="">{t("gradeNone")}</option>
-                  {["A", "B", "C", "D", "F"].map((mark) => (
-                    <option key={mark} value={mark}>
-                      {mark}
-                    </option>
-                  ))}
-                </select>
+                <span className="field-label">{t("letterLabel")}</span>
+                <textarea
+                  ref={letterRef}
+                  value={letter}
+                  onChange={(event) => {
+                    letterDirty.current = true;
+                    setLetter(event.target.value);
+                  }}
+                  rows={8}
+                  className="field mt-1.5 w-full"
+                />
               </label>
+              {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
               <button
                 type="button"
                 disabled={pending}
@@ -525,45 +400,12 @@ export function QueueClient({
                 onClick={() =>
                   start(async () => {
                     if (!item.submissionId) return;
-                    await submitReply(
-                      item.submissionId,
-                      { progress: progressNote, keyPoint, nextStep },
-                      grade,
-                      highlightAt,
-                    );
+                    await submitReply(item.submissionId, letter, highlightAt);
                   })
                 }
               >
                 {t("send")}
               </button>
-              </>
-              )}
-              {skipOpen ? (
-                <form
-                  className="space-y-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!item.submissionId) return;
-                    start(async () => {
-                      await skipSubmission(item.submissionId!, skipReason);
-                      setSkipOpen(false);
-                      setSkipReason("");
-                      setIndex((i) => i + 1);
-                    });
-                  }}
-                >
-                  <input
-                    value={skipReason}
-                    onChange={(e) => setSkipReason(e.target.value)}
-                    placeholder={t("skipReason")}
-                    className="field mt-0"
-                    required
-                  />
-                  <button type="submit" className="desk-action">
-                    {t("skip")}
-                  </button>
-                </form>
-              ) : null}
             </div>
           ) : null}
 
@@ -572,38 +414,6 @@ export function QueueClient({
           ) : null}
 
           <div className="desk-actions">
-            {item.kind === "unanswered" && letterOpen ? (
-              <>
-                <button
-                  type="button"
-                  className="desk-action"
-                  onClick={() => {
-                    progressRef.current?.focus();
-                  }}
-                >
-                  {t("edit")}
-                </button>
-                <button
-                  type="button"
-                  className="desk-action"
-                  onClick={() => {
-                    setPolledDraft(null);
-                    setMinDraftAt(shownDraftAt ?? new Date().toISOString());
-                    setProgressNote("");
-                    setKeyPoint("");
-                    setNextStep("");
-                    if (item.submissionId) void requestDraft(item.submissionId);
-                  }}
-                >
-                  {t("rewrite")}
-                </button>
-              </>
-            ) : null}
-            {item.kind === "unanswered" ? (
-              <button type="button" className="desk-action" onClick={() => setSkipOpen(true)}>
-                {t("skip")}
-              </button>
-            ) : null}
             {item.kind === "answered" && item.reply && item.submissionId ? (
               <RevertReplyButton
                 submissionId={item.submissionId}

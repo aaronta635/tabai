@@ -1,0 +1,20 @@
+{
+  "source": "design-resources/PARA_Brand_Resources/PARA_Glassmorphism_Resources",
+  "assets": [
+    {
+      "source": "03_OVERLAYS_AND_TEXTURES/PNG/para-film-grain-256.png",
+      "file": "para-film-grain-256.png",
+      "sha256": "97b30b0e07adc2389787e765e2d78a913928d642e828422013775e20fd2532ed"
+    },
+    {
+      "source": "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-ivory.svg",
+      "file": "para-glass-rising-edge-ivory.svg",
+      "sha256": "bfc873573ee8903244382b5425f448f52b726bbcd414aa15f78cbc8126c2d728"
+    },
+    {
+      "source": "03_OVERLAYS_AND_TEXTURES/SVG/para-glass-rising-edge-smoke.svg",
+      "file": "para-glass-rising-edge-smoke.svg",
+      "sha256": "2a1186be407e0437bd254099d33b311ae6a0d902a67f10695d5c5206566ff6b2"
+    }
+  ]
+}

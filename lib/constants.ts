@@ -14,6 +14,7 @@ export const MAX_SHEET_BYTES = 20 * 1024 * 1024;
 export const MAX_VIDEO_SECONDS = 90;
 export const MAX_CLIP_SECONDS = 120;
 export const MAX_CLIP_BYTES = 40 * 1024 * 1024;
+export const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 export const MAX_ACTIVE_VOICE_SAMPLES = 40;
 export const TEACHER_COOKIE = "teacher_session";
 export const STUDENT_COOKIE = "student_token";

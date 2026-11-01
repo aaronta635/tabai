@@ -4,7 +4,9 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { formatDuration, formatWhen } from "@/lib/when";
+import { StudioTitle } from "@/components/home/feed";
 import { SectionPanel } from "@/components/disclosure";
+import { PrefetchTakeVideos } from "@/components/teacher/prefetch-take-videos";
 import { SubmissionCabinet } from "@/components/teacher/submission-cabinet";
 import { isClaimableStatus } from "@/lib/forms";
 import { classForTake, groupTakesByClassThenPiece } from "@/lib/submission-folders";
@@ -14,8 +16,10 @@ import {
   sliceSubmissionPage,
   submissionCursorWhere,
   submissionsHref,
+  submissionsStudentWhere,
   SUBMISSIONS_PAGE_SIZE,
 } from "@/lib/submissions-page";
+import { approveStudentForm } from "@/app/teacher/actions";
 
 export default async function SubmissionsPage({
   searchParams,
@@ -66,9 +70,7 @@ export default async function SubmissionsPage({
             ...(kindFilter ? { kind: kindFilter } : { kind: { in: ["take", "overdub"] } }),
             ...(statusFilter ? { status: statusFilter } : {}),
             ...(submittedAt ? { submittedAt } : {}),
-            ...(q
-              ? { student: { name: { contains: q, mode: "insensitive" } } }
-              : { student: { approvedAt: { not: null } } }),
+            ...submissionsStudentWhere(q),
             ...(classId
               ? {
                   OR: [
@@ -83,13 +85,16 @@ export default async function SubmissionsPage({
       },
       select: {
         id: true,
+        mediaId: true,
         submittedAt: true,
         status: true,
         kind: true,
         media: { select: { durationS: true } },
         student: {
           select: {
+            id: true,
             name: true,
+            approvedAt: true,
             memberships: { select: { class: { select: { id: true, name: true } } }, take: 1 },
           },
         },
@@ -133,6 +138,7 @@ export default async function SubmissionsPage({
     drafted: t.teacher.statusDrafted,
     answered: t.teacher.answered,
     skipped: t.teacher.skip,
+    pending: t.teacher.pending,
   };
 
   const filed = rows.map((row) => {
@@ -142,10 +148,13 @@ export default async function SubmissionsPage({
     });
     return {
       id: row.id,
+      mediaId: row.mediaId,
       submittedAt: row.submittedAt,
       status: row.status,
       kind: [kindLabels[row.kind] ?? row.kind, formatDuration(row.media.durationS)].filter(Boolean).join(" · "),
+      studentId: row.student.id,
       studentName: row.student.name,
+      approved: Boolean(row.student.approvedAt),
       pieceId: row.piece.id,
       pieceTitle: row.piece.title,
       classId: klass?.id ?? null,
@@ -155,10 +164,12 @@ export default async function SubmissionsPage({
 
   const folders = groupTakesByClassThenPiece(filed, t.teacher.noClassFolder);
   const inbox = filed
-    .filter((take) => isClaimableStatus(take.status))
+    .filter((take) => !take.approved || isClaimableStatus(take.status))
     .map((take) => ({
       id: take.id,
+      studentId: take.studentId,
       studentName: take.studentName,
+      approved: take.approved,
       when: formatWhen(take.submittedAt, locale),
       status: take.status,
       kind: take.kind,
@@ -171,7 +182,9 @@ export default async function SubmissionsPage({
       ...piece,
       takes: piece.takes.map((take) => ({
         id: take.id,
+        studentId: take.studentId,
         studentName: take.studentName,
+        approved: take.approved,
         when: formatWhen(take.submittedAt, locale),
         status: take.status,
         kind: take.kind,
@@ -179,18 +192,21 @@ export default async function SubmissionsPage({
     })),
   }));
 
+  const inboxIds = new Set(inbox.map((take) => take.id));
+  const prefetchIds = [...filed.filter((take) => inboxIds.has(take.id)), ...filed.filter((take) => !inboxIds.has(take.id))]
+    .map((take) => take.mediaId)
+    .filter((id): id is string => Boolean(id));
   const done = Math.max(0, filed.length - inbox.length);
 
   return (
-    <div className="space-y-5">
-      <header>
-        <h1 className="font-display">{t.teacher.submissionsTitle}</h1>
-        <p className="page-meta">
-          {t.teacher.queueMeta
-            .replace("{waiting}", String(inbox.length))
-            .replace("{done}", String(done))}
-        </p>
-      </header>
+    <div className="teacher-inbox space-y-5">
+      <PrefetchTakeVideos mediaIds={prefetchIds} />
+      <StudioTitle
+        title={t.teacher.submissionsTitle}
+        meta={`${t.teacher.pageScope} · ${t.teacher.queueMeta
+          .replace("{waiting}", String(inbox.length))
+          .replace("{done}", String(done))}`}
+      />
 
       <SectionPanel title={t.teacher.filter} count={activeFilters || undefined} open={activeFilters > 0}>
         <form className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -253,7 +269,9 @@ export default async function SubmissionsPage({
             needsReply: t.teacher.needsReply,
             emptyQueue: t.teacher.emptyQueue,
             loadMore: t.teacher.loadMore,
+            approve: t.teacher.approve,
           }}
+          approveAction={approveStudentForm}
           statusLabels={statusLabels}
           moreHref={moreHref}
         />

@@ -1,0 +1,172 @@
+/* Loop-only stack: fallback 0, shader 1, scrim 2 inside the atmosphere;
+   atmosphere 0, artwork 1, headline 2 and controls 3 in the sticky scene. */
+.para-site .studio-home .scene-loop .loop-sticky {
+  isolation: isolate;
+}
+.para-site .studio-home .scene-loop .loop-atmosphere {
+  position: absolute;
+  inset: 0 calc((100% - 100vw) / 2);
+  z-index: 0;
+  overflow: clip;
+  pointer-events: none;
+  mask-image: linear-gradient(
+    180deg,
+    transparent,
+    #000 12%,
+    #000 84%,
+    transparent
+  );
+}
+.para-site .studio-home
+  .scene-loop
+  :is(.loop-waves-fallback, .loop-waves-effect, .loop-waves-scrim) {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.para-site .studio-home .scene-loop .loop-waves-fallback {
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse at 80% 68%,
+      rgb(214 185 140 / 0.32),
+      transparent 62%
+    ),
+    radial-gradient(ellipse at 14% 74%, rgb(139 94 52 / 0.12), transparent 65%),
+    var(--color-background);
+}
+.para-site .studio-home .scene-loop .loop-waves-effect {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 650ms ease;
+}
+.para-site .studio-home .scene-loop [data-wave-state="ready"] .loop-waves-effect {
+  opacity: 0.9;
+}
+.para-site .studio-home .scene-loop .loop-waves-scrim {
+  z-index: 2;
+  background:
+    linear-gradient(
+      180deg,
+      var(--color-background) 0%,
+      var(--color-background) 20%,
+      transparent 48%,
+      transparent 78%,
+      var(--color-background)
+    ),
+    radial-gradient(
+      ellipse 28% 44% at 50% 60%,
+      rgb(243 237 226 / 0.82),
+      transparent 100%
+    );
+}
+.para-site .studio-home .scene-loop .loop-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.06;
+  background: url("/brand/para/glass/para-film-grain-256.png") repeat;
+  background-size: 256px 256px;
+  pointer-events: none;
+}
+.para-site .studio-home .scene-loop .loop-composition {
+  position: relative;
+  z-index: 1;
+}
+.para-site .studio-home .scene-loop .loop-heading-slot {
+  position: relative;
+  z-index: 2;
+}
+.para-site .studio-home .scene-loop .loop-wave-control {
+  position: absolute;
+  z-index: 3;
+  bottom: 8px;
+  right: 0;
+  min-height: 44px;
+  font-size: 11px;
+  background: var(--color-background);
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .studio-home .scene-loop [data-wave-state="ready"] .loop-waves-effect {
+    opacity: 0.7;
+  }
+  /* These labels previously sat on the old light material. Give them a
+     reliable local contrast plane over every moving wave state. */
+  .para-site .studio-home
+    .scene-loop
+    :is(.loop-record-label, .loop-response-label, .loop-next-instruction) {
+    color: var(--para-ivory);
+    background: var(--para-espresso);
+    padding: 4px 8px;
+    border-radius: var(--para-glass-radius-small);
+  }
+  .para-site .studio-home .scene-loop .loop-symbols::before {
+    content: "";
+    position: absolute;
+    inset: 6%;
+    border-radius: 50%;
+    background: var(--para-ivory);
+    border: 1px solid var(--para-sand);
+    box-shadow: 0 4px 16px rgb(59 47 42 / 0.12);
+  }
+  .para-site .studio-home .scene-loop .loop-waves-scrim {
+    background:
+      linear-gradient(
+        180deg,
+        var(--color-background) 0%,
+        var(--color-background) 20%,
+        transparent 48%,
+        transparent 78%,
+        var(--color-background)
+      ),
+      radial-gradient(
+        ellipse 28% 44% at 50% 60%,
+        rgb(59 47 42 / 0.88),
+        transparent 100%
+      );
+  }
+}
+@media (max-width: 700px) {
+  .para-site .studio-home .scene-loop .loop-wave-control {
+    right: 0;
+    bottom: 0;
+  }
+  .para-site .studio-home .scene-loop .loop-waves-scrim {
+    background: linear-gradient(
+      180deg,
+      var(--color-background) 0%,
+      var(--color-background) 18%,
+      transparent 45%,
+      var(--color-background) 94%
+    );
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .studio-home .scene-loop .loop-waves-effect,
+  .para-site .studio-home .scene-loop .loop-wave-control {
+    display: none;
+    transition: none;
+  }
+}
+@media (forced-colors: active) {
+  .para-site .studio-home .scene-loop .loop-atmosphere {
+    display: none;
+  }
+}
+
+.para-site .gradient-waves-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.para-site .gradient-waves-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+

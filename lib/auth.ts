@@ -477,14 +477,30 @@ export async function getStudentTokenFromCookie() {
   return jar.get(STUDENT_COOKIE)?.value ?? null;
 }
 
+/** Opening another teacher's piece link must not move the student's home studio. */
+export function homeTeacherId(current: string | null | undefined, pieceTeacherId: string) {
+  return current ?? pieceTeacherId;
+}
+
 /** Guest token cookie or logged-in student session for this teacher's piece. */
-export async function studentForPiece(teacherId: string) {
+export async function studentForPiece(teacherId: string, options?: { demo?: boolean }) {
   const session = await readStudentSession();
   if (session) {
     const account = await prisma.student.findUnique({ where: { id: session.id } });
     if (account) {
-      const otherClass = Boolean(account.teacherId && account.teacherId !== teacherId);
-      return { student: otherClass ? null : account, otherClass, fromSession: true as const };
+      if (options?.demo) {
+        return { student: account, otherClass: false, fromSession: true as const };
+      }
+      const sameStudio = !account.teacherId || account.teacherId === teacherId;
+      const inClass =
+        sameStudio ||
+        Boolean(
+          await prisma.classMembership.findFirst({
+            where: { studentId: account.id, class: { teacherId, archived: false } },
+            select: { id: true },
+          }),
+        );
+      return { student: inClass ? account : null, otherClass: !inClass, fromSession: true as const };
     }
   }
   if (await supabaseUser()) {
@@ -492,7 +508,9 @@ export async function studentForPiece(teacherId: string) {
   }
   const token = await getStudentTokenFromCookie();
   if (!token) return { student: null, otherClass: false, fromSession: false as const };
-  const student = await prisma.student.findFirst({ where: { token, teacherId } });
+  const student = await prisma.student.findFirst({
+    where: options?.demo ? { token, OR: [{ teacherId }, { teacherId: null }] } : { token, teacherId },
+  });
   return { student, otherClass: false, fromSession: false as const };
 }
 
@@ -566,18 +584,24 @@ export async function signOutTeacher() {
   await signOutAccount();
 }
 
+function expireCookie(jar: Awaited<ReturnType<typeof cookies>>, name: string) {
+  jar.set(name, "", { path: "/", maxAge: 0 });
+}
+
 export async function signOutAccount() {
+  const jar = await cookies();
   try {
     const supabase = await createServerSupabase();
-    await Promise.race([
-      supabase.auth.signOut(),
-      new Promise((resolve) => setTimeout(resolve, 1500)),
-    ]);
+    // Local scope clears this browser. A global revoke waits on the network and
+    // used to return before the auth cookies were removed.
+    await supabase.auth.signOut({ scope: "local" });
   } catch {
     // Cookie clear still logs the person out locally.
   }
-  const jar = await cookies();
-  jar.delete(TEACHER_COOKIE);
-  jar.delete(STUDENT_SESSION_COOKIE);
-  jar.delete(STUDENT_COOKIE);
+  for (const cookie of jar.getAll()) {
+    if (cookie.name.startsWith("sb-")) expireCookie(jar, cookie.name);
+  }
+  expireCookie(jar, TEACHER_COOKIE);
+  expireCookie(jar, STUDENT_SESSION_COOKIE);
+  expireCookie(jar, STUDENT_COOKIE);
 }

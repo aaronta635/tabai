@@ -2,7 +2,7 @@
 
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { ClassChips, FeedBlock, FeedRow } from "@/components/home/feed";
+import { AssignmentList, ClassChips, FeedBlock, FeedRow } from "@/components/home/feed";
 
 describe("home feed", () => {
   it("renders a class chip row", () => {
@@ -37,4 +37,14 @@ describe("home feed", () => {
     );
     expect(screen.getByText("Nothing due")).toBeTruthy();
   });
+});
+
+const assignment = [{ href: "/student/work/a", title: "Exercise A", meta: "Class A", status: "Friday", fraction: "1/1", progress: 1 }];
+it("keeps legacy meters by default and labels student piece history without a completion bar", () => {
+  const view = render(<AssignmentList title="Pieces" empty="None" rows={assignment} track />);
+  expect(view.container.querySelector(".meter")).toBeTruthy();
+  view.rerender(<AssignmentList title="Pieces" empty="None" rows={assignment} track historyLabel="Previously sent" />);
+  expect(screen.getByText("Previously sent: 1/1")).toBeInTheDocument();
+  expect(view.container.querySelector(".meter")).toBeNull();
+  expect(screen.getByRole("link", { name: /Exercise A/ })).toHaveAttribute("href", "/student/work/a");
 });

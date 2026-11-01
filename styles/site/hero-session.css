@@ -1,0 +1,364 @@
+/* The entire hero (copy and symbol) inherits the existing parent's single
+   scroll transform/opacity. The symbol has no independent motion controller. */
+.para-site .studio-home .simple-hero {
+  --hero-heading-size: clamp(46px, min(5.7vw, 11svh), 176px);
+  --hero-heading-leading: 1.17;
+}
+html[lang="vi"] .para-site .studio-home .simple-hero {
+  --hero-heading-size: clamp(42px, min(5.3vw, 10svh), 164px);
+  --hero-heading-leading: 1.3;
+}
+.para-site .studio-home .simple-hero .hero-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  column-gap: clamp(40px, 5vw, 176px);
+  align-items: center;
+  width: 100%;
+}
+.para-site .studio-home .simple-hero .hero-copy > :not(.hero-brand-symbol) {
+  grid-column: 1;
+}
+.para-site .studio-home .simple-hero .hero-copy .eyebrow {
+  grid-row: 1;
+}
+.para-site .studio-home .simple-hero .hero-copy h1,
+html[lang="vi"] .para-site .studio-home .simple-hero .hero-copy h1 {
+  grid-row: 2;
+  font-size: var(--hero-heading-size);
+  line-height: var(--hero-heading-leading);
+}
+.para-site .studio-home .simple-hero .hero-lead {
+  grid-row: 3;
+}
+.para-site .studio-home .simple-hero .hero-actions {
+  grid-row: 4;
+}
+.para-site .hero-brand-symbol {
+  grid-column: 2;
+  grid-row: 2;
+  display: block;
+  width: min(
+    76%,
+    calc(
+      var(--hero-heading-size) * var(--hero-heading-leading) * 2 * 0.86 *
+        0.96667
+    )
+  );
+  justify-self: center;
+  align-self: center;
+}
+.para-site .hero-brand-symbol img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* Three roles share one session instead of disconnected cards. One bounded
+   practice passage on the right, one reading and control column on the left. */
+.para-site .studio-home .session-perspectives {
+  padding-block: clamp(64px, 7vw, 128px);
+}
+.para-site .studio-home .session-perspectives .perspective-scene-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: clamp(40px, 5vw, 144px);
+}
+.para-site .studio-home .session-perspectives .session-intro {
+  position: relative;
+  isolation: isolate;
+  display: block;
+  min-width: 0;
+  margin: 0;
+}
+.para-site .studio-home .session-perspectives .session-intro .scene-heading {
+  font-size: clamp(40px, min(3.8vw, 6.5svh), 96px);
+  line-height: 1.25;
+}
+.para-site .session-support {
+  font-size: clamp(16px, 1vw, 22px);
+  max-width: 42ch;
+  margin-top: 24px;
+}
+.para-site .studio-home .session-perspectives .perspective-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  position: relative;
+  max-width: 680px;
+  margin-top: 32px;
+  padding: 4px;
+  gap: 4px;
+  border: 1px solid color-mix(in srgb, var(--wave-ink) 32%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-background) 65%, transparent);
+}
+.para-site .studio-home .session-perspectives .perspective-tabs button {
+  position: relative;
+  z-index: 1;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 52px;
+  padding: 10px 8px;
+  border: 0;
+  border-radius: 7px;
+  font: 600 clamp(14px, 0.9vw, 20px)/1.5 var(--font-body);
+  color: var(--wave-ink);
+  background: transparent;
+}
+.para-site .studio-home
+  .session-perspectives
+  .perspective-tabs
+  button[aria-selected="true"] {
+  color: var(--wave-base);
+  background: var(--wave-ink);
+}
+.para-site .studio-home .session-perspectives .audience-tab-indicator {
+  position: absolute;
+  inset: auto auto -8px 4px;
+  width: calc((100% - 16px) / 3);
+  height: 2px;
+  border-radius: 2px;
+  background: var(--wave-ink);
+  transform: translateX(calc(var(--audience) * (100% + 4px)));
+  transition: transform 280ms var(--ease-phrase);
+  pointer-events: none;
+}
+.para-site .studio-home .session-perspectives .session-explanations {
+  display: grid;
+  padding: 0;
+  margin: 28px 0 0;
+  border: 0;
+  background: none;
+}
+.para-site .studio-home .session-perspectives .perspective-pane {
+  align-self: start;
+}
+.para-site .studio-home .session-perspectives .perspective-pane h3 {
+  font: 500 clamp(20px, 1.4vw, 32px)/1.5 var(--font-body);
+  color: var(--wave-ink);
+  max-width: 36ch;
+}
+.para-site .studio-home .session-perspectives .perspective-pane p {
+  font-size: clamp(13px, 0.75vw, 16px);
+  color: var(--wave-ink);
+  max-width: 46ch;
+}
+.para-site .studio-home .session-perspectives .session-intro > .text-link {
+  margin-top: 28px;
+  font-size: clamp(14px, 0.9vw, 19px);
+}
+.para-site .practice-session {
+  --session-ink: var(--wave-ink, var(--color-text));
+  --session-accent: var(--para-saddle-brown);
+  --session-muted: var(--session-ink);
+  position: relative;
+  min-width: 0;
+  margin: 0;
+  padding: clamp(22px, 2.4vw, 56px);
+  border: 0;
+  background: none;
+  color: var(--session-ink);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+.para-site .session-topline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font: 600 clamp(16px, 1.1vw, 24px)/1.5 var(--font-body);
+}
+.para-site .session-passage {
+  margin-top: 28px;
+}
+.para-site .practice-session .session-label {
+  font: 500 clamp(11px, 0.72vw, 15px)/1.5 var(--font-body);
+  color: var(--session-muted);
+  margin: 0 0 8px;
+}
+.para-site .session-passage svg {
+  display: block;
+  width: 100%;
+  height: clamp(160px, 17vw, 300px);
+  overflow: visible;
+}
+.para-site .session-guide {
+  stroke: currentColor;
+  opacity: 0.1;
+}
+.para-site .session-selected-passage {
+  fill: var(--para-sand);
+  fill-opacity: 0.22;
+  stroke: var(--session-accent);
+  stroke-opacity: 0.24;
+  transition: fill-opacity 350ms ease;
+}
+.para-site .session-wave {
+  stroke: var(--session-accent);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.para-site .session-feedback-pin {
+  stroke: var(--session-accent);
+  stroke-width: 2;
+  opacity: 0.3;
+  transition: opacity 350ms ease;
+}
+.para-site .session-feedback-pin circle {
+  fill: var(--session-accent);
+}
+.para-site .session-attempt-path {
+  stroke: var(--session-accent);
+  stroke-width: 2;
+  opacity: 0.2;
+  transition: opacity 350ms ease;
+}
+.para-site .practice-session[data-perspective="0"] .session-feedback-pin,
+.para-site .practice-session[data-perspective="1"] .session-attempt-path {
+  opacity: 1;
+}
+.para-site .practice-session[data-perspective="1"] .session-selected-passage {
+  fill-opacity: 0.5;
+}
+.para-site .session-timestamps {
+  position: relative;
+  height: 18px;
+  font-size: 11px;
+  color: var(--session-muted);
+}
+.para-site .session-timestamps span {
+  position: absolute;
+  top: 0;
+}
+.para-site .session-timestamps span:first-child {
+  left: 0;
+}
+.para-site .session-timestamps span:nth-child(2) {
+  left: 60%;
+  transform: translateX(-50%);
+}
+.para-site .session-timestamps span:last-child {
+  right: 0;
+}
+.para-site .session-annotations {
+  display: grid;
+  margin-top: 28px;
+}
+.para-site .session-annotation-panel {
+  grid-area: 1 / 1;
+  min-width: 0;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity 350ms ease,
+    visibility 350ms;
+}
+.para-site .session-annotation-panel.active {
+  visibility: visible;
+  opacity: 1;
+}
+.para-site .session-comment,
+.para-site .session-next {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  align-items: start;
+}
+.para-site .session-next {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid color-mix(in srgb, var(--session-ink) 16%, transparent);
+}
+.para-site .session-next > .para-icon,
+.para-site .session-comment > .para-icon {
+  margin-top: 4px;
+}
+.para-site .session-time {
+  font-size: 12px;
+  border: 1px solid var(--session-accent);
+  border-radius: 6px;
+  padding: 4px;
+  text-align: center;
+}
+.para-site .session-annotation-panel p:not(.session-label) {
+  font-size: clamp(14px, 1vw, 21px);
+  line-height: 1.6;
+  max-width: 42ch;
+}
+.para-site .studio-home .practice-session figcaption {
+  margin-top: 28px;
+  font-size: clamp(10px, 0.65vw, 14px);
+  color: var(--session-muted);
+}
+@media (prefers-color-scheme: light) {
+  .para-site .session-perspectives {
+    /* A deeper Espresso ink keeps small text legible on the moving wave
+       without restoring a panel, scrim or blur behind it. */
+    --wave-ink: color-mix(in srgb, var(--para-espresso-strong) 60%, black);
+  }
+}
+@media (prefers-color-scheme: dark) {
+  .para-site .practice-session {
+    --session-accent: var(--para-sand);
+  }
+}
+@media (max-width: 900px) {
+  .para-site .studio-home .simple-hero {
+    --hero-heading-size: clamp(36px, 5.8vw, 52px);
+  }
+  html[lang="vi"] .para-site .studio-home .simple-hero {
+    --hero-heading-size: clamp(34px, 5.2vw, 48px);
+  }
+  .para-site .studio-home .session-perspectives .perspective-scene-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+  }
+  .para-site .studio-home .session-perspectives .session-intro .scene-heading {
+    font-size: 44px;
+  }
+  .para-site .practice-session {
+    width: 100%;
+  }
+}
+@media (max-width: 700px) {
+  .para-site .studio-home .simple-hero .hero-copy {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .para-site .studio-home .simple-hero {
+    --hero-heading-size: clamp(38px, 10.6vw, 64px);
+    --hero-heading-leading: 1.35;
+  }
+  html[lang="vi"] .para-site .studio-home .simple-hero {
+    --hero-heading-size: clamp(26px, 8.9vw, 56px);
+    --hero-heading-leading: 1.45;
+  }
+  .para-site .hero-brand-symbol {
+    grid-column: 1;
+    grid-row: 5;
+    width: clamp(88px, 26vw, 132px);
+    justify-self: end;
+    margin-top: 28px;
+    margin-right: 8px;
+  }
+  .para-site .studio-home .session-perspectives .session-intro .scene-heading {
+    font-size: 38px;
+  }
+  .para-site .studio-home .session-perspectives .perspective-tabs button {
+    font-size: 14px;
+  }
+  .para-site .session-comment,
+  .para-site .session-next {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .session-perspectives *,
+  .para-site .session-perspectives *::before,
+  .para-site .session-perspectives *::after {
+    transition: none !important;
+  }
+}

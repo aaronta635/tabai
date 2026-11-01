@@ -28,10 +28,10 @@ export function supabaseAdmin() {
   return cached;
 }
 
-export async function createSignedUpload(path: string) {
+export async function createSignedUpload(path: string, upsert = false) {
   const { data, error } = await supabaseAdmin()
     .storage.from(MEDIA_BUCKET)
-    .createSignedUploadUrl(path);
+    .createSignedUploadUrl(path, { upsert });
   if (error || !data) {
     throw new Error(error?.message ?? "Could not create upload URL");
   }

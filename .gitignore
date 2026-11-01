@@ -26,6 +26,7 @@ tmp
 coverage
 prisma/dev.db
 .cursor/hooks/state
+graphify-out/
 test-results
 playwright-report
 blob-report

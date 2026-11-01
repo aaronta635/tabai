@@ -11,6 +11,7 @@ import { StudioTour, type TourCopy } from "@/components/studio/studio-tour";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
 import { ParaIcon, type ParaIconName } from "@/components/ui/para-icon";
+import { splitLocale, withLocale, type Locale } from "@/lib/locale-path";
 
 export type NavItem = {
   href: string;
@@ -166,7 +167,12 @@ export function StudioShell({
     void fetch("/api/session", { method: "POST" });
   }, []);
 
-  const here = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
+  const pageLocale: Locale = splitLocale(pathname || "/").locale ?? "vi";
+  const here = splitLocale(pathname || "/").pathname;
+  function stay(href: string) {
+    if (!href.startsWith("/") || href.startsWith("//")) return href;
+    return withLocale(splitLocale(href).pathname, pageLocale);
+  }
 
   function active(href: string, exact?: boolean) {
     if (exact) return here === href;
@@ -178,7 +184,7 @@ export function StudioShell({
   const rail = (
     <div className="flex h-full flex-col px-3 pb-4 pt-5">
       <div className="mb-6 px-2">
-        <Link href={home} className="inline-flex" aria-label="PARA">
+        <Link href={stay(home)} className="inline-flex" aria-label="PARA">
           <BrandMark />
         </Link>
         <p className="studio-kicker">{kicker}</p>
@@ -190,7 +196,7 @@ export function StudioShell({
           return (
             <Link
               key={item.href}
-              href={item.href}
+              href={stay(item.href)}
               prefetch={false}
               aria-current={on ? "page" : undefined}
               className="studio-nav-link"
@@ -212,7 +218,7 @@ export function StudioShell({
           </div>
         ) : null}
         {profile ? (
-          <Link href={profile.href} className="studio-profile" data-tour={profile.href}>
+          <Link href={stay(profile.href)} className="studio-profile" data-tour={profile.href}>
             <AvatarMark name={name} src={avatarSrc} />
             <span className="min-w-0">
               <span className="studio-profile-name block truncate">{name}</span>
@@ -257,7 +263,7 @@ export function StudioShell({
           <button ref={menuRef} type="button" className="studio-menu" aria-label={labels.menu} aria-expanded={Boolean(variant) ? railOpen : undefined} aria-controls={Boolean(variant) && railOpen ? drawerId : undefined} onClick={() => setRailOpen(true)}>
             {Boolean(variant) ? <ParaIcon name="menu" /> : "☰"}
           </button>
-          <Link href={home} aria-label="PARA">
+          <Link href={stay(home)} aria-label="PARA">
             <BrandMark compact />
           </Link>
           {labels.language && labels.localeEn && labels.localeVi ? (

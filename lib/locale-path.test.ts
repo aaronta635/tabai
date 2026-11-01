@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { localeFrom, skipsLocale, splitLocale, withLocale } from "@/lib/locale-path";
+import { localeFrom, localeInPath, skipsLocale, splitLocale, withLocale } from "@/lib/locale-path";
 
 describe("locale paths", () => {
   it("splits a language prefix off the existing route", () => {
@@ -14,6 +14,13 @@ describe("locale paths", () => {
     expect(skipsLocale("/auth/callback")).toBe(true);
     expect(skipsLocale("/api/health")).toBe(true);
     expect(skipsLocale("/teacher")).toBe(false);
+  });
+
+  it("reads the language from a path or a full address", () => {
+    expect(localeInPath("/en/student/work/9obk27wh")).toBe("en");
+    expect(localeInPath("https://app.paramuzic.com/vi/student?x=1")).toBe("vi");
+    expect(localeInPath("/student")).toBeNull();
+    expect(localeInPath("not a url")).toBeNull();
   });
 
   it("prefers the address over the remembered cookie", () => {

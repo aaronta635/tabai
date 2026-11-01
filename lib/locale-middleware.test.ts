@@ -5,10 +5,12 @@ import { LOCALE_COOKIE } from "@/lib/constants";
 import { LOCALE_HEADER } from "@/lib/locale-path";
 import { RETURN_PATH_HEADER } from "@/lib/return-path";
 
-function ask(url: string, cookie?: string) {
+function ask(url: string, cookie?: string, prior?: { nextUrl?: string; referer?: string }) {
   const headers = new Headers();
   headers.set("host", new URL(url).host);
   if (cookie) headers.set("cookie", `${LOCALE_COOKIE}=${cookie}`);
+  if (prior?.nextUrl) headers.set("next-url", prior.nextUrl);
+  if (prior?.referer) headers.set("referer", prior.referer);
   return middleware(new NextRequest(url, { headers }));
 }
 
@@ -65,6 +67,30 @@ describe("locale middleware", () => {
     expect(callback.headers.get(`x-middleware-request-${RETURN_PATH_HEADER}`)).toBe(
       "/auth/callback?code=abc",
     );
+  });
+
+  it("keeps the language of the open page when a studio link has no prefix", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://app.paramuzic.com");
+    vi.stubEnv("NEXT_PUBLIC_MARKETING_URL", "https://paramuzic.com");
+
+    const fromNext = ask("https://app.paramuzic.com/student", "vi", { nextUrl: "/en/student/work/9obk27wh" });
+    expect(location(fromNext)).toBe("https://app.paramuzic.com/en/student");
+    expect(fromNext.cookies.get(LOCALE_COOKIE)?.value).toBe("en");
+
+    const fromReferer = ask("https://app.paramuzic.com/student", "vi", {
+      referer: "https://app.paramuzic.com/en/student/work/9obk27wh",
+    });
+    expect(location(fromReferer)).toBe("https://app.paramuzic.com/en/student");
+    expect(fromReferer.cookies.get(LOCALE_COOKIE)?.value).toBe("en");
+  });
+
+  it("sends a first visit with no saved language to Vietnamese", () => {
+    vi.stubEnv("NEXT_PUBLIC_APP_URL", "https://app.paramuzic.com");
+    vi.stubEnv("NEXT_PUBLIC_MARKETING_URL", "https://paramuzic.com");
+
+    const response = ask("https://app.paramuzic.com/student");
+    expect(location(response)).toBe("https://app.paramuzic.com/vi/student");
+    expect(response.cookies.get(LOCALE_COOKIE)?.value).toBe("vi");
   });
 
   it("rewrites a prefixed address onto the existing page and sets that locale", () => {

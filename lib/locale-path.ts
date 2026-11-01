@@ -22,6 +22,21 @@ export function withLocale(pathname: string, locale: Locale) {
   return `/${locale}${pathname}`;
 }
 
+/** Locale written in a path or absolute URL. Query and hash are ignored. */
+export function localeInPath(value: string | null | undefined): Locale | null {
+  if (!value) return null;
+  let path = value;
+  if (!path.startsWith("/")) {
+    try {
+      path = new URL(path).pathname;
+    } catch {
+      return null;
+    }
+  }
+  const bare = path.split("?")[0]?.split("#")[0] ?? path;
+  return splitLocale(bare).locale;
+}
+
 /** Sign-in callbacks and API routes stay off the language prefix. */
 export function skipsLocale(pathname: string) {
   return pathname === "/api" || pathname.startsWith("/api/") || pathname === "/auth" || pathname.startsWith("/auth/");

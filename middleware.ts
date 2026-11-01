@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { LOCALE_COOKIE } from "@/lib/constants";
-import { LOCALE_HEADER, skipsLocale, splitLocale, withLocale, type Locale } from "@/lib/locale-path";
+import { LOCALE_HEADER, localeInPath, skipsLocale, splitLocale, withLocale, type Locale } from "@/lib/locale-path";
 import { RETURN_PATH_HEADER } from "@/lib/return-path";
 import { isMarketingHost, isProductHost, isProductPath, marketingOrigin, productOrigin, sitesAreSplit } from "@/lib/sites";
 
@@ -22,6 +22,24 @@ function remember(response: NextResponse, locale: Locale) {
 
 function rememberedLocale(request: NextRequest): Locale {
   return request.cookies.get(LOCALE_COOKIE)?.value === "en" ? "en" : "vi";
+}
+
+/** Language of the page that started this request. A saved cookie is the fallback. */
+function localeFromPriorPage(request: NextRequest): Locale | null {
+  const fromNext = localeInPath(request.headers.get("next-url"));
+  if (fromNext) return fromNext;
+  const referer = request.headers.get("referer");
+  if (!referer) return null;
+  try {
+    if (new URL(referer).host !== (request.headers.get("host") ?? "")) return null;
+  } catch {
+    return null;
+  }
+  return localeInPath(referer);
+}
+
+function chosenLocale(request: NextRequest, locale: Locale | null): Locale {
+  return locale ?? localeFromPriorPage(request) ?? rememberedLocale(request);
 }
 
 /** Supabase attaches ?code= to the site address when it does not return to /auth/callback. */
@@ -60,13 +78,13 @@ export function middleware(request: NextRequest) {
   }
 
   if (sitesAreSplit() && isMarketingHost(host) && isProductPath(bare)) {
-    const chosen = locale ?? rememberedLocale(request);
+    const chosen = chosenLocale(request, locale);
     const target = locale ? pathname : withLocale(pathname, chosen);
     return remember(NextResponse.redirect(new URL(`${target}${search}`, productOrigin())), chosen);
   }
 
   if (!locale) {
-    const chosen = rememberedLocale(request);
+    const chosen = chosenLocale(request, null);
     const dest = request.nextUrl.clone();
     dest.pathname = withLocale(pathname, chosen);
     return remember(NextResponse.redirect(dest), chosen);

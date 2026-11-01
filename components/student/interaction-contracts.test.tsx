@@ -23,9 +23,9 @@ afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); delete document.d
 it("retains locale-aware selection, profile, logout and main's active class context", async () => {
   const user = userEvent.setup(); const signOut = vi.fn(async () => {});
   const view = render(<StudioShell {...shell} variant="student" signOutAction={signOut}><ActiveClass name="Class A" /></StudioShell>);
-  expect(screen.getByRole("link", { name: "Assigned work" })).toHaveAttribute("href", "/student/work");
+  expect(screen.getByRole("link", { name: "Assigned work" })).toHaveAttribute("href", "/vi/student/work");
   expect(screen.getByRole("link", { name: "Assigned work" })).toHaveAttribute("aria-current", "page");
-  expect(screen.getByRole("link", { name: /Student A Profile/ })).toHaveAttribute("href", "/student/profile");
+  expect(screen.getByRole("link", { name: /Student A Profile/ })).toHaveAttribute("href", "/vi/student/profile");
   expect(screen.queryByRole("searchbox")).toBeNull();
   expect(view.container.querySelector(".studio-active-class")).toHaveTextContent("Class A");
   await user.click(screen.getByRole("button", { name: "Sign out" }));

@@ -17,7 +17,7 @@ it("teacher shell reuses material and drawer contract while keeping destinations
  const user=userEvent.setup();
  const view=renderWithIntl(<StudioShell variant="teacher" name="Teacher A" home="/teacher" kicker="Studio" items={[{href:"/teacher/submissions",label:"Submissions",icon:"video"}]} menuLinks={[]} signOutAction={async()=>{}} labels={{menu:"Menu",close:"Close",signOut:"Sign out",themeLight:"Light",themeDark:"Dark"}}><input aria-label="Unsent" defaultValue="Keep" /></StudioShell>,[]);
  expect(view.container.querySelector('.teacher-ui.student-ui')).toBeTruthy();
- expect(screen.getByRole('link',{name:'Submissions'})).toHaveAttribute('href','/teacher/submissions');
+ expect(screen.getByRole('link',{name:'Submissions'})).toHaveAttribute('href','/vi/teacher/submissions');
  await user.click(screen.getByRole('button',{name:'Menu'}));
  expect(screen.getByRole('dialog')).toBeInTheDocument();
  fireEvent.keyDown(document,{key:'Escape'});

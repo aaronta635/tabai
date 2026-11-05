@@ -1,4 +1,5 @@
 ## Learned User Preferences
+- Keep Cursor tokens low: Grep and short Reads, no graphify unless asked, no subagent for a one-file lookup.
 - Plan first, then implement; when a plan is attached, finish its todos and do not edit the plan file.
 - Start from an updated `main`: checkout `main`, pull, then a new branch. Do not commit on `main`.
 - Run commands and choose recommendations without waiting; proceed after a reproduced issue.
@@ -6,6 +7,7 @@
 - User-facing name is PARA. Studio is a class-first desk on the Sandalwood palette (ivory, espresso, saddle, sand), with Be Vietnam Pro for titles and controls, and the original dog logo. Do not restyle the landing in the same pass.
 - Teacher and student are separate roles with different onboarding; signing in on the student path must not open a teacher account even if the email belongs to a teacher.
 - LMS chrome should match across teacher and student: class-first, one page title, “+” to open create flows, submissions as a normal dashboard section (not a separate vertical pipeline).
+- On a teacher submission, Đúng/Sai marks do not start a letter or reload the page. Draft the letter from an explicit button and keep a loading bar up for the whole wait; Lưu bản nháp stores the text without sending it, and Gửi is what the student sees. A take that is still queued or analyzing shows a loading state.
 - Split landing vs studio; landing may live on a separate Vercel/GitHub from the app.
 
 ## Learned Workspace Facts
@@ -17,7 +19,7 @@
 - Students get a dashboard with classes and teacher name, current piece, submissions, practice vs take, and progress; schedule is a click-to-create calendar, with attendance on the teacher side. A student phone number is required and unique, and a class-code link opens student signup instead of a name-and-phone shortcut.
 - Signed uploads need the Supabase service role (anon + RLS fails); regenerate the Prisma client after schema changes.
 - Tests are Vitest plus Playwright e2e; Playwright browsers must be installed locally. Node 22+ is expected for `@supabase/supabase-js`. Local nav slowness is often round-trips to remote/free Supabase.
-- Public and studio pages use `/vi` and `/en`; a bare `/` opens Vietnamese. `/api` and `/auth` stay unprefixed so sign-in callbacks still land.
+- Public and studio pages use `/vi` and `/en`; a bare `/` opens Vietnamese. Studio is `app.paramuzic.com` and the landing is `paramuzic.com`; they share a parent-domain `locale` cookie, and a missing or non-`en` cookie stays Vietnamese. In-app links keep the language of the page that was opened. `/api` and `/auth` stay unprefixed so sign-in callbacks still land.
 - Local testing must stay on localhost for sign-in and navigation. Do not send local Google, Facebook, Zalo, or email auth callbacks, or landing links, to `https://paramuzic.com`. Supabase Site URL stays `https://paramuzic.com`. The local redirect allowlist is `http://localhost:3000/auth/callback` and `http://localhost:3000/**`.
 - The Google account chooser shows the Supabase project host until the Auth Platform brand is published as Para Music. App verification is not required while the OAuth client is in Testing; the name appears after the app is Published and branding is verified. Leave “Use this client for an AI-powered agent” unchecked on the human sign-in client. The authorized redirect URI is `https://<project-ref>.supabase.co/auth/v1/callback`. JavaScript origins include `https://paramuzic.com` and `http://localhost:3000`.
-- Demo piece takes must be analyzed without class approval. The live Cloud Run service is `para-music` in `asia-southeast1`, and its image can lag the repo and still refuse with “student not approved”. Enqueue of compare/analyze must include demo takes even when `Student.approvedAt` is null. Do not deploy the howl0 `cloudbuild.yaml` against the para-music project. `BASIC_PITCH=1` must stay on that worker, and a rebuild needs `INSTALL_BASIC_PITCH=true` or the next image drops the package.
+- Demo piece takes must be analyzed without class approval. The live Cloud Run service is `para-music` in `asia-southeast1`, and its image can lag the repo and still refuse with “student not approved”. Enqueue of compare/analyze must include demo takes even when `Student.approvedAt` is null. `cloudbuild.yaml` deploys only the worker service `para-music` in `asia-southeast1`. `BASIC_PITCH=1` must stay on that worker, and a rebuild needs `INSTALL_BASIC_PITCH=true` or the next image drops the package.

@@ -1,3 +1,4 @@
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { enqueueTrainForPiecesWithoutReadyModel } from "../lib/catalog";
 import { isPrismaConnectionError } from "../lib/db-errors";
 import { PITCH_OVERLAY_VERSION } from "../lib/constants";
@@ -11,6 +12,7 @@ import { listenHealthz } from "./healthz";
 import { runTrainPiece } from "./train";
 
 loadLocalEnv();
+process.env.WORKER_LOOP = "1";
 
 const POLL_MS = 2000;
 const RECONNECT_WAIT_MS = 5000;
@@ -109,5 +111,52 @@ async function loop() {
   }
 }
 
-listenHealthz();
+const RUN_WINDOW_MS = 12 * 60 * 1000;
+
+async function runPendingJobs() {
+  const started = Date.now();
+  const jobs: { id: string; type: string; ok: boolean }[] = [];
+  while (Date.now() - started < RUN_WINDOW_MS && jobs.length < 4) {
+    const job = await claimNextJob();
+    if (!job) break;
+    const payload = (job.payload ?? {}) as { submissionId?: string; pieceId?: string };
+    try {
+      console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
+      await handle(job);
+      await finishJob(job.id);
+      console.log("job done", job.type, job.id);
+      jobs.push({ id: job.id, type: job.type, ok: true });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "unknown";
+      console.error("job failed", job.id, message);
+      if (isPrismaConnectionError(error)) await reconnectPrisma();
+      await failJob(job.id, message);
+      jobs.push({ id: job.id, type: job.type, ok: false });
+    }
+  }
+  return jobs;
+}
+
+function handleRunRequest(req: IncomingMessage, res: ServerResponse) {
+  const expected = process.env.WORKER_TOKEN?.trim();
+  if (expected && req.headers.authorization !== `Bearer ${expected}`) {
+    res.writeHead(401);
+    res.end();
+    return;
+  }
+  void runPendingJobs()
+    .then((jobs) => {
+      if (res.writableEnded) return;
+      const body = JSON.stringify({ ok: true, jobs });
+      res.writeHead(200, { "content-type": "application/json", "content-length": Buffer.byteLength(body) });
+      res.end(body);
+    })
+    .catch((error: unknown) => {
+      if (res.writableEnded) return;
+      res.writeHead(500);
+      res.end(error instanceof Error ? error.message : "failed");
+    });
+}
+
+listenHealthz(handleRunRequest);
 void loop();

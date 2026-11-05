@@ -1,23 +1,32 @@
 import type { JobStatus, JobType, Prisma } from "@prisma/client";
+import { wakeCloudWorker } from "@/lib/cloud-worker";
 import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
 import { analyzeAllowed } from "@/lib/demo-piece";
 import { CLAIMABLE_SUBMISSION_STATUSES } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
 import { needsPitchOverlay } from "@/lib/pitch-overlay";
-import { heardExtractFromMetrics, whyDraftNotReady } from "@/lib/score-model";
+import {
+  draftCoversFactVerdicts,
+  heardExtractFromMetrics,
+  latestFactVerdictAt,
+  observationMarkers,
+  whyDraftNotReady,
+} from "@/lib/score-model";
 
 export async function enqueueJob(
   type: JobType,
   payload: Prisma.InputJsonValue,
   submissionId?: string,
 ) {
-  return prisma.job.create({
+  const job = await prisma.job.create({
     data: {
       type,
       payload,
       submissionId,
     },
   });
+  wakeCloudWorker();
+  return job;
 }
 
 export async function enqueueTrainPiece(pieceId: string) {
@@ -114,6 +123,7 @@ export async function enqueueDraftWhenReady(submissionId: string) {
       piece: { select: { demo: true } },
       student: { select: { approvedAt: true } },
       analyses: { orderBy: { createdAt: "desc" }, take: 1, select: { observationsJson: true } },
+      drafts: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } },
     },
   });
   if (!submission) {
@@ -130,13 +140,23 @@ export async function enqueueDraftWhenReady(submissionId: string) {
     console.log("draft enqueue", submissionId, "skip", skip);
     return null;
   }
-  const pending = await prisma.job.findFirst({
-    where: { type: "draft", submissionId, status: "pending" },
+  const open = await prisma.job.findFirst({
+    where: { type: "draft", submissionId, status: { in: ["pending", "running"] } },
     select: { id: true },
   });
-  if (pending) {
-    console.log("draft enqueue", submissionId, "already_pending", pending.id);
-    return pending;
+  if (open) {
+    console.log("draft enqueue", submissionId, "already_open", open.id);
+    return open;
+  }
+  const markers = observationMarkers(submission.analyses[0]?.observationsJson);
+  const draftAt = submission.drafts?.[0]?.createdAt ?? null;
+  const covered =
+    Boolean(draftAt) &&
+    (markers.length === 0 ||
+      draftCoversFactVerdicts(draftAt!.toISOString(), latestFactVerdictAt(markers), markers.length));
+  if (covered) {
+    console.log("draft enqueue", submissionId, "skip covered");
+    return null;
   }
   const job = await enqueueJob("draft", { submissionId }, submissionId);
   console.log("draft enqueue", submissionId, job.id);

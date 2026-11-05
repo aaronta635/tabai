@@ -163,6 +163,38 @@ describe("enqueueDraftWhenReady", () => {
     await expect(enqueueDraftWhenReady("sub-1")).resolves.toBeNull();
     expect(job.create).not.toHaveBeenCalled();
   });
+
+  it("does not write another letter when the current one already matches the marks", async () => {
+    submission.findUnique.mockResolvedValueOnce({
+      id: "sub-1",
+      status: "drafted",
+      kind: "take",
+      piece: { demo: true },
+      student: { approvedAt: null },
+      analyses: [
+        {
+          observationsJson: {
+            confidence: 0.8,
+            issues: [
+              {
+                tStart: 1,
+                verdict: "true",
+                verdictAt: "2026-10-31T13:47:19.325Z",
+                type: "pitch",
+                expected: "B3",
+                observed: "missing",
+              },
+            ],
+          },
+        },
+      ],
+      drafts: [{ createdAt: new Date("2026-11-01T05:30:00.000Z") }],
+    });
+    job.findFirst.mockResolvedValueOnce(null);
+
+    await expect(enqueueDraftWhenReady("sub-1")).resolves.toBeNull();
+    expect(job.create).not.toHaveBeenCalled();
+  });
 });
 
 describe("enqueueTakesNeedingCompare", () => {

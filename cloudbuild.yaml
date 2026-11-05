@@ -1,13 +1,15 @@
-# Cloud Build: push to Artifact Registry in Tokyo, then deploy howl0-web + howl0-worker.
+# Cloud Build: image in asia-southeast1, then deploy the worker service para-music.
+# The studio stays on Vercel. This file does not deploy a web service.
 # Trigger this on branch `dev` only. Do not deploy `main`.
 #
-# Substitutions: _REGION, _REPO, _SERVICE_WEB, _SERVICE_WORKER
+# The Artifact Registry repo `para-music` must already exist in asia-southeast1.
+# An empty _RUN_SERVICE_ACCOUNT keeps the service account already on para-music.
 
 substitutions:
-  _REGION: asia-northeast1
-  _REPO: howl0
-  _SERVICE_WEB: howl0-web
-  _SERVICE_WORKER: howl0-worker
+  _REGION: asia-southeast1
+  _REPO: para-music
+  _SERVICE_WORKER: para-music
+  _RUN_SERVICE_ACCOUNT: ""
   _NEXT_PUBLIC_SUPABASE_URL: ""
   _NEXT_PUBLIC_SUPABASE_ANON_KEY: ""
   _NEXT_PUBLIC_APP_URL: ""
@@ -48,24 +50,11 @@ steps:
       - |
         set -euo pipefail
         IMAGE="${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/app:$COMMIT_SHA"
+        SA_ARGS=()
+        if [[ -n "${_RUN_SERVICE_ACCOUNT}" ]]; then
+          SA_ARGS=(--service-account "${_RUN_SERVICE_ACCOUNT}")
+        fi
         COMMON_SECRETS="DATABASE_URL=DATABASE_URL:latest,DIRECT_URL=DIRECT_URL:latest,SUPABASE_URL=SUPABASE_URL:latest,SUPABASE_SERVICE_ROLE_KEY=SUPABASE_SERVICE_ROLE_KEY:latest,SESSION_SECRET=SESSION_SECRET:latest,ADMIN_SECRET=ADMIN_SECRET:latest,GEMINI_API_KEY=GEMINI_API_KEY:latest"
-        gcloud run deploy ${_SERVICE_WEB} \
-          --image "$$IMAGE" \
-          --region ${_REGION} \
-          --platform managed \
-          --port 8080 \
-          --cpu 1 \
-          --memory 1Gi \
-          --min-instances 0 \
-          --max-instances 5 \
-          --timeout 300 \
-          --cpu-throttling \
-          --command npm \
-          --args start \
-          --allow-unauthenticated \
-          --service-account "howl0-run@$PROJECT_ID.iam.gserviceaccount.com" \
-          --set-secrets "$$COMMON_SECRETS" \
-          --set-env-vars "NODE_ENV=production"
         gcloud run deploy ${_SERVICE_WORKER} \
           --image "$$IMAGE" \
           --region ${_REGION} \
@@ -80,9 +69,9 @@ steps:
           --command npm \
           --args run,worker \
           --no-allow-unauthenticated \
-          --service-account "howl0-run@$PROJECT_ID.iam.gserviceaccount.com" \
-          --set-secrets "$$COMMON_SECRETS" \
-          --set-env-vars "NODE_ENV=production,ANALYZE_BACKEND=librosa,BASIC_PITCH=1,GEMINI_MODEL_TRAIN=gemini-3.1-pro-preview,GEMINI_MODEL_COMPARE=gemini-3.5-flash"
+          "$${SA_ARGS[@]}" \
+          --update-secrets "$$COMMON_SECRETS" \
+          --update-env-vars "NODE_ENV=production,ANALYZE_BACKEND=librosa,BASIC_PITCH=1,GEMINI_MODEL_TRAIN=gemini-3.1-pro-preview,GEMINI_MODEL_COMPARE=gemini-3.5-flash"
 
 images:
   - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/app:$COMMIT_SHA

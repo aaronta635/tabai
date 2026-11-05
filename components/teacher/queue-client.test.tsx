@@ -12,6 +12,7 @@ const markOpened = vi.fn();
 const setIssueVerdict = vi.fn();
 const peekDraft = vi.fn();
 const requestDraft = vi.fn();
+const saveLetter = vi.fn();
 const revertReply = vi.fn();
 
 vi.mock("@/app/teacher/actions", () => ({
@@ -21,6 +22,7 @@ vi.mock("@/app/teacher/actions", () => ({
   setIssueVerdict: (...args: unknown[]) => setIssueVerdict(...args),
   peekDraft: (...args: unknown[]) => peekDraft(...args),
   requestDraft: (...args: unknown[]) => requestDraft(...args),
+  saveLetter: (...args: unknown[]) => saveLetter(...args),
   skipSubmission: vi.fn(),
   togglePick: vi.fn(),
   deleteTeacherTake: vi.fn(),
@@ -70,9 +72,14 @@ describe("QueueClient", () => {
     setIssueVerdict.mockReset();
     peekDraft.mockReset();
     requestDraft.mockReset();
+    saveLetter.mockReset();
     revertReply.mockReset();
     peekDraft.mockResolvedValue({ text: null, createdAt: null });
     requestDraft.mockResolvedValue({ ok: true, draftQueued: false });
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => ({ ok: false, json: async () => ({ text: null }) })),
+    );
   });
 
   it("shows an inline error when sending an empty reply", async () => {
@@ -138,6 +145,7 @@ describe("QueueClient", () => {
       verdict: "correct_and_send",
     });
     expect(sendReply).not.toHaveBeenCalled();
+    expect(requestDraft).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();
     expect(screen.getByLabelText("Letter")).toBeInTheDocument();
   });
@@ -176,7 +184,8 @@ describe("QueueClient", () => {
     expect(screen.queryByRole("button", { name: "Write it yourself" })).not.toBeInTheDocument();
   });
 
-  it("shows a drafting bar once every notable fact is marked", () => {
+  it("writes a letter only after the button is pressed", async () => {
+    const user = userEvent.setup();
     renderWithIntl(
       <QueueClient
         tab="unanswered"
@@ -200,9 +209,47 @@ describe("QueueClient", () => {
       />,
     );
 
+    expect(requestDraft).not.toHaveBeenCalled();
+    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
+    const write = screen.getByRole("button", { name: "Write the letter" });
+    expect(write).toBeEnabled();
+    await user.click(write);
+    expect(requestDraft).toHaveBeenCalledOnce();
+    expect(requestDraft).toHaveBeenCalledWith("sub-1");
     expect(screen.getByRole("progressbar", { name: "Writing the letter from the true bars…" })).toBeInTheDocument();
-    expect(screen.getByText("Writing the letter from the true bars…")).toBeInTheDocument();
     expect(screen.getByLabelText("Letter")).toHaveValue("");
+  });
+
+  it("keeps the letter button off when the current letter already matches the marks", () => {
+    renderWithIntl(
+      <QueueClient
+        tab="unanswered"
+        labels={labels}
+        counts={{ unanswered: 1, pending: 0, answered: 0, practice: 0 }}
+        items={[
+          {
+            ...item,
+            draft: "The opening holds together.",
+            draftAt: "2026-11-01T05:30:00.000Z",
+            markers: [
+              {
+                index: 0,
+                tStart: 1,
+                type: "pitch",
+                label: "pitch",
+                expected: "B3",
+                observed: "missing",
+                verdict: "true",
+                verdictAt: "2026-10-31T13:47:19.325Z",
+              },
+            ],
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Write the letter" })).toBeDisabled();
+    expect(requestDraft).not.toHaveBeenCalled();
   });
 
   it("sends the edited letter and the marked moment", async () => {

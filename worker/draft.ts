@@ -9,6 +9,7 @@ import {
   generateGeminiText,
 } from "../lib/gemini";
 import { getReadyPieceModel } from "../lib/catalog";
+import { addressAsStudent } from "../lib/draft-address";
 import { tempoCue, tempoNumber } from "../lib/tempo-cue";
 import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
@@ -21,8 +22,8 @@ import {
   type DraftRetrieval,
 } from "../lib/rag";
 import {
-  letterUsesSendableFacts,
   observationsForDraft,
+  letterUsesSendableFacts,
   parseCompareObservations,
   whyDraftNotReady,
   type CompareObservations,
@@ -47,27 +48,28 @@ function buildUserPrompt(input: {
   observations: CompareObservations | null;
   samples: string[];
   retrieval: DraftRetrieval;
-  tempoLine?: string | null;
+  tempoLine: string | null;
 }) {
   if (input.locale === "en") {
     return [
       `Piece: ${input.title}`,
       input.note ? `Teacher's note: ${input.note}` : "No note.",
       `Student: ${input.studentName}`,
+      `Address: Hello ${input.studentName}. Use "${input.studentName}" every time the letter refers to the student.`,
       input.retrieval.previousText
-        ? `Previous reply (same student, same piece): ${input.retrieval.previousText}`
+        ? `Previous reply (same student, same piece): ${addressAsStudent(input.retrieval.previousText, input.studentName)}`
         : "No previous reply for this student.",
       `Required facts:\n${observationOutline(input.observations, "en")}`,
-      input.tempoLine ? `Tempo line: ${input.tempoLine}` : "No tempo line.",
       `Measures: ${JSON.stringify(input.metrics)}`,
       `How to use the measures: ${metricGuidance(input.metrics, input.observations, "en")}`,
+      input.tempoLine ?? "No tempo line. Do not mention speed.",
       input.retrieval.scoreHints.length
         ? `Related score or tutorial:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
         : "No score passage tied to a mistake.",
-      `Earlier replies on this piece (voice, not facts):\n${formatExamples(input.retrieval.pieceReplies, "en")}`,
-      `Earlier replies on the same kind of mistake:\n${formatExamples(input.retrieval.similarReplies, "en")}`,
+      `Earlier replies on this piece (voice, not facts):\n${formatExamples(namedExamples(input.retrieval.pieceReplies, input.studentName), "en")}`,
+      `Earlier replies on the same kind of mistake:\n${formatExamples(namedExamples(input.retrieval.similarReplies, input.studentName), "en")}`,
       input.samples.length
-        ? `Teacher's voice (samples):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
+        ? `Teacher's voice (samples):\n${input.samples.map((s) => `- ${addressAsStudent(s, input.studentName)}`).join("\n")}`
         : "No voice samples yet. Write 50–110 words, warm and specific, with a clock time when the facts have one.",
     ].join("\n\n");
   }
@@ -75,20 +77,21 @@ function buildUserPrompt(input: {
     `Bài: ${input.title}`,
     input.note ? `Note của thầy: ${input.note}` : "Không có note.",
     `Học viên: ${input.studentName}`,
+    `Cách gọi: Chào ${input.studentName}. Mọi chỗ nói về học viên dùng tên "${input.studentName}". Không viết "con" hay "bạn".`,
     input.retrieval.previousText
-      ? `Nhận xét lần trước (cùng học viên, cùng bài): ${input.retrieval.previousText}`
+      ? `Nhận xét lần trước (cùng học viên, cùng bài): ${addressAsStudent(input.retrieval.previousText, input.studentName)}`
       : "Chưa có nhận xét trước cho học viên này.",
     `Facts bắt buộc:\n${observationOutline(input.observations)}`,
-    input.tempoLine ? `Tempo: ${input.tempoLine}` : "Không có dòng tempo.",
     `Số đo: ${JSON.stringify(input.metrics)}`,
     `Cách dùng số đo: ${metricGuidance(input.metrics, input.observations)}`,
+    input.tempoLine ?? "Không có dòng tempo. Đừng nhắc tốc độ.",
     input.retrieval.scoreHints.length
       ? `Đoạn score/tutorial liên quan:\n${input.retrieval.scoreHints.map((hint) => `- ${hint}`).join("\n")}`
       : "Không có đoạn score gắn với lỗi.",
-    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(input.retrieval.pieceReplies, "vi")}`,
-    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(input.retrieval.similarReplies, "vi")}`,
+    `Nhận xét cũ cùng bài (giọng, không phải facts):\n${formatExamples(namedExamples(input.retrieval.pieceReplies, input.studentName), "vi")}`,
+    `Nhận xét cũ cùng loại lỗi:\n${formatExamples(namedExamples(input.retrieval.similarReplies, input.studentName), "vi")}`,
     input.samples.length
-      ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${s}`).join("\n")}`
+      ? `Giọng thầy (mẫu):\n${input.samples.map((s) => `- ${addressAsStudent(s, input.studentName)}`).join("\n")}`
       : "Chưa có mẫu giọng. Viết 50–110 chữ, ấm, cụ thể, kèm mốc giờ nếu facts có.",
   ].join("\n\n");
 }
@@ -139,7 +142,8 @@ export async function runDraft(submissionId: string) {
     pieceModel?.scoreJson && typeof pieceModel.scoreJson === "object" && !Array.isArray(pieceModel.scoreJson)
       ? (pieceModel.scoreJson as { tempoBpm?: unknown; allowFasterTempo?: unknown })
       : null;
-  const tempoLine = tempoCue(tempoNumber(scoreJson?.tempoBpm), tempoNumber(metrics?.tempo_bpm), locale, {
+  const referenceBpm = tempoNumber(scoreJson?.tempoBpm);
+  const tempoLine = tempoCue(referenceBpm, tempoNumber(metrics?.tempo_bpm), locale, {
     allowFaster: scoreJson?.allowFasterTempo === true,
   });
   const retrieval = await retrieveDraftContext({
@@ -264,6 +268,10 @@ export async function runDraft(submissionId: string) {
   }
 }
 
+function namedExamples(rows: { source: string; text: string }[], name: string) {
+  return rows.map((row) => ({ ...row, text: addressAsStudent(row.text, name) }));
+}
+
 function sendableLetter(
   name: string,
   title: string,
@@ -284,8 +292,8 @@ function sendableLetter(
 function fallbackDraft(name: string, title: string, note: string | null, locale: DraftLocale) {
   if (locale === "en") {
     const focus = note?.trim() || "steady time and a clean sound";
-    return `I heard ${name} play ${title}. The opening holds together, so keep that time. Next time focus on ${focus}, slow it by a beat, and send another take.`;
+    return `Hello ${name}, I heard ${name} play ${title}. The opening holds together, so keep that time. Next time focus on ${focus}, slow it by a beat, and send another take.`;
   }
   const focus = note?.trim() || "đúng nhịp và tiếng sạch";
-  return `Thầy đã nghe ${name} chơi ${title}. Đoạn mở đầu ổn, giữ nhịp đó. Lần sau tập trung ${focus}, chơi chậm một nhịp rồi gửi lại một take.`;
+  return `Chào ${name}, thầy đã nghe ${name} chơi ${title}. Đoạn mở đầu ổn, giữ nhịp đó. Lần sau tập trung ${focus}, chơi chậm một nhịp rồi gửi lại một take.`;
 }

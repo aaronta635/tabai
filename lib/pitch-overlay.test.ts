@@ -72,11 +72,12 @@ describe("overlayPitchIssues", () => {
       ],
       melodyScore,
     );
-    expect(next.issues.some((issue) => issue.type === "timing")).toBe(true);
-    const pitch = next.issues.filter((issue) => issue.type === "pitch");
+    expect(next.issues.some((issue) => issue.type === "timing")).toBe(false);
+    const pitch = next.issues.filter((issue) => issue.type === "melody_note_missing");
     expect(pitch).toHaveLength(1);
-    expect(pitch[0]?.expected).toBe("E4");
-    expect(pitch[0]?.observed).toBe("D4");
+    expect(pitch[0]?.expected).toBe("E4 · Dây buông · dây 1");
+    expect(pitch[0]?.observed).toBe("missing");
+    expect(pitch[0]?.evidence?.alignmentCost).toEqual(expect.any(Number));
     expect(pitch.some((issue) => issue.observed === "guess")).toBe(false);
   });
 
@@ -91,17 +92,12 @@ describe("overlayPitchIssues", () => {
       chordScore,
       [{ tStart: 4, tEnd: 7, topic: "Am to C7", instruction: "Play the A minor chord", bar: 2 }],
     );
-    const pitch = next.issues.filter((issue) => issue.type === "chord");
-    expect(pitch[0]?.expected).toBe("Am");
-    expect(pitch[0]?.observed).toBe("A");
-    expect(pitch[0]?.tStart).toBeCloseTo(4.2, 2);
-    expect(pitch[0]?.bar).toBeNull();
+    expect(next.issues.filter((issue) => issue.type === "chord" || issue.type === "chord_not_ringing")).toEqual([]);
   });
 
   it("drops Gemini pitch when Basic Pitch ran with no notes", () => {
     const next = overlayPitchIssues(emptyObs, [], chordScore);
-    expect(next.issues.some((issue) => issue.type === "pitch")).toBe(false);
-    expect(next.issues.some((issue) => issue.type === "timing")).toBe(true);
+    expect(next.issues.some((issue) => issue.type === "pitch" || issue.type === "timing")).toBe(false);
   });
 
   it("prefers chord windows when the model has more chords than melody notes", () => {
@@ -119,9 +115,7 @@ describe("overlayPitchIssues", () => {
       mixed,
       [{ tStart: 4, tEnd: 7, topic: "Am to C7", instruction: "Play the A minor chord", bar: 2 }],
     );
-    const pitch = next.issues.filter((issue) => issue.type === "chord");
-    expect(pitch[0]?.expected).toBe("Am");
-    expect(pitch[0]?.observed).toBe("A");
+    expect(next.issues.filter((issue) => issue.type === "chord" || issue.type === "chord_not_ringing")).toEqual([]);
   });
 
   it("does not map a G ending cue onto Fm from the chord list", () => {
@@ -174,11 +168,7 @@ describe("overlayPitchIssues", () => {
         },
       ],
     );
-    const pitch = next.issues.filter((issue) => issue.type === "chord");
-    expect(pitch[0]?.expected).toBe("Am");
-    expect(pitch[0]?.observed).toBe("A");
-    expect(pitch[0]?.tStart).toBeCloseTo(5.05, 2);
-    expect(pitch[0]?.bar).toBeNull();
+    expect(next.issues.filter((issue) => issue.type === "chord" || issue.type === "chord_not_ringing")).toEqual([]);
   });
 
   it("drops Gemini chord names when Basic Pitch heard notes", () => {
@@ -207,8 +197,7 @@ describe("overlayPitchIssues", () => {
       chordScore,
       [{ tStart: 4, tEnd: 7, topic: "Am to C7", instruction: "Play the A minor chord", bar: 2 }],
     );
-    expect(next.issues.some((issue) => issue.observed === "Dm")).toBe(false);
-    expect(next.issues.some((issue) => issue.type === "chord" && issue.observed === "A")).toBe(true);
+    expect(next.issues.some((issue) => issue.observed === "Dm" || issue.observed === "A")).toBe(false);
   });
 
   it("skips an Fm window when the tutorial itself played F major", () => {
@@ -247,9 +236,7 @@ describe("overlayPitchIssues", () => {
         { tStart: 12, tEnd: 12.4, midi: 67, name: "G4" },
       ],
     );
-    const pitch = next.issues.filter((issue) => issue.type === "chord");
-    expect(pitch[0]?.observed).toBe("A");
-    expect(pitch[0]?.tStart).toBeCloseTo(5.05, 2);
+    expect(next.issues.filter((issue) => issue.type === "chord" || issue.type === "chord_not_ringing")).toEqual([]);
   });
 
   it("flags take notes that disagree with a sequential tutorial lick", () => {
@@ -295,8 +282,8 @@ describe("overlayPitchIssues", () => {
       [{ tStart: 0, tEnd: 6, topic: "Melody Line", instruction: "Playing melody on the D string", bar: null }],
       tutorial,
     );
-    const pitch = next.issues.filter((issue) => issue.type === "pitch");
-    expect(pitch.some((issue) => issue.expected === "F4" && issue.observed === "A#4")).toBe(true);
+    const pitch = next.issues.filter((issue) => issue.type === "melody_note_missing");
+    expect(pitch.some((issue) => issue.expected === "F4 · ngăn 1 · dây 1" && issue.observed === "missing")).toBe(true);
   });
 
   it("names A7 only when the flat seventh is in the window", () => {
@@ -311,9 +298,7 @@ describe("overlayPitchIssues", () => {
       chordScore,
       [{ tStart: 4, tEnd: 6, topic: "Am", instruction: "A minor", bar: null }],
     );
-    const chord = next.issues.find((issue) => issue.type === "chord");
-    expect(chord?.expected).toBe("Am");
-    expect(chord?.observed).toBe("A7");
+    expect(next.issues.filter((issue) => issue.type === "chord" || issue.type === "chord_not_ringing")).toEqual([]);
   });
 
   it("refuses to judge a take with too few notes", () => {
@@ -324,8 +309,7 @@ describe("overlayPitchIssues", () => {
       [{ tStart: 4, tEnd: 6, topic: "Am", instruction: "A minor", bar: null }],
     );
     expect(next.pitchJudge).toBe("weak");
-    expect(next.issues.some((issue) => issue.type === "pitch" || issue.type === "chord")).toBe(false);
-    expect(next.issues.some((issue) => issue.type === "timing")).toBe(true);
+    expect(next.issues.some((issue) => issue.type === "pitch" || issue.type === "chord" || issue.type === "timing")).toBe(false);
   });
 
   it("does not flag the same pitch when only the fret differs", () => {
@@ -385,8 +369,9 @@ describe("overlayPitchIssues", () => {
       ],
     );
     const moved = next.issues.find((issue) => issue.tStart === 1);
-    expect(moved?.expected).toBe("C4 · ngăn 1");
-    expect(moved?.observed).toBe("D4 · ngăn 3");
+    expect(moved?.expected).toBe("C4 · ngăn 1 · dây 2");
+    expect(moved?.observed).toBe("missing");
+    expect(moved?.type).toBe("melody_note_missing");
     expect(next.issues.some((issue) => issue.expected?.includes("ngăn") && issue.observed?.includes("ngăn") && issue.tStart !== 1)).toBe(
       false,
     );
@@ -448,7 +433,9 @@ describe("overlayPitchIssues", () => {
         { tStart: 3, tEnd: 3.2, midi: 69, name: "A4" },
       ],
     );
-    expect(next.issues.filter((issue) => issue.type === "pitch")).toEqual([]);
+    expect(next.issues.filter((issue) => issue.type === "wrong_pitch_semitone")).toEqual([
+      expect.objectContaining({ expected: "F4 · ngăn 1 · dây 1", observed: "F#4 · ngăn 2 · dây 1" }),
+    ]);
   });
 
   it("flags the skipped note instead of shifting every later note", () => {
@@ -478,8 +465,8 @@ describe("overlayPitchIssues", () => {
         { tStart: 4, tEnd: 4.2, midi: 65, name: "F4" },
       ],
     );
-    const pitch = next.issues.filter((issue) => issue.type === "pitch");
-    expect(pitch).toEqual([expect.objectContaining({ expected: "D4", observed: "missing" })]);
+    const pitch = next.issues.filter((issue) => issue.type === "melody_note_missing");
+    expect(pitch).toEqual([expect.objectContaining({ expected: "D4 · ngăn 3 · dây 2", observed: "missing" })]);
   });
 
   it("collapses a constant transposition into one bar", () => {
@@ -514,6 +501,40 @@ describe("overlayPitchIssues", () => {
     expect(pitch).toEqual([expect.objectContaining({ expected: "original pitch", observed: "+2 semitones" })]);
   });
 
+  it("calls a half-step-down take a tuning offset, not a capo", () => {
+    const lick: ScoreJson = {
+      title: "C lick",
+      key: "C",
+      tempoBpm: 80,
+      timeSignature: "4/4",
+      barCount: 0,
+      sections: [{ name: "A", startBar: 1, endBar: 2, chords: [], melodyNotes: [], lyrics: null }],
+      techniqueFocus: [],
+      commonMistakes: [],
+    };
+    const next = overlayPitchIssues(
+      emptyObs,
+      [
+        { tStart: 1, tEnd: 1.2, midi: 59, name: "B3" },
+        { tStart: 2, tEnd: 2.2, midi: 61, name: "C#4" },
+        { tStart: 3, tEnd: 3.2, midi: 63, name: "D#4" },
+        { tStart: 4, tEnd: 4.2, midi: 66, name: "F#4" },
+      ],
+      lick,
+      [{ tStart: 0, tEnd: 5, topic: "Melody", instruction: "Play the lick", bar: null }],
+      [
+        { tStart: 1, tEnd: 1.2, midi: 60, name: "C4" },
+        { tStart: 2, tEnd: 2.2, midi: 62, name: "D4" },
+        { tStart: 3, tEnd: 3.2, midi: 64, name: "E4" },
+        { tStart: 4, tEnd: 4.2, midi: 67, name: "G4" },
+      ],
+    );
+    expect(next.issues.some((issue) => issue.observed.includes("capo"))).toBe(false);
+    expect(next.issues.filter((issue) => issue.type === "wrong_pitch_semitone")).toEqual([
+      expect.objectContaining({ observed: "tuned 1 semitone flat" }),
+    ]);
+  });
+
   it("names G when that chord is played instead of Am", () => {
     const next = overlayPitchIssues(
       emptyObs,
@@ -525,9 +546,10 @@ describe("overlayPitchIssues", () => {
       chordScore,
       [{ tStart: 0, tEnd: 3, topic: "Am", instruction: "A minor", bar: null }],
     );
-    const chord = next.issues.find((issue) => issue.type === "chord");
+    const chord = next.issues.find((issue) => issue.type === "chord_not_ringing");
     expect(chord?.expected).toBe("Am");
-    expect(chord?.observed).toBe("G");
+    expect(chord?.observed).toBe("not ringing");
+    expect(chord?.evidence?.pitchClassEnergy).toBe(0);
   });
 
   it("ignores a short count-in before the chord", () => {

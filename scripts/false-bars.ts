@@ -4,7 +4,7 @@ loadLocalEnv();
 
 async function main() {
   const { prisma } = await import("../lib/prisma");
-  const { falseBarReport, formatFalseBarReport, markedBarsFromAnalysis } = await import("../lib/false-bars");
+  const { falseBarReport, formatFactTypeScores, formatFalseBarReport, markedBarsFromAnalysis } = await import("../lib/false-bars");
   const analyses = await prisma.analysis.findMany({
     orderBy: { createdAt: "desc" },
     distinct: ["submissionId"],
@@ -25,6 +25,8 @@ async function main() {
   const rows = extracted.flat();
   const takes = extracted.filter((bars) => bars.length > 0).length;
   console.log(formatFalseBarReport(falseBarReport(rows), takes));
+  console.log("");
+  console.log(formatFactTypeScores(rows));
 }
 
 main()

@@ -96,7 +96,7 @@ export function QueueClient({
     item.markers.length === 0 ||
     item.markers.every((marker) => {
       const verdict = verdicts[marker.index] ?? marker.verdict;
-      return verdict === "true" || verdict === "false";
+      return verdict != null;
     });
 
   const submitReply = useCallback(async (submissionId: string, text: string, moment: number | null) => {
@@ -301,6 +301,13 @@ export function QueueClient({
               trueLabel: t("factTrue"),
               falseLabel: t("factFalse"),
               positives: t("factPositives"),
+              reasons: {
+                wrong_detection: t("factReasonDetection"),
+                wrong_alignment: t("factReasonAlignment"),
+                wrong_piece_model: t("factReasonPiece"),
+                correct_but_skip: t("factReasonSkip"),
+                unsure: t("factReasonUnsure"),
+              },
             }}
             onSeek={(tStart) => {
               const video = videoRef.current;

@@ -1,5 +1,5 @@
 # Compare a student take to a saved piece model
-# prompt_version: compare_take-v5
+# prompt_version: compare_take-v6
 
 You compare one student guitar video to a frozen piece model (score JSON + tutorial cues) and light audio metrics.
 
@@ -16,7 +16,7 @@ Rules:
 - Only report an issue when you can point to the video (timestamp) or a bar on the score. If unsure, lower `confidence` and omit the issue.
 - `confidence` is how sure you are overall, 0 to 1. Phone guitar is noisy; be conservative. Below 0.45 means hedge — do not claim a wrong pitch as fact.
 - `overallFit` is how closely the take matches the score, 0 to 1.
-- Issue types: timing, pitch, chord, technique, missing.
+- Do not write issue types. Tempo, whether a chord rang, and a missing melody note are computed in code. Do not write technique, buzz, mute, strum direction, or per-note timing. Leave `issues` empty.
 - `positives` are specific to this take (a clean open G, a steady count-in), never generic praise. Include a time in the positive text when you can (`0:08 intro`).
 - `nextPractice` is one concrete instruction for the next attempt. If there are no issues, tell them to keep this take’s feel / send the next piece — do not invent a new problem.
 - Do not mention that you are an AI or that this is a model comparison.

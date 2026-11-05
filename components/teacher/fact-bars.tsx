@@ -1,13 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { formatClock, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
+import { formatClock, SAI_REASONS, verdictMarked, verdictSends, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
 
 type Copy = {
   help: string;
   trueLabel: string;
   falseLabel: string;
   positives: string;
+  reasons: Record<(typeof SAI_REASONS)[number], string>;
 };
 
 export function FactBars({
@@ -58,9 +59,9 @@ export function FactBars({
                 <button
                   type="button"
                   className="chip"
-                  aria-pressed={verdict === "true"}
+                  aria-pressed={verdictSends(verdict)}
                   onClick={() => {
-                    const next: FactVerdict = verdict === "true" ? null : "true";
+                    const next: FactVerdict = verdictSends(verdict) ? null : "correct_and_send";
                     setLocal((prev) => ({ ...prev, [marker.index]: next }));
                     void onVerdict(marker.index, next);
                   }}
@@ -70,15 +71,33 @@ export function FactBars({
                 <button
                   type="button"
                   className="chip"
-                  aria-pressed={verdict === "false"}
+                  aria-pressed={verdictMarked(verdict) && !verdictSends(verdict)}
                   onClick={() => {
-                    const next: FactVerdict = verdict === "false" ? null : "false";
+                    const next: FactVerdict = verdictMarked(verdict) && !verdictSends(verdict) ? null : "wrong_detection";
                     setLocal((prev) => ({ ...prev, [marker.index]: next }));
                     void onVerdict(marker.index, next);
                   }}
                 >
                   {copy.falseLabel}
                 </button>
+                {verdictMarked(verdict) && !verdictSends(verdict) ? (
+                  <select
+                    className="chip"
+                    aria-label={copy.falseLabel}
+                    value={SAI_REASONS.includes(verdict as (typeof SAI_REASONS)[number]) ? verdict! : "wrong_detection"}
+                    onChange={(event) => {
+                      const next = event.target.value as FactVerdict;
+                      setLocal((prev) => ({ ...prev, [marker.index]: next }));
+                      void onVerdict(marker.index, next);
+                    }}
+                  >
+                    {SAI_REASONS.map((reason) => (
+                      <option key={reason} value={reason}>
+                        {copy.reasons[reason]}
+                      </option>
+                    ))}
+                  </select>
+                ) : null}
               </div>
             ) : null}
           </div>

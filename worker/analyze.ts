@@ -122,7 +122,7 @@ export async function runAnalyze(submissionId: string) {
   const started = Date.now();
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },
-    include: { student: true, media: true, piece: true },
+    include: { student: true, media: true, piece: { include: { teacher: { select: { feedbackLocale: true } } } } },
   });
   if (!submission) throw new Error("submission not found");
   if (!submission.piece.demo && !submission.student.approvedAt) {
@@ -298,18 +298,13 @@ export async function runAnalyze(submissionId: string) {
                   }
                 }
                 try {
-                  const hasTutorial = await loadTutorial();
                   const labeled = await labelMismatchFrets({
                     takeVideo: videoPath,
-                    tutorialVideo: hasTutorial ? tutorialPath : null,
+                    tutorialVideo: null,
                     heard: heardNotes,
                     tutorial: tutorialNotes,
                   });
                   heardNotes = labeled.heard;
-                  if (labeled.tutorialChanged) {
-                    tutorialNotes = labeled.tutorial;
-                    tutorialDirty = true;
-                  }
                   metrics = {
                     ...(metrics as object),
                     pitch_notes: heardNotes,
@@ -338,17 +333,23 @@ export async function runAnalyze(submissionId: string) {
                   silence_ratio?: unknown;
                   duration_s?: unknown;
                   pitch_error?: unknown;
+                  tempo_bpm?: unknown;
                 };
+                const score = pieceModel.scoreJson as ScoreJson;
                 observationsParsed = overlayPitchIssues(
                   observationsParsed,
                   heardNotes,
-                  pieceModel.scoreJson as ScoreJson,
+                  score,
                   cues,
                   tutorialNotes,
                   {
                     silenceRatio: typeof metricRow.silence_ratio === "number" ? metricRow.silence_ratio : null,
                     durationS: typeof metricRow.duration_s === "number" ? metricRow.duration_s : null,
                     pitchError: typeof metricRow.pitch_error === "string" ? metricRow.pitch_error : null,
+                    locale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
+                    takeBpm: typeof metricRow.tempo_bpm === "number" ? metricRow.tempo_bpm : null,
+                    referenceBpm: typeof score.tempoBpm === "number" ? score.tempoBpm : null,
+                    allowFasterTempo: score.allowFasterTempo === true,
                   },
                 );
               }

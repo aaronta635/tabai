@@ -135,7 +135,7 @@ describe("QueueClient", () => {
     expect(setIssueVerdict).toHaveBeenCalledWith({
       submissionId: "sub-1",
       issueIndex: 0,
-      verdict: "true",
+      verdict: "correct_and_send",
     });
     expect(sendReply).not.toHaveBeenCalled();
     expect(screen.getByRole("button", { name: "Send" })).toBeInTheDocument();

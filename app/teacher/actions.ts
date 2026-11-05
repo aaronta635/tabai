@@ -19,7 +19,14 @@ import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
 import { teacherSubmission } from "@/lib/scope";
 import { deleteTeacherTake as removeTeacherTake } from "@/lib/deletion";
-import { applyIssueVerdict, draftCoversFactVerdicts, latestFactVerdictAt, observationMarkers, parseCompareObservations } from "@/lib/score-model";
+import {
+  applyIssueVerdict,
+  draftCoversFactVerdicts,
+  latestFactVerdictAt,
+  observationMarkers,
+  parseCompareObservations,
+  type FactVerdict,
+} from "@/lib/score-model";
 
 async function teacherOrThrow() {
   const teacher = await requireTeacher();
@@ -427,7 +434,7 @@ export async function revertReply(submissionId: string) {
 export async function setIssueVerdict(input: {
   submissionId: string;
   issueIndex: number;
-  verdict: "true" | "false" | null;
+  verdict: FactVerdict;
 }) {
   const review = await reviewSubmission(input.submissionId);
   const submission = review.submission;

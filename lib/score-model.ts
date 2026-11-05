@@ -1,5 +1,19 @@
-export const ISSUE_TYPES = ["timing", "pitch", "chord", "technique", "missing"] as const;
+export const ISSUE_TYPES = [
+  "timing",
+  "pitch",
+  "chord",
+  "technique",
+  "missing",
+  "tempo_vs_target",
+  "chord_not_ringing",
+  "melody_note_missing",
+  "wrong_pitch_semitone",
+] as const;
 export type IssueType = (typeof ISSUE_TYPES)[number];
+
+/** Gemini may still return these. The compare parser drops them. */
+const DROPPED_ISSUE_TYPES = new Set<IssueType>(["timing", "technique"]);
+const UNSAFE_FACT = /\b(buzz|mute|strum(?:ming|-direction)?)\b/i;
 
 export type ScoreSection = {
   name: string;
@@ -14,6 +28,8 @@ export type ScoreJson = {
   title: string;
   key: string;
   tempoBpm: number | null;
+  /** When true, a take slower than the target may say "play faster". Default off. */
+  allowFasterTempo?: boolean;
   timeSignature: string;
   barCount: number;
   sections: ScoreSection[];
@@ -58,7 +74,33 @@ export type PieceModelSourceJson = {
   tutorialMime?: string;
 };
 
-export type FactVerdict = "true" | "false" | null;
+export const FACT_VERDICTS = [
+  "true",
+  "false",
+  "correct_and_send",
+  "correct_but_skip",
+  "wrong_detection",
+  "wrong_alignment",
+  "wrong_piece_model",
+  "unsure",
+] as const;
+export type FactVerdict = (typeof FACT_VERDICTS)[number] | null;
+
+/** Sai reasons on the existing false control. Đúng stores correct_and_send. */
+export const SAI_REASONS = [
+  "wrong_detection",
+  "wrong_alignment",
+  "wrong_piece_model",
+  "correct_but_skip",
+  "unsure",
+] as const;
+export type SaiReason = (typeof SAI_REASONS)[number];
+
+export type FactEvidence = {
+  pitchClassEnergy: number | null;
+  alignmentCost: number | null;
+  onsetProbability: number | null;
+};
 
 export type CompareIssue = {
   type: IssueType;
@@ -70,7 +112,26 @@ export type CompareIssue = {
   confidence: number;
   verdict?: FactVerdict;
   verdictAt?: string | null;
+  evidence?: FactEvidence | null;
 };
+
+/** Legacy Đúng and correct_and_send are the only marks that enter the letter. */
+export function verdictSends(verdict: FactVerdict | undefined): boolean {
+  return verdict === "true" || verdict === "correct_and_send";
+}
+
+export function verdictMarked(verdict: FactVerdict | undefined): boolean {
+  return verdict != null;
+}
+
+/** Paper precision: sendable plus correct_but_skip, over every mark except unsure. */
+export function verdictCountsForPrecision(verdict: FactVerdict | undefined): boolean {
+  return verdict != null && verdict !== "unsure";
+}
+
+export function verdictIsPrecisionHit(verdict: FactVerdict | undefined): boolean {
+  return verdict === "true" || verdict === "correct_and_send" || verdict === "correct_but_skip";
+}
 
 export type CompareObservations = {
   overallFit: number;
@@ -109,15 +170,33 @@ function asStringArray(value: unknown) {
   return value.filter((item): item is string => typeof item === "string");
 }
 
-function asIssueType(value: unknown): IssueType {
+function asIssueType(value: unknown): IssueType | null {
   if (typeof value === "string" && ISSUE_TYPES.includes(value as IssueType)) {
     return value as IssueType;
   }
-  return "technique";
+  return null;
 }
 
 function asVerdict(value: unknown): FactVerdict {
-  return value === "true" || value === "false" ? value : null;
+  return typeof value === "string" && FACT_VERDICTS.includes(value as (typeof FACT_VERDICTS)[number])
+    ? (value as FactVerdict)
+    : null;
+}
+
+function asEvidence(value: unknown): FactEvidence | null {
+  const row = asRecord(value);
+  if (!row) return null;
+  return {
+    pitchClassEnergy: asNumber(row.pitchClassEnergy),
+    alignmentCost: asNumber(row.alignmentCost),
+    onsetProbability: asNumber(row.onsetProbability),
+  };
+}
+
+function keepParsedIssue(issue: CompareIssue) {
+  if (DROPPED_ISSUE_TYPES.has(issue.type)) return false;
+  if (UNSAFE_FACT.test(issue.expected) || UNSAFE_FACT.test(issue.observed)) return false;
+  return true;
 }
 
 export function parseTrainExtract(raw: unknown): TrainExtract {
@@ -293,10 +372,12 @@ export function parseCompareObservations(raw: unknown): CompareObservations {
     positives: asStringArray(data.positives),
     nextPractice: asString(data.nextPractice),
     pitchJudge: data.pitchJudge === "weak" ? "weak" : "ok",
-    issues: issuesRaw.map((item) => {
+    issues: issuesRaw.flatMap((item) => {
       const issue = asRecord(item) ?? {};
-      return {
-        type: asIssueType(issue.type),
+      const type = asIssueType(issue.type);
+      if (!type) return [];
+      const parsed: CompareIssue = {
+        type,
         bar: asNumber(issue.bar),
         tStart: asNumber(issue.tStart),
         tEnd: asNumber(issue.tEnd),
@@ -305,7 +386,9 @@ export function parseCompareObservations(raw: unknown): CompareObservations {
         confidence: clamp01(asNumber(issue.confidence) ?? 0),
         verdict: asVerdict(issue.verdict),
         verdictAt: asString(issue.verdictAt) || null,
+        evidence: asEvidence(issue.evidence),
       };
+      return keepParsedIssue(parsed) ? [parsed] : [];
     }),
   };
 }
@@ -401,7 +484,7 @@ export function applyIssueVerdict(
 export function factVerdictsComplete(observations: CompareObservations): boolean {
   return observations.issues
     .filter((issue) => issue.tStart != null)
-    .every((issue) => issue.verdict === "true" || issue.verdict === "false");
+    .every((issue) => verdictMarked(issue.verdict));
 }
 
 export function whyDraftNotReady(input: {
@@ -416,20 +499,33 @@ export function whyDraftNotReady(input: {
   if (!isCompareObservations(input.observations)) return "no_compare";
   const parsed = parseCompareObservations(input.observations);
   const timed = parsed.issues.filter((issue) => issue.tStart != null);
-  const open = timed.filter((issue) => issue.verdict !== "true" && issue.verdict !== "false");
+  const open = timed.filter((issue) => !verdictMarked(issue.verdict));
   if (open.length) return `facts_open ${open.length}/${timed.length}`;
   return null;
 }
 
-/** Letter facts: only issues the tutor marked true. Incomplete bars return null. */
+/** Letter facts: only issues the tutor marked sendable. Incomplete bars return null. */
 export function observationsForDraft(observations: CompareObservations): CompareObservations | null {
   if (!factVerdictsComplete(observations)) return null;
-  const dropped = observations.issues.some((issue) => issue.verdict === "false");
+  const dropped = observations.issues.some((issue) => verdictMarked(issue.verdict) && !verdictSends(issue.verdict));
   return {
     ...observations,
-    issues: observations.issues.filter((issue) => issue.verdict === "true"),
+    issues: observations.issues.filter((issue) => verdictSends(issue.verdict)),
     nextPractice: dropped ? "" : observations.nextPractice,
   };
+}
+
+/** The letter may name a fact only when that fact was marked sendable. */
+export function letterUsesSendableFacts(letter: string, observations: CompareObservations): boolean {
+  const hay = letter.toLowerCase();
+  const blocked = observations.issues.filter((issue) => verdictMarked(issue.verdict) && !verdictSends(issue.verdict));
+  return blocked.every((issue) => {
+    return [issue.expected, issue.observed].every((token) => {
+      const text = token.trim().toLowerCase();
+      if (text.length < 3) return true;
+      return !hay.includes(text);
+    });
+  });
 }
 
 export function latestFactVerdictAt(markers: Pick<ObservationMarker, "verdictAt">[]): string | null {

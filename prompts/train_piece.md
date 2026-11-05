@@ -1,5 +1,5 @@
 # Train a piece model from the assets the teacher uploaded
-# prompt_version: train_piece-v3
+# prompt_version: train_piece-v4
 
 You extract a reusable guitar piece model from whichever files are attached: a score, a tutorial video, or both. They are independent. Do not wait for a missing file. Do not invent the missing one.
 
@@ -27,8 +27,10 @@ Fill `tutorialCues` (at least four timestamped cues), `techniqueFocus`, and `com
 
 Sheet wins for notes/chords/bars. Tutorial wins for tempo feel, fingering, and cues.
 
+Standard tuning, low to high: dây 6 is low E, dây 5 is A, dây 4 is D, dây 3 is G, dây 2 is B, dây 1 is high E. Fret 0 is Dây buông. When a cue names a pitch, write the note, Dây buông or ngăn N, and the dây number. The sheet and the tab win. Do not guess a fret from a blurry frame. Student takes and Đúng/Sai marks are not inputs. Do not learn from them.
+
 Rules:
-- `tempoBpm` is the tutorial’s performed tempo when a tutorial is attached and the tempo is clear; otherwise omit a made-up number and use null.
+- `tempoBpm` is the tutorial’s performed tempo when a tutorial is attached and the tempo is clear; otherwise omit a made-up number and use null. This number is the piece tempo later letters compare with the student’s take.
 - `melodyNotes` are the written melody in performance order for that section (e.g. Happy Birthday C4 C4 D4 C4 F4 E4). Never dump a scale (C D E F G A B).
 - `chords` use standard symbols (Am, G7). Empty array if the sheet is melody-only, or if there is no sheet and chords are not clearly taught.
 - `tutorialCues`: when a tutorial is attached, at least four cues with real `tStart` seconds (count-in, a chord change, a picking/thumb note, a bar to watch). `instruction` is a concrete teacher sentence, not "play well". Empty array if there is no tutorial.

@@ -14,6 +14,7 @@ import {
   heardExtractFromMetrics,
   applyIssueVerdict,
   draftCoversFactVerdicts,
+  letterUsesSendableFacts,
   factVerdictsComplete,
   observationsForDraft,
   whyDraftNotReady,
@@ -27,15 +28,21 @@ describe("score-model parsers", () => {
     expect(extract.tutorialCues).toEqual([]);
   });
 
-  it("clamps compare observations and maps unknown types", () => {
+  it("clamps compare observations and drops unknown or unsafe types", () => {
     const observations = parseCompareObservations({
       overallFit: 1.4,
       confidence: -1,
-      issues: [{ type: "nope", bar: 7, tStart: 3, expected: "C", observed: "late", confidence: 0.9 }],
+      issues: [
+        { type: "nope", bar: 7, tStart: 3, expected: "C", observed: "late", confidence: 0.9 },
+        { type: "technique", tStart: 4, expected: "thumb", observed: "mute", confidence: 0.9 },
+        { type: "timing", tStart: 5, expected: "on 1", observed: "late", confidence: 0.8 },
+        { type: "pitch", tStart: 6, expected: "buzz", observed: "E4", confidence: 0.8 },
+        { type: "melody_note_missing", tStart: 7, expected: "E4", observed: "missing", confidence: 0.8 },
+      ],
     });
     expect(observations.overallFit).toBe(1);
     expect(observations.confidence).toBe(0);
-    expect(observations.issues[0]?.type).toBe("technique");
+    expect(observations.issues.map((issue) => issue.type)).toEqual(["melody_note_missing"]);
   });
 
   it("treats a high-fit take with no hard issues as a close match", () => {
@@ -82,8 +89,7 @@ describe("score-model parsers", () => {
           observed: "C#",
           confidence: 0.8,
         },
-        { type: "timing", bar: 1, tStart: 4, tEnd: null, expected: "", observed: "", confidence: 0.2 },
-        { type: "technique", bar: null, tStart: null, tEnd: null, expected: "thumb", observed: "mute", confidence: 0.9 },
+        { type: "melody_note_missing", bar: 1, tStart: 4, tEnd: null, expected: "E4", observed: "missing", confidence: 0.2 },
       ],
     });
     expect(markers).toEqual([
@@ -100,10 +106,10 @@ describe("score-model parsers", () => {
       {
         index: 1,
         tStart: 4,
-        type: "timing",
-        label: "0:04 · timing",
-        expected: "",
-        observed: "",
+        type: "melody_note_missing",
+        label: "0:04 · E4 vs missing",
+        expected: "E4",
+        observed: "missing",
         verdict: null,
         verdictAt: null,
       },
@@ -129,7 +135,7 @@ describe("score-model parsers", () => {
       positives: ["clean run at 0:01"],
       nextPractice: "fix the slide",
       issues: [
-        { type: "technique", tStart: 12, expected: "pressure", observed: "choke", confidence: 0.9 },
+        { type: "melody_note_missing", tStart: 12, expected: "E4", observed: "missing", confidence: 0.9 },
         { type: "pitch", tStart: 5, expected: "G#4", observed: "A#4", confidence: 0.9 },
       ],
     });
@@ -146,6 +152,10 @@ describe("score-model parsers", () => {
       issues: [done!.issues[0]],
       nextPractice: "",
     });
+    const skipped = applyIssueVerdict(done!, 0, "correct_but_skip", "2026-09-29T01:00:06.000Z");
+    expect(observationsForDraft(skipped!)?.issues).toEqual([]);
+    expect(letterUsesSendableFacts("the E4 was missing", skipped!)).toBe(false);
+    expect(letterUsesSendableFacts("the opening was steady", skipped!)).toBe(true);
     expect(draftCoversFactVerdicts("2026-09-29T01:00:04.000Z", "2026-09-29T01:00:05.000Z", 2)).toBe(false);
     expect(draftCoversFactVerdicts("2026-09-29T01:00:06.000Z", "2026-09-29T01:00:05.000Z", 2)).toBe(true);
     expect(draftCoversFactVerdicts("2026-09-29T01:00:06.000Z", null, 0)).toBe(true);

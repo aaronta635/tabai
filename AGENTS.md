@@ -10,7 +10,7 @@
 
 ## Learned Workspace Facts
 - Feedback_AI (howl0) is a Next.js + Prisma LMS using Supabase Postgres and Storage; Prisma needs both `DATABASE_URL` and `DIRECT_URL`.
-- Score-model V1 trains from catalog sheet music plus a tutorial video, stores a piece model, then a worker compares student takes (Gemini extract + local compare) and writes feedback; analysis waits on the worker.
+- Score-model V1 trains from catalog sheet music plus a tutorial video, stores a piece model, then a worker compares student takes (Gemini extract + local compare) and writes feedback; analysis waits on the worker. Guitar positions use standard tuning (low E = dây 6, A = dây 5, D = dây 4, G = dây 3, B = dây 2, high E = dây 1) and fret 0 is “Dây buông”. The sheet, the tab, and that string map are the source of truth; guessed video-frame frets are not written back onto the piece. A Sai mark stays out of the letter. It is not a training negative for the next time that piece trains: a Sai can be a detector error, a bad alignment, a true fact not worth saying, or a wrong piece model.
 - Catalog ingest (`catalog:train`) skips a song unless `sheet.*` and `tutorial.*` exist; teachers upload score and tutorial with the piece, and students see the tutorial on the submit link.
 - Near-term product center is “AI between lessons” (practice, assignments, submissions), not a live Zoom-replacement classroom.
 - Teachers create classes, invite by link or email, keep a custom curriculum of levels and pieces (title, tutorial, sheet, description, tips), and assign pieces to a class or a student; class pieces should be clickable from the class.

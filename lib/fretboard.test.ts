@@ -1,15 +1,36 @@
 import { describe, expect, it } from "vitest";
-import { notePositionLabel, parseFretRead } from "@/lib/fretboard";
+import { labelFactPosition, notePositionLabel, parseFretRead, positionForMidi } from "@/lib/fretboard";
 
 describe("notePositionLabel", () => {
-  it("keeps the note name and adds the fret when the frame is clear", () => {
-    expect(notePositionLabel({ midi: 60, name: "C4", fret: 1, visible: true })).toBe("C4 · ngăn 1");
-    expect(notePositionLabel({ midi: 60, name: "C4", fret: 5, visible: true })).toBe("C4 · ngăn 5");
+  it("names an open string and the dây number from standard tuning", () => {
+    expect(positionForMidi(59)).toEqual({ string: 2, fret: 0 });
+    expect(notePositionLabel({ midi: 64, name: "E4" })).toBe("E4 · Dây buông · dây 1");
+    expect(notePositionLabel({ midi: 59, name: "B3" })).toBe("B3 · Dây buông · dây 2");
+    expect(notePositionLabel({ midi: 60, name: "C4" })).toBe("C4 · ngăn 1 · dây 2");
+    expect(notePositionLabel({ midi: 62, name: "D4" })).toBe("D4 · ngăn 3 · dây 2");
   });
 
-  it("leaves the fret off when the hand is not visible", () => {
-    expect(notePositionLabel({ midi: 60, name: "C4", fret: 1, visible: false })).toBe("C4");
-    expect(notePositionLabel({ midi: 60, name: "C4" })).toBe("C4");
+  it("ignores a video-frame fret that does not match the string map", () => {
+    expect(notePositionLabel({ midi: 62, name: "D4", fret: 2, visible: true })).toBe("D4 · ngăn 3 · dây 2");
+  });
+
+  it("uses a stored tab position when the sheet marked that string and fret", () => {
+    expect(notePositionLabel({ midi: 62, name: "D4", string: 3, fret: 7, fromScore: true })).toBe("D4 · ngăn 7 · dây 3");
+  });
+
+  it("ignores a video fret even when that string and fret make the same note", () => {
+    expect(notePositionLabel({ midi: 62, name: "D4", string: 3, fret: 7, visible: true })).toBe("D4 · ngăn 3 · dây 2");
+  });
+
+  it("rewrites an older fact that only stored a frame fret", () => {
+    expect(labelFactPosition("B3")).toBe("B3 · Dây buông · dây 2");
+    expect(labelFactPosition("D4 · ngăn 2")).toBe("D4 · ngăn 3 · dây 2");
+    expect(labelFactPosition("missing")).toBe("missing");
+  });
+
+  it("names the same places in English", () => {
+    expect(notePositionLabel({ midi: 64, name: "E4" }, "en")).toBe("E4 · open string · string 1");
+    expect(notePositionLabel({ midi: 60, name: "C4" }, "en")).toBe("C4 · fret 1 · string 2");
   });
 });
 

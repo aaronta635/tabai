@@ -62,6 +62,7 @@ function trainUserText(input: {
     attached,
     rules,
     "Extract the piece model JSON.",
+    "Student takes and Đúng/Sai marks are not inputs. Do not learn from them.",
   ];
   if (input.strict) {
     lines.push("Previous extract was too thin. Retry:");

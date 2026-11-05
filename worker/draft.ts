@@ -8,6 +8,8 @@ import {
   geminiDraftModel,
   generateGeminiText,
 } from "../lib/gemini";
+import { getReadyPieceModel } from "../lib/catalog";
+import { tempoCue, tempoNumber } from "../lib/tempo-cue";
 import { routeSubmission, sendApprovedDraft } from "../lib/growth";
 import { prisma } from "../lib/prisma";
 import {
@@ -19,6 +21,7 @@ import {
   type DraftRetrieval,
 } from "../lib/rag";
 import {
+  letterUsesSendableFacts,
   observationsForDraft,
   parseCompareObservations,
   whyDraftNotReady,
@@ -44,6 +47,7 @@ function buildUserPrompt(input: {
   observations: CompareObservations | null;
   samples: string[];
   retrieval: DraftRetrieval;
+  tempoLine?: string | null;
 }) {
   if (input.locale === "en") {
     return [
@@ -54,6 +58,7 @@ function buildUserPrompt(input: {
         ? `Previous reply (same student, same piece): ${input.retrieval.previousText}`
         : "No previous reply for this student.",
       `Required facts:\n${observationOutline(input.observations, "en")}`,
+      input.tempoLine ? `Tempo line: ${input.tempoLine}` : "No tempo line.",
       `Measures: ${JSON.stringify(input.metrics)}`,
       `How to use the measures: ${metricGuidance(input.metrics, input.observations, "en")}`,
       input.retrieval.scoreHints.length
@@ -74,6 +79,7 @@ function buildUserPrompt(input: {
       ? `Nhận xét lần trước (cùng học viên, cùng bài): ${input.retrieval.previousText}`
       : "Chưa có nhận xét trước cho học viên này.",
     `Facts bắt buộc:\n${observationOutline(input.observations)}`,
+    input.tempoLine ? `Tempo: ${input.tempoLine}` : "Không có dòng tempo.",
     `Số đo: ${JSON.stringify(input.metrics)}`,
     `Cách dùng số đo: ${metricGuidance(input.metrics, input.observations)}`,
     input.retrieval.scoreHints.length
@@ -128,6 +134,14 @@ export async function runDraft(submissionId: string) {
     .slice(0, MAX_ACTIVE_VOICE_SAMPLES)
     .map((s) => s.text);
   const metrics = (submission.analyses[0]?.metricsJson ?? null) as DraftMetrics | null;
+  const pieceModel = await getReadyPieceModel(submission.pieceId);
+  const scoreJson =
+    pieceModel?.scoreJson && typeof pieceModel.scoreJson === "object" && !Array.isArray(pieceModel.scoreJson)
+      ? (pieceModel.scoreJson as { tempoBpm?: unknown; allowFasterTempo?: unknown })
+      : null;
+  const tempoLine = tempoCue(tempoNumber(scoreJson?.tempoBpm), tempoNumber(metrics?.tempo_bpm), locale, {
+    allowFaster: scoreJson?.allowFasterTempo === true,
+  });
   const retrieval = await retrieveDraftContext({
     teacherId: submission.piece.teacherId,
     pieceId: submission.pieceId,
@@ -146,6 +160,7 @@ export async function runDraft(submissionId: string) {
     observations,
     samples,
     retrieval,
+    tempoLine,
   });
 
   let text: string;
@@ -212,6 +227,11 @@ export async function runDraft(submissionId: string) {
     text = fallbackDraft(submission.student.name, submission.piece.title, submission.piece.note, locale);
   }
 
+  if (!letterUsesSendableFacts(text, parsed)) {
+    text = sendableLetter(submission.student.name, submission.piece.title, observations, locale);
+    usedModel = `${usedModel}+sendable-only`;
+  }
+
   const route = routeSubmission({
     aiDirectUnlockedAt: submission.piece.aiDirectUnlockedAt,
     confidence: submission.confidence,
@@ -242,6 +262,23 @@ export async function runDraft(submissionId: string) {
       text,
     });
   }
+}
+
+function sendableLetter(
+  name: string,
+  title: string,
+  observations: CompareObservations,
+  locale: DraftLocale,
+) {
+  const facts = observations.issues
+    .map((issue) => `${issue.expected} vs ${issue.observed}`.trim())
+    .filter((line) => line.length > 3);
+  if (locale === "en") {
+    const body = facts.length > 0 ? facts.slice(0, 2).join(". ") : `${name}'s take of ${title} is close.`;
+    return `Hello ${name}, I heard ${name} play ${title}. ${body} Send another take when ready.`;
+  }
+  const body = facts.length > 0 ? facts.slice(0, 2).join(". ") : `bài ${title} đã gần khớp.`;
+  return `Chào ${name}, thầy đã nghe ${name} chơi ${title}. ${body} Gửi lại một take khi sẵn sàng.`;
 }
 
 function fallbackDraft(name: string, title: string, note: string | null, locale: DraftLocale) {

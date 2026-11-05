@@ -1,25 +1,30 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useTransition } from "react";
-import { ParaIcon } from "@/components/ui/para-icon";
+import { useEffect, useState, useTransition } from "react";
 
 export function ThemeToggle({
   theme,
   labels,
   className = "",
-  variant,
 }: {
   theme: "light" | "dark";
-  labels: { light: string; dark: string };
+  labels: { on: string; off: string };
   className?: string;
-  variant?: "student";
 }) {
   const router = useRouter();
   const [pending, start] = useTransition();
+  const [current, setCurrent] = useState(theme);
+  const dark = current === "dark";
+  const label = dark ? labels.off : labels.on;
+
+  useEffect(() => {
+    setCurrent(theme);
+  }, [theme]);
 
   function setTheme(next: "light" | "dark") {
-    if (next === theme) return;
+    if (next === current || pending) return;
+    setCurrent(next);
     start(async () => {
       document.documentElement.dataset.theme = next;
       await fetch("/api/theme", {
@@ -32,33 +37,14 @@ export function ThemeToggle({
   }
 
   return (
-    <div
-      className={`theme-toggle font-ui inline-flex rounded-full text-xs font-medium ${className}`}
-      role="group"
-      aria-label={theme === "dark" ? labels.light : labels.dark}
+    <button
+      type="button"
+      disabled={pending}
+      aria-pressed={dark}
+      onClick={() => setTheme(dark ? "light" : "dark")}
+      className={`theme-toggle font-ui ${className}`}
     >
-      <button
-        type="button"
-        disabled={pending}
-        aria-pressed={theme === "light"}
-        onClick={() => setTheme("light")}
-        className={`theme-toggle-btn rounded-l-full px-2.5 py-2 ${theme === "light" ? "theme-toggle-active" : "theme-toggle-idle"}`}
-        title={labels.light}
-      >
-        {variant ? <ParaIcon name="sun" /> : <span aria-hidden>☀</span>}
-        <span className={variant ? "" : "sr-only"}>{labels.light}</span>
-      </button>
-      <button
-        type="button"
-        disabled={pending}
-        aria-pressed={theme === "dark"}
-        onClick={() => setTheme("dark")}
-        className={`theme-toggle-btn rounded-r-full px-2.5 py-2 ${theme === "dark" ? "theme-toggle-active" : "theme-toggle-idle"}`}
-        title={labels.dark}
-      >
-        {variant ? <ParaIcon name="moon" /> : <span aria-hidden>☾</span>}
-        <span className={variant ? "" : "sr-only"}>{labels.dark}</span>
-      </button>
-    </div>
+      {label}
+    </button>
   );
 }

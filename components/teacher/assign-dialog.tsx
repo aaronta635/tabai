@@ -50,7 +50,7 @@ export function AssignDialog({
         });
         setBusy(false);
         if (result && "error" in result) {
-          setError(t("assignTargetRequired"));
+          setError(result.error === "due_required" ? t("dueRequired") : t("assignTargetRequired"));
           return;
         }
         setOpen(false);
@@ -73,7 +73,7 @@ export function AssignDialog({
           </option>
         ))}
       </select></label>
-      <label className="block"><span className="field-label">{t("due")}</span><input type="date" name="dueAt" className="field" /></label>
+      <label className="block"><span className="field-label">{t("due")}</span><input type="date" name="dueAt" required className="field" /></label>
       <label className="block"><span className="field-label">{t("goal")}</span><input name="goal" placeholder={t("goal")} className="field" /></label>
       {error ? <p className="text-danger">{error}</p> : null}
       <div className="flex gap-2">

@@ -20,5 +20,8 @@ it("retains main's account-deletion confirmation and action alongside student ap
   expect(form?.props.action).toBe(deleteStudentAccount);
   const confirm = nodes.find(node => node.type === "input" && node.props.name === "confirm");
   expect(confirm?.props).toMatchObject({ type: "checkbox", required: true, value: "yes" });
-  expect(nodes.find(node => node.type === ThemeToggle)?.props).toMatchObject({ variant: "student", theme: "light" });
+  expect(nodes.find(node => node.type === ThemeToggle)?.props).toMatchObject({
+    theme: "light",
+    labels: { on: "Turn on dark mode", off: "Turn off" },
+  });
 });

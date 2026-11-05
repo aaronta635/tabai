@@ -8,11 +8,13 @@ export function StudentAppShell({
   studentName,
   avatarSrc,
   locale,
+  tourSeen,
   children,
 }: {
   studentName: string;
   avatarSrc?: string | null;
   locale: "en" | "vi";
+  tourSeen: boolean;
   children: React.ReactNode;
 }) {
   const t = useStudioMessages(locale);
@@ -42,6 +44,7 @@ export function StudentAppShell({
           { href: "/student/profile", title: t.tour.studentProfileTitle, body: t.tour.studentProfileBody },
         ],
       }}
+      tourSeen={tourSeen}
       home="/student"
       kicker={t.studio.kicker}
       items={[
@@ -58,11 +61,8 @@ export function StudentAppShell({
         signOut: t.auth.signOut,
         menu: t.student.menu,
         close: t.student.close,
-        themeLight: t.theme.light,
-        themeDark: t.theme.dark,
-        language: t.theme.language,
-        localeEn: t.locale.en,
-        localeVi: t.locale.vi,
+        themeOn: t.theme.on,
+        themeOff: t.theme.off,
       }}
     >
       {children}

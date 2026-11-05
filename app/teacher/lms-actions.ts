@@ -9,6 +9,7 @@ import { logEvent } from "@/lib/events";
 import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
 import { ensureDefaultCurriculum, inviteEmailsFrom, newClassCode } from "@/lib/lms";
 import { parseDueAt } from "@/lib/practice";
+import { notifyAssignments } from "@/lib/student-mail";
 import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
 import { safePaymentUrl } from "@/lib/report";
 import { meetingLink } from "@/lib/meeting";
@@ -272,8 +273,11 @@ export async function assignWork(input: {
     return { error: "source_required" as const };
   }
 
+  if (!dueAt) return { error: "due_required" as const };
+
+  const created: string[] = [];
   for (const pieceId of pieceIds) {
-    await prisma.assignment.create({
+    const row = await prisma.assignment.create({
       data: {
         pieceId,
         partId,
@@ -283,9 +287,27 @@ export async function assignWork(input: {
         goal,
       },
     });
+    created.push(row.id);
   }
   revalidateLms(teacher.id);
+  await notifyAssignments(created);
   return { ok: true as const, count: pieceIds.length };
+}
+
+export async function setAssignmentDue(formData: FormData) {
+  const teacher = await teacherOrThrow();
+  const id = String(formData.get("assignmentId") ?? "");
+  const dueAt = parseDueAt(String(formData.get("dueAt") ?? ""));
+  if (!id || !dueAt) return;
+  const row = await prisma.assignment.findFirst({
+    where: {
+      id,
+      OR: [{ class: { teacherId: teacher.id } }, { student: { teacherId: teacher.id } }],
+    },
+  });
+  if (!row) return;
+  await prisma.assignment.update({ where: { id }, data: { dueAt } });
+  revalidateLms(teacher.id);
 }
 
 export async function moveCurriculumPart(input: { partId: string; dir: "up" | "down" }) {

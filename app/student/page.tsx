@@ -4,7 +4,7 @@ import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsForStudent } from "@/lib/lms";
-import { formatDueLabel } from "@/lib/practice";
+import { duePhrase } from "@/lib/practice";
 import { studentClasses } from "@/lib/student-view";
 import { ParaIcon } from "@/components/ui/para-icon";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
@@ -179,7 +179,7 @@ export default async function StudentHomePage() {
                         href: `/student/work/${row.piece.code}`,
                         title: row.piece.title,
                         meta: [row.class?.name, row.goal].filter(Boolean).join(" · "),
-                        status: row.dueAt ? formatDueLabel(row.dueAt, locale) : t.student.due,
+                        status: duePhrase(row.dueAt, locale, t.student.due) ?? "",
                         progress: sentPieceIds.has(row.piece.id) ? 1 : 0,
                         fraction: sentPieceIds.has(row.piece.id) ? "1/1" : "0/1",
                       },

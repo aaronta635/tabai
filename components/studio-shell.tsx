@@ -6,7 +6,6 @@ import { createContext, Suspense, useContext, useEffect, useState, useRef, useId
 import { BrandMark } from "@/components/landing/brand-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { AvatarMark } from "@/components/profile/avatar-mark";
-import { LocaleSwitch } from "@/components/locale-switch";
 import { StudioTour, type TourCopy } from "@/components/studio/studio-tour";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
@@ -90,6 +89,7 @@ export function StudioShell({
   signOutAction,
   search,
   tour,
+  tourSeen = true,
   labels,
   children,
 }: {
@@ -104,15 +104,13 @@ export function StudioShell({
   signOutAction: () => Promise<void>;
   search?: { action: string; placeholder: string };
   tour?: TourCopy;
+  tourSeen?: boolean;
   labels: {
     signOut: string;
     menu: string;
     close: string;
-    themeLight: string;
-    themeDark: string;
-    language?: string;
-    localeEn?: string;
-    localeVi?: string;
+    themeOn: string;
+    themeOff: string;
   };
   children: React.ReactNode;
 }) {
@@ -203,13 +201,8 @@ export function StudioShell({
         })}
       </nav>
       <div className="studio-rail-foot">
-        {labels.language && labels.localeEn && labels.localeVi ? (
-          <LocaleSwitch labels={{ language: labels.language, en: labels.localeEn, vi: labels.localeVi }} />
-        ) : null}
         {theme ? (
-          <div className="mb-3 flex flex-wrap items-center gap-2">
-            <ThemeToggle theme={theme} labels={{ light: labels.themeLight, dark: labels.themeDark }} />
-          </div>
+          <ThemeToggle className="studio-theme" theme={theme} labels={{ on: labels.themeOn, off: labels.themeOff }} />
         ) : null}
         {profile ? (
           <Link href={profile.href} className="studio-profile" data-tour={profile.href}>
@@ -260,9 +253,6 @@ export function StudioShell({
           <Link href={home} aria-label="PARA">
             <BrandMark compact />
           </Link>
-          {labels.language && labels.localeEn && labels.localeVi ? (
-            <LocaleSwitch labels={{ language: labels.language, en: labels.localeEn, vi: labels.localeVi }} />
-          ) : null}
         </div>
         <main className="min-w-0 flex-1">
           <div className="studio-main px-4 py-6 lg:px-8 lg:py-7">
@@ -282,7 +272,7 @@ export function StudioShell({
           </div>
         </main>
       </div>
-      {tour ? <StudioTour tour={tour} /> : null}
+      {tour ? <StudioTour tour={tour} seen={tourSeen} /> : null}
     </div>
     </ActiveClassContext.Provider>
   );

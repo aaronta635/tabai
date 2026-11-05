@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { formatDueLabel } from "@/lib/practice";
+import { duePhrase, formatDueLabel } from "@/lib/practice";
 import { formatWhen } from "@/lib/when";
 import { weekParam } from "@/lib/schedule";
 import { studentClass } from "@/lib/student-view";
@@ -84,7 +84,7 @@ export default async function StudentClassPage({ params }: { params: Promise<{ i
                     )}
                   </td>
                   <td className="text-sm text-ink-soft">
-                    {row.dueAt ? formatDueLabel(row.dueAt, locale) : "—"}
+                    {duePhrase(row.dueAt, locale, t.student.due) ?? ""}
                   </td>
                 </tr>
               ))}

@@ -5,7 +5,6 @@ import { getLocale, getMessages } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
 import { StudioTitle } from "@/components/home/feed";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { LocaleSwitch } from "@/components/locale-switch";
 import { ReplayTour } from "@/components/studio/replay-tour";
 import { deleteStudentAccount } from "@/app/account/actions";
 
@@ -21,13 +20,7 @@ export default async function StudentSettingsPage() {
       <StudioTitle title={t.student.settingsTitle} />
       <section className="studio-panel student-settings-card">
         <h2 className="font-ui">{t.theme.appearance}</h2>
-        <ThemeToggle variant="student" theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
-        <div className="student-settings-row">
-          <p>{t.theme.language}</p>
-          <LocaleSwitch
-            labels={{ language: t.theme.language, en: t.locale.en, vi: t.locale.vi }}
-          />
-        </div>
+        <ThemeToggle theme={theme} labels={{ on: t.theme.on, off: t.theme.off }} />
         <div className="student-settings-row">
           <p>{t.tour.guide}</p>
           <ReplayTour label={t.tour.again} />

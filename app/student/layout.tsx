@@ -19,10 +19,18 @@ export default async function StudentLayout({ children }: { children: React.Reac
     redirect(back ? `/onboarding?next=${encodeURIComponent(back)}` : "/onboarding");
   }
   const locale = await getLocale();
-  const portrait = await prisma.student.findUnique({ where: { id: session.id }, select: { avatarUrl: true } });
+  const portrait = await prisma.student.findUnique({
+    where: { id: session.id },
+    select: { avatarUrl: true, tourSeenAt: true },
+  });
   const avatarSrc = await signedMediaUrl(portrait?.avatarUrl ?? null);
   return (
-    <StudentAppShell studentName={session.name} avatarSrc={avatarSrc} locale={locale === "en" ? "en" : "vi"}>
+    <StudentAppShell
+      studentName={session.name}
+      avatarSrc={avatarSrc}
+      locale={locale === "en" ? "en" : "vi"}
+      tourSeen={portrait?.tourSeenAt != null}
+    >
       {children}
     </StudentAppShell>
   );

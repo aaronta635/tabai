@@ -3,7 +3,6 @@ import Link from "next/link";
 import { requireStudentAccount, requireTeacher } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { BrandMark } from "@/components/landing/brand-mark";
-import { LocaleSwitch } from "@/components/locale-switch";
 import { StudentOnboardingForm, TutorOnboardingForm } from "@/components/onboarding/onboarding-form";
 import { onboardingNext } from "@/lib/return-path";
 
@@ -34,7 +33,6 @@ export default async function OnboardingPage({
         <Link href="/" aria-label={t.brand}>
           <BrandMark />
         </Link>
-        <LocaleSwitch labels={{ language: t.theme.language, en: t.locale.en, vi: t.locale.vi }} />
       </div>
       <div className="mx-auto max-w-md px-6 py-10">
         <p className="text-xs tracking-[0.18em] uppercase text-ink-soft">

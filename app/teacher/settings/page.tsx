@@ -28,7 +28,7 @@ export default async function SettingsPage() {
       <StudioTitle title={t.teacher.settings} />
       <section className="studio-panel space-y-4 pb-4">
         <h2>{t.theme.appearance}</h2>
-        <ThemeToggle variant="student" theme={theme} labels={{ light: t.theme.light, dark: t.theme.dark }} />
+        <ThemeToggle theme={theme} labels={{ on: t.theme.on, off: t.theme.off }} />
         <ReplayTour label={t.tour.again} />
       </section>
       <form action={deleteTeacherAccountAction} className="teacher-danger studio-panel space-y-3 pb-4">

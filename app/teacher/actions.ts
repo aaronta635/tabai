@@ -9,6 +9,7 @@ import { newPieceCode, requireAdmin, requireTeacher, signOutTeacher } from "@/li
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
 import { maybeRelockAiDirect, maybeUnlockAiDirect } from "@/lib/growth";
+import { notifyReply } from "@/lib/student-mail";
 import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
@@ -344,9 +345,10 @@ export async function sendReply(input: {
   const { source, editDistance } = classifyReplySource(draft, text);
   const openedAt = submission.reviewOpenedAt ?? new Date();
   const sentAt = new Date();
+  let replyId = "";
 
   try {
-    await prisma.$transaction(async (tx) => {
+    const reply = await prisma.$transaction(async (tx) => {
       const claimed = await tx.submission.updateMany({
         where: { id: submission.id, status: { in: [...CLAIMABLE_SUBMISSION_STATUSES] } },
         data: {
@@ -357,7 +359,7 @@ export async function sendReply(input: {
       if (claimed.count === 0) {
         throw new Error("STALE");
       }
-      await tx.reply.create({
+      return tx.reply.create({
         data: {
           submissionId: submission.id,
           teacherId: teacher.id,
@@ -375,6 +377,7 @@ export async function sendReply(input: {
         },
       });
     });
+    replyId = reply.id;
   } catch (error) {
     if (error instanceof Error && error.message === "STALE") {
       return { error: "stale_item" as const };
@@ -382,6 +385,7 @@ export async function sendReply(input: {
     throw error;
   }
 
+  await notifyReply(replyId);
   await logEvent({
     name: "reply.sent",
     actorType: review.actorType,

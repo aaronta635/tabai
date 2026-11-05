@@ -11,8 +11,8 @@ type Labels = {
   signOut: string;
   menu: string;
   close: string;
-  themeLight: string;
-  themeDark: string;
+  themeOn: string;
+  themeOff: string;
 };
 
 export function AdminAppShell({ labels, children }: { labels: Labels; children: React.ReactNode }) {
@@ -34,8 +34,8 @@ export function AdminAppShell({ labels, children }: { labels: Labels; children: 
         signOut: labels.signOut,
         menu: labels.menu,
         close: labels.close,
-        themeLight: labels.themeLight,
-        themeDark: labels.themeDark,
+        themeOn: labels.themeOn,
+        themeOff: labels.themeOff,
       }}
     >
       {children}

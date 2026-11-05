@@ -25,7 +25,7 @@ export default async function SignupRolePage({
       kicker={t.auth.manifestoKicker}
       footer={t.auth.roomFooter}
       theme={ready.theme}
-      themeLabels={{ light: t.theme.light, dark: t.theme.dark }}
+      themeLabels={{ on: t.theme.on, off: t.theme.off }}
     >
       <SignupForm
         initialRole={ready.role}

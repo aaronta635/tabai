@@ -5,7 +5,8 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { cachedClassPulseForTeacher } from "@/lib/class-pulse";
-import { formatTime, formatWait, formatWhen } from "@/lib/when";
+import { formatTime, formatWait } from "@/lib/when";
+import { formatDueLabel } from "@/lib/practice";
 import { weekParam, weekRangeUtc } from "@/lib/schedule";
 import { weekPractice } from "@/lib/practice-week";
 import { displayClassCode } from "@/lib/lms";
@@ -182,7 +183,7 @@ export default async function TeacherDashboard() {
                   href: `/teacher/curriculum/${row.piece.id}`,
                   title: row.piece.title,
                   meta: row.class?.name ?? row.student?.name ?? "",
-                  status: row.dueAt ? formatWhen(row.dueAt, locale) : t.teacher.dueSoon,
+                  status: row.dueAt ? formatDueLabel(row.dueAt, locale) : t.teacher.dueSoon,
                   progress: total > 0 ? done / total : 0,
                   fraction: total > 0 ? `${done}/${total}` : "—",
                 },

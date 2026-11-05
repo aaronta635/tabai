@@ -5,11 +5,13 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { displayClassCode, mailtoInvite } from "@/lib/lms";
+import { formatDueLabel } from "@/lib/practice";
 import { formatWhen } from "@/lib/when";
 import { AddPanel, SectionPanel } from "@/components/disclosure";
 import { StudioTitle } from "@/components/home/feed";
 import { ActiveClass } from "@/components/studio-shell";
-import { approveMembershipForm, inviteByEmail, renameClass } from "@/app/teacher/lms-actions";
+import { DueField } from "@/components/teacher/due-field";
+import { approveMembershipForm, inviteByEmail, renameClass, setAssignmentDue } from "@/app/teacher/lms-actions";
 
 const CLASS_ASSIGNMENT_CAP = 40;
 
@@ -139,7 +141,13 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
                       {row.piece?.title ?? row.part?.name}
                     </Link>
                   </td>
-                  <td className="text-sm text-ink-soft">{row.dueAt ? formatWhen(row.dueAt, locale) : "—"}</td>
+                  <td className="text-sm text-ink-soft">
+                    {row.dueAt ? (
+                      formatDueLabel(row.dueAt, locale)
+                    ) : (
+                      <DueField assignmentId={row.id} label={t.teacher.due} action={setAssignmentDue} />
+                    )}
+                  </td>
                 </tr>
               ))}
             </tbody>

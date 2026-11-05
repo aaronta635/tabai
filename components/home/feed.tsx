@@ -207,7 +207,7 @@ export function AssignmentList({
                       </span> : null}
                     </span>
                   ) : null}
-                  <span className="status-chip">{row.status}</span>
+                  {row.status ? <span className="status-chip">{row.status}</span> : null}
                 </span>
               </Link>
             </li>

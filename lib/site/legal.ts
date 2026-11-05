@@ -1,6 +1,6 @@
 import type { Locale } from "@/lib/site/content";
 
-export const LEGAL_EMAIL = "aaronta635@gmail.com";
+export const LEGAL_EMAIL = "info@paramuzic.com";
 
 export type LegalSection = {
   heading: string;

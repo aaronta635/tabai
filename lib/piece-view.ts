@@ -17,6 +17,8 @@ export async function loadPieceClassroom(code: string) {
       tips: true,
       goal: true,
       dueAt: true,
+      songKey: true,
+      tuning: true,
       archived: true,
       demo: true,
       teacherId: true,

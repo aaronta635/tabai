@@ -172,6 +172,8 @@ model Piece {
   tips               String?
   goal               String?
   dueAt              DateTime?
+  songKey            String?
+  tuning             String?
   archived           Boolean   @default(false)
   demo               Boolean   @default(false)
   // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts

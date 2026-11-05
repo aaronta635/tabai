@@ -28,6 +28,8 @@ export default async function CurriculumPage() {
             title: true,
             description: true,
             tips: true,
+            songKey: true,
+            tuning: true,
             sheetMediaId: true,
             tutorialMediaId: true,
             clipMediaId: true,

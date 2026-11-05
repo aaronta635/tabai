@@ -17,6 +17,7 @@ import { highlightStart, joinStoryLetter } from "@/lib/report";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
+import { parseSongKey, parseTuning } from "@/lib/piece-setup";
 import { teacherSubmission } from "@/lib/scope";
 import { deleteTeacherTake as removeTeacherTake } from "@/lib/deletion";
 import {
@@ -118,6 +119,9 @@ export async function createPieceRecord(input: {
   partId?: string;
   description?: string;
   tips?: string;
+  songKey?: string | null;
+  tuning?: string | null;
+  dueAt?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const titled = pieceTitleResult(input.title);
@@ -125,6 +129,10 @@ export async function createPieceRecord(input: {
   const title = titled.title;
   const note = (input.description ?? input.note).trim();
   const tips = input.tips?.trim() || null;
+  const songKey = parseSongKey(input.songKey);
+  const tuning = parseTuning(input.tuning);
+  if (input.songKey && !songKey) return { error: "song_key" as const };
+  if (input.tuning && !tuning) return { error: "tuning" as const };
   let partId = input.partId;
   if (partId) {
     const part = await prisma.curriculumPart.findFirst({
@@ -145,6 +153,9 @@ export async function createPieceRecord(input: {
       note: note || null,
       description: note || null,
       tips,
+      songKey,
+      tuning,
+      dueAt: parseDueAt(input.dueAt),
       partId,
     },
   });
@@ -167,6 +178,8 @@ export async function updatePieceAssignment(input: {
   tips?: string;
   goal?: string;
   dueAt?: string | null;
+  songKey?: string | null;
+  tuning?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const piece = await prisma.piece.findFirst({
@@ -176,6 +189,10 @@ export async function updatePieceAssignment(input: {
   const title = input.title?.trim();
   if (input.title != null && !title) return { error: "title_required" as const };
   const note = input.note?.trim() || null;
+  const songKey = input.songKey !== undefined ? parseSongKey(input.songKey) : undefined;
+  const tuning = input.tuning !== undefined ? parseTuning(input.tuning) : undefined;
+  if (input.songKey && songKey == null) return { error: "song_key" as const };
+  if (input.tuning && tuning == null) return { error: "tuning" as const };
   const updated = await prisma.piece.update({
     where: { id: piece.id },
     data: {
@@ -184,6 +201,8 @@ export async function updatePieceAssignment(input: {
       ...(input.tips != null ? { tips: input.tips.trim() || null } : {}),
       ...(input.goal !== undefined ? { goal: input.goal?.trim() || null } : {}),
       ...(input.dueAt !== undefined ? { dueAt: parseDueAt(input.dueAt) } : {}),
+      ...(songKey !== undefined ? { songKey } : {}),
+      ...(tuning !== undefined ? { tuning } : {}),
     },
   });
   revalidatePath("/teacher");
@@ -246,6 +265,29 @@ export async function completePieceAssets(input: {
   revalidatePath("/teacher");
   revalidatePath("/teacher/curriculum");
   return { code: updated.code, trained };
+}
+
+export async function archivePiece(pieceId: string) {
+  const teacher = await teacherOrThrow();
+  const piece = await prisma.piece.findFirst({
+    where: { id: pieceId, teacherId: teacher.id, archived: false },
+    select: { id: true },
+  });
+  if (!piece) throw new Error("not found");
+  await prisma.piece.update({
+    where: { id: piece.id },
+    data: { archived: true },
+  });
+  await logEvent({
+    name: "piece.archived",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: { pieceId: piece.id },
+  });
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/curriculum");
+  revalidatePath(`/teacher/curriculum/${piece.id}`);
 }
 
 export async function approveStudentForm(formData: FormData) {

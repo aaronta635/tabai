@@ -15,8 +15,10 @@ export function ClassDropList({ classes }: { classes: { id: string; name: string
           classId={row.id}
           name={row.name}
           onAssigned={async (input) => {
-            await assignWork(input);
+            const result = await assignWork(input);
+            if (result && "error" in result) return result;
             router.refresh();
+            return result;
           }}
         />
       ))}

@@ -5,16 +5,18 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { appOrigin } from "@/lib/origin";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { formatWhen } from "@/lib/when";
+import { formatDueLabel } from "@/lib/practice";
 import { StudioTitle } from "@/components/home/feed";
 import { CopyLink } from "@/components/teacher/copy-link";
 import { SectionPanel } from "@/components/disclosure";
-import { PieceForm } from "@/components/teacher/piece-form";
+import { PieceEditor } from "@/components/teacher/piece-setup-dialog";
+import { DeletePieceButton } from "@/components/teacher/delete-piece-button";
 import { AssignDialog } from "@/components/teacher/assign-dialog";
 import { PieceModelPanel } from "@/components/teacher/piece-model-panel";
 import { PieceMedia } from "@/components/student/piece-media";
 import { mediaStoragePath, sheetView, signedMediaUrl } from "@/lib/media-view";
 import { parseSheetSync } from "@/lib/score-model";
+import { pieceSetupLabel } from "@/lib/piece-setup";
 
 export default async function PiecePage({ params }: { params: Promise<{ id: string }> }) {
   const teacher = await readTeacherSession();
@@ -70,13 +72,17 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
   ].filter(Boolean);
 
   return (
-    <div className="teacher-piece space-y-5">
+    <div className="teacher-piece piece-edit space-y-5">
       <Link href="/teacher/curriculum" className="font-ui text-sm text-ink-soft hover:text-ink">
         ← {t.teacher.navCurriculum}
       </Link>
       <StudioTitle
         title={piece.title}
-        meta={[piece.part?.name, files.length > 0 ? files.join(" · ") : t.teacher.noAttachments]
+        meta={[
+          pieceSetupLabel(piece, locale === "en" ? "en" : "vi"),
+          piece.part?.name,
+          files.length > 0 ? files.join(" · ") : t.teacher.noAttachments,
+        ]
           .filter(Boolean)
           .join(" · ")}
       />
@@ -86,6 +92,8 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
         <AssignDialog pieceId={piece.id} classes={classes} students={students} />
       </div>
 
+      <div className="piece-stage">
+      <div className="space-y-5">
       <PieceModelPanel
         model={piece.models[0] ?? null}
         hasSheet={Boolean(piece.sheetMediaId)}
@@ -143,7 +151,7 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
                   <span>{row.student?.name ?? "—"}</span>
                 )}
                 <span className="font-ui tabular text-xs text-ink-soft">
-                  {[row.goal, row.dueAt ? formatWhen(row.dueAt, locale) : null].filter(Boolean).join(" · ")}
+                  {[row.goal, row.dueAt ? formatDueLabel(row.dueAt, locale) : null].filter(Boolean).join(" · ")}
                 </span>
               </li>
             ))}
@@ -151,36 +159,47 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
         )}
       </SectionPanel>
 
-      <PieceMedia
-        tutorialUrl={tutorialUrl}
-        clipUrl={clipUrl}
-        sheetUrl={sheetUrl}
-        sheetKind={sheetView(sheetPath ?? "")}
-        sheetSync={parseSheetSync(readyModel?.sheetSyncJson)}
-        labels={{
-          reference: t.teacher.tutorialLabel,
-          clip: t.teacher.clipLabel,
-          sheet: t.teacher.sheetLabel,
-          openSheet: t.teacher.hasSheet,
-        }}
-      />
-
-      <section className="tile piece-edit">
-        <h2 className="font-display text-xl">{t.teacher.edit}</h2>
-        <p className="mt-1 text-sm text-ink-soft">{t.teacher.replaceHint}</p>
-        <div className="mt-4">
-          <PieceForm
-            pieceId={piece.id}
-            partId={piece.partId ?? undefined}
-            defaultTitle={piece.title}
-            defaultNote={piece.description ?? ""}
-            defaultTips={piece.tips ?? ""}
-            hasSheet={Boolean(sheetUrl)}
-            hasTutorial={Boolean(tutorialUrl)}
-            hasClip={Boolean(clipUrl)}
-          />
-        </div>
-      </section>
+      <div className="flex flex-wrap items-center gap-2">
+        <PieceEditor
+          pieceId={piece.id}
+          partId={piece.partId ?? undefined}
+          defaultTitle={piece.title}
+          defaultNote={piece.description ?? ""}
+          defaultTips={piece.tips ?? ""}
+          defaultSongKey={piece.songKey ?? ""}
+          defaultTuning={piece.tuning ?? ""}
+          hasSheet={Boolean(sheetUrl)}
+          hasTutorial={Boolean(tutorialUrl)}
+          hasClip={Boolean(clipUrl)}
+          savedTutorialUrl={tutorialUrl}
+          savedSheetUrl={sheetUrl}
+          savedSheetKind={sheetView(sheetPath ?? "")}
+        />
+        <DeletePieceButton
+          pieceId={piece.id}
+          label={t.teacher.deletePiece}
+          confirmLabel={t.teacher.deletePieceConfirm}
+          afterHref="/teacher/curriculum"
+        />
+      </div>
+      </div>
+      <aside className="piece-preview space-y-3">
+        <PieceMedia
+          tutorialUrl={tutorialUrl}
+          clipUrl={clipUrl}
+          sheetUrl={sheetUrl}
+          sheetKind={sheetView(sheetPath ?? "")}
+          sheetSync={parseSheetSync(readyModel?.sheetSyncJson)}
+          labels={{
+            reference: t.teacher.tutorialLabel,
+            clip: t.teacher.clipLabel,
+            sheet: t.teacher.sheetLabel,
+            openSheet: t.teacher.hasSheet,
+          }}
+        />
+        {!tutorialUrl && !sheetUrl ? <p className="text-sm text-ink-soft">{t.teacher.previewEmpty}</p> : null}
+      </aside>
+      </div>
     </div>
   );
 }

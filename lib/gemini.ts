@@ -172,7 +172,7 @@ export const COMPARE_RESPONSE_SCHEMA = {
       items: {
         type: Type.OBJECT,
         properties: {
-          type: { type: Type.STRING, enum: ["timing", "pitch", "chord", "technique", "missing"] },
+          type: { type: Type.STRING, enum: ["missing"] },
           bar: { type: Type.NUMBER },
           tStart: { type: Type.NUMBER },
           tEnd: { type: Type.NUMBER },

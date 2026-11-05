@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, it, vi } from "vitest";
 import { StudioShell } from "@/components/studio-shell";
 import { AssignDialog } from "@/components/teacher/assign-dialog";
+import { ClassDropList } from "@/components/teacher/class-drop-list";
 import { CreateClassDialog } from "@/components/teacher/create-class-dialog";
 import { renderWithIntl } from "@/test/render";
 const assign = vi.hoisted(() => vi.fn(async (_input: unknown) => undefined));
@@ -15,7 +16,7 @@ beforeEach(() => {
 });
 it("teacher shell reuses material and drawer contract while keeping destinations", async () => {
  const user=userEvent.setup();
- const view=renderWithIntl(<StudioShell variant="teacher" name="Teacher A" home="/teacher" kicker="Studio" items={[{href:"/teacher/submissions",label:"Submissions",icon:"video"}]} menuLinks={[]} signOutAction={async()=>{}} labels={{menu:"Menu",close:"Close",signOut:"Sign out",themeLight:"Light",themeDark:"Dark"}}><input aria-label="Unsent" defaultValue="Keep" /></StudioShell>,[]);
+ const view=renderWithIntl(<StudioShell variant="teacher" name="Teacher A" home="/teacher" kicker="Studio" items={[{href:"/teacher/submissions",label:"Submissions",icon:"video"}]} menuLinks={[]} signOutAction={async()=>{}} labels={{menu:"Menu",close:"Close",signOut:"Sign out",themeOn:"Turn on dark mode",themeOff:"Turn off"}}><input aria-label="Unsent" defaultValue="Keep" /></StudioShell>,[]);
  expect(view.container.querySelector('.teacher-ui.student-ui')).toBeTruthy();
  expect(screen.getByRole('link',{name:'Submissions'})).toHaveAttribute('href','/teacher/submissions');
  await user.click(screen.getByRole('button',{name:'Menu'}));
@@ -48,4 +49,22 @@ it("labelled assignment fields keep target, due date and goal payloads", async (
  await user.type(goal,'Synthetic goal');
  await user.click(screen.getByRole('button',{name:/^Assign/}));
  await waitFor(()=>expect(assign).toHaveBeenCalledWith({pieceId:'piece-a',partId:undefined,classId:'class-a',studentId:undefined,dueAt:'2026-11-01',goal:'Synthetic goal'}));
+});
+it("class drop asks for a due date and does not save when the teacher cancels", async () => {
+ const user=userEvent.setup();
+ renderWithIntl(<ClassDropList classes={[{id:'class-a',name:'Class A'}]} />,['teacher']);
+ fireEvent.drop(screen.getByTitle('Drop on Class A'),{dataTransfer:{getData:(type:string)=>type==='application/x-howl0-piece'?'piece-a':''}});
+ expect(assign).not.toHaveBeenCalled();
+ expect(screen.getByLabelText('Due date')).toBeRequired();
+ await user.click(screen.getByRole('button',{name:'Close'}));
+ expect(assign).not.toHaveBeenCalled();
+ expect(screen.queryByLabelText('Due date')).toBeNull();
+});
+it("class drop saves only after a due date is chosen", async () => {
+ const user=userEvent.setup();
+ renderWithIntl(<ClassDropList classes={[{id:'class-a',name:'Class A'}]} />,['teacher']);
+ fireEvent.drop(screen.getByTitle('Drop on Class A'),{dataTransfer:{getData:(type:string)=>type==='application/x-howl0-piece'?'piece-a':''}});
+ fireEvent.change(screen.getByLabelText('Due date'),{target:{value:'2026-11-12'}});
+ await user.click(screen.getByRole('button',{name:'Assign…'}));
+ await waitFor(()=>expect(assign).toHaveBeenCalledWith({classId:'class-a',pieceId:'piece-a',partId:undefined,dueAt:'2026-11-12'}));
 });

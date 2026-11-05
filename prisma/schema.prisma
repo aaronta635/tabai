@@ -124,6 +124,7 @@ model Teacher {
   stage          TutorStage?
   answersJson    Json?
   onboardedAt    DateTime?
+  tourSeenAt     DateTime?
   feedbackLocale String    @default("vi")
   consentAt      DateTime?
   consentVersion String?
@@ -172,6 +173,8 @@ model Piece {
   tips               String?
   goal               String?
   dueAt              DateTime?
+  songKey            String?
+  tuning             String?
   archived           Boolean   @default(false)
   demo               Boolean   @default(false)
   // v2 AI-direct: set when approve-untouched gate is met; worker routes high-confidence drafts
@@ -205,6 +208,7 @@ model Student {
   stage          StudentStage?
   answersJson    Json?
   onboardedAt    DateTime?
+  tourSeenAt     DateTime?
   consentAt      DateTime
   consentVersion String
   publicOk       Boolean       @default(false)
@@ -216,6 +220,7 @@ model Student {
   memberships      ClassMembership[]
   assignments      Assignment[]
   attendances      Attendance[]
+  outboundEmails   OutboundEmail[]
 
   @@index([teacherId, approvedAt])
 }
@@ -469,4 +474,16 @@ model Job {
 
   @@index([status, createdAt])
   @@index([type, status])
+}
+
+model OutboundEmail {
+  id        String   @id @default(cuid())
+  kind      String
+  dedupeKey String   @unique
+  studentId String
+  student   Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  toAddress String
+  createdAt DateTime @default(now())
+
+  @@index([studentId])
 }

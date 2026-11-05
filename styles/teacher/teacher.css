@@ -16,6 +16,9 @@
 .teacher-ui.teacher-ui :is(.desk-action,.chip,.add-trigger,button[aria-pressed]):hover:not(:disabled) { background:rgb(var(--para-app-surface-rgb) / .6); }
 .teacher-ui.teacher-ui :is(.desk-action,.chip,.add-trigger):active:not(:disabled) { box-shadow:inset 0 2px 4px var(--para-app-shadow); }
 .teacher-ui.teacher-ui [aria-pressed="true"] { background:var(--para-app-field); color:var(--para-app-text); border-color:var(--para-app-accent); box-shadow:inset 0 -3px var(--para-app-accent); font-weight:600; }
+.teacher-ui.teacher-ui .piece-setup :is(button,.piece-step,.piece-select-trigger) { box-shadow:none; }
+.teacher-ui.teacher-ui .piece-setup :is(button,.piece-step,.piece-select-trigger):active { box-shadow:none; }
+.teacher-ui.teacher-ui .piece-setup :is(.piece-step[aria-current="step"],.piece-select-menu button[aria-selected="true"]) { background:var(--color-ink); color:var(--color-paper); border-color:transparent; box-shadow:none; font-weight:500; }
 .teacher-ui.teacher-ui .desk-actions { display:flex; flex-wrap:wrap; gap:12px; border-top:1px solid var(--para-app-edge); margin-top:24px; padding-top:20px; }
 .teacher-ui.teacher-ui :is(.is-danger,.teacher-danger button) { color:var(--student-danger-text); border:1px solid currentColor; background:transparent; }
 .teacher-ui.teacher-ui :is(.teacher-profile,.teacher-settings) { max-width:800px; }

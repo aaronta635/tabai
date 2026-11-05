@@ -18,7 +18,7 @@ export function AuthShell({
   kicker: string;
   footer: string;
   theme: Theme;
-  themeLabels: { light: string; dark: string };
+  themeLabels: { on: string; off: string };
   children: ReactNode;
 }) {
   return (

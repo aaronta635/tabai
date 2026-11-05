@@ -10,7 +10,7 @@ import { WeekCalendar } from "@/components/schedule/week-calendar";
 import { renderWithIntl } from "@/test/render";
 
 vi.mock("@/app/teacher/lms-actions", () => ({ saveClassSession: vi.fn() }));
-const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student", label: "Home", icon: "home" as const }], menuLinks: [], signOutAction: async () => {}, labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeLight: "Light", themeDark: "Dark" } };
+const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student", label: "Home", icon: "home" as const }], menuLinks: [], signOutAction: async () => {}, labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeOn: "Turn on dark mode", themeOff: "Turn off" } };
 beforeEach(() => {
   sessionStorage.setItem("howl0-session-bound", "1");
   Object.defineProperty(window, "matchMedia", { configurable: true, value: () => ({ matches: false, addEventListener: vi.fn(), removeEventListener: vi.fn() }) });

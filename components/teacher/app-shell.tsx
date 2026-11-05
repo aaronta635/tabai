@@ -8,11 +8,13 @@ export function TeacherAppShell({
   teacherName,
   avatarSrc,
   locale,
+  tourSeen,
   children,
 }: {
   teacherName: string;
   avatarSrc?: string | null;
   locale: "en" | "vi";
+  tourSeen: boolean;
   children: React.ReactNode;
 }) {
   const t = useStudioMessages(locale);
@@ -36,6 +38,7 @@ export function TeacherAppShell({
           { href: "/teacher/schedule", title: t.tour.teacherScheduleTitle, body: t.tour.teacherScheduleBody },
         ],
       }}
+      tourSeen={tourSeen}
       home="/teacher"
       kicker={t.studio.kicker}
       items={[
@@ -54,11 +57,8 @@ export function TeacherAppShell({
         signOut: t.auth.signOut,
         menu: t.teacher.menu,
         close: t.teacher.close,
-        themeLight: t.theme.light,
-        themeDark: t.theme.dark,
-        language: t.theme.language,
-        localeEn: t.locale.en,
-        localeVi: t.locale.vi,
+        themeOn: t.theme.on,
+        themeOff: t.theme.off,
       }}
     >
       {children}

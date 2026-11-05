@@ -11,7 +11,7 @@ describe("legal pages", () => {
         expect(text).toContain("Thanh Phong Nguyen");
       }
       const privacy = [legal[locale].privacy.intro, ...legal[locale].privacy.sections.flatMap((section) => section.paragraphs)].join("\n");
-      expect(privacy).toContain("aaronta635@gmail.com");
+      expect(privacy).toContain("info@paramuzic.com");
     }
   });
 

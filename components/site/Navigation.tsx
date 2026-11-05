@@ -8,27 +8,17 @@ import { ProductCta } from "@/components/site/ProductCta";
 import {
   content,
   homeHref,
-  languageChoiceHref,
   localePath,
   type Locale,
 } from "@/lib/site/content";
 
 export function Navigation({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
-  const [hash, setHash] = useState("");
   const pathname = usePathname();
   const dictionary = content[locale].navigation;
   const toggle = useRef<HTMLButtonElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
   const navigation = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const update = () =>
-      setHash(window.location.hash === "#waitlist" ? "#waitlist" : "");
-    update();
-    window.addEventListener("hashchange", update);
-    return () => window.removeEventListener("hashchange", update);
-  }, [pathname]);
 
   useLayoutEffect(() => {
     if (!open) return;
@@ -58,9 +48,6 @@ export function Navigation({ locale }: { locale: Locale }) {
     media.addEventListener("change", resize);
     return () => media.removeEventListener("change", resize);
   }, []);
-
-  const plainPath = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
-  const languageHash = plainPath === "/" ? hash : "";
 
   function handleKeys(event: React.KeyboardEvent<HTMLElement>) {
     if (!open) return;
@@ -119,20 +106,6 @@ export function Navigation({ locale }: { locale: Locale }) {
             className="nav-cta"
             onClick={() => setOpen(false)}
           />
-        </div>
-        <div className="language-switch" role="group" aria-label={dictionary.languageLabel}>
-          {(["en", "vi"] as const).map((choice) => (
-            <a
-              key={choice}
-              href={languageChoiceHref(choice, plainPath, languageHash)}
-              hrefLang={choice}
-              lang={choice}
-              aria-current={locale === choice ? "true" : undefined}
-              onClick={() => setOpen(false)}
-            >
-              {choice === "en" ? "EN" : "VI"}
-            </a>
-          ))}
         </div>
         <button
           ref={toggle}

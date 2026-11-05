@@ -9,49 +9,29 @@ import { newPieceCode, requireAdmin, requireTeacher, signOutTeacher } from "@/li
 import { classifyReplySource } from "@/lib/edit-distance";
 import { logEvent } from "@/lib/events";
 import { maybeRelockAiDirect, maybeUnlockAiDirect } from "@/lib/growth";
+import { notifyReply } from "@/lib/student-mail";
 import { enqueueAnalyzeIfApproved, enqueueDraftWhenReady } from "@/lib/jobs";
-import { runDraft } from "@/worker/draft";
 import { prisma } from "@/lib/prisma";
 import { CLAIMABLE_SUBMISSION_STATUSES, guardReply, pieceTitleResult, replyGrade, statusAfterRevert } from "@/lib/forms";
 import { highlightStart, joinStoryLetter } from "@/lib/report";
 import { MAX_ACTIVE_VOICE_SAMPLES } from "@/lib/constants";
 import { parseDueAt } from "@/lib/practice";
 import { enqueueTrainPiece, linkPieceAssets } from "@/lib/catalog";
+import { parseSongKey, parseTuning } from "@/lib/piece-setup";
 import { teacherSubmission } from "@/lib/scope";
 import { deleteTeacherTake as removeTeacherTake } from "@/lib/deletion";
-import { applyIssueVerdict, draftCoversFactVerdicts, latestFactVerdictAt, observationMarkers, parseCompareObservations } from "@/lib/score-model";
+import {
+  applyIssueVerdict,
+  latestFactVerdictAt,
+  observationMarkers,
+  parseCompareObservations,
+  type FactVerdict,
+} from "@/lib/score-model";
 
 async function teacherOrThrow() {
   const teacher = await requireTeacher();
   if (!teacher) throw new Error("unauthorized");
   return teacher;
-}
-
-const demoDrafts = new Set<string>();
-
-function writeDemoLetter(
-  submission: {
-    id: string;
-    piece: { demo: boolean };
-    student: { approvedAt: Date | null };
-    drafts: { createdAt: Date }[];
-    analyses: { observationsJson: unknown }[];
-  },
-  observations?: unknown,
-) {
-  if (!submission.piece.demo || submission.student.approvedAt) return;
-  if (demoDrafts.has(submission.id)) return;
-  const markers = observationMarkers(observations ?? submission.analyses[0]?.observationsJson);
-  const draftAt = submission.drafts[0]?.createdAt.toISOString() ?? null;
-  if (draftCoversFactVerdicts(draftAt, latestFactVerdictAt(markers), markers.length)) return;
-  demoDrafts.add(submission.id);
-  void runDraft(submission.id)
-    .catch((error) => {
-      console.error("demo draft", error instanceof Error ? error.message : error);
-    })
-    .finally(() => {
-      demoDrafts.delete(submission.id);
-    });
 }
 
 function revalidateTeacherQueue(teacherId: string, studentId?: string) {
@@ -111,6 +91,9 @@ export async function createPieceRecord(input: {
   partId?: string;
   description?: string;
   tips?: string;
+  songKey?: string | null;
+  tuning?: string | null;
+  dueAt?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const titled = pieceTitleResult(input.title);
@@ -118,6 +101,10 @@ export async function createPieceRecord(input: {
   const title = titled.title;
   const note = (input.description ?? input.note).trim();
   const tips = input.tips?.trim() || null;
+  const songKey = parseSongKey(input.songKey);
+  const tuning = parseTuning(input.tuning);
+  if (input.songKey && !songKey) return { error: "song_key" as const };
+  if (input.tuning && !tuning) return { error: "tuning" as const };
   let partId = input.partId;
   if (partId) {
     const part = await prisma.curriculumPart.findFirst({
@@ -138,6 +125,9 @@ export async function createPieceRecord(input: {
       note: note || null,
       description: note || null,
       tips,
+      songKey,
+      tuning,
+      dueAt: parseDueAt(input.dueAt),
       partId,
     },
   });
@@ -160,6 +150,8 @@ export async function updatePieceAssignment(input: {
   tips?: string;
   goal?: string;
   dueAt?: string | null;
+  songKey?: string | null;
+  tuning?: string | null;
 }) {
   const teacher = await teacherOrThrow();
   const piece = await prisma.piece.findFirst({
@@ -169,6 +161,10 @@ export async function updatePieceAssignment(input: {
   const title = input.title?.trim();
   if (input.title != null && !title) return { error: "title_required" as const };
   const note = input.note?.trim() || null;
+  const songKey = input.songKey !== undefined ? parseSongKey(input.songKey) : undefined;
+  const tuning = input.tuning !== undefined ? parseTuning(input.tuning) : undefined;
+  if (input.songKey && songKey == null) return { error: "song_key" as const };
+  if (input.tuning && tuning == null) return { error: "tuning" as const };
   const updated = await prisma.piece.update({
     where: { id: piece.id },
     data: {
@@ -177,6 +173,8 @@ export async function updatePieceAssignment(input: {
       ...(input.tips != null ? { tips: input.tips.trim() || null } : {}),
       ...(input.goal !== undefined ? { goal: input.goal?.trim() || null } : {}),
       ...(input.dueAt !== undefined ? { dueAt: parseDueAt(input.dueAt) } : {}),
+      ...(songKey !== undefined ? { songKey } : {}),
+      ...(tuning !== undefined ? { tuning } : {}),
     },
   });
   revalidatePath("/teacher");
@@ -239,6 +237,29 @@ export async function completePieceAssets(input: {
   revalidatePath("/teacher");
   revalidatePath("/teacher/curriculum");
   return { code: updated.code, trained };
+}
+
+export async function archivePiece(pieceId: string) {
+  const teacher = await teacherOrThrow();
+  const piece = await prisma.piece.findFirst({
+    where: { id: pieceId, teacherId: teacher.id, archived: false },
+    select: { id: true },
+  });
+  if (!piece) throw new Error("not found");
+  await prisma.piece.update({
+    where: { id: piece.id },
+    data: { archived: true },
+  });
+  await logEvent({
+    name: "piece.archived",
+    actorType: "teacher",
+    actorId: teacher.id,
+    teacherId: teacher.id,
+    props: { pieceId: piece.id },
+  });
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/curriculum");
+  revalidatePath(`/teacher/curriculum/${piece.id}`);
 }
 
 export async function approveStudentForm(formData: FormData) {
@@ -324,9 +345,10 @@ export async function sendReply(input: {
   const { source, editDistance } = classifyReplySource(draft, text);
   const openedAt = submission.reviewOpenedAt ?? new Date();
   const sentAt = new Date();
+  let replyId = "";
 
   try {
-    await prisma.$transaction(async (tx) => {
+    const reply = await prisma.$transaction(async (tx) => {
       const claimed = await tx.submission.updateMany({
         where: { id: submission.id, status: { in: [...CLAIMABLE_SUBMISSION_STATUSES] } },
         data: {
@@ -337,7 +359,7 @@ export async function sendReply(input: {
       if (claimed.count === 0) {
         throw new Error("STALE");
       }
-      await tx.reply.create({
+      return tx.reply.create({
         data: {
           submissionId: submission.id,
           teacherId: teacher.id,
@@ -355,6 +377,7 @@ export async function sendReply(input: {
         },
       });
     });
+    replyId = reply.id;
   } catch (error) {
     if (error instanceof Error && error.message === "STALE") {
       return { error: "stale_item" as const };
@@ -362,6 +385,7 @@ export async function sendReply(input: {
     throw error;
   }
 
+  await notifyReply(replyId);
   await logEvent({
     name: "reply.sent",
     actorType: review.actorType,
@@ -427,7 +451,7 @@ export async function revertReply(submissionId: string) {
 export async function setIssueVerdict(input: {
   submissionId: string;
   issueIndex: number;
-  verdict: "true" | "false" | null;
+  verdict: FactVerdict;
 }) {
   const review = await reviewSubmission(input.submissionId);
   const submission = review.submission;
@@ -450,8 +474,6 @@ export async function setIssueVerdict(input: {
     return applied;
   });
   if (!next) return { error: "no_facts" as const };
-  const job = await enqueueDraftWhenReady(submission.id);
-  if (job) writeDemoLetter(submission, next);
   const issue = next.issues[input.issueIndex];
   const metrics = analysis.metricsJson;
   const overlayVersion =
@@ -472,12 +494,10 @@ export async function setIssueVerdict(input: {
       observed: issue?.observed ?? "",
       verdict: input.verdict ?? "none",
       pitchOverlayVersion: typeof overlayVersion === "string" ? overlayVersion : null,
-      draftQueued: Boolean(job),
     },
   });
   return {
     ok: true as const,
-    draftQueued: Boolean(job),
     latestVerdictAt: latestFactVerdictAt(observationMarkers(next)),
   };
 }
@@ -485,8 +505,22 @@ export async function setIssueVerdict(input: {
 export async function requestDraft(submissionId: string) {
   const { submission } = await reviewSubmission(submissionId);
   const job = await enqueueDraftWhenReady(submission.id);
-  if (job) writeDemoLetter(submission);
   return { ok: true as const, draftQueued: Boolean(job) };
+}
+
+export async function saveLetter(submissionId: string, text: string) {
+  const { submission } = await reviewSubmission(submissionId);
+  const body = text.trim();
+  if (!body) return { error: "empty" as const };
+  await prisma.draft.create({
+    data: {
+      submissionId: submission.id,
+      promptVersion: "teacher",
+      model: "teacher",
+      text: body,
+    },
+  });
+  return { ok: true as const };
 }
 
 export async function peekDraft(submissionId: string) {

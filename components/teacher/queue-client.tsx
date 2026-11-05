@@ -6,14 +6,16 @@ import { useTranslations } from "next-intl";
 import {
   approveStudent,
   markOpened,
-  peekDraft,
   requestDraft,
+  saveLetter,
   sendReply,
   setIssueVerdict,
 } from "@/app/teacher/actions";
 import { DeleteTakeButton } from "@/components/teacher/delete-take-button";
 import { RevertReplyButton } from "@/components/teacher/revert-reply-button";
 import { FactBars } from "@/components/teacher/fact-bars";
+import { TakeAnalyzeStatus } from "@/components/teacher/take-analyze-status";
+import { type AnalyzeJobView } from "@/lib/analyze-status";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
 import { requiredText } from "@/lib/forms";
 import { formatClock, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
@@ -40,6 +42,7 @@ export type QueueItem = {
   pitchJudge?: "ok" | "weak";
   submissionKind?: "take" | "practice" | "overdub" | null;
   studentNote?: string | null;
+  analyzeJob?: AnalyzeJobView | null;
 };
 
 function waitLabel(ms: number) {
@@ -70,6 +73,7 @@ export function QueueClient({
   const videoRef = useRef<HTMLVideoElement>(null);
   const letterRef = useRef<HTMLTextAreaElement>(null);
   const letterDirty = useRef(false);
+  const draftSince = useRef<string | null>(null);
   const verdictQueue = useRef(Promise.resolve());
   const verdictTicket = useRef<Record<number, number>>({});
   const verdictItem = useRef<string | null>(null);
@@ -81,6 +85,8 @@ export function QueueClient({
   const [actionError, setActionError] = useState<string | null>(null);
   const [verdicts, setVerdicts] = useState<Record<number, FactVerdict>>({});
   const [draftTimedOut, setDraftTimedOut] = useState(false);
+  const [drafting, setDrafting] = useState(false);
+  const [marksChanged, setMarksChanged] = useState(false);
 
   const item = items[index] ?? null;
   const mediaId = item?.mediaId ?? null;
@@ -96,7 +102,7 @@ export function QueueClient({
     item.markers.length === 0 ||
     item.markers.every((marker) => {
       const verdict = verdicts[marker.index] ?? marker.verdict;
-      return verdict === "true" || verdict === "false";
+      return verdict != null;
     });
 
   const submitReply = useCallback(async (submissionId: string, text: string, moment: number | null) => {
@@ -131,44 +137,58 @@ export function QueueClient({
     for (const marker of item.markers) next[marker.index] = marker.verdict ?? null;
     setVerdicts(next);
     letterDirty.current = false;
+    draftSince.current = null;
     setLetter(item.draft ?? "");
     setHighlightAt(null);
     setActionError(null);
+    setDrafting(false);
+    setMarksChanged(false);
     if (item.submissionId && item.kind === "unanswered") {
       void markOpened(item.submissionId);
     }
   }, [item?.id]);
 
   useEffect(() => {
-    if (!item?.submissionId || item.kind !== "unanswered") return;
+    if (!drafting || !item?.submissionId || item.kind !== "unanswered") return;
     let cancelled = false;
+    let timer = 0;
     const tick = async () => {
-      if (letterDirty.current) return;
-      const latest = await peekDraft(item.submissionId!);
-      if (cancelled || letterDirty.current || !latest.text) return;
-      setLetter(latest.text);
+      if (cancelled || letterDirty.current) return;
+      try {
+        const res = await fetch(`/api/teacher/draft?submissionId=${encodeURIComponent(item.submissionId!)}`);
+        if (!res.ok) return;
+        const latest = (await res.json()) as { text?: string | null; createdAt?: string | null };
+        const since = draftSince.current;
+        if (cancelled || letterDirty.current || !latest.text) return;
+        if (since && latest.createdAt && latest.createdAt <= since) return;
+        window.clearInterval(timer);
+        setLetter(latest.text);
+        setDrafting(false);
+        setMarksChanged(false);
+      } catch {
+        // The letter stays until the next check.
+      }
     };
     void tick();
-    const id = window.setInterval(() => void tick(), 2000);
+    timer = window.setInterval(() => void tick(), 4000);
     return () => {
       cancelled = true;
-      window.clearInterval(id);
+      window.clearInterval(timer);
     };
-  }, [item?.id, item?.submissionId, item?.kind]);
+  }, [drafting, item?.id, item?.submissionId, item?.kind]);
 
-  useEffect(() => {
-    if (!item?.submissionId || !factsReady || item.markers.length === 0) return;
-    if (letterDirty.current) return;
-    void requestDraft(item.submissionId);
-    const id = window.setInterval(() => {
-      if (letterDirty.current) return;
-      void requestDraft(item.submissionId!);
-    }, 8000);
-    return () => window.clearInterval(id);
-  }, [item?.id, item?.submissionId, factsReady, item?.markers.length]);
+  const marksNewerThanLetter = Boolean(
+    item?.draftAt &&
+      item.markers.some((marker) => marker.verdictAt && item.draftAt && marker.verdictAt > item.draftAt),
+  );
+  const canStartDraft =
+    item?.kind === "unanswered" &&
+    item.markers.length > 0 &&
+    factsReady &&
+    !drafting &&
+    (!letter.trim() || marksChanged || marksNewerThanLetter);
 
-  const draftingLetter =
-    item?.kind === "unanswered" && item.markers.length > 0 && factsReady && !letter.trim();
+  const draftingLetter = drafting;
 
   useEffect(() => {
     if (!draftingLetter) {
@@ -301,6 +321,13 @@ export function QueueClient({
               trueLabel: t("factTrue"),
               falseLabel: t("factFalse"),
               positives: t("factPositives"),
+              reasons: {
+                wrong_detection: t("factReasonDetection"),
+                wrong_alignment: t("factReasonAlignment"),
+                wrong_piece_model: t("factReasonPiece"),
+                correct_but_skip: t("factReasonSkip"),
+                unsure: t("factReasonUnsure"),
+              },
             }}
             onSeek={(tStart) => {
               const video = videoRef.current;
@@ -321,9 +348,7 @@ export function QueueClient({
                       try {
                         const result = await setIssueVerdict({ submissionId, issueIndex, verdict });
                         if (verdictItem.current !== itemId || verdictTicket.current[issueIndex] !== mine) return;
-                        if (result && "latestVerdictAt" in result && result.latestVerdictAt && !letterDirty.current) {
-                          void requestDraft(submissionId);
-                        }
+                        if (result && "ok" in result && result.ok) setMarksChanged(true);
                       } catch {
                         if (verdictItem.current !== itemId || verdictTicket.current[issueIndex] !== mine) return;
                       }
@@ -395,10 +420,39 @@ export function QueueClient({
               {highlightAt != null ? (
                 <p className="text-sm">{t("highlightAt", { time: formatClock(highlightAt) })}</p>
               ) : null}
+              {item.markers.length === 0 && item.analyzeJob !== undefined ? (
+                <TakeAnalyzeStatus
+                  job={item.analyzeJob}
+                  copy={{
+                    pending: t("analyzePending"),
+                    running: t("analyzeRunning"),
+                    failed: t("analyzeFailed"),
+                    none: t("analyzeNone"),
+                    doneEmpty: t("analyzeDoneEmpty"),
+                  }}
+                />
+              ) : null}
               {item.markers.length > 0 && !factsReady ? (
                 <p className="fact-draft-wait">{t("factDraftGate")}</p>
               ) : null}
-              {item.markers.length > 0 && factsReady && !letter.trim() ? (
+              {item.markers.length > 0 ? (
+                <button
+                  type="button"
+                  className="btn mt-3"
+                  disabled={!canStartDraft || pending}
+                  onClick={() => {
+                    if (!item.submissionId || !canStartDraft) return;
+                    draftSince.current = item.draftAt ?? null;
+                    letterDirty.current = false;
+                    setDraftTimedOut(false);
+                    setDrafting(true);
+                    void requestDraft(item.submissionId).catch(() => setDrafting(false));
+                  }}
+                >
+                  {t("draftLetter")}
+                </button>
+              ) : null}
+              {draftingLetter ? (
                 <div className="letter-draft">
                   <p className="fact-draft-wait">{draftTimedOut ? t("factDraftTimeout") : t("factDraftWait")}</p>
                   <div
@@ -426,19 +480,40 @@ export function QueueClient({
                 />
               </label>
               {actionError ? <p className="text-sm text-danger">{actionError}</p> : null}
-              <button
-                type="button"
-                disabled={pending}
-                className="btn w-full"
-                onClick={() =>
-                  start(async () => {
-                    if (!item.submissionId) return;
-                    await submitReply(item.submissionId, letter, highlightAt);
-                  })
-                }
-              >
-                {t("send")}
-              </button>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  className="rounded-full border border-ink/20 px-3 py-1 text-sm"
+                  disabled={pending || !letter.trim()}
+                  onClick={() =>
+                    start(async () => {
+                      if (!item.submissionId) return;
+                      const result = await saveLetter(item.submissionId, letter);
+                      if (result && "error" in result) {
+                        setActionError(t("replyRequired"));
+                        return;
+                      }
+                      setActionError(null);
+                      letterDirty.current = false;
+                    })
+                  }
+                >
+                  {t("saveLetter")}
+                </button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  className="btn"
+                  onClick={() =>
+                    start(async () => {
+                      if (!item.submissionId) return;
+                      await submitReply(item.submissionId, letter, highlightAt);
+                    })
+                  }
+                >
+                  {t("send")}
+                </button>
+              </div>
             </div>
           ) : null}
 

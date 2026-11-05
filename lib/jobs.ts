@@ -1,23 +1,32 @@
-import type { JobType, Prisma } from "@prisma/client";
+import type { JobStatus, JobType, Prisma } from "@prisma/client";
+import { wakeCloudWorker } from "@/lib/cloud-worker";
 import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
 import { analyzeAllowed } from "@/lib/demo-piece";
 import { CLAIMABLE_SUBMISSION_STATUSES } from "@/lib/forms";
 import { prisma } from "@/lib/prisma";
 import { needsPitchOverlay } from "@/lib/pitch-overlay";
-import { heardExtractFromMetrics, whyDraftNotReady } from "@/lib/score-model";
+import {
+  draftCoversFactVerdicts,
+  heardExtractFromMetrics,
+  latestFactVerdictAt,
+  observationMarkers,
+  whyDraftNotReady,
+} from "@/lib/score-model";
 
 export async function enqueueJob(
   type: JobType,
   payload: Prisma.InputJsonValue,
   submissionId?: string,
 ) {
-  return prisma.job.create({
+  const job = await prisma.job.create({
     data: {
       type,
       payload,
       submissionId,
     },
   });
+  wakeCloudWorker();
+  return job;
 }
 
 export async function enqueueTrainPiece(pieceId: string) {
@@ -114,6 +123,7 @@ export async function enqueueDraftWhenReady(submissionId: string) {
       piece: { select: { demo: true } },
       student: { select: { approvedAt: true } },
       analyses: { orderBy: { createdAt: "desc" }, take: 1, select: { observationsJson: true } },
+      drafts: { orderBy: { createdAt: "desc" }, take: 1, select: { createdAt: true } },
     },
   });
   if (!submission) {
@@ -130,32 +140,66 @@ export async function enqueueDraftWhenReady(submissionId: string) {
     console.log("draft enqueue", submissionId, "skip", skip);
     return null;
   }
-  const pending = await prisma.job.findFirst({
-    where: { type: "draft", submissionId, status: "pending" },
+  const open = await prisma.job.findFirst({
+    where: { type: "draft", submissionId, status: { in: ["pending", "running"] } },
     select: { id: true },
   });
-  if (pending) {
-    console.log("draft enqueue", submissionId, "already_pending", pending.id);
-    return pending;
+  if (open) {
+    console.log("draft enqueue", submissionId, "already_open", open.id);
+    return open;
+  }
+  const markers = observationMarkers(submission.analyses[0]?.observationsJson);
+  const draftAt = submission.drafts?.[0]?.createdAt ?? null;
+  const covered =
+    Boolean(draftAt) &&
+    (markers.length === 0 ||
+      draftCoversFactVerdicts(draftAt!.toISOString(), latestFactVerdictAt(markers), markers.length));
+  if (covered) {
+    console.log("draft enqueue", submissionId, "skip covered");
+    return null;
   }
   const job = await enqueueJob("draft", { submissionId }, submissionId);
   console.log("draft enqueue", submissionId, job.id);
   return job;
 }
 
-const STALE_RUNNING_MS = 3 * 60 * 1000;
+/** Train on a long tutorial can run well past a few minutes; shorter windows re-run live jobs. */
+const STALE_RUNNING_MS = 20 * 60 * 1000;
+export const MAX_JOB_ATTEMPTS = 3;
+export const MAX_TRAIN_FAILURES = 3;
 
+/** Requeue jobs whose worker died mid-run; after MAX_JOB_ATTEMPTS they stay failed. */
 export async function reclaimStaleJobs() {
   const staleBefore = new Date(Date.now() - STALE_RUNNING_MS);
+  const stuck = { status: "running" as const, updatedAt: { lt: staleBefore } };
+  const exhausted = await prisma.job.updateMany({
+    where: { ...stuck, attempts: { gte: MAX_JOB_ATTEMPTS } },
+    data: { status: "failed", lastError: `stopped mid-run ${MAX_JOB_ATTEMPTS} times` },
+  });
+  if (exhausted.count) console.log("gave up on stuck jobs", exhausted.count);
   const stale = await prisma.job.updateMany({
-    where: { status: "running", updatedAt: { lt: staleBefore } },
+    where: { ...stuck, attempts: { lt: MAX_JOB_ATTEMPTS } },
     data: { status: "pending" },
   });
-  const crashed = await prisma.job.updateMany({
-    where: { status: "failed", lastError: "payload is not defined" },
-    data: { status: "pending", lastError: null },
+  return stale.count;
+}
+
+export function trainKeepsFailing(recentStatuses: JobStatus[]) {
+  return (
+    recentStatuses.length >= MAX_TRAIN_FAILURES &&
+    recentStatuses.slice(0, MAX_TRAIN_FAILURES).every((status) => status === "failed")
+  );
+}
+
+/** True when this piece's last MAX_TRAIN_FAILURES train jobs all failed. A new teacher upload still trains. */
+export async function pieceTrainKeepsFailing(pieceId: string) {
+  const recent = await prisma.job.findMany({
+    where: { type: "train_piece", payload: { path: ["pieceId"], equals: pieceId } },
+    orderBy: { createdAt: "desc" },
+    take: MAX_TRAIN_FAILURES,
+    select: { status: true },
   });
-  return stale.count + crashed.count;
+  return trainKeepsFailing(recent.map((job) => job.status));
 }
 
 export async function claimNextJob() {

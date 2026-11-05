@@ -36,7 +36,7 @@ export async function LandingPage() {
         <div className="landing-nav-end">
           <ThemeToggle
             theme={theme}
-            labels={{ light: messages.theme.light, dark: messages.theme.dark }}
+            labels={{ on: messages.theme.on, off: messages.theme.off }}
             className="landing-locale"
           />
           <Link href={navHref} className="landing-cta landing-nav-cta">

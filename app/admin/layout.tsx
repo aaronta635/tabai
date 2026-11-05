@@ -28,8 +28,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         signOut: t.auth.signOut,
         menu: t.teacher.menu,
         close: t.teacher.close,
-        themeLight: t.theme.light,
-        themeDark: t.theme.dark,
+        themeOn: t.theme.on,
+        themeOff: t.theme.off,
         kicker: t.studio.kicker,
       }}
     >

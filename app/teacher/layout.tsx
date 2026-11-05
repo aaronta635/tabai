@@ -19,10 +19,18 @@ export default async function TeacherLayout({ children }: { children: React.Reac
     redirect(back ? `/onboarding?next=${encodeURIComponent(back)}` : "/onboarding");
   }
   const locale = await getLocale();
-  const portrait = await prisma.teacher.findUnique({ where: { id: session.id }, select: { avatarUrl: true } });
+  const portrait = await prisma.teacher.findUnique({
+    where: { id: session.id },
+    select: { avatarUrl: true, tourSeenAt: true },
+  });
   const avatarSrc = await signedMediaUrl(portrait?.avatarUrl ?? null);
   return (
-    <TeacherAppShell teacherName={session.name} avatarSrc={avatarSrc} locale={locale === "en" ? "en" : "vi"}>
+    <TeacherAppShell
+      teacherName={session.name}
+      avatarSrc={avatarSrc}
+      locale={locale === "en" ? "en" : "vi"}
+      tourSeen={portrait?.tourSeenAt != null}
+    >
       {children}
     </TeacherAppShell>
   );

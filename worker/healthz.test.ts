@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { healthzPayload, healthzStatus } from "./healthz";
+import { healthzPayload, healthzStatus, isJobRunRequest } from "./healthz";
 
 describe("worker healthz", () => {
   it("accepts Cloud Run probes", () => {
@@ -11,5 +11,7 @@ describe("worker healthz", () => {
   it("rejects other paths", () => {
     expect(healthzStatus("GET", "/jobs")).toBe(404);
     expect(healthzStatus("POST", "/healthz")).toBe(404);
+    expect(isJobRunRequest("POST", "/api/jobs/run")).toBe(true);
+    expect(isJobRunRequest("GET", "/api/jobs/run")).toBe(false);
   });
 });

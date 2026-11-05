@@ -5,6 +5,7 @@ import {
   heatmapCounts,
   lastNDays,
   parseDueAt,
+  duePhrase,
   parseSubmissionKind,
   pickAssignedPiece,
 } from "@/lib/practice";
@@ -57,6 +58,17 @@ describe("parseDueAt", () => {
   it("rejects junk", () => {
     expect(parseDueAt("tomorrow")).toBeNull();
     expect(parseDueAt("")).toBeNull();
+  });
+});
+
+describe("duePhrase", () => {
+  it("hides the label when there is no date", () => {
+    expect(duePhrase(null, "en", "Due")).toBeNull();
+  });
+
+  it("keeps the calendar day the teacher picked", () => {
+    expect(duePhrase(new Date("2026-11-12T23:59:59.000Z"), "en", "Due")).toBe("Due 12 Nov");
+    expect(duePhrase(new Date("2026-11-12T23:59:59.000Z"), "vi", "Hạn")).toMatch(/^Hạn 12 thg 11/);
   });
 });
 

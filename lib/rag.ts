@@ -1,11 +1,14 @@
 /** SQL retrieval for drafts: teacher replies + matching score bars. Not pgvector. */
 import { Prisma } from "@prisma/client";
 import { getReadyPieceModel } from "@/lib/catalog";
+import { labelFactPosition } from "@/lib/fretboard";
 import { prisma } from "@/lib/prisma";
 import {
   closeMatch,
   formatIssueWhere,
   isCompareObservations,
+  verdictMarked,
+  verdictSends,
   type CompareObservations,
   type IssueType,
   type ScoreJson,
@@ -81,7 +84,7 @@ function observationOutlineEn(observations: CompareObservations | null) {
       "Do not write a long letter. Do not praise tone or feeling.",
     ].join(" ");
   }
-  const teacherKept = observations.issues.some((issue) => issue.verdict === "true" || issue.verdict === "false");
+  const teacherKept = observations.issues.some((issue) => verdictMarked(issue.verdict));
   if (observations.pitchJudge === "weak" && !teacherKept) {
     return [
       "The notes on this take could not be read.",
@@ -97,11 +100,13 @@ function observationOutlineEn(observations: CompareObservations | null) {
     ].join(" ");
   }
   const issues = observations.issues
-    .filter((issue) => (teacherKept ? issue.verdict === "true" : issue.confidence >= 0.75))
+    .filter((issue) => (teacherKept ? verdictSends(issue.verdict) : issue.confidence >= 0.75))
     .slice(0, teacherKept ? 8 : 4)
     .map((issue) => {
       const where = formatIssueWhere(issue) ?? "one passage";
-      return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
+      const expected = issue.type === "pitch" ? labelFactPosition(issue.expected, "en") : issue.expected;
+      const observed = issue.type === "pitch" ? labelFactPosition(issue.observed, "en") : issue.observed;
+      return `${issue.type} @ ${where}: expected ${expected}; heard ${observed}`;
     });
   const unjudged = observations.pitchJudge === "weak" ? "Notes and chords could not be read. Do not praise a note match." : "";
   if (closeMatch(observations) || issues.length === 0) {
@@ -136,7 +141,7 @@ export function observationOutline(observations: CompareObservations | null, loc
       "Không viết thư dài. Không khen 'có hồn' / 'tròn trịa'.",
     ].join(" ");
   }
-  const teacherKept = observations.issues.some((issue) => issue.verdict === "true" || issue.verdict === "false");
+  const teacherKept = observations.issues.some((issue) => verdictMarked(issue.verdict));
   if (observations.pitchJudge === "weak" && !teacherKept) {
     return [
       "Không phân tích được nốt trên take này.",
@@ -152,11 +157,13 @@ export function observationOutline(observations: CompareObservations | null, loc
     ].join(" ");
   }
   const issues = observations.issues
-    .filter((issue) => (teacherKept ? issue.verdict === "true" : issue.confidence >= 0.75))
+    .filter((issue) => (teacherKept ? verdictSends(issue.verdict) : issue.confidence >= 0.75))
     .slice(0, teacherKept ? 8 : 4)
     .map((issue) => {
       const where = formatIssueWhere(issue) ?? "một đoạn";
-      return `${issue.type} @ ${where}: expected ${issue.expected}; heard ${issue.observed}`;
+      const expected = issue.type === "pitch" ? labelFactPosition(issue.expected, "vi") : issue.expected;
+      const observed = issue.type === "pitch" ? labelFactPosition(issue.observed, "vi") : issue.observed;
+      return `${issue.type} @ ${where}: expected ${expected}; heard ${observed}`;
     });
   const unjudged =
     observations.pitchJudge === "weak" ? "Nốt và hợp âm không phân tích được. Đừng khen là khớp nốt." : "";

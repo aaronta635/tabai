@@ -21,7 +21,8 @@
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
     "catalog:train": "tsx scripts/ingest-catalog.ts",
-    "bars:report": "tsx scripts/false-bars.ts"
+    "bars:report": "tsx scripts/false-bars.ts",
+    "gold:score": "tsx scripts/gold-set.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.124.0",
@@ -45,6 +46,7 @@
     "prisma": "^6.19.3",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
+    "resend": "^6.37.0",
     "tailwindcss": "^4.3.3",
     "tsx": "^4.23.13",
     "typescript": "^6.0.3",

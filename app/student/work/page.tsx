@@ -5,7 +5,7 @@ import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { assignmentsForStudent } from "@/lib/lms";
 import { prisma } from "@/lib/prisma";
-import { formatDueLabel } from "@/lib/practice";
+import { duePhrase } from "@/lib/practice";
 
 export default async function StudentWorkPage() {
   const student = await readStudentSession();
@@ -77,7 +77,7 @@ export default async function StudentWorkPage() {
                         {row.goal ? <p className="text-xs text-ink-soft">{row.goal}</p> : null}
                       </td>
                       <td className="text-sm text-ink-soft">
-                        {row.dueAt ? formatDueLabel(row.dueAt, locale) : "—"}
+                        {duePhrase(row.dueAt, locale, t.student.due) ?? ""}
                       </td>
                       <td>
                         <Link href={`/student/work/${row.piece!.code}`} className="btn">

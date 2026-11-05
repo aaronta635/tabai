@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { useLocale, useTranslations } from "next-intl";
-import { PieceForm } from "@/components/teacher/piece-form";
+import { DeletePieceButton } from "@/components/teacher/delete-piece-button";
+import { PieceSetupDialog } from "@/components/teacher/piece-setup-dialog";
 import { AssignDialog } from "@/components/teacher/assign-dialog";
-import { AddPanel } from "@/components/disclosure";
+import { pieceSetupLabel } from "@/lib/piece-setup";
 import { createCurriculumPart, moveCurriculumPart, placePieceOnShelf, renameCurriculumPart } from "@/app/teacher/lms-actions";
 import { shelfName } from "@/lib/curriculum";
 
@@ -17,6 +18,8 @@ type Part = {
     title: string;
     description: string | null;
     tips: string | null;
+    songKey: string | null;
+    tuning: string | null;
     sheetMediaId: string | null;
     tutorialMediaId: string | null;
     clipMediaId: string | null;
@@ -76,6 +79,7 @@ export function CurriculumBoard({
   const [shelves, setShelves] = useState(parts);
   const [draft, setDraft] = useState("");
   const [overId, setOverId] = useState<string | null>(null);
+  const [creatingPartId, setCreatingPartId] = useState<string | null>(null);
 
   useEffect(() => {
     setShelves(parts);
@@ -217,8 +221,10 @@ export function CurriculumBoard({
                   const total = stat?.total ?? 0;
                   const reviewed = stat?.reviewed ?? 0;
                   const width = total > 0 ? Math.round((reviewed / total) * 100) : 0;
+                  const saved = pieceSetupLabel(piece, locale === "en" ? "en" : "vi");
                   const files =
                     [
+                      saved || null,
                       piece.sheetMediaId ? t("hasSheet") : null,
                       piece.tutorialMediaId ? t("hasTutorial") : null,
                     ]
@@ -264,6 +270,12 @@ export function CurriculumBoard({
                             ))}
                           </select>
                           <AssignDialog pieceId={piece.id} classes={classes} students={students} />
+                          <DeletePieceButton
+                            pieceId={piece.id}
+                            label={t("deletePiece")}
+                            confirmLabel={t("deletePieceConfirm")}
+                            className="btn btn-quiet px-3 py-1.5 text-xs text-danger"
+                          />
                         </div>
                       </td>
                     </tr>
@@ -274,13 +286,19 @@ export function CurriculumBoard({
           ) : null}
 
           <div className="mt-3">
-            <AddPanel label={t("addPiece")}>
-              <PieceForm partId={part.id} />
-            </AddPanel>
+            <button type="button" className="add-trigger" onClick={() => setCreatingPartId(part.id)}>
+              <i aria-hidden>+</i>
+              <span>{t("addPiece")}</span>
+            </button>
           </div>
 
         </section>
       ))}
+      <PieceSetupDialog
+        open={creatingPartId != null}
+        onClose={() => setCreatingPartId(null)}
+        partId={creatingPartId ?? undefined}
+      />
     </div>
   );
 }
@@ -292,29 +310,93 @@ export function ClassDropZone({
 }: {
   classId: string;
   name: string;
-  onAssigned: (input: { classId: string; pieceId?: string; partId?: string }) => Promise<void>;
+  onAssigned: (input: {
+    classId: string;
+    pieceId?: string;
+    partId?: string;
+    dueAt: string;
+  }) => Promise<{ error: string } | { ok: true; count: number } | void>;
 }) {
   const t = useTranslations("teacher");
   const [over, setOver] = useState(false);
+  const [pending, setPending] = useState<{ pieceId?: string; partId?: string } | null>(null);
+  const [dueAt, setDueAt] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!pending || !dueAt) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const result = await onAssigned({
+        classId,
+        pieceId: pending.pieceId,
+        partId: pending.partId,
+        dueAt,
+      });
+      if (result && "error" in result) {
+        setError(result.error === "due_required" ? t("dueRequired") : t("assignTargetRequired"));
+        return;
+      }
+      setPending(null);
+      setDueAt("");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
-    <div
-      onDragOver={(event) => {
-        event.preventDefault();
-        setOver(true);
-      }}
-      onDragLeave={() => setOver(false)}
-      onDrop={async (event) => {
-        event.preventDefault();
-        setOver(false);
-        const pieceId = event.dataTransfer.getData("application/x-howl0-piece") || undefined;
-        const partId = event.dataTransfer.getData("application/x-howl0-part") || undefined;
-        if (pieceId || partId) await onAssigned({ classId, pieceId, partId });
-      }}
-      title={`${t("dropOnClass")} ${name}`}
-      className={`drop-chip ${over ? "drop-chip-over" : ""}`}
-    >
-      <span aria-hidden>↧</span>
-      <span>{name}</span>
+    <div className="flex flex-col gap-1">
+      <div
+        onDragOver={(event) => {
+          event.preventDefault();
+          setOver(true);
+        }}
+        onDragLeave={() => setOver(false)}
+        onDrop={(event) => {
+          event.preventDefault();
+          setOver(false);
+          const pieceId = event.dataTransfer.getData("application/x-howl0-piece") || undefined;
+          const partId = event.dataTransfer.getData("application/x-howl0-part") || undefined;
+          if (!pieceId && !partId) return;
+          setError(null);
+          setPending({ pieceId, partId });
+        }}
+        title={`${t("dropOnClass")} ${name}`}
+        className={`drop-chip ${over ? "drop-chip-over" : ""}`}
+      >
+        <span aria-hidden>↧</span>
+        <span>{name}</span>
+      </div>
+      {pending ? (
+        <form className="flex flex-wrap items-center gap-2" onSubmit={save}>
+          <input
+            type="date"
+            required
+            aria-label={t("due")}
+            value={dueAt}
+            onChange={(event) => setDueAt(event.target.value)}
+            className="field"
+          />
+          <button type="submit" disabled={busy} className="btn px-3 py-1.5 text-xs">
+            {t("assign")}
+          </button>
+          <button
+            type="button"
+            className="btn btn-quiet px-3 py-1.5 text-xs"
+            onClick={() => {
+              setPending(null);
+              setDueAt("");
+              setError(null);
+            }}
+          >
+            {t("close")}
+          </button>
+          {error ? <p className="text-danger text-xs">{error}</p> : null}
+        </form>
+      ) : null}
     </div>
   );
 }

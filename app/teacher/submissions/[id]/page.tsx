@@ -5,6 +5,7 @@ import { readTeacherSession } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getLocale, getMessages } from "@/lib/i18n";
 import { nudgeHref } from "@/lib/deep-links";
+import { toAnalyzeJobView } from "@/lib/analyze-status";
 import { observationMarkers, observationPositives, parseCompareObservations } from "@/lib/score-model";
 import { StudioTitle } from "@/components/home/feed";
 import { QueueClient } from "@/components/teacher/queue-client";
@@ -21,6 +22,7 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
       drafts: { orderBy: { createdAt: "desc" }, take: 1 },
       replies: { orderBy: { createdAt: "desc" }, take: 1 },
       analyses: { orderBy: { createdAt: "desc" }, take: 1 },
+      jobs: { where: { type: "analyze" }, orderBy: { createdAt: "desc" }, take: 1 },
     },
   });
   if (!row) notFound();
@@ -76,6 +78,7 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
             pitchJudge: parseCompareObservations(row.analyses[0]?.observationsJson).pitchJudge,
             submissionKind: row.kind,
             studentNote: row.studentNote,
+            analyzeJob: toAnalyzeJobView(row.jobs[0] ?? null),
           },
         ]}
       />

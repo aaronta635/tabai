@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { mkdir, readdir, readFile, unlink, writeFile } from "node:fs/promises";
 import { extname, join } from "node:path";
 import type { MediaKind, Prisma } from "@prisma/client";
-import { enqueueJob } from "@/lib/jobs";
+import { enqueueJob, pieceTrainKeepsFailing } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { downloadMedia, uploadMedia } from "@/lib/storage";
 import type { PieceModelSourceJson } from "@/lib/score-model";
@@ -320,6 +320,7 @@ export async function enqueueTrainIfIdle(pieceId: string) {
     return payload?.pieceId === pieceId;
   });
   if (alreadyQueued) return null;
+  if (await pieceTrainKeepsFailing(pieceId)) return null;
   return enqueueTrainPiece(pieceId);
 }
 
@@ -348,6 +349,10 @@ export async function enqueueTrainForPiecesWithoutReadyModel() {
   const jobs = [];
   for (const piece of pieces) {
     if (openIds.has(piece.id)) continue;
+    if (await pieceTrainKeepsFailing(piece.id)) {
+      console.log("skip train, keeps failing", piece.code);
+      continue;
+    }
     jobs.push({ piece, job: await enqueueTrainPiece(piece.id) });
   }
   return jobs;

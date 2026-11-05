@@ -20,7 +20,7 @@ const ending = {
   },
   vi: {
     availableLines: ["PARA đã", "sẵn sàng"],
-    nextLines: ["Bắt đầu", "bước tiếp theo", "cùng PARA"],
+    nextLines: ["Giao bài.", "Nghe bài.", "Góp ý."],
     utilities: [
       [{ label: "Liên hệ", href: `mailto:${LEGAL_EMAIL}` }],
       [

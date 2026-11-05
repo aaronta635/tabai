@@ -1,0 +1,10 @@
+---
+description: Keep Cursor token use low
+alwaysApply: true
+---
+
+- Explore with Grep (`head_limit`) and short Read ranges. Open the function, not the file.
+- Do not run graphify. Do not read `graphify-out/`. Ignore the global graphify skill unless the user typed `/graphify`.
+- Do not spawn subagents or open Plan mode for a lookup one Grep can answer.
+- After edits, skip `graphify update` unless asked.
+- For large CLI output (tests, gcloud, git log), use context-mode `ctx_execute` so the raw dump stays out of the chat.

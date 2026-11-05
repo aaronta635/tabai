@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/return-path";
 import { readStudentSession } from "@/lib/auth";
 import { getLocale, getMessages } from "@/lib/i18n";
-import { formatDueLabel } from "@/lib/practice";
+import { duePhrase } from "@/lib/practice";
+import { pieceSetupLabel } from "@/lib/piece-setup";
 import { senderName } from "@/lib/demo-teacher";
 import { loadPieceClassroom } from "@/lib/piece-view";
 import { prisma } from "@/lib/prisma";
@@ -22,11 +23,16 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
   const locale = await getLocale();
   const t = await getMessages(locale);
   const dueAt = room.assigned?.dueAt ?? room.piece.dueAt;
-  const dueLabel = dueAt ? formatDueLabel(dueAt, locale) : null;
   const goal = room.assigned?.goal ?? room.piece.goal;
   const brief = room.piece.description || room.piece.note;
   const tips = room.piece.tips && room.piece.tips !== brief ? room.piece.tips : null;
-  const meta = [dueLabel ? `${t.student.due} ${dueLabel}` : null, goal].filter(Boolean).join(" · ");
+  const meta = [
+    pieceSetupLabel(room.piece, locale === "en" ? "en" : "vi"),
+    duePhrase(dueAt, locale, t.student.due),
+    goal,
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const teacherName = senderName(room.piece.teacher.name, room.piece.demo);
   const history = room.bound.student
     ? await prisma.submission.findMany({

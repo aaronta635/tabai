@@ -61,10 +61,15 @@ export function parseDueAt(value?: string | null) {
 
 export function formatDueLabel(date: Date, locale: string) {
   return new Intl.DateTimeFormat(locale === "en" ? "en-GB" : "vi-VN", {
-    weekday: "short",
     day: "numeric",
     month: "short",
+    timeZone: "UTC",
   }).format(date);
+}
+
+export function duePhrase(date: Date | null | undefined, locale: string, prefix: string) {
+  if (!date) return null;
+  return `${prefix} ${formatDueLabel(date, locale)}`;
 }
 
 export function parseSubmissionKind(value: unknown) {

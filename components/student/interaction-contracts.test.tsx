@@ -13,7 +13,7 @@ vi.mock("@/app/teacher/actions", () => ({ deleteTeacherTake: vi.fn() }));
 vi.mock("@/lib/supabase/client", () => ({
   createBrowserSupabase: () => ({ auth: { signOut: vi.fn(async () => ({ error: null })) } }),
 }));
-const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student/work", label: "Assigned work", icon: "assignment" as const }], menuLinks: [{ href: "/student/profile", label: "Profile" }], labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeLight: "Light", themeDark: "Dark" } };
+const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student/work", label: "Assigned work", icon: "assignment" as const }], menuLinks: [{ href: "/student/profile", label: "Profile" }], labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeOn: "Turn on dark mode", themeOff: "Turn off" } };
 beforeEach(() => {
   sessionStorage.setItem("howl0-session-bound", "1");
   router.push.mockReset(); router.refresh.mockReset();
@@ -37,11 +37,11 @@ it("student theme controls retain the cookie endpoint, pending state and router 
   let finish: (value: Response) => void = () => {};
   const response = new Promise<Response>((resolve) => { finish = resolve; });
   const fetchMock = vi.fn(() => response); vi.stubGlobal("fetch", fetchMock);
-  render(<ThemeToggle variant="student" theme="light" labels={{ light: "Light", dark: "Dark" }} />);
-  await user.click(screen.getByRole("button", { name: "Dark" }));
+  render(<ThemeToggle theme="light" labels={{ on: "Turn on dark mode", off: "Turn off" }} />);
+  await user.click(screen.getByRole("button", { name: "Turn on dark mode" }));
   expect(document.documentElement.dataset.theme).toBe("dark");
   expect(fetchMock).toHaveBeenCalledWith("/api/theme", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ theme: "dark" }) });
-  expect(screen.getByRole("button", { name: "Dark" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Turn off" })).toBeDisabled();
   finish(new Response(null, { status: 200 }));
   await waitFor(() => expect(router.refresh).toHaveBeenCalledOnce());
 });

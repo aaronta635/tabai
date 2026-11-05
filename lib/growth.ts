@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { notifyReply } from "@/lib/student-mail";
 
 /**
  * Growth hooks — v1 does not unlock these. Call sites should keep using
@@ -69,13 +70,13 @@ export async function sendApprovedDraft(input: {
   text: string;
 }) {
   const sentAt = new Date();
-  const claimed = await prisma.$transaction(async (tx) => {
+  const reply = await prisma.$transaction(async (tx) => {
     const updated = await tx.submission.updateMany({
       where: { id: input.submissionId, status: { in: ["new", "drafted"] } },
       data: { status: "answered", route: "ai_direct" },
     });
-    if (updated.count === 0) return false;
-    await tx.reply.create({
+    if (updated.count === 0) return null;
+    return tx.reply.create({
       data: {
         submissionId: input.submissionId,
         teacherId: input.teacherId,
@@ -86,9 +87,9 @@ export async function sendApprovedDraft(input: {
         sentAt,
       },
     });
-    return true;
   });
-  if (!claimed) return false;
+  if (!reply) return false;
+  await notifyReply(reply.id);
   await prisma.event.create({
     data: {
       actorType: "system",

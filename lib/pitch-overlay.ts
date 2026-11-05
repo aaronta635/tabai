@@ -1,11 +1,13 @@
 import { alignWithShift, pitchDistance } from "@/lib/align";
 import { PITCH_OVERLAY_VERSION } from "@/lib/constants";
-import { bestChord, chordsInText, firstChordInText, matchHeardChord, matchWrongRoot, pcFromName, pcName, pitchClass, wrongThird } from "@/lib/chord-tones";
-import { notePositionLabel } from "@/lib/fretboard";
+import { bestChord, chordsInText, firstChordInText, pcName, pitchClass } from "@/lib/chord-tones";
+import { notePositionLabel, type LocaleLabel } from "@/lib/fretboard";
+import { tempoCue } from "@/lib/tempo-cue";
 import {
   midiFromNote,
   type CompareIssue,
   type CompareObservations,
+  type FactEvidence,
   type ScoreJson,
   type TutorialCue,
 } from "@/lib/score-model";
@@ -93,46 +95,90 @@ function sectionChords(score: ScoreJson | null) {
   return score.sections.flatMap((section) => section.chords);
 }
 
-const PRESENCE_WINDOW = 0.5;
+const PRESENCE_WINDOW = 0.15;
 
 type LickMismatch = {
   want: HeardPitchNote;
   got: HeardPitchNote | null;
   targetT: number;
+  semitone: boolean;
+  energy: number;
+  onset: number;
 };
 
 type LickCompare = {
   shift: number;
+  /** Negative semitone count when the take is flat. Never treated as a capo. */
+  tuningFlat: number;
   mismatches: LickMismatch[];
   matchedRatio: number;
+  alignmentCost: number;
 };
 
-function shiftIssue(heard: HeardPitchNote[], shift: number): CompareIssue {
+function evidence(partial: Partial<FactEvidence>): FactEvidence {
+  return {
+    pitchClassEnergy: partial.pitchClassEnergy ?? null,
+    alignmentCost: partial.alignmentCost ?? null,
+    onsetProbability: partial.onsetProbability ?? null,
+  };
+}
+
+function scoreNoteLabel(note: { midi: number; name?: string }, locale: LocaleLabel) {
+  return notePositionLabel({ midi: note.midi, name: note.name }, locale);
+}
+
+function shiftIssue(heard: HeardPitchNote[], shift: number, alignmentCost: number): CompareIssue {
   return {
     type: "pitch",
     bar: null,
     tStart: heard[0]?.tStart ?? 0,
     tEnd: null,
     expected: "original pitch",
-    observed: `${shift > 0 ? "+" : ""}${shift} semitones`,
+    observed: `+${shift} semitones`,
     confidence: 0.8,
     verdict: null,
     verdictAt: null,
+    evidence: evidence({ alignmentCost, pitchClassEnergy: 1, onsetProbability: 1 }),
   };
 }
 
-function issuesFromLick(compared: LickCompare, heard: HeardPitchNote[]): CompareIssue[] {
-  if (compared.shift !== 0) return [shiftIssue(heard, compared.shift)];
-  return compared.mismatches.map(({ want, got, targetT }) => ({
-    type: "pitch" as const,
+function tuningIssue(heard: HeardPitchNote[], semitonesFlat: number, alignmentCost: number): CompareIssue {
+  return {
+    type: "wrong_pitch_semitone",
     bar: null,
-    tStart: got?.tStart ?? targetT,
-    tEnd: got?.tEnd ?? null,
-    expected: notePositionLabel(want),
-    observed: got ? notePositionLabel(got) : "missing",
+    tStart: heard[0]?.tStart ?? 0,
+    tEnd: null,
+    expected: "original pitch",
+    observed: `tuned ${Math.abs(semitonesFlat)} semitone flat`,
     confidence: 0.8,
     verdict: null,
     verdictAt: null,
+    evidence: evidence({ alignmentCost, pitchClassEnergy: 0, onsetProbability: 1 }),
+  };
+}
+
+function issuesFromLick(
+  compared: LickCompare,
+  heard: HeardPitchNote[],
+  locale: LocaleLabel,
+): CompareIssue[] {
+  if (compared.tuningFlat < 0) return [tuningIssue(heard, compared.tuningFlat, compared.alignmentCost)];
+  if (compared.shift > 0 && compared.shift <= 7) return [shiftIssue(heard, compared.shift, compared.alignmentCost)];
+  return compared.mismatches.map(({ want, got, targetT, semitone, energy, onset }) => ({
+    type: semitone ? "wrong_pitch_semitone" : "melody_note_missing",
+    bar: null,
+    tStart: got?.tStart ?? targetT,
+    tEnd: got?.tEnd ?? null,
+    expected: scoreNoteLabel(want, locale),
+    observed: semitone && got ? scoreNoteLabel(got, locale) : "missing",
+    confidence: 0.8,
+    verdict: null,
+    verdictAt: null,
+    evidence: evidence({
+      pitchClassEnergy: energy,
+      alignmentCost: compared.alignmentCost,
+      onsetProbability: onset,
+    }),
   }));
 }
 
@@ -164,7 +210,12 @@ function rankMismatches(rows: LickMismatch[]) {
 function compareSequence(expected: HeardPitchNote[], heard: HeardPitchNote[]): LickCompare | null {
   if (expected.length < 3 || heard.length === 0) return null;
   const aligned = alignWithShift(expected, heard);
-  if (aligned.shift !== 0) return { shift: aligned.shift, mismatches: [], matchedRatio: 1 };
+  if (aligned.shift > 0 && aligned.shift <= 7) {
+    return { shift: aligned.shift, tuningFlat: 0, mismatches: [], matchedRatio: 1, alignmentCost: aligned.cost };
+  }
+  if (aligned.shift < 0) {
+    return { shift: 0, tuningFlat: aligned.shift, mismatches: [], matchedRatio: 1, alignmentCost: aligned.cost };
+  }
   const assigned = new Map<number, number>();
   for (const step of aligned.steps) {
     if (step.heardIndex == null) continue;
@@ -182,13 +233,31 @@ function compareSequence(expected: HeardPitchNote[], heard: HeardPitchNote[]): L
       if (claimed.has(index) && index !== heardIndex) return false;
       return true;
     });
-    if (window.some((note) => pitchDistance(note.midi, want.midi) <= 1)) {
+    const exact = window.filter((note) => pitchDistance(note.midi, want.midi) === 0);
+    if (exact.length > 0) {
       matched += 1;
       continue;
     }
-    mismatches.push({ want, got: window.length > 0 ? loudest(window) : null, targetT });
+    const near = window.filter((note) => pitchDistance(note.midi, want.midi) === 1);
+    const got = near.length > 0 ? loudest(near) : null;
+    const weight = window.reduce((sum, note) => sum + duration(note), 0);
+    const energy = weight === 0 ? 0 : exact.reduce((sum, note) => sum + duration(note), 0) / weight;
+    mismatches.push({
+      want,
+      got,
+      targetT,
+      semitone: got != null,
+      energy,
+      onset: got ? Math.min(1, duration(got)) : 0,
+    });
   }
-  return { shift: 0, mismatches: rankMismatches(mismatches), matchedRatio: matched / expected.length };
+  return {
+    shift: 0,
+    tuningFlat: 0,
+    mismatches: rankMismatches(mismatches),
+    matchedRatio: matched / expected.length,
+    alignmentCost: aligned.cost,
+  };
 }
 
 function melodyCompare(heard: HeardPitchNote[], score: ScoreJson | null): LickCompare | null {
@@ -367,48 +436,26 @@ function chordIssues(
     const rawStart = cue.tStart;
     const rawEnd = cue.tEnd != null && cue.tEnd > rawStart ? cue.tEnd : (limited[i + 1]?.tStart ?? rawStart + 2);
 
-    if (tutorialNotes.length > 0) {
-      const tutorial = weightsBetween(tutorialNotes, rawStart, rawEnd);
-      if (tutorial.inside.length > 0 && wrongThird(parsed, tutorial.weights)) continue;
-    }
-
     const start = useSpans && spans ? spans[i].tStart : mapTime(rawStart);
     const end = useSpans && spans ? spans[i].tEnd : mapTime(rawEnd);
     const { inside, weights } = weightsBetween(notes, start, end);
     if (inside.length === 0) continue;
-    const heardChord = matchHeardChord(parsed, weights) ?? matchWrongRoot(parsed, weights);
-    if (heardChord) {
-      const distinct = heardChord.pcs.filter((pc) => !parsed.pcs.includes(pc));
-      const offenders = inside.filter((note) => distinct.includes(pitchClass(note.midi)));
-      const stamp = loudest(offenders.length > 0 ? offenders : inside);
-      issues.push({
-        type: "chord",
-        bar: allowBar ? cue.bar : null,
-        tStart: stamp.tStart,
-        tEnd: stamp.tEnd,
-        expected: parsed.symbol,
-        observed: heardChord.symbol,
-        confidence: 0.8,
-        verdict: null,
-        verdictAt: null,
-      });
-      continue;
-    }
-    const third = wrongThird(parsed, weights);
-    if (!third) continue;
-    const observedPc = pcFromName(third.observed);
-    const offenders = observedPc == null ? inside : inside.filter((note) => pitchClass(note.midi) === observedPc);
-    const stamp = loudest(offenders.length > 0 ? offenders : inside);
+    let total = 0;
+    for (const weight of weights.values()) total += weight;
+    const rootEnergy = total === 0 ? 0 : (weights.get(parsed.root) ?? 0) / total;
+    if (rootEnergy >= 0.25) continue;
+    const stamp = loudest(inside);
     issues.push({
-      type: "pitch",
+      type: "chord_not_ringing",
       bar: allowBar ? cue.bar : null,
       tStart: stamp.tStart,
       tEnd: stamp.tEnd,
-      expected: `${parsed.symbol} (${third.expected})`,
-      observed: third.observed,
+      expected: parsed.symbol,
+      observed: "not ringing",
       confidence: 0.8,
       verdict: null,
       verdictAt: null,
+      evidence: evidence({ pitchClassEnergy: rootEnergy, alignmentCost: null, onsetProbability: null }),
     });
   }
   return issues;
@@ -418,6 +465,10 @@ export type PitchOverlayContext = {
   silenceRatio?: number | null;
   durationS?: number | null;
   pitchError?: string | null;
+  locale?: LocaleLabel;
+  takeBpm?: number | null;
+  referenceBpm?: number | null;
+  allowFasterTempo?: boolean;
 };
 
 export function judgePitchTake(input: {
@@ -436,10 +487,50 @@ export function judgePitchTake(input: {
   return "ok";
 }
 
+const UNSAFE_FACT = /\b(buzz|mute|strum(?:ming|-direction)?)\b/i;
+
+function tempoIssue(context: PitchOverlayContext): CompareIssue | null {
+  const line = tempoCue(context.referenceBpm ?? null, context.takeBpm ?? null, context.locale === "en" ? "en" : "vi", {
+    allowFaster: context.allowFasterTempo === true,
+  });
+  if (!line) return null;
+  return {
+    type: "tempo_vs_target",
+    bar: null,
+    tStart: 0,
+    tEnd: null,
+    expected: String(Math.round(context.referenceBpm ?? 0)),
+    observed: String(Math.round(context.takeBpm ?? 0)),
+    confidence: 0.8,
+    verdict: null,
+    verdictAt: null,
+    evidence: evidence({ pitchClassEnergy: null, alignmentCost: null, onsetProbability: null }),
+  };
+}
+
+function keptGeminiIssues(issues: CompareIssue[]) {
+  return issues.filter((issue) => {
+    if (
+      issue.type === "pitch" ||
+      issue.type === "chord" ||
+      issue.type === "timing" ||
+      issue.type === "technique" ||
+      issue.type === "missing"
+    ) {
+      return false;
+    }
+    if (issue.type === "tempo_vs_target" || issue.type === "chord_not_ringing" || issue.type === "melody_note_missing") {
+      return false;
+    }
+    if (UNSAFE_FACT.test(issue.expected) || UNSAFE_FACT.test(issue.observed)) return false;
+    return true;
+  });
+}
+
 /**
- * Basic Pitch is the pitch source. Gemini pitch and chord guesses are dropped whenever this overlay runs.
- * A lick bar exists only when the expected pitch is missing from the aligned window.
- * A 1-semitone miss stays quiet. Chord songs can name a different root, and Am versus A7 still needs G.
+ * Basic Pitch is the pitch source. Gemini does not write tempo, chord, or melody facts.
+ * A missing melody note is a pitch class absent within 150ms. A 1-semitone miss is a teacher bar.
+ * A flat guitar is a tuning offset, not a capo. Chord facts only say the expected chord did not ring.
  */
 export function overlayPitchIssues(
   observations: CompareObservations,
@@ -449,7 +540,8 @@ export function overlayPitchIssues(
   tutorialNotes: HeardPitchNote[] = [],
   context: PitchOverlayContext = {},
 ): CompareObservations {
-  const other = observations.issues.filter((issue) => issue.type !== "pitch" && issue.type !== "chord");
+  const locale: LocaleLabel = context.locale === "en" ? "en" : "vi";
+  const other = keptGeminiIssues(observations.issues);
   const usable = usableNotes(heard);
   const melody = expectedMelody(score);
   const chords = sectionChords(score);
@@ -460,13 +552,13 @@ export function overlayPitchIssues(
       const compared = tutorialCompare(heard, tutorialNotes);
       if (compared) {
         matchedRatio = compared.matchedRatio;
-        pitchIssues = issuesFromLick(compared, usable);
+        pitchIssues = issuesFromLick(compared, usable, locale);
       }
     } else if (melody.length >= 3 && melody.length >= chords.length) {
       const compared = melodyCompare(heard, score);
       if (compared) {
         matchedRatio = compared.matchedRatio;
-        pitchIssues = issuesFromLick(compared, usable);
+        pitchIssues = issuesFromLick(compared, usable, locale);
       }
     } else {
       pitchIssues = chordIssues(heard, score, cues, tutorialNotes);
@@ -479,12 +571,11 @@ export function overlayPitchIssues(
     durationS: context.durationS,
     matchedRatio,
   });
-  if (pitchJudge === "weak") {
-    return { ...observations, pitchJudge, issues: other };
-  }
+  const tempo = tempoIssue(context);
+  const base = pitchJudge === "weak" ? other : [...other, ...pitchIssues];
   return {
     ...observations,
     pitchJudge,
-    issues: [...other, ...pitchIssues],
+    issues: tempo ? [...base, tempo] : base,
   };
 }

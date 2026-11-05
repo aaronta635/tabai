@@ -54,7 +54,8 @@ describe("observationOutline", () => {
         },
       ],
     });
-    expect(text).toMatch(/G#4/);
+    expect(text).toMatch(/G#4 · ngăn 4 · dây 1/);
+    expect(text).toMatch(/A#4 · ngăn 6 · dây 1/);
     expect(text).not.toMatch(/choke/);
   });
 });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, useState } from "react";
+import { markTourSeen } from "@/app/account/tour-actions";
 
 export type TourStep = { href: string; title: string; body: string; fallback?: string };
 
@@ -20,27 +21,31 @@ export function openStudioTour() {
   window.dispatchEvent(new Event(OPEN_EVENT));
 }
 
-export function StudioTour({ tour }: { tour: TourCopy }) {
+export function StudioTour({ tour, seen }: { tour: TourCopy; seen: boolean }) {
   const titleId = useId();
-  const storageKey = `para-tour-${tour.role}`;
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
+  const [recorded, setRecorded] = useState(seen);
   const current = tour.steps[step];
 
   function finish() {
-    localStorage.setItem(storageKey, "1");
     setOpen(false);
+    setRecorded(true);
   }
 
   useEffect(() => {
-    if (!localStorage.getItem(storageKey)) setOpen(true);
+    if (!recorded) {
+      setOpen(true);
+      setRecorded(true);
+      void markTourSeen(tour.role);
+    }
     function onOpen() {
       setStep(0);
       setOpen(true);
     }
     window.addEventListener(OPEN_EVENT, onOpen);
     return () => window.removeEventListener(OPEN_EVENT, onOpen);
-  }, [storageKey]);
+  }, [recorded, tour.role]);
 
   useEffect(() => {
     if (!open || !current) return;

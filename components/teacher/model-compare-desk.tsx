@@ -1,6 +1,8 @@
 import { SectionPanel } from "@/components/disclosure";
 import { ScoreExtractView, extractFromUnknown } from "@/components/teacher/score-extract";
 import { HeardPitchChips } from "@/components/teacher/heard-pitch-chips";
+import { TakeAnalyzeStatus } from "@/components/teacher/take-analyze-status";
+import { type AnalyzeJobView, type AnalyzeStatusCopy } from "@/lib/analyze-status";
 import { pitchErrorFromMetrics, pitchNotesFromMetrics } from "@/lib/pitch-overlay";
 import {
   chordSequenceDelta,
@@ -34,11 +36,13 @@ export function ModelCompareDesk({
   heardJson,
   metricsJson,
   copy,
+  analyze,
 }: {
   pieceModel: { scoreJson: unknown; tutorialCuesJson: unknown } | null;
   heardJson: unknown;
   metricsJson?: unknown;
   copy: Copy;
+  analyze?: { job: AnalyzeJobView | null; copy: AnalyzeStatusCopy };
 }) {
   const piece = pieceModel
     ? parseTrainExtract({
@@ -53,6 +57,7 @@ export function ModelCompareDesk({
   const tutorialError = pitchErrorFromMetrics(pieceModel?.tutorialCuesJson);
   const delta =
     piece && heard ? chordSequenceDelta(chordsFromScore(piece), chordsFromScore(heard)) : null;
+  const waitingOnJob = Boolean(analyze) && !heard;
 
   return (
     <SectionPanel title={copy.title} open>
@@ -86,20 +91,26 @@ export function ModelCompareDesk({
         <section className="tile">
           <p className="tile-title">{copy.take}</p>
           <div className="mt-2">
-            <ScoreExtractView
-              extract={heard}
-              empty={copy.emptyTake}
-              chordsLabel={copy.takeChords}
-              cuesLabel={copy.takeCues}
-              rawLabel={copy.raw}
-            />
-            <HeardPitchChips
-              notes={heardNotes}
-              error={pitchError}
-              label={copy.heardNotes}
-              empty={copy.heardNotesNone}
-              errorLabel={copy.heardNotesError}
-            />
+            {waitingOnJob && analyze ? (
+              <TakeAnalyzeStatus job={analyze.job} copy={analyze.copy} />
+            ) : (
+              <ScoreExtractView
+                extract={heard}
+                empty={copy.emptyTake}
+                chordsLabel={copy.takeChords}
+                cuesLabel={copy.takeCues}
+                rawLabel={copy.raw}
+              />
+            )}
+            {waitingOnJob ? null : (
+              <HeardPitchChips
+                notes={heardNotes}
+                error={pitchError}
+                label={copy.heardNotes}
+                empty={copy.heardNotesNone}
+                errorLabel={copy.heardNotesError}
+              />
+            )}
           </div>
         </section>
       </div>

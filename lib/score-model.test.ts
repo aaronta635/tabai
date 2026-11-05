@@ -177,6 +177,25 @@ describe("score-model parsers", () => {
     ).toBeNull();
   });
 
+  it("does not treat an empty issue list as ready to draft", () => {
+    const empty = parseCompareObservations({
+      overallFit: 0.95,
+      confidence: 0.95,
+      pitchJudge: "weak",
+      issues: [],
+    });
+    expect(factVerdictsComplete(empty)).toBe(false);
+    expect(observationsForDraft(empty)).toBeNull();
+    expect(
+      whyDraftNotReady({
+        kind: "take",
+        status: "new",
+        approved: true,
+        observations: empty,
+      }),
+    ).toBe("facts_empty");
+  });
+
   it("maps C4 to MIDI 60", () => {
     expect(midiFromNote("C4")).toBe(60);
     expect(noteFromMidi(64)).toBe("E4");

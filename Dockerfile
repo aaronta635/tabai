@@ -44,7 +44,7 @@ COPY --from=builder /app/lib ./lib
 COPY --from=builder /app/catalog ./catalog
 COPY --from=builder /app/i18n ./i18n
 COPY --from=builder /app/tsconfig.json ./
-ARG INSTALL_BASIC_PITCH=false
+ARG INSTALL_BASIC_PITCH=true
 RUN if [ "$INSTALL_BASIC_PITCH" = "true" ]; then pip3 install --no-cache-dir --break-system-packages -r /tmp/requirements-pitch.txt; fi
 EXPOSE 8080
 CMD ["npm", "run", "worker"]

@@ -113,7 +113,7 @@ export async function enqueueAllTakesNeedingCompare() {
   return queued;
 }
 
-/** Draft only after every timed fact has Đúng/Sai, or when there are no bars to mark. */
+/** Draft only after every timed fact has Đúng/Sai. An empty chart is not ready. */
 export async function enqueueDraftWhenReady(submissionId: string) {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },

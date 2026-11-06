@@ -480,11 +480,14 @@ export function applyIssueVerdict(
   };
 }
 
-/** Timed fact bars the tutor sees. Untimed issues are not gated. */
+/** Timed fact bars the tutor sees. An empty list is not ready. Untimed issues are not gated. */
 export function factVerdictsComplete(observations: CompareObservations): boolean {
-  return observations.issues
-    .filter((issue) => issue.tStart != null)
-    .every((issue) => verdictMarked(issue.verdict));
+  const timed = observations.issues.filter((issue) => issue.tStart != null);
+  if (timed.length === 0) return false;
+  if (observations.pitchJudge === "weak" && !timed.some((issue) => verdictMarked(issue.verdict))) {
+    return false;
+  }
+  return timed.every((issue) => verdictMarked(issue.verdict));
 }
 
 export function whyDraftNotReady(input: {
@@ -499,6 +502,10 @@ export function whyDraftNotReady(input: {
   if (!isCompareObservations(input.observations)) return "no_compare";
   const parsed = parseCompareObservations(input.observations);
   const timed = parsed.issues.filter((issue) => issue.tStart != null);
+  if (timed.length === 0) return "facts_empty";
+  if (parsed.pitchJudge === "weak" && !timed.some((issue) => verdictMarked(issue.verdict))) {
+    return "pitch_weak";
+  }
   const open = timed.filter((issue) => !verdictMarked(issue.verdict));
   if (open.length) return `facts_open ${open.length}/${timed.length}`;
   return null;

@@ -1,0 +1,73 @@
+.head {
+  position: relative;
+  overflow: hidden;
+  padding-block: clamp(3.5rem, 8vw, 6rem) clamp(2rem, 4vw, 3rem);
+  text-align: center;
+}
+
+/* notebook lines, faded at the edges */
+.head::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(var(--paper-line) 1px, transparent 1px);
+  background-size: 100% 2.25rem;
+  background-position: 0 0.9rem;
+  -webkit-mask-image: radial-gradient(ellipse 70% 90% at 50% 0%, #000 30%, transparent 80%);
+  mask-image: radial-gradient(ellipse 70% 90% at 50% 0%, #000 30%, transparent 80%);
+  pointer-events: none;
+}
+
+.inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-12);
+  max-width: 72rem;
+  margin-inline: auto;
+  padding-inline: var(--spacing-6);
+}
+
+.withVisual {
+  gap: 3.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 var(--spacing-3);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.title {
+  margin: 0 auto;
+  max-width: 44rem;
+  font-family: var(--font-family-display);
+  font-size: clamp(2.2rem, 5vw, 3.9rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+  text-wrap: balance;
+}
+
+.lead {
+  margin: var(--spacing-6) auto 0;
+  max-width: 36rem;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}
+
+.visual {
+  width: 100%;
+  max-width: 52rem;
+  min-width: 0;
+}
+
+@media (max-width: 560px) {
+  .inner {
+    padding-inline: var(--spacing-4);
+  }
+}

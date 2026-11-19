@@ -29,9 +29,6 @@ export const content = {
       items: [
         ["Product", "/product"],
         ["How it works", "/how-it-works"],
-        ["Why PARA", "/why-howl0"],
-        ["For you", "/for-you"],
-        ["People", "/people"],
         ["FAQ", "/faq"],
       ],
     },
@@ -328,10 +325,7 @@ export const content = {
       items: [
         ["Sản phẩm", "/product"],
         ["Cách hoạt động", "/how-it-works"],
-        ["Vì sao PARA", "/why-howl0"],
-        ["Dành cho bạn", "/for-you"],
-        ["Con người", "/people"],
-        ["Câu hỏi thường gặp", "/faq"],
+        ["Hỏi đáp", "/faq"],
       ],
     },
     metadata: {

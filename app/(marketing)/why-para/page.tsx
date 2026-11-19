@@ -1,4 +1,4 @@
-import { WhyHowl0Page } from "@/components/site/pages/WhyHowl0Page";
+import { WhyParaPage } from "@/components/site/pages/WhyParaPage";
 import { getLocale } from "@/lib/i18n";
 import { content, type Locale } from "@/lib/site/content";
 
@@ -10,5 +10,5 @@ export async function generateMetadata() {
 
 export default async function Page() {
   const locale = (await getLocale()) as Locale;
-  return <WhyHowl0Page locale={locale} />;
+  return <WhyParaPage locale={locale} />;
 }

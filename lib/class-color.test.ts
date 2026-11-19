@@ -6,7 +6,7 @@ describe("classColor", () => {
     expect(classColor("cls_guitar_monday")).toBe(classColor("cls_guitar_monday"));
   });
 
-  it("only uses the Howl0 palette", () => {
+  it("only uses the PARA palette", () => {
     for (const id of ["a", "b", "class_1", "class_2", "c".repeat(40)]) {
       expect(CLASS_COLORS).toContain(classColor(id));
     }

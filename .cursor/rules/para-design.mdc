@@ -1,0 +1,45 @@
+---
+description: PARA marketing design system (Floot). Apply to marketing pages and components/marketing only.
+alwaysApply: true
+---
+
+# PARA design rules (marketing site)
+
+Scope: `app/(marketing)/`, `components/marketing/`, `styles/site/marketing-*.css`, `lib/marketing/`.
+Do NOT apply these tokens to the studio, teacher or student UI (`DESIGN.md` Sandalwood desk stays as is).
+Full snapshot: `design-reference/design-reference.md`. Reuse its tokens and components. Do not add colours, shadows or components that are not there.
+
+Apple-minimal with a little play. Vietnamese-first. White, calm, centred.
+
+## Language and voice
+- UI copy is Vietnamese. "thầy cô" (never "giáo viên"), "bạn" for students, "con" for parents.
+- Never write: nền tảng, giải pháp, tối ưu hoá, trải nghiệm, cá nhân hoá.
+- Never promise "AI chấm bài" or "AI feedback". AI is behind the scenes; every comment comes from thầy cô.
+- No prices, user counts, invented stats, leaderboards, or "theo dõi / giám sát" wording.
+- Audio is enough. Camera off by default under 18. Recordings are the student's; sharing is opt-in.
+- Any sample content (names, numbers) must be labelled "Ví dụ" or "Minh hoạ".
+
+## Tokens (CSS variables in marketing-tokens.css, never hard-code)
+- Text #1d1d1f, muted #6e6e73, background #ffffff, surface #f5f5f7, hairline #e5e5ea.
+- Accent copper #8b5e34 (links, eyebrows, one gradient headline line). Primary button = ink #1d1d1f, white text.
+- Radius: 8 / 12 / 18 / 28px; pills 9999px. Cards and blocks use 28px.
+- Fonts: system stack first (-apple-system, "SF Pro Display/Text"), Inter fallback. Mono: ui-monospace, "SF Mono".
+- Headings weight 700, tracking -0.035em to -0.04em, line-height 1.08-1.1. Body 17-19px, muted colour.
+- Spring easing: cubic-bezier(0.34, 1.56, 0.64, 1).
+
+## Components
+- Nav: sticky, frosted (white 72% + saturate(180%) blur(20px)), 0.5px hairline, 13px links.
+- Buttons: pill. Primary ink fill, secondary outline. NO glow, shadow or colour on buttons.
+- Icons: lucide, strokeWidth 1.75, always inside gradient squircle tiles (blue, rose, copper, amber, green) with a white glyph. Never bare coloured icons.
+- Product visuals: a macOS-style browser window (red/yellow/green dots, segmented tab control). Never phone mockups: PARA runs on the web.
+- Sections: centred headings, generous whitespace, grey #f5f5f7 rounded blocks for emphasis (bento). Flat, hairline borders, no heavy shadows.
+- Gradient glow is allowed ONLY behind the hero window and the final CTA card.
+- Notebook ruled lines ONLY in the hero / page header, faded at the edges with a radial mask.
+- Motion: reveal on scroll (fade + 22px rise + scale 0.97 with spring easing), tile hover lift. Respect prefers-reduced-motion.
+
+## Pages
+Home, Sản phẩm, Cách hoạt động, Hỏi đáp only in the nav. Header: logo, 3 links, "Dùng thử miễn phí". Links collapse to a menu under 720px.
+Legacy routes (why-para, for-you, people, ...) stay reachable but are not linked from the nav.
+
+## Done means
+Check at 390px, 768px and 1440px: no horizontal scroll, tap targets at least 44px, contrast AA.

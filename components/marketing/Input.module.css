@@ -1,0 +1,20 @@
+.input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding-inline: var(--spacing-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  color: var(--foreground);
+  font-family: var(--font-family-base);
+  font-size: 1rem;
+  transition: border-color var(--animation-duration-fast) ease;
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.input:focus-visible {
+  border-color: var(--accent);
+}

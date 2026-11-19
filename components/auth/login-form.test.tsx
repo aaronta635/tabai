@@ -42,7 +42,7 @@ const loginLabels = {
   forgot: "Forgot password?",
   forgotNeedEmail: "Enter your email, then ask for the reset link.",
   resetSent: "Check your email for the reset link.",
-  newHere: "New to howl0?",
+  newHere: "New to PARA?",
   createLink: "Create an account",
   providerFailed: "That sign-in did not start.",
 };

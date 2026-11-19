@@ -31,7 +31,7 @@ export function HeroLoopPreview({
         {stages[0]} <b>↗</b>
       </span>
       <span className="preview-link" aria-hidden="true">
-        <strong>howl0.link/practice</strong>
+        <strong>paramuzic.com/practice</strong>
       </span>
       <span className="preview-practice" aria-hidden="true">
         <i /> <i /> <i /> <i /> <i />

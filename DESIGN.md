@@ -63,7 +63,7 @@ components:
 
 # PARA
 
-Studio is an Operate-mode class desk for guitar teachers and students between live lessons. Landing stays a separate luxury room.
+Studio is an Operate-mode class desk for guitar teachers and students between live lessons. Landing is a separate room; see Marketing (Floot) below.
 
 ## Overview
 
@@ -81,7 +81,7 @@ Be Vietnam Pro is the studio face for titles, labels, and controls, so a setting
 
 ## Layout
 
-Grid-disciplined. Left rail, one page title, lists and tables. Class context belongs in the rail or title, not a hero chip row. Hybrid: this file does not restyle marketing.
+Grid-disciplined. Left rail, one page title, lists and tables. Class context belongs in the rail or title, not a hero chip row. Hybrid: this file does not restyle marketing; the Marketing (Floot) section does.
 
 ## Elevation & Depth
 
@@ -99,3 +99,11 @@ Primary button: espresso fill, ivory text, saddle on hover. Tables for submissio
 
 Do: class-first, one title, dog logo, EN/VI even type, role-separate login.
 Don't: 3-column feature grids, nested cards, Plus Jakarta titles, manifesto-as-the-whole-login, purple, raspberry, blush paper, Inter.
+
+## Marketing (Floot)
+
+Scope: the Vietnamese pages `/vi`, `/vi/product`, `/vi/how-it-works`, `/vi/faq`. Source of truth is `design-reference/design-reference.md`; rules for agents are in `.cursor/rules/para-design.mdc`.
+
+White, calm, Apple-minimal. Ink `#1d1d1f`, copper accent `#8b5e34`, surface `#f5f5f7`, hairline `#e5e5ea`, SF Pro with Inter as fallback, pill buttons, gradient icon tiles, macOS-style product window. Tokens live in `styles/site/marketing-tokens.css` and are scoped to `.para-marketing`, so the studio keeps Sandalwood and Be Vietnam Pro.
+
+This supersedes the earlier Plus Jakarta landing for those four pages only. English pages and the older routes (`why-para`, `for-you`, `people`, `about`, legal pages) still use the legacy landing (`styles/site/para.css`) until their own pass. The nav links Sản phẩm, Cách hoạt động and Hỏi đáp; the older routes stay reachable but are not linked.

@@ -1,0 +1,4 @@
+/* Plain ink pill. No glow, no shadow, no colour. */
+.wrap {
+  display: inline-flex;
+}

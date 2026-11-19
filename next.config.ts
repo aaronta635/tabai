@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
   // Client navigations reuse the last payload for 20s so Classes → Curriculum → Classes
   // does not wait on Tokyo again. Pages still refetch after that window, and a reload
   // always talks to Postgres.
+  async redirects() {
+    return [
+      { source: "/why-howl0", destination: "/why-para", permanent: true },
+      { source: "/why-howlo", destination: "/why-para", permanent: true },
+      { source: "/:locale(vi|en)/why-howl0", destination: "/:locale/why-para", permanent: true },
+      { source: "/:locale(vi|en)/why-howlo", destination: "/:locale/why-para", permanent: true },
+    ];
+  },
   experimental: {
     staleTimes: {
       dynamic: 20,

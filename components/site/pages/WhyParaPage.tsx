@@ -4,7 +4,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { ParaFigure } from "@/components/site/ParaFigure";
 import { content, type Locale } from "@/lib/site/content";
 
-export function WhyHowl0Page({ locale }: { locale: Locale }) {
+export function WhyParaPage({ locale }: { locale: Locale }) {
   const dictionary = content[locale];
   const page = dictionary.why;
   return (

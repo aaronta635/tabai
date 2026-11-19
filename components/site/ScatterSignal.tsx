@@ -15,10 +15,10 @@ export function ScatterSignal({ locale }: { locale: Locale }) {
       ))}
       <div className="scatter-centre">
         <img
-          src="/brand/howl0/02-symbols/howl0-return-loop-master.svg"
+          src="/brand/para/abstract/practice-loop.svg"
           alt=""
         />
-        <span className="scatter-link">howl0.link/practice</span>
+        <span className="scatter-link">paramuzic.com/practice</span>
       </div>
     </div>
   );

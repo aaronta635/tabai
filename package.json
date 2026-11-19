@@ -39,6 +39,7 @@
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.3.4",
     "jose": "^6.2.12",
+    "lucide-react": "^1.74.0",
     "nanoid": "^5.1.16",
     "next": "^15.5.25",
     "next-intl": "^4.14.2",

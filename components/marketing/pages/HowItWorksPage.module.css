@@ -1,0 +1,27 @@
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-3);
+}
+
+.chip {
+  padding: var(--spacing-3) 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--card);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.chipMain {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-weight: 600;
+}
+
+.arrow {
+  color: var(--accent);
+}

@@ -1,4 +1,4 @@
-/** Stable Howl0 tones. Hashed from the class id so a class keeps one color with no schema change. */
+/** Stable PARA tones. Hashed from the class id so a class keeps one color with no schema change. */
 export const CLASS_COLORS = ["beat", "wire", "butter", "rosewood"] as const;
 
 export type ClassColor = (typeof CLASS_COLORS)[number];

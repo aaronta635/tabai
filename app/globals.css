@@ -3853,3 +3853,39 @@ body:has(.setup-wash) {
   font-size: 1.35rem;
   font-weight: 400;
 }
+
+/* Take recorder (student upload): camera preview, record, review. */
+.take-recorder { display: grid; gap: 12px; min-width: 0; }
+.take-recorder-title { margin: 0; font-weight: 600; }
+.take-recorder-note,
+.take-recorder-hint { margin: 0; font-size: 13px; color: var(--color-ink-soft); }
+.take-recorder-screen,
+.take-recorder-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 60vh;
+  overflow: hidden;
+  border-radius: 16px;
+  background: var(--color-ink);
+}
+.take-recorder-screen { object-fit: contain; display: block; }
+.take-recorder-stage .take-recorder-screen { position: absolute; inset: 0; height: 100%; max-height: none; border-radius: 0; }
+.take-recorder-screen.is-mirrored { transform: scaleX(-1); }
+.take-recorder-stage .take-recorder-off {
+  position: absolute; inset: 0; display: grid; place-items: center; padding: 16px;
+  text-align: center; color: var(--color-paper); font-size: 14px;
+}
+.take-recorder-badge {
+  position: absolute; top: 12px; left: 12px; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 28px; padding: 4px 12px; border-radius: 9999px;
+  background: rgb(0 0 0 / .55); color: #fff; font-size: 13px; font-variant-numeric: tabular-nums;
+}
+.take-recorder-badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--color-danger); }
+@media (prefers-reduced-motion: no-preference) {
+  .take-recorder-badge::before { animation: take-recorder-pulse 1.2s ease-in-out infinite; }
+}
+@keyframes take-recorder-pulse { 50% { opacity: .3; } }
+.take-recorder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.take-recorder-actions .btn,
+.take-recorder-actions button { min-height: 44px; }

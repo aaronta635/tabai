@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { saveAvatar } from "@/app/onboarding/actions";
-import { MAX_AVATAR_BYTES } from "@/lib/constants";
+import { API_WAIT_MS, AVATAR_PUT_WAIT_MS, MAX_AVATAR_BYTES } from "@/lib/constants";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 import { AvatarMark } from "@/components/profile/avatar-mark";
 
 export function AvatarUpload({
@@ -34,18 +35,26 @@ export function AvatarUpload({
     }
     setBusy(true);
     try {
-      const sign = await fetch("/api/account/avatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ role, size: file.size, filename: file.name }),
-      });
+      const sign = await fetchWithServiceWait(
+        "/api/account/avatar",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ role, size: file.size, filename: file.name }),
+        },
+        API_WAIT_MS,
+      );
       const signed = (await sign.json()) as { error?: string; signedUrl?: string; path?: string; contentType?: string };
       if (!sign.ok || !signed.signedUrl || !signed.path) throw new Error(signed.error ?? "sign");
-      const put = await fetch(signed.signedUrl, {
-        method: "PUT",
-        headers: { "Content-Type": signed.contentType || file.type || "application/octet-stream" },
-        body: file,
-      });
+      const put = await fetchWithServiceWait(
+        signed.signedUrl,
+        {
+          method: "PUT",
+          headers: { "Content-Type": signed.contentType || file.type || "application/octet-stream" },
+          body: file,
+        },
+        AVATAR_PUT_WAIT_MS,
+      );
       if (!put.ok) throw new Error("upload");
       const saved = await saveAvatar(signed.path, role);
       if ("error" in saved) throw new Error(saved.error);

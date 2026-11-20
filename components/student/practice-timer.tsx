@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { API_WAIT_MS } from "@/lib/constants";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 export function PracticeTimer({ code }: { code: string }) {
   const t = useTranslations("student");
@@ -27,11 +29,15 @@ export function PracticeTimer({ code }: { code: string }) {
       return;
     }
     setError(null);
-    const res = await fetch(`/api/l/${code}/practice`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ seconds: elapsed, startedAt: startedAt.current }),
-    });
+    const res = await fetchWithServiceWait(
+      `/api/l/${code}/practice`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ seconds: elapsed, startedAt: startedAt.current }),
+      },
+      API_WAIT_MS,
+    );
     if (!res.ok) {
       setError(t("practiceFailed"));
       return;

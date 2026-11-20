@@ -306,4 +306,26 @@ html.tour-open .studio-rail { position:relative; z-index:80; }
 .analyze-bar > span { display: block; height: 100%; width: 40%; background: var(--para-app-accent, #8b5e34); animation: analyze-slide 1.2s ease-in-out infinite; }
 .analyze-log { margin-top: 8px; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12px; line-height: 1.4; }
 @keyframes analyze-slide { from { transform: translateX(-120%); } to { transform: translateX(280%); } }
+.practice-session-root.student-ui { padding-inline:0; min-height:100dvh; }
+.practice-session { min-height:100dvh; display:flex; flex-direction:column; background:var(--para-app-field); color:var(--para-app-text); }
+.practice-session-bar { display:flex; align-items:center; gap:16px; padding:12px 16px; border-bottom:1px solid var(--para-app-edge); }
+.practice-session-bar h1 { margin:0; font-size:1.25rem; }
+.practice-session-help { margin:0; padding:10px 16px 0; font-size:13px; color:var(--para-app-text); max-width:78ch; }
+.practice-session-stage { flex:1; display:grid; grid-template-columns:minmax(0,1fr); gap:16px; padding:16px; min-height:0; align-items:stretch; }
+.practice-session-pane { min-width:0; min-height:0; overflow:auto; padding:12px; border:1px solid var(--para-app-edge); border-radius:16px; background:var(--para-app-field); }
+.practice-session-cam { display:flex; flex-direction:column; gap:12px; }
+.practice-session-pdf { width:100%; min-height:16rem; border-radius:16px; background:#fff; }
+.practice-session-file { display:flex; flex-direction:column; gap:6px; font-size:13px; }
+.practice-clip-list { display:flex; flex-direction:column; gap:12px; }
+.practice-clip { padding:12px 0; border-top:1px solid var(--para-app-edge); display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
+.practice-clip-head { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; width:100%; }
+.practice-clip-issues { margin:0; padding-left:1.1rem; font-size:13px; }
+.practice-session-stage > .tile { min-width:0; min-height:0; overflow:auto; margin:0; }
+@media(min-width:1100px) {
+  .practice-session-stage { grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.15fr); }
+}
 @media (prefers-reduced-motion: reduce) { .analyze-bar > span { animation: none; width: 100%; opacity: .7; } }
+.analyze-status[data-kind="silent"],
+.analyze-status[data-kind="no_notes"],
+.analyze-status[data-kind="pitch_error"],
+.analyze-status[data-kind="failed"] { padding: 10px 12px; border-left: 3px solid var(--para-app-accent, currentColor); background: rgb(var(--para-app-surface-rgb, 243 237 226) / .6); border-radius: 8px; }

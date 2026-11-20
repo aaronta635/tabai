@@ -2,7 +2,7 @@ import { mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
-import { COMPARE_PROMPT_VERSION, EXTRACT_TAKE_PROMPT_VERSION, PIPELINE_VERSION, PIPELINE_VERSION_SCORE, PITCH_OVERLAY_VERSION } from "../lib/constants";
+import { ANALYZE_PYTHON_WAIT_MS, COMPARE_PROMPT_VERSION, EXTRACT_TAKE_PROMPT_VERSION, PIPELINE_VERSION, PIPELINE_VERSION_SCORE, PITCH_OVERLAY_VERSION } from "../lib/constants";
 import { enqueueTrainIfIdle, getReadyPieceModel, sniffMime } from "../lib/catalog";
 import {
   COMPARE_RESPONSE_SCHEMA,
@@ -20,10 +20,12 @@ import { enqueueJob } from "../lib/jobs";
 import { isClaimableStatus } from "../lib/forms";
 import { prisma } from "../lib/prisma";
 import { overlayPitchIssues, pitchNotesFromMetrics, type HeardPitchNote } from "../lib/pitch-overlay";
+import { usesGeminiVisual } from "../lib/practice";
 import {
   factVerdictsComplete,
   parseCompareObservations,
   parseTrainExtract,
+  type CompareObservations,
   type PieceModelSourceJson,
   type ScoreJson,
   type TrainExtract,
@@ -118,6 +120,117 @@ async function compareTake(input: {
   };
 }
 
+const EMPTY_OBSERVATIONS: CompareObservations = {
+  overallFit: 0,
+  confidence: 0.5,
+  positives: [],
+  issues: [],
+  nextPractice: "",
+};
+
+async function applyHeardPitchOverlay(input: {
+  submissionId: string;
+  pieceModel: Awaited<ReturnType<typeof getReadyPieceModel>>;
+  tutorialMediaId: string | null;
+  teacherLocale: "en" | "vi";
+  videoPath: string;
+  dir: string;
+  heardNotes: HeardPitchNote[];
+  metrics: Prisma.InputJsonValue;
+  observations: CompareObservations;
+}) {
+  let heardNotes = input.heardNotes;
+  let metrics = input.metrics;
+  let tutorialNotes: HeardPitchNote[] = [];
+  const cues = (input.pieceModel?.tutorialCuesJson as TutorialCuesJson | null)?.cues ?? [];
+  if (pitchEnabled() && input.pieceModel) {
+    tutorialNotes = pitchNotesFromMetrics(input.pieceModel.tutorialCuesJson);
+    let tutorialDirty = false;
+    const tutorialPath = join(input.dir, "tutorial.bin");
+    const loadTutorial = async () => {
+      if (!input.tutorialMediaId) return false;
+      try {
+        await readFile(tutorialPath);
+        return true;
+      } catch {
+        const tutorial = await prisma.media.findUnique({
+          where: { id: input.tutorialMediaId },
+        });
+        if (!tutorial) return false;
+        await writeFile(tutorialPath, await downloadMedia(tutorial.storagePath));
+        return true;
+      }
+    };
+    if (tutorialNotes.length === 0 && input.tutorialMediaId) {
+      try {
+        if (await loadTutorial()) {
+          const pitched = await extractPitchFromVideo(tutorialPath, join(input.dir, "tutorial.wav"));
+          tutorialNotes = pitched.notes;
+          tutorialDirty = true;
+        }
+      } catch (error) {
+        console.error(
+          "tutorial pitch skipped",
+          input.submissionId,
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
+    try {
+      const labeled = await labelMismatchFrets({
+        takeVideo: input.videoPath,
+        tutorialVideo: null,
+        heard: heardNotes,
+        tutorial: tutorialNotes,
+      });
+      heardNotes = labeled.heard;
+      metrics = {
+        ...(metrics as object),
+        pitch_notes: heardNotes,
+      };
+    } catch (error) {
+      console.error(
+        "fret labels skipped",
+        input.submissionId,
+        error instanceof Error ? error.message : error,
+      );
+    }
+    if (tutorialDirty && tutorialNotes.length > 0) {
+      const cuesJson = {
+        ...((input.pieceModel.tutorialCuesJson && typeof input.pieceModel.tutorialCuesJson === "object"
+          ? input.pieceModel.tutorialCuesJson
+          : {}) as object),
+        pitch_notes: tutorialNotes,
+        pitch_backend: "basic-pitch",
+      };
+      await prisma.pieceModel.update({
+        where: { id: input.pieceModel.id },
+        data: { tutorialCuesJson: cuesJson as Prisma.InputJsonValue },
+      });
+    }
+  }
+  const metricRow = metrics as {
+    silence_ratio?: unknown;
+    duration_s?: unknown;
+    pitch_error?: unknown;
+    tempo_bpm?: unknown;
+  };
+  const score = (input.pieceModel?.scoreJson ?? null) as ScoreJson | null;
+  return {
+    observations: overlayPitchIssues(input.observations, heardNotes, score, cues, tutorialNotes, {
+      silenceRatio: typeof metricRow.silence_ratio === "number" ? metricRow.silence_ratio : null,
+      durationS: typeof metricRow.duration_s === "number" ? metricRow.duration_s : null,
+      pitchError: typeof metricRow.pitch_error === "string" ? metricRow.pitch_error : null,
+      locale: input.teacherLocale,
+      takeBpm: typeof metricRow.tempo_bpm === "number" ? metricRow.tempo_bpm : null,
+      referenceBpm: typeof score?.tempoBpm === "number" ? score.tempoBpm : null,
+      allowFasterTempo: score?.allowFasterTempo === true,
+    }),
+    metrics,
+    heardNotes,
+  };
+}
+
 export async function runAnalyze(submissionId: string) {
   const started = Date.now();
   const submission = await prisma.submission.findUnique({
@@ -137,7 +250,7 @@ export async function runAnalyze(submissionId: string) {
 
     let metrics: Prisma.InputJsonValue = { skipped: true };
     try {
-      const raw = await runPython(join(process.cwd(), "scripts/analyze.py"), [videoPath]);
+      const raw = await runPython(join(process.cwd(), "scripts/analyze.py"), [videoPath], "python3", ANALYZE_PYTHON_WAIT_MS);
       metrics = JSON.parse(raw) as Prisma.InputJsonValue;
     } catch (error) {
       metrics = {
@@ -201,7 +314,8 @@ export async function runAnalyze(submissionId: string) {
       await enqueueTrainIfIdle(submission.pieceId);
     }
 
-    const ai = geminiClient();
+    const visual = usesGeminiVisual(submission.kind);
+    const ai = visual ? geminiClient() : null;
     if (ai) {
       const uploaded: string[] = [];
       try {
@@ -264,94 +378,20 @@ export async function runAnalyze(submissionId: string) {
             if (compared) {
               let observationsParsed = compared.observations;
               if (pitchEnabled()) {
-                const cues = (pieceModel.tutorialCuesJson as TutorialCuesJson | null)?.cues ?? [];
-                let tutorialNotes = pitchNotesFromMetrics(pieceModel.tutorialCuesJson);
-                let tutorialDirty = false;
-                const tutorialPath = join(dir, "tutorial.bin");
-                const loadTutorial = async () => {
-                  if (!submission.piece.tutorialMediaId) return false;
-                  try {
-                    await readFile(tutorialPath);
-                    return true;
-                  } catch {
-                    const tutorial = await prisma.media.findUnique({
-                      where: { id: submission.piece.tutorialMediaId },
-                    });
-                    if (!tutorial) return false;
-                    await writeFile(tutorialPath, await downloadMedia(tutorial.storagePath));
-                    return true;
-                  }
-                };
-                if (tutorialNotes.length === 0 && submission.piece.tutorialMediaId) {
-                  try {
-                    if (await loadTutorial()) {
-                      const pitched = await extractPitchFromVideo(tutorialPath, join(dir, "tutorial.wav"));
-                      tutorialNotes = pitched.notes;
-                      tutorialDirty = true;
-                    }
-                  } catch (error) {
-                    console.error(
-                      "tutorial pitch skipped",
-                      submissionId,
-                      error instanceof Error ? error.message : error,
-                    );
-                  }
-                }
-                try {
-                  const labeled = await labelMismatchFrets({
-                    takeVideo: videoPath,
-                    tutorialVideo: null,
-                    heard: heardNotes,
-                    tutorial: tutorialNotes,
-                  });
-                  heardNotes = labeled.heard;
-                  metrics = {
-                    ...(metrics as object),
-                    pitch_notes: heardNotes,
-                  };
-                } catch (error) {
-                  console.error(
-                    "fret labels skipped",
-                    submissionId,
-                    error instanceof Error ? error.message : error,
-                  );
-                }
-                if (tutorialDirty && tutorialNotes.length > 0) {
-                  const cuesJson = {
-                    ...((pieceModel.tutorialCuesJson && typeof pieceModel.tutorialCuesJson === "object"
-                      ? pieceModel.tutorialCuesJson
-                      : {}) as object),
-                    pitch_notes: tutorialNotes,
-                    pitch_backend: "basic-pitch",
-                  };
-                  await prisma.pieceModel.update({
-                    where: { id: pieceModel.id },
-                    data: { tutorialCuesJson: cuesJson as Prisma.InputJsonValue },
-                  });
-                }
-                const metricRow = metrics as {
-                  silence_ratio?: unknown;
-                  duration_s?: unknown;
-                  pitch_error?: unknown;
-                  tempo_bpm?: unknown;
-                };
-                const score = pieceModel.scoreJson as ScoreJson;
-                observationsParsed = overlayPitchIssues(
-                  observationsParsed,
+                const overlaid = await applyHeardPitchOverlay({
+                  submissionId,
+                  pieceModel,
+                  tutorialMediaId: submission.piece.tutorialMediaId,
+                  teacherLocale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
+                  videoPath,
+                  dir,
                   heardNotes,
-                  score,
-                  cues,
-                  tutorialNotes,
-                  {
-                    silenceRatio: typeof metricRow.silence_ratio === "number" ? metricRow.silence_ratio : null,
-                    durationS: typeof metricRow.duration_s === "number" ? metricRow.duration_s : null,
-                    pitchError: typeof metricRow.pitch_error === "string" ? metricRow.pitch_error : null,
-                    locale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
-                    takeBpm: typeof metricRow.tempo_bpm === "number" ? metricRow.tempo_bpm : null,
-                    referenceBpm: typeof score.tempoBpm === "number" ? score.tempoBpm : null,
-                    allowFasterTempo: score.allowFasterTempo === true,
-                  },
-                );
+                  metrics,
+                  observations: observationsParsed,
+                });
+                heardNotes = overlaid.heardNotes;
+                metrics = overlaid.metrics;
+                observationsParsed = overlaid.observations;
               }
               observations = observationsParsed as unknown as Prisma.InputJsonValue;
               pipelineVersion = PIPELINE_VERSION_SCORE;
@@ -386,6 +426,23 @@ export async function runAnalyze(submissionId: string) {
       } finally {
         await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
       }
+    } else if (!visual) {
+      const overlaid = await applyHeardPitchOverlay({
+        submissionId,
+        pieceModel,
+        tutorialMediaId: submission.piece.tutorialMediaId,
+        teacherLocale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
+        videoPath,
+        dir,
+        heardNotes,
+        metrics,
+        observations: EMPTY_OBSERVATIONS,
+      });
+      heardNotes = overlaid.heardNotes;
+      metrics = overlaid.metrics;
+      observations = overlaid.observations as unknown as Prisma.InputJsonValue;
+      if (pieceModel) pipelineVersion = PIPELINE_VERSION_SCORE;
+      confidence = overlaid.observations.confidence;
     }
 
     await prisma.analysis.create({

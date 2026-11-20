@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FilePicker } from "@/components/file-picker";
+import { TakeRecorder } from "@/components/student/take-recorder";
 import { ParaIcon } from "@/components/ui/para-icon";
-import { MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS } from "@/lib/constants";
+import { API_WAIT_MS, MAX_CLIP_SECONDS, MAX_VIDEO_BYTES, MAX_VIDEO_SECONDS, MEDIA_PUT_WAIT_MS } from "@/lib/constants";
 import { requiredText, submissionNote } from "@/lib/forms";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 type Kind = "take" | "practice" | "overdub";
 type SendPhase = "sign" | "upload" | "save";
@@ -82,42 +84,9 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ name?: string; contactHandle?: string }>({});
-  const [recordSupported, setRecordSupported] = useState(false);
-  const [recording, setRecording] = useState(false);
-  const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]);
+  const [recorderOpen, setRecorderOpen] = useState(false);
   const [video, setVideo] = useState<File | null>(null);
   const [kind, setKind] = useState<Kind>("take");
-
-  useEffect(() => {
-    setRecordSupported(typeof MediaRecorder !== "undefined");
-  }, []);
-
-  async function startRecord() {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-      const recorder = new MediaRecorder(stream);
-      chunksRef.current = [];
-      recorder.ondataavailable = (e) => {
-        if (e.data.size) chunksRef.current.push(e.data);
-      };
-      recorder.onstop = () => {
-        stream.getTracks().forEach((track) => track.stop());
-        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || "video/webm" });
-        setVideo(new File([blob], `${kind}.webm`, { type: blob.type }));
-        setRecording(false);
-      };
-      recorderRef.current = recorder;
-      recorder.start();
-      setRecording(true);
-    } catch {
-      setRecordSupported(false);
-    }
-  }
-
-  function stopRecord() {
-    recorderRef.current?.stop();
-  }
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -142,7 +111,8 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
       try {
         const duration = await mediaDuration(picked);
         const maxSeconds = kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS;
-        if (duration > maxSeconds) {
+        // Recorded webm files can report an infinite length; the recorder already enforces the limit.
+        if (Number.isFinite(duration) && duration > maxSeconds) {
           setError(kind === "overdub" ? t("tooBigClip") : t("tooBig"));
           return;
         }
@@ -163,18 +133,22 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           setBusy(false);
           return;
         }
-        const register = await fetch(`/api/l/${code}/register`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: nameRaw.trim(),
-            ageBand,
-            contactType,
-            contactHandle: contactRaw.trim(),
-            publicOk: ageBand === "adult" && data.get("publicOk") === "on",
-            consent: true,
-          }),
-        });
+        const register = await fetchWithServiceWait(
+          `/api/l/${code}/register`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: nameRaw.trim(),
+              ageBand,
+              contactType,
+              contactHandle: contactRaw.trim(),
+              publicOk: ageBand === "adult" && data.get("publicOk") === "on",
+              consent: true,
+            }),
+          },
+          API_WAIT_MS,
+        );
         const registerJson = await readJson(register);
         if (!register.ok) {
           if (registerJson.error === "phone_taken") {
@@ -193,14 +167,18 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
         }
       }
 
-      const sign = await fetch(`/api/l/${code}/upload-url`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          size: picked.size,
-          contentType: picked.type || "video/mp4",
-        }),
-      });
+      const sign = await fetchWithServiceWait(
+        `/api/l/${code}/upload-url`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            size: picked.size,
+            contentType: picked.type || "video/mp4",
+          }),
+        },
+        API_WAIT_MS,
+      );
       const signed = await readJson(sign);
       if (!sign.ok) throw new Error(signed.error ?? "sign failed");
       if (typeof signed.signedUrl !== "string" || typeof signed.mediaId !== "string") {
@@ -208,11 +186,15 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
       }
 
       setPhase("upload");
-      const put = await fetch(signed.signedUrl, {
-        method: "PUT",
-        headers: { "Content-Type": picked.type || "video/mp4" },
-        body: picked,
-      });
+      const put = await fetchWithServiceWait(
+        signed.signedUrl,
+        {
+          method: "PUT",
+          headers: { "Content-Type": picked.type || "video/mp4" },
+          body: picked,
+        },
+        MEDIA_PUT_WAIT_MS,
+      );
       if (!put.ok) throw new Error("upload failed");
 
       const note = submissionNote(String(data.get("note") ?? ""));
@@ -223,11 +205,15 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
       }
 
       setPhase("save");
-      const complete = await fetch(`/api/l/${code}/complete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mediaId: signed.mediaId, kind, note }),
-      });
+      const complete = await fetchWithServiceWait(
+        `/api/l/${code}/complete`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mediaId: signed.mediaId, kind, note }),
+        },
+        API_WAIT_MS,
+      );
       const finished = await readJson(complete);
       if (!complete.ok) {
         throw new Error(finished.error === "note too long" ? t("noteTooLong") : (finished.error ?? "complete failed"));
@@ -251,7 +237,7 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
 
   const modes: { id: Kind; label: string; show: boolean }[] = [
     { id: "take", label: t("sendTake"), show: true },
-    { id: "practice", label: t("sendPractice"), show: true },
+    { id: "practice", label: t("sendPractice"), show: variant !== "studio" },
     { id: "overdub", label: t("overdub"), show: Boolean(clipUrl) },
   ];
 
@@ -289,12 +275,15 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
       />
     </label>
   );
-  const recordButton = recordSupported ? (
-    <button type="button" onClick={recording ? stopRecord : startRecord} className="btn btn-quiet">
-      {variant ? <ParaIcon name={recording ? "stop" : "record"} /> : null}
-      {recording ? (variant ? t("stopPractice") : "Stop") : t("record")}
-    </button>
-  ) : null;
+  const recorder = (
+    <TakeRecorder
+      kind={kind}
+      maxSeconds={kind === "overdub" ? MAX_CLIP_SECONDS : MAX_VIDEO_SECONDS}
+      onTake={setVideo}
+      onActiveChange={setRecorderOpen}
+      icons={Boolean(variant)}
+    />
+  );
   const actionLabel = kind === "practice" ? t("sendPractice") : kind === "overdub" ? t("overdub") : desk ? t("sendToTeacher") : t("submit");
   const phaseLabel = phase === "upload" ? t("sendingUpload") : phase === "save" ? t("sendingSave") : t("sending");
   const sendLabel = busy ? phaseLabel : actionLabel;
@@ -397,18 +386,20 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           </div>
           {modeRow}
           {help}
-          <FilePicker
-            dropIcon={<ParaIcon name="upload" />}
-            accept="video/*"
-            capture="environment"
-            file={video}
-            onFile={setVideo}
-            buttonLabel={t("browseFiles")}
-            changeLabel={t("changeFile")}
-            dropTitle={t("dropHere")}
-            dropHint={t("dropHint")}
-          />
-          {recordButton}
+          {recorderOpen ? null : (
+            <FilePicker
+              dropIcon={<ParaIcon name="upload" />}
+              accept="video/*"
+              capture="environment"
+              file={video}
+              onFile={setVideo}
+              buttonLabel={t("browseFiles")}
+              changeLabel={t("changeFile")}
+              dropTitle={t("dropHere")}
+              dropHint={t("dropHint")}
+            />
+          )}
+          {recorder}
           {noteField}
           {error ? <p className="text-sm text-danger" role="alert">{error}</p> : null}
           {sendStatus}
@@ -422,17 +413,19 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           </div>
           <div className="submit-desk">
             <div className="space-y-3">
-              <FilePicker
-                accept="video/*"
-                capture="environment"
-                file={video}
-                onFile={setVideo}
-                buttonLabel={t("browseFiles")}
-                changeLabel={t("changeFile")}
-                dropTitle={t("dropHere")}
-                dropHint={t("dropHint")}
-              />
-              {recordButton}
+              {recorderOpen ? null : (
+                <FilePicker
+                  accept="video/*"
+                  capture="environment"
+                  file={video}
+                  onFile={setVideo}
+                  buttonLabel={t("browseFiles")}
+                  changeLabel={t("changeFile")}
+                  dropTitle={t("dropHere")}
+                  dropHint={t("dropHint")}
+                />
+              )}
+              {recorder}
             </div>
             <div className="space-y-4">
               <div>
@@ -468,17 +461,19 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
           {help}
           <div>
             <p className="mb-2 text-sm font-medium">{kind === "overdub" ? t("overdub") : t("upload")}</p>
-            <FilePicker
-              accept="video/*"
-              capture="environment"
-              file={video}
-              onFile={setVideo}
-              buttonLabel={t("chooseFile")}
-              changeLabel={t("changeFile")}
-              size="lg"
-            />
+            {recorderOpen ? null : (
+              <FilePicker
+                accept="video/*"
+                capture="environment"
+                file={video}
+                onFile={setVideo}
+                buttonLabel={t("chooseFile")}
+                changeLabel={t("changeFile")}
+                size="lg"
+              />
+            )}
           </div>
-          {recordButton}
+          {recorder}
           {noteField}
           {error ? <p className="text-sm text-danger">{error}</p> : null}
           {sendStatus}

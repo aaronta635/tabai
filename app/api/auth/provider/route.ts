@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { API_WAIT_MS } from "@/lib/constants";
 import { isOAuthProviderRedirect } from "@/lib/oauth-bind";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 /** Confirms a Supabase authorize URL will send the browser to Google/Facebook/Zalo. */
 export async function POST(request: Request) {
@@ -10,7 +12,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false }, { status: 400 });
   }
 
-  const res = await fetch(url, { redirect: "manual" });
+  const res = await fetchWithServiceWait(url, { redirect: "manual" }, API_WAIT_MS);
   const location = res.headers.get("location");
   if (res.status >= 300 && res.status < 400 && location && isOAuthProviderRedirect(location)) {
     return NextResponse.json({ ok: true });

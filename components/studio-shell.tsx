@@ -10,6 +10,9 @@ import { StudioTour, type TourCopy } from "@/components/studio/studio-tour";
 import { createBrowserSupabase } from "@/lib/supabase/client";
 
 import { ParaIcon, type ParaIconName } from "@/components/ui/para-icon";
+import { API_WAIT_MS } from "@/lib/constants";
+import { isPracticeSessionPath } from "@/lib/practice";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 export type NavItem = {
   href: string;
@@ -161,10 +164,11 @@ export function StudioShell({
   useEffect(() => {
     if (sessionStorage.getItem("howl0-session-bound")) return;
     sessionStorage.setItem("howl0-session-bound", "1");
-    void fetch("/api/session", { method: "POST" });
+    void fetchWithServiceWait("/api/session", { method: "POST" }, API_WAIT_MS);
   }, []);
 
   const here = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
+  const practiceSession = isPracticeSessionPath(pathname);
 
   function active(href: string, exact?: boolean) {
     if (exact) return here === href;
@@ -172,6 +176,16 @@ export function StudioShell({
   }
 
   const profile = menuLinks[0];
+
+  if (practiceSession) {
+    return (
+      <ActiveClassContext.Provider value={setActiveClass}>
+        <div className={`studio-shell practice-session-root${Boolean(variant) ? ` student-ui${variant === "teacher" ? " teacher-ui" : ""}` : ""}`}>
+          {children}
+        </div>
+      </ActiveClassContext.Provider>
+    );
+  }
 
   const rail = (
     <div className="flex h-full flex-col px-3 pb-4 pt-5">

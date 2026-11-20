@@ -1,9 +1,14 @@
+"use client";
+
 import { SectionPanel } from "@/components/disclosure";
 import { ScoreExtractView, extractFromUnknown } from "@/components/teacher/score-extract";
 import { HeardPitchChips } from "@/components/teacher/heard-pitch-chips";
-import { TakeAnalyzeStatus } from "@/components/teacher/take-analyze-status";
-import { type AnalyzeJobView, type AnalyzeStatusCopy } from "@/lib/analyze-status";
+import { TakeLogNote } from "@/components/teacher/take-log-note";
+import { isOpenAnalyze, type AnalyzeJobView } from "@/lib/analyze-status";
+import { ANALYZE_WAIT_MS } from "@/lib/constants";
 import { pitchErrorFromMetrics, pitchNotesFromMetrics } from "@/lib/pitch-overlay";
+import { takeLogView, type TakeLogCopy } from "@/lib/take-log";
+import { useServiceWaitClock } from "@/lib/use-service-wait-clock";
 import {
   chordSequenceDelta,
   chordsFromScore,
@@ -42,7 +47,7 @@ export function ModelCompareDesk({
   heardJson: unknown;
   metricsJson?: unknown;
   copy: Copy;
-  analyze?: { job: AnalyzeJobView | null; copy: AnalyzeStatusCopy };
+  analyze?: { job: AnalyzeJobView | null; copy: TakeLogCopy };
 }) {
   const piece = pieceModel
     ? parseTrainExtract({
@@ -57,7 +62,11 @@ export function ModelCompareDesk({
   const tutorialError = pitchErrorFromMetrics(pieceModel?.tutorialCuesJson);
   const delta =
     piece && heard ? chordSequenceDelta(chordsFromScore(piece), chordsFromScore(heard)) : null;
-  const waitingOnJob = Boolean(analyze) && !heard;
+  const now = useServiceWaitClock(isOpenAnalyze(analyze?.job?.status), analyze?.job?.updatedAt, ANALYZE_WAIT_MS);
+  const log = analyze
+    ? takeLogView({ job: analyze.job, heard, metrics: metricsJson, copy: analyze.copy, now })
+    : null;
+  const showLog = log !== null && log.kind !== "ready";
 
   return (
     <SectionPanel title={copy.title} open>
@@ -91,8 +100,8 @@ export function ModelCompareDesk({
         <section className="tile">
           <p className="tile-title">{copy.take}</p>
           <div className="mt-2">
-            {waitingOnJob && analyze ? (
-              <TakeAnalyzeStatus job={analyze.job} copy={analyze.copy} />
+            {showLog && log ? (
+              <TakeLogNote view={log} />
             ) : (
               <ScoreExtractView
                 extract={heard}
@@ -102,7 +111,7 @@ export function ModelCompareDesk({
                 rawLabel={copy.raw}
               />
             )}
-            {waitingOnJob ? null : (
+            {showLog ? null : (
               <HeardPitchChips
                 notes={heardNotes}
                 error={pitchError}

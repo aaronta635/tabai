@@ -76,3 +76,23 @@ export function parseSubmissionKind(value: unknown) {
   if (value === "practice" || value === "overdub") return value;
   return "take" as const;
 }
+
+/** Gemini watches the video only for clips the teacher will mark. */
+export function usesGeminiVisual(kind: "take" | "practice" | "overdub"): boolean {
+  switch (kind) {
+    case "take":
+    case "overdub":
+      return true;
+    case "practice":
+      return false;
+    default: {
+      const never: never = kind;
+      return never;
+    }
+  }
+}
+
+export function isPracticeSessionPath(pathname: string) {
+  const here = pathname.replace(/^\/(vi|en)(?=\/|$)/, "") || "/";
+  return /^\/student\/work\/[^/]+\/practice\/?$/.test(here);
+}

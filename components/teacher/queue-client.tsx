@@ -19,6 +19,8 @@ import { type AnalyzeJobView } from "@/lib/analyze-status";
 import { NUDGE_MESSAGE } from "@/lib/deep-links";
 import { requiredText } from "@/lib/forms";
 import { formatClock, type FactVerdict, type ObservationMarker } from "@/lib/score-model";
+import { API_WAIT_MS, GEMINI_DRAFT_WAIT_MS } from "@/lib/constants";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 import { fetchTakeVideo, readTakeVideo } from "@/lib/take-video-link";
 
 export type QueueItem = {
@@ -155,7 +157,11 @@ export function QueueClient({
     const tick = async () => {
       if (cancelled || letterDirty.current) return;
       try {
-        const res = await fetch(`/api/teacher/draft?submissionId=${encodeURIComponent(item.submissionId!)}`);
+        const res = await fetchWithServiceWait(
+          `/api/teacher/draft?submissionId=${encodeURIComponent(item.submissionId!)}`,
+          {},
+          API_WAIT_MS,
+        );
         if (!res.ok) return;
         const latest = (await res.json()) as { text?: string | null; createdAt?: string | null };
         const since = draftSince.current;
@@ -195,7 +201,7 @@ export function QueueClient({
       setDraftTimedOut(false);
       return;
     }
-    const id = window.setTimeout(() => setDraftTimedOut(true), 25000);
+    const id = window.setTimeout(() => setDraftTimedOut(true), GEMINI_DRAFT_WAIT_MS);
     return () => window.clearTimeout(id);
   }, [draftingLetter, item?.id]);
 
@@ -429,6 +435,7 @@ export function QueueClient({
                     failed: t("analyzeFailed"),
                     none: t("analyzeNone"),
                     doneEmpty: t("analyzeDoneEmpty"),
+                    timedOut: t("analyzeTimedOut"),
                   }}
                 />
               ) : null}

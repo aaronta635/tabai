@@ -3,7 +3,9 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { parseFretRead } from "../lib/fretboard";
+import { FFMPEG_FRAME_WAIT_MS, FRET_LABEL_WAIT_MS } from "../lib/constants";
 import { FRET_RESPONSE_SCHEMA, geminiClient, geminiCompareModel, generateGeminiImageJson } from "../lib/gemini";
+import { remainingServiceWaitMs } from "../lib/service-wait";
 import { pitchMismatches, type HeardPitchNote } from "../lib/pitch-overlay";
 
 const FRET_SYSTEM = `You look at one still frame from a guitar lesson.
@@ -20,7 +22,7 @@ export function grabVideoFrame(videoPath: string, at: number, outPath: string) {
   const result = spawnSync(
     "ffmpeg",
     ["-y", "-ss", Math.max(0, at).toFixed(3), "-i", videoPath, "-frames:v", "1", "-q:v", "4", outPath],
-    { stdio: "ignore" },
+    { stdio: "ignore", timeout: FFMPEG_FRAME_WAIT_MS },
   );
   return result.status === 0;
 }
@@ -35,7 +37,9 @@ export async function labelNoteFrets(videoPath: string, notes: HeardPitchNote[])
   let seen = 0;
   try {
     let index = 0;
+    const started = Date.now();
     for (const note of pending) {
+      if (remainingServiceWaitMs(started, FRET_LABEL_WAIT_MS) === 0) break;
       index += 1;
       const framePath = join(dir, `note-${index}.jpg`);
       if (!grabVideoFrame(videoPath, note.tStart, framePath)) {

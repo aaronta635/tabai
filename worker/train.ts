@@ -3,7 +3,7 @@ import { mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import type { Prisma } from "@prisma/client";
-import { TRAIN_PROMPT_VERSION } from "../lib/constants";
+import { GEMINI_TRAIN_WAIT_MS, TRAIN_PROMPT_VERSION } from "../lib/constants";
 import { sha256, sniffMime } from "../lib/catalog";
 import { enqueueTakesNeedingCompare } from "../lib/jobs";
 import {
@@ -154,6 +154,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
       thinkingLevel: ThinkingLevel.HIGH,
       files,
       userText: baseUser,
+      waitMs: GEMINI_TRAIN_WAIT_MS,
     });
     let extract = parseTrainExtract(first.data);
     let usage = first.usage;
@@ -170,6 +171,7 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
         thinkingLevel: ThinkingLevel.HIGH,
         files,
         userText: strictUser,
+        waitMs: GEMINI_TRAIN_WAIT_MS,
       });
       usage = {
         inputTokens: first.usage.inputTokens + second.usage.inputTokens,

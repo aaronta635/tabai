@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { join } from "node:path";
-import { PITCH_OVERLAY_VERSION } from "../lib/constants";
+import { FFMPEG_WAIT_MS, PITCH_OVERLAY_VERSION, PITCH_PYTHON_WAIT_MS } from "../lib/constants";
 import type { HeardPitchNote } from "../lib/pitch-overlay";
 
 export function pitchEnabled() {
@@ -27,19 +27,27 @@ export function parsePitchStdout(raw: string) {
   return JSON.parse(json) as { notes?: HeardPitchNote[]; error?: string };
 }
 
-export function runPython(script: string, args: string[], binary = "python3") {
+export function runPython(script: string, args: string[], binary: string, ms: number) {
   return new Promise<string>((resolve, reject) => {
     const child = spawn(binary, [script, ...args], { stdio: ["ignore", "pipe", "pipe"] });
     let out = "";
     let err = "";
+    const timer = setTimeout(() => {
+      child.kill("SIGKILL");
+      reject(new Error(`${script} timed out after ${ms}ms`));
+    }, ms);
     child.stdout.on("data", (chunk) => {
       out += chunk.toString();
     });
     child.stderr.on("data", (chunk) => {
       err += chunk.toString();
     });
-    child.on("error", reject);
+    child.on("error", (error) => {
+      clearTimeout(timer);
+      reject(error);
+    });
     child.on("close", (code) => {
+      clearTimeout(timer);
       if (code === 0) resolve(out.trim());
       else reject(new Error(err || `${script} exited ${code}`));
     });
@@ -47,7 +55,12 @@ export function runPython(script: string, args: string[], binary = "python3") {
 }
 
 export async function extractPitchFromWav(wavPath: string) {
-  const raw = await runPython(join(process.cwd(), "scripts/basic_pitch_notes.py"), [wavPath], pitchPython());
+  const raw = await runPython(
+    join(process.cwd(), "scripts/basic_pitch_notes.py"),
+    [wavPath],
+    pitchPython(),
+    PITCH_PYTHON_WAIT_MS,
+  );
   const parsed = parsePitchStdout(raw);
   const notes = Array.isArray(parsed.notes) ? parsed.notes : [];
   return {
@@ -61,7 +74,7 @@ export function writeVideoWav(videoPath: string, wavPath: string) {
   spawnSync(
     "ffmpeg",
     ["-y", "-i", videoPath, "-vn", "-ac", "1", "-ar", "22050", wavPath],
-    { stdio: "ignore" },
+    { stdio: "ignore", timeout: FFMPEG_WAIT_MS },
   );
 }
 

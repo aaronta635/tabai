@@ -8,7 +8,8 @@ import { DeleteTakeButton } from "@/components/teacher/delete-take-button";
 import { ParaIcon } from "@/components/ui/para-icon";
 
 const router = vi.hoisted(() => ({ push: vi.fn(), refresh: vi.fn() }));
-vi.mock("next/navigation", () => ({ useRouter: () => router, usePathname: () => "/vi/student/work/song1", useSearchParams: () => new URLSearchParams("q=gam") }));
+const nav = vi.hoisted(() => ({ path: "/vi/student/work/song1" }));
+vi.mock("next/navigation", () => ({ useRouter: () => router, usePathname: () => nav.path, useSearchParams: () => new URLSearchParams("q=gam") }));
 vi.mock("@/app/teacher/actions", () => ({ deleteTeacherTake: vi.fn() }));
 vi.mock("@/lib/supabase/client", () => ({
   createBrowserSupabase: () => ({ auth: { signOut: vi.fn(async () => ({ error: null })) } }),
@@ -16,6 +17,7 @@ vi.mock("@/lib/supabase/client", () => ({
 const shell = { name: "Student A", home: "/student", kicker: "Practice room", items: [{ href: "/student/work", label: "Assigned work", icon: "assignment" as const }], menuLinks: [{ href: "/student/profile", label: "Profile" }], labels: { signOut: "Sign out", menu: "Menu", close: "Close", themeOn: "Turn on dark mode", themeOff: "Turn off" } };
 beforeEach(() => {
   sessionStorage.setItem("howl0-session-bound", "1");
+  nav.path = "/vi/student/work/song1";
   router.push.mockReset(); router.refresh.mockReset();
 });
 afterEach(() => { vi.unstubAllGlobals(); vi.restoreAllMocks(); delete document.documentElement.dataset.theme; });
@@ -44,6 +46,15 @@ it("student theme controls retain the cookie endpoint, pending state and router 
   expect(screen.getByRole("button", { name: "Turn off" })).toBeDisabled();
   finish(new Response(null, { status: 200 }));
   await waitFor(() => expect(router.refresh).toHaveBeenCalledOnce());
+});
+
+it("hides studio chrome on the practice session path", () => {
+  nav.path = "/vi/student/work/song1/practice";
+  const view = render(<StudioShell {...shell} variant="student" signOutAction={async () => {}}><p>Session</p></StudioShell>);
+  expect(screen.queryByRole("link", { name: "Assigned work" })).toBeNull();
+  expect(view.container.querySelector(".studio-rail")).toBeNull();
+  expect(view.container.querySelector(".practice-session-root")).toBeTruthy();
+  expect(screen.getByText("Session")).toBeInTheDocument();
 });
 
 it("an icon-enhanced delete still requires confirmation and calls the supplied owner action", async () => {

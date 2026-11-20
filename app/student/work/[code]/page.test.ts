@@ -31,11 +31,14 @@ it("retains the existing canSubmit visibility condition for assignment context a
   expect(blocked).not.toContain("Assignment instructions A");
   expect(blocked).not.toContain("Practice tip A");
   expect(blocked).not.toContain('class="student-upload');
+  expect(blocked).not.toContain("Practice this piece");
 
   fixture.canSubmit = true;
   const allowed = await pageHtml();
   expect(allowed).toContain("Assignment instructions A");
   expect(allowed).toContain("Practice tip A");
   expect(allowed).toContain('class="student-upload');
+  expect(allowed).toContain("Practice this piece");
+  expect(allowed).toContain('href="/student/work/example/practice"');
   fixture.canSubmit = false;
 });

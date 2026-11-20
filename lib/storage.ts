@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import WebSocket from "ws";
-import { MEDIA_BUCKET } from "@/lib/constants";
+import { MEDIA_BUCKET, STORAGE_DOWNLOAD_WAIT_MS, STORAGE_META_WAIT_MS, STORAGE_UPLOAD_WAIT_MS } from "@/lib/constants";
+import { withServiceWait } from "@/lib/service-wait";
 
 let cached: SupabaseClient | null = null;
 
@@ -29,9 +30,11 @@ export function supabaseAdmin() {
 }
 
 export async function createSignedUpload(path: string, upsert = false) {
-  const { data, error } = await supabaseAdmin()
-    .storage.from(MEDIA_BUCKET)
-    .createSignedUploadUrl(path, { upsert });
+  const { data, error } = await withServiceWait(
+    supabaseAdmin().storage.from(MEDIA_BUCKET).createSignedUploadUrl(path, { upsert }),
+    "storage sign upload",
+    STORAGE_META_WAIT_MS,
+  );
   if (error || !data) {
     throw new Error(error?.message ?? "Could not create upload URL");
   }
@@ -42,9 +45,11 @@ export const SIGNED_READ_TTL_SECONDS = 60 * 60;
 export const SIGNED_URL_CACHE_SECONDS = 45 * 60;
 
 export async function createSignedReadUrl(path: string, expiresIn = SIGNED_READ_TTL_SECONDS) {
-  const { data, error } = await supabaseAdmin()
-    .storage.from(MEDIA_BUCKET)
-    .createSignedUrl(path, expiresIn);
+  const { data, error } = await withServiceWait(
+    supabaseAdmin().storage.from(MEDIA_BUCKET).createSignedUrl(path, expiresIn),
+    "storage sign read",
+    STORAGE_META_WAIT_MS,
+  );
   if (error || !data) {
     throw new Error(error?.message ?? "Could not create read URL");
   }
@@ -52,25 +57,37 @@ export async function createSignedReadUrl(path: string, expiresIn = SIGNED_READ_
 }
 
 export async function downloadMedia(path: string) {
-  const { data, error } = await supabaseAdmin().storage.from(MEDIA_BUCKET).download(path);
+  const { data, error } = await withServiceWait(
+    supabaseAdmin().storage.from(MEDIA_BUCKET).download(path),
+    "storage download",
+    STORAGE_DOWNLOAD_WAIT_MS,
+  );
   if (error || !data) {
     throw new Error(error?.message ?? "Could not download media");
   }
-  return Buffer.from(await data.arrayBuffer());
+  return Buffer.from(await withServiceWait(data.arrayBuffer(), "storage download body", STORAGE_DOWNLOAD_WAIT_MS));
 }
 
 export async function uploadMedia(path: string, body: Buffer, contentType: string) {
-  const { error } = await supabaseAdmin().storage.from(MEDIA_BUCKET).upload(path, body, {
-    contentType,
-    upsert: true,
-  });
+  const { error } = await withServiceWait(
+    supabaseAdmin().storage.from(MEDIA_BUCKET).upload(path, body, {
+      contentType,
+      upsert: true,
+    }),
+    "storage upload",
+    STORAGE_UPLOAD_WAIT_MS,
+  );
   if (error) {
     throw new Error(error.message);
   }
 }
 
 export async function removeMedia(path: string) {
-  const { error } = await supabaseAdmin().storage.from(MEDIA_BUCKET).remove([path]);
+  const { error } = await withServiceWait(
+    supabaseAdmin().storage.from(MEDIA_BUCKET).remove([path]),
+    "storage remove",
+    STORAGE_META_WAIT_MS,
+  );
   if (error) {
     throw new Error(error.message);
   }

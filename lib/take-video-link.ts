@@ -1,4 +1,6 @@
+import { API_WAIT_MS } from "@/lib/constants";
 import { MEDIA_URL_MAX_IDS } from "@/lib/media-url-guard";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 const PREFIX = "para-take-video:";
 const TTL_MS = 30 * 60 * 1000;
@@ -30,7 +32,7 @@ export function writeTakeVideo(mediaId: string, url: string) {
 export async function fetchTakeVideo(mediaId: string): Promise<string | null> {
   const cached = readTakeVideo(mediaId);
   if (cached) return cached;
-  const res = await fetch(`/api/media/url?mediaId=${encodeURIComponent(mediaId)}`);
+  const res = await fetchWithServiceWait(`/api/media/url?mediaId=${encodeURIComponent(mediaId)}`, {}, API_WAIT_MS);
   if (!res.ok) return null;
   const data = (await res.json()) as { url?: string };
   if (typeof data.url !== "string") return null;
@@ -41,7 +43,7 @@ export async function fetchTakeVideo(mediaId: string): Promise<string | null> {
 async function fetchTakeVideoBatch(mediaIds: string[]) {
   const params = new URLSearchParams();
   for (const id of mediaIds) params.append("mediaId", id);
-  const res = await fetch(`/api/media/url?${params.toString()}`);
+  const res = await fetchWithServiceWait(`/api/media/url?${params.toString()}`, {}, API_WAIT_MS);
   if (!res.ok) return;
   const data = (await res.json()) as { urls?: Record<string, string> };
   const urls = data.urls ?? {};

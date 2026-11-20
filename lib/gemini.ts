@@ -6,7 +6,17 @@ import {
   ThinkingLevel,
   Type,
 } from "@google/genai";
-import { DEFAULT_GEMINI_MODEL_COMPARE, DEFAULT_GEMINI_MODEL_TRAIN } from "@/lib/constants";
+import {
+  DEFAULT_GEMINI_MODEL_COMPARE,
+  DEFAULT_GEMINI_MODEL_TRAIN,
+  GEMINI_DRAFT_WAIT_MS,
+  GEMINI_FILE_GET_WAIT_MS,
+  GEMINI_FILE_READY_WAIT_MS,
+  GEMINI_IMAGE_WAIT_MS,
+  GEMINI_UPLOAD_WAIT_MS,
+  GEMINI_VIDEO_WAIT_MS,
+} from "@/lib/constants";
+import { remainingServiceWaitMs, withServiceWait } from "@/lib/service-wait";
 
 export type GeminiFileRef = {
   name: string;
@@ -66,15 +76,20 @@ export async function uploadGeminiFile(
   displayName: string,
 ): Promise<GeminiFileRef> {
   const blob = new Blob([new Uint8Array(bytes)], { type: mimeType });
-  const uploaded = await ai.files.upload({
-    file: blob,
-    config: { mimeType, displayName },
-  });
+  const uploaded = await withServiceWait(
+    ai.files.upload({
+      file: blob,
+      config: { mimeType, displayName, httpOptions: { timeout: GEMINI_UPLOAD_WAIT_MS } },
+    }),
+    "gemini upload",
+    GEMINI_UPLOAD_WAIT_MS,
+  );
   const name = uploaded.name;
   if (!name) throw new Error("Gemini file upload returned no name");
 
   let file = uploaded;
-  for (let attempt = 0; attempt < 90; attempt += 1) {
+  const started = Date.now();
+  while (remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS) > 0) {
     if (isActive(file.state)) {
       if (!file.uri) throw new Error("Gemini file is active but missing uri");
       return { name, uri: file.uri, mimeType: file.mimeType || mimeType };
@@ -82,8 +97,12 @@ export async function uploadGeminiFile(
     if (isFailed(file.state)) {
       throw new Error(`Gemini file processing failed (${displayName})`);
     }
-    await sleep(2000);
-    file = await ai.files.get({ name });
+    await sleep(Math.min(2000, remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS)));
+    file = await withServiceWait(
+      ai.files.get({ name, config: { httpOptions: { timeout: GEMINI_FILE_GET_WAIT_MS } } }),
+      "gemini file status",
+      GEMINI_FILE_GET_WAIT_MS,
+    );
   }
   throw new Error(`Gemini file processing timed out (${displayName})`);
 }
@@ -195,21 +214,28 @@ export async function generateGeminiJson(input: {
   files?: GeminiFileRef[];
   schema: object;
   thinkingLevel?: ThinkingLevel;
+  waitMs?: number;
 }): Promise<{ data: unknown; usage: GeminiUsage; model: string }> {
+  const waitMs = input.waitMs ?? GEMINI_VIDEO_WAIT_MS;
   const parts = [
     ...(input.files ?? []).map((file) => createPartFromUri(file.uri, file.mimeType)),
     input.userText,
   ];
-  const response = await input.ai.models.generateContent({
-    model: input.model,
-    contents: createUserContent(parts),
-    config: {
-      systemInstruction: input.system,
-      responseMimeType: "application/json",
-      responseJsonSchema: input.schema,
-      thinkingConfig: { thinkingLevel: input.thinkingLevel ?? ThinkingLevel.LOW },
-    },
-  });
+  const response = await withServiceWait(
+    input.ai.models.generateContent({
+      model: input.model,
+      contents: createUserContent(parts),
+      config: {
+        systemInstruction: input.system,
+        responseMimeType: "application/json",
+        responseJsonSchema: input.schema,
+        thinkingConfig: { thinkingLevel: input.thinkingLevel ?? ThinkingLevel.LOW },
+        httpOptions: { timeout: waitMs },
+      },
+    }),
+    "gemini json",
+    waitMs,
+  );
   const text = response.text?.trim();
   if (!text) throw new Error("Gemini returned an empty response");
   return {
@@ -237,19 +263,24 @@ export async function generateGeminiImageJson(input: {
   mimeType: string;
   schema: object;
 }): Promise<{ data: unknown; usage: GeminiUsage; model: string }> {
-  const response = await input.ai.models.generateContent({
-    model: input.model,
-    contents: createUserContent([
-      createPartFromBase64(input.imageBase64, input.mimeType),
-      input.userText,
-    ]),
-    config: {
-      systemInstruction: input.system,
-      responseMimeType: "application/json",
-      responseJsonSchema: input.schema,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-    },
-  });
+  const response = await withServiceWait(
+    input.ai.models.generateContent({
+      model: input.model,
+      contents: createUserContent([
+        createPartFromBase64(input.imageBase64, input.mimeType),
+        input.userText,
+      ]),
+      config: {
+        systemInstruction: input.system,
+        responseMimeType: "application/json",
+        responseJsonSchema: input.schema,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        httpOptions: { timeout: GEMINI_IMAGE_WAIT_MS },
+      },
+    }),
+    "gemini image",
+    GEMINI_IMAGE_WAIT_MS,
+  );
   const text = response.text?.trim();
   if (!text) throw new Error("Gemini returned an empty response");
   return {
@@ -265,15 +296,20 @@ export async function generateGeminiText(input: {
   system: string;
   userText: string;
 }): Promise<{ text: string; usage: GeminiUsage; model: string }> {
-  const response = await input.ai.models.generateContent({
-    model: input.model,
-    contents: input.userText,
-    config: {
-      systemInstruction: input.system,
-      maxOutputTokens: 2048,
-      thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
-    },
-  });
+  const response = await withServiceWait(
+    input.ai.models.generateContent({
+      model: input.model,
+      contents: input.userText,
+      config: {
+        systemInstruction: input.system,
+        maxOutputTokens: 2048,
+        thinkingConfig: { thinkingLevel: ThinkingLevel.MINIMAL },
+        httpOptions: { timeout: GEMINI_DRAFT_WAIT_MS },
+      },
+    }),
+    "gemini text",
+    GEMINI_DRAFT_WAIT_MS,
+  );
   const text = response.text?.trim();
   if (!text) return { text: "", usage: EMPTY_USAGE, model: input.model };
   return { text, usage: usageFrom(response), model: input.model };

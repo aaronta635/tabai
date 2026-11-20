@@ -3,11 +3,13 @@ import {
   activityStreak,
   dayKey,
   heatmapCounts,
+  isPracticeSessionPath,
   lastNDays,
   parseDueAt,
   duePhrase,
   parseSubmissionKind,
   pickAssignedPiece,
+  usesGeminiVisual,
 } from "@/lib/practice";
 
 const noon = new Date("2026-09-20T12:00:00.000Z");
@@ -76,5 +78,22 @@ describe("parseSubmissionKind", () => {
   it("defaults unknown values to take", () => {
     expect(parseSubmissionKind("practice")).toBe("practice");
     expect(parseSubmissionKind("nope")).toBe("take");
+  });
+});
+
+describe("usesGeminiVisual", () => {
+  it("runs Gemini only for send-to-teacher kinds", () => {
+    expect(usesGeminiVisual("take")).toBe(true);
+    expect(usesGeminiVisual("overdub")).toBe(true);
+    expect(usesGeminiVisual("practice")).toBe(false);
+  });
+});
+
+describe("isPracticeSessionPath", () => {
+  it("matches locale-prefixed practice routes only", () => {
+    expect(isPracticeSessionPath("/vi/student/work/song1/practice")).toBe(true);
+    expect(isPracticeSessionPath("/en/student/work/song1/practice/")).toBe(true);
+    expect(isPracticeSessionPath("/student/work/song1")).toBe(false);
+    expect(isPracticeSessionPath("/student/work/song1/practice/extra")).toBe(false);
   });
 });

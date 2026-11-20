@@ -2,6 +2,8 @@ import { createBrowserSupabase } from "@/lib/supabase/client";
 import { encodeOAuthBind, OAUTH_BIND_COOKIE, oauthRedirectTo } from "@/lib/oauth-bind";
 import type { AccountRole } from "@/lib/onboarding";
 import { authPath } from "@/lib/return-path";
+import { API_WAIT_MS } from "@/lib/constants";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 
 export type Social = "google" | "facebook" | "zalo";
 export type SocialFrom = "login" | "signup";
@@ -37,11 +39,15 @@ export async function bindLocalSession(input: {
   wrongRoleStudent: string;
 }) {
   const supabase = createBrowserSupabase();
-  const sessionRes = await fetch("/api/session", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role: input.role, next: input.next }),
-  });
+  const sessionRes = await fetchWithServiceWait(
+    "/api/session",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ role: input.role, next: input.next }),
+    },
+    API_WAIT_MS,
+  );
   const json = (await sessionRes.json()) as {
     next?: string;
     error?: string;
@@ -82,11 +88,15 @@ export async function startSocial(
     },
   });
   if (oauthError || !data?.url) throw oauthError ?? new Error("missing");
-  const probe = await fetch("/api/auth/provider", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ url: data.url }),
-  });
+  const probe = await fetchWithServiceWait(
+    "/api/auth/provider",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: data.url }),
+    },
+    API_WAIT_MS,
+  );
   if (!probe.ok) throw new Error("provider");
   window.location.assign(data.url);
 }

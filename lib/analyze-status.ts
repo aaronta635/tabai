@@ -14,6 +14,7 @@ export type AnalyzeStatusCopy = {
   failed: string;
   none: string;
   doneEmpty: string;
+  timedOut?: string;
 };
 
 export function isAnalyzeStatus(status: string): status is AnalyzeStatus {

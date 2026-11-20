@@ -7,8 +7,17 @@ import { completePieceAssets, createPieceRecord, updatePieceAssignment } from "@
 import { FilePicker } from "@/components/file-picker";
 import { MusicXmlSheet } from "@/components/student/musicxml-sheet";
 import { PieceSelect } from "@/components/teacher/piece-select";
-import { MAX_CLIP_BYTES, MAX_CLIP_SECONDS, MAX_SHEET_BYTES, MAX_VIDEO_BYTES } from "@/lib/constants";
+import {
+  API_WAIT_MS,
+  MAX_CLIP_BYTES,
+  MAX_CLIP_SECONDS,
+  MAX_SHEET_BYTES,
+  MAX_VIDEO_BYTES,
+  MEDIA_PUT_WAIT_MS,
+  SHEET_PUT_WAIT_MS,
+} from "@/lib/constants";
 import { requiredText } from "@/lib/forms";
+import { fetchWithServiceWait } from "@/lib/service-wait";
 import { SONG_MODES, SONG_TONICS, TUNINGS, parseSongKey, parseTuning, type SetupLocale, type SongMode } from "@/lib/piece-setup";
 
 type Props = {
@@ -66,26 +75,34 @@ async function mediaDuration(file: File) {
 }
 
 async function uploadAsset(pieceId: string, kind: "sheet" | "tutorial" | "clip", file: File) {
-  const sign = await fetch(`/api/teacher/pieces/${pieceId}/upload-url`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      kind,
-      size: file.size,
-      filename: file.name,
-      contentType: file.type,
-    }),
-  });
+  const sign = await fetchWithServiceWait(
+    `/api/teacher/pieces/${pieceId}/upload-url`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        kind,
+        size: file.size,
+        filename: file.name,
+        contentType: file.type,
+      }),
+    },
+    API_WAIT_MS,
+  );
   const signed = await readJson(sign);
   if (!sign.ok) throw new Error(signed.error ?? "sign failed");
   if (typeof signed.signedUrl !== "string" || typeof signed.mediaId !== "string") {
     throw new Error("sign failed");
   }
-  const put = await fetch(signed.signedUrl, {
-    method: "PUT",
-    headers: { "Content-Type": signed.contentType || file.type || "application/octet-stream" },
-    body: file,
-  });
+  const put = await fetchWithServiceWait(
+    signed.signedUrl,
+    {
+      method: "PUT",
+      headers: { "Content-Type": signed.contentType || file.type || "application/octet-stream" },
+      body: file,
+    },
+    kind === "sheet" ? SHEET_PUT_WAIT_MS : MEDIA_PUT_WAIT_MS,
+  );
   if (!put.ok) throw new Error("upload failed");
   return signed.mediaId;
 }

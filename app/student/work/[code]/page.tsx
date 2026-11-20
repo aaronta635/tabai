@@ -36,7 +36,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
   const teacherName = senderName(room.piece.teacher.name, room.piece.demo);
   const history = room.bound.student
     ? await prisma.submission.findMany({
-        where: { studentId: room.bound.student.id, pieceId: room.piece.id },
+        where: { studentId: room.bound.student.id, pieceId: room.piece.id, kind: { in: ["take", "overdub"] } },
         orderBy: { submittedAt: "desc" },
         take: 5,
         select: {
@@ -70,6 +70,13 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
         </div>
         {brief ? <div><h3 className="field-label">{t.student.brief}</h3><p className="whitespace-pre-wrap leading-relaxed">{brief}</p></div> : null}
         {tips ? <p className="whitespace-pre-wrap text-sm leading-relaxed">{tips}</p> : null}
+        {!room.needsProfile ? (
+          <p>
+            <Link href={`/student/work/${code}/practice`} className="btn">
+              {t.student.openPracticeSession}
+            </Link>
+          </p>
+        ) : null}
       </section> : null}
 
       <div className="student-assignment-desk">

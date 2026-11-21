@@ -190,12 +190,12 @@ export function CurriculumBoard({
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <AssignDialog partId={part.id} classes={classes} students={students} />
-              <button type="button" className="icon-btn" aria-label={t("moveUp")} disabled={index === 0} onClick={() => shift(part.id, "up")}>
+              <button type="button" className="icon-btn reorder-btn" aria-label={t("moveUp")} disabled={index === 0} onClick={() => shift(part.id, "up")}>
                 ↑
               </button>
               <button
                 type="button"
-                className="icon-btn"
+                className="icon-btn reorder-btn"
                 aria-label={t("moveDown")}
                 disabled={index === shelves.length - 1}
                 onClick={() => shift(part.id, "down")}
@@ -241,7 +241,7 @@ export function CurriculumBoard({
                       }}
                     >
                       <td>
-                        <Link href={`/teacher/curriculum/${piece.id}`} className="font-semibold">
+                        <Link href={`/teacher/curriculum/${piece.id}`} className="tap-target font-semibold">
                           {piece.title}
                         </Link>
                         <p className="text-xs text-ink-soft">{stat?.className ?? files}</p>

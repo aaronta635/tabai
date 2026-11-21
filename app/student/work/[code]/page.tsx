@@ -51,7 +51,7 @@ export default async function StudentPiecePage({ params }: { params: Promise<{ c
   return (
     <div className="student-assignment space-y-5">
       <header className="studio-page-head">
-        <Link href="/student/work" className="font-ui text-sm text-ink-soft hover:text-ink">
+        <Link href="/student/work" className="tap-target font-ui text-sm text-ink-soft hover:text-ink">
           ← {t.student.navWork}
         </Link>
         <h1 className="font-display mt-3">{t.student.submitVideo}</h1>

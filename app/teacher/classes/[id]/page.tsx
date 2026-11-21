@@ -46,7 +46,7 @@ export default async function ClassDetailPage({ params }: { params: Promise<{ id
   return (
     <div className="space-y-5">
       <ActiveClass name={studioClass.name} />
-      <Link href="/teacher/classes" className="font-ui text-sm text-ink-soft hover:text-ink">
+      <Link href="/teacher/classes" className="tap-target font-ui text-sm text-ink-soft hover:text-ink">
         ← {t.teacher.navClasses}
       </Link>
       <StudioTitle

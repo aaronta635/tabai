@@ -3889,3 +3889,48 @@ body:has(.setup-wash) {
 .take-recorder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .take-recorder-actions .btn,
 .take-recorder-actions button { min-height: 44px; }
+
+/* Mobile layout pass: 44px tap areas that keep the visual size and spacing.
+   The negative block margin cancels the extra height, so the line box stays one line tall. */
+.tap-target {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: -12px;
+  margin-block: calc((1lh - 44px) / 2);
+}
+
+/* Delete-account confirmation: the whole label row is the 44px tap area. */
+.delete-confirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.delete-confirm input[type="checkbox"] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+
+/* Curriculum shelf reorder arrows: 44px square tap area. */
+.icon-btn.reorder-btn {
+  height: 2.75rem;
+  width: 2.75rem;
+}
+
+/* Avatar picker: the native file field fits narrow screens instead of forcing sideways scroll. */
+.setup-photo {
+  grid-template-columns: minmax(0, 1fr);
+}
+.setup-photo > .setup-block {
+  justify-self: stretch;
+  max-width: 100%;
+}
+.setup-photo input[type="file"] {
+  width: 100%;
+  min-height: 44px;
+}

@@ -139,6 +139,8 @@
  .student-ui.student-ui .studio-search { margin-bottom:24px; }
  .student-ui.student-ui .studio-table { table-layout:fixed; font-size:13px; }
  .student-ui.student-ui .studio-table :is(th,td) { padding:12px 6px; white-space:normal; }
+ /* Row buttons keep whole words: "Submit" must not break as "Subm/it". */
+ .student-ui.student-ui .studio-table .table-btn { padding-inline:12px; white-space:nowrap; overflow-wrap:normal; word-break:keep-all; }
  .student-ui.student-ui .assign-row { align-items:start; flex-direction:column; gap:10px; }
  .student-ui.student-ui .assign-row > span:last-child { justify-content:flex-start; }
  .student-ui.student-ui .class-chip { max-width:100%; overflow-wrap:anywhere; }
@@ -187,8 +189,8 @@
 .student-ui.student-ui .student-settings .student-settings-row p { margin:0; }
 .student-ui.student-ui .student-settings .student-destructive-zone { display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:24px; border-top:0; }
 .student-ui.student-ui .student-delete-copy { max-width:36rem; margin:0; text-wrap:pretty; line-height:1.6; }
-.student-ui.student-ui .student-delete-confirm { display:flex; align-items:flex-start; gap:8px; max-width:36rem; }
-.student-ui.student-ui .student-delete-confirm input { margin-top:0.2rem; }
+.student-ui.student-ui .student-delete-confirm { display:flex; align-items:center; gap:10px; min-height:44px; max-width:36rem; cursor:pointer; }
+.student-ui.student-ui .student-delete-confirm input { margin:0; }
 .student-ui.student-ui .delete-take { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--para-app-color-danger-existing); border-radius:10px; background:transparent; color:var(--para-app-color-danger-existing); font-size:14px; transition:background-color 140ms ease-out; }
 .student-ui.student-ui .delete-take:hover:not(:disabled) { background:var(--para-app-field); }
 .student-ui.student-ui .group-card-title { font-family:var(--font-serif); font-size:22px; line-height:1.5; }
@@ -316,6 +318,8 @@ html.tour-open .studio-rail { position:relative; z-index:80; }
 .practice-session-cam { display:flex; flex-direction:column; gap:12px; }
 .practice-session-pdf { width:100%; min-height:16rem; border-radius:16px; background:#fff; }
 .practice-session-file { display:flex; flex-direction:column; gap:6px; font-size:13px; }
+.practice-session-file input[type="file"] { min-height:44px; max-width:100%; font-size:14px; }
+.practice-session-file input[type="file"]::file-selector-button { min-height:44px; padding:0 14px; margin-right:10px; border:1px solid var(--para-app-edge, currentColor); border-radius:10px; background:var(--para-app-field, transparent); color:inherit; font:inherit; cursor:pointer; }
 .practice-clip-list { display:flex; flex-direction:column; gap:12px; }
 .practice-clip { padding:12px 0; border-top:1px solid var(--para-app-edge); display:flex; flex-direction:column; gap:8px; align-items:flex-start; }
 .practice-clip-head { display:flex; flex-wrap:wrap; gap:8px 16px; align-items:baseline; width:100%; }
@@ -329,3 +333,6 @@ html.tour-open .studio-rail { position:relative; z-index:80; }
 .analyze-status[data-kind="no_notes"],
 .analyze-status[data-kind="pitch_error"],
 .analyze-status[data-kind="failed"] { padding: 10px 12px; border-left: 3px solid var(--para-app-accent, currentColor); background: rgb(var(--para-app-surface-rgb, 243 237 226) / .6); border-radius: 8px; }
+/* Guide row stacks on phones so "Show the tour again" gets a full-width 44px button.
+   Kept at the end so it follows the base .student-settings-row rule. */
+@media(max-width:640px) { .student-ui.student-ui .student-settings .student-settings-row { grid-template-columns:minmax(0,1fr); gap:8px; } .student-ui.student-ui .student-settings .student-settings-row .btn { width:100%; min-height:44px; } }

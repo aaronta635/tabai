@@ -304,8 +304,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0 8px;
   border-radius: 8px;
   color: inherit;
@@ -892,7 +892,19 @@
 .para-site .footer-legal {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
+  gap: 0 20px;
+}
+/* Footer links keep their look but get a 44px tap height. */
+.para-site .footer-legal a,
+.para-site .footer-bottom a,
+.para-site .footer-main a[aria-label] {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.para-site .footer-bottom {
+  row-gap: 0;
 }
 .para-site .footer-legal a:hover,
 .para-site .footer-bottom a:hover {

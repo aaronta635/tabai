@@ -216,6 +216,9 @@ body:has(.para-editorial),
   }
 }
 /* tabai: footer keeps the legal links the shared footer would show. */
+.para-site .ed-footer-links a {
+  min-width: 44px;
+}
 .para-site .ed-footer-links {
   display: flex;
   flex-wrap: wrap;
@@ -236,12 +239,6 @@ body:has(.para-editorial),
 }
 .para-site .ed-nav-story {
   white-space: nowrap;
-}
-/* tabai: phones need room for the language link; the showcase sits right below the hero. */
-@media (max-width: 420px) {
-  .para-site .ed-nav-anchor {
-    display: none;
-  }
 }
 /* tabai: class-code entry and studio links, in the editorial palette. */
 .para-site .ed-close .studio-entry-block {
@@ -314,7 +311,110 @@ body:has(.para-editorial),
   text-decoration: underline;
   text-underline-offset: 5px;
 }
+/* The site frame stacks and centres .hero-actions on phones; keep these as a left-aligned row. */
+.para-site .ed-close .studio-entry-block .hero-actions {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0;
+}
 .para-site .ed-close .studio-entry-block .hero-actions > * {
   width: auto;
   flex: none;
+  justify-content: flex-start;
+}
+/* tabai: header tap targets are at least 44x44. */
+.para-site .ed-language {
+  justify-content: center;
+  min-width: 44px;
+}
+.para-site .ed-brand {
+  min-height: 44px;
+}
+/* tabai: on narrow screens the inline links move into an accessible menu. */
+.para-site .ed-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ed-ink);
+  cursor: pointer;
+}
+.para-site .ed-menu-toggle .para-icon {
+  width: 24px;
+  height: 24px;
+}
+.para-site .ed-menu-toggle:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 2px;
+}
+.para-site .ed-menu[hidden] {
+  display: none;
+}
+.para-site .ed-menu {
+  position: fixed;
+  inset: 69px 0 0;
+  z-index: 59;
+  overflow-y: auto;
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+}
+.para-site .ed-menu-inner {
+  display: flex;
+  flex-direction: column;
+  padding-block: 12px 32px;
+}
+.para-site .ed-menu-link {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-bottom: 1px solid var(--ed-line);
+  font-size: 18px;
+}
+.para-site .ed-menu-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.para-site .ed-menu-language {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.para-site .ed-menu-language a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--ed-line);
+  border-radius: 999px;
+  font-size: 14px;
+}
+.para-site .ed-menu-language a[aria-current="true"] {
+  border-color: var(--ed-ink);
+  font-weight: 600;
+}
+.para-site .ed-menu a:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .para-site .ed-nav-inline {
+    display: none;
+  }
+  .para-site .ed-menu-toggle {
+    display: inline-flex;
+  }
+}
+@media (max-width: 500px) {
+  .para-site .ed-menu {
+    inset: 65px 0 0;
+  }
 }

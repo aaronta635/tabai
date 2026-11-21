@@ -1,9 +1,14 @@
+"use client";
 import Link from "next/link";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { ParaIcon } from "@/components/site/ParaIcon";
 import { content, homeHref, languageChoiceHref, localePath } from "@/lib/site/content";
 import "@/styles/site/editorial-home.css";
 
 /** The editorial homepage is English-only; the CTA opens the in-app signup. */
 const SIGNUP_HREF = localePath("en", "/signup");
+/** Matches the CSS breakpoint where the inline links give way to the menu. */
+const MENU_QUERY = "(max-width: 760px)";
 
 export function EditorialArrow() {
   return (
@@ -16,9 +21,9 @@ export function EditorialArrow() {
   );
 }
 
-export function EditorialCta() {
+export function EditorialCta({ onClick }: { onClick?: () => void }) {
   return (
-    <a className="ed-button" href={SIGNUP_HREF}>
+    <a className="ed-button" href={SIGNUP_HREF} onClick={onClick}>
       {content.en.conversion.button} <EditorialArrow />
     </a>
   );
@@ -26,8 +31,65 @@ export function EditorialCta() {
 
 export function EditorialHeader() {
   const navigation = content.en.navigation;
+  const [open, setOpen] = useState(false);
+  const toggle = useRef<HTMLButtonElement>(null);
+  const panel = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    const surfaces = Array.from(
+      document.querySelectorAll<HTMLElement>(".para-site main, .para-site > footer"),
+    );
+    const previous = surfaces.map((node) => node.inert);
+    const overflow = document.body.style.overflow;
+    surfaces.forEach((node) => {
+      node.inert = true;
+    });
+    document.body.style.overflow = "hidden";
+    panel.current?.querySelector<HTMLElement>("a")?.focus();
+    return () => {
+      surfaces.forEach((node, index) => {
+        node.inert = previous[index];
+      });
+      document.body.style.overflow = overflow;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    const media = matchMedia(MENU_QUERY);
+    const resize = () => {
+      if (!media.matches) setOpen(false);
+    };
+    media.addEventListener("change", resize);
+    return () => media.removeEventListener("change", resize);
+  }, []);
+
+  function close(restoreFocus: boolean) {
+    setOpen(false);
+    if (restoreFocus) toggle.current?.focus();
+  }
+
+  function handleKeys(event: React.KeyboardEvent<HTMLElement>) {
+    if (!open) return;
+    if (event.key === "Escape") {
+      event.preventDefault();
+      close(true);
+      return;
+    }
+    if (event.key !== "Tab") return;
+    // The open menu is modal: Tab cycles through the toggle and the panel only.
+    const items = [
+      toggle.current,
+      ...Array.from(panel.current?.querySelectorAll<HTMLElement>("a,button") ?? []),
+    ].filter((node): node is HTMLElement => !!node && node.getClientRects().length > 0);
+    const index = items.indexOf(document.activeElement as HTMLElement);
+    const direction = event.shiftKey ? -1 : 1;
+    event.preventDefault();
+    items[(index + direction + items.length) % items.length]?.focus();
+  }
+
   return (
-    <header className="ed-header">
+    <header className={open ? "ed-header ed-menu-open" : "ed-header"} onKeyDown={handleKeys}>
       <nav className="ed-wrap ed-nav" aria-label={navigation.label}>
         <Link className="ed-brand" href={homeHref("en")} aria-label={navigation.homeLabel}>
           <img
@@ -38,12 +100,12 @@ export function EditorialHeader() {
           />
         </Link>
         <div className="ed-nav-actions">
-          <a className="ed-nav-story ed-nav-anchor" href="#how-it-works">
+          <a className="ed-nav-story ed-nav-inline" href="#how-it-works">
             How it works
           </a>
           {/* Full navigation so the root layout re-renders with the new <html lang>. */}
           <a
-            className="ed-nav-story ed-language"
+            className="ed-nav-story ed-language ed-nav-inline"
             href={languageChoiceHref("vi", "/")}
             hrefLang="vi"
             lang="vi"
@@ -52,8 +114,47 @@ export function EditorialHeader() {
             {navigation.languageShort}
           </a>
           <EditorialCta />
+          <button
+            ref={toggle}
+            type="button"
+            className="ed-menu-toggle"
+            aria-expanded={open}
+            aria-controls="ed-menu"
+            onClick={() => (open ? close(false) : setOpen(true))}
+          >
+            <span className="sr-only">{open ? navigation.close : navigation.menu}</span>
+            <ParaIcon name={open ? "close" : "menu"} />
+          </button>
         </div>
       </nav>
+      <div
+        id="ed-menu"
+        ref={panel}
+        className="ed-menu"
+        hidden={!open}
+      >
+        <div className="ed-wrap ed-menu-inner">
+          {navigation.items.map(([label, url]) => (
+            <Link
+              key={url}
+              className="ed-menu-link"
+              href={localePath("en", url)}
+              prefetch={false}
+              onClick={() => close(false)}
+            >
+              {label}
+            </Link>
+          ))}
+          <div className="ed-menu-language" role="group" aria-label={navigation.languageGroup}>
+            <a href={languageChoiceHref("en", "/")} hrefLang="en" lang="en" aria-current="true">
+              EN
+            </a>
+            <a href={languageChoiceHref("vi", "/")} hrefLang="vi" lang="vi" aria-label={navigation.languageLabel}>
+              VI
+            </a>
+          </div>
+        </div>
+      </div>
     </header>
   );
 }

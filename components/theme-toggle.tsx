@@ -16,6 +16,7 @@ export function ThemeToggle({
   const [pending, start] = useTransition();
   const [current, setCurrent] = useState(theme);
   const dark = current === "dark";
+  // The label names the action, so it is not also announced as a pressed toggle.
   const label = dark ? labels.off : labels.on;
 
   useEffect(() => {
@@ -40,7 +41,6 @@ export function ThemeToggle({
     <button
       type="button"
       disabled={pending}
-      aria-pressed={dark}
       onClick={() => setTheme(dark ? "light" : "dark")}
       className={`theme-toggle font-ui ${className}`}
     >

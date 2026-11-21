@@ -1,0 +1,268 @@
+/* Ported from howl0-landing; selectors are scoped under .para-site so they outrank the
+   site frame's scoped element rules, as they outrank bare element rules in the design repo. */
+/* Light-only showcase: white panels on a quiet neutral canvas. */
+.para-site .para-editorial .para-feature-showcase {
+  background: #f5f5f7;
+  color: #111;
+  margin-top: 0;
+  padding: 24px 32px 80px;
+  scroll-margin-top: 0;
+  color-scheme: light;
+}
+.para-site .para-feature-column {
+  width: min(100%, 1120px);
+  margin-inline: auto;
+  display: grid;
+  gap: 24px;
+}
+.para-site .para-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 38fr) minmax(0, 62fr);
+  min-height: 480px;
+  border-radius: 28px;
+  background: #fff;
+  overflow: clip;
+  isolation: isolate;
+}
+.para-site .para-feature-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 40px 28px 32px 40px;
+  min-width: 0;
+}
+.para-site .para-editorial .para-feature-eyebrow {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  color: #626262;
+  margin: 0 0 12px;
+}
+.para-site .para-editorial .para-feature h2 {
+  font-size: 48px;
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #111;
+  text-align: left;
+  text-wrap: initial;
+  margin: 0 0 14px;
+}
+.para-site .para-feature h2 span {
+  display: inline-block;
+}
+.para-site .para-editorial .para-feature-summary {
+  font-size: 17px;
+  line-height: 25px;
+  color: #626262;
+  margin: 0;
+  max-width: 32ch;
+}
+.para-site .para-feature-icon {
+  width: 40px;
+  height: 40px;
+  margin-top: auto;
+  padding-top: 0;
+  flex: none;
+}
+.para-site .para-feature-media {
+  min-width: 0;
+  margin: 32px 0 0;
+  align-self: end;
+}
+.para-site .para-demo-frame {
+  /* Keep the complete recorded Mac window, including its traffic-light controls. */
+  aspect-ratio: 1240 / 990;
+  position: relative;
+  overflow: clip;
+  background: #fff;
+}
+.para-site .para-demo-video {
+  display: block;
+  position: absolute;
+  width: 116.129032%;
+  height: 109.090909%;
+  max-width: none;
+  left: -8.064516%;
+  top: -4.545455%;
+  object-fit: fill;
+}
+.para-site .para-demo-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 24px 8px 0;
+  color: #626262;
+  font-size: 11px;
+  line-height: 1.5;
+}
+.para-site .para-demo-toolbar button,
+.para-site .para-demo-fallback {
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: #111;
+  min-height: 44px;
+  padding: 10px 12px;
+  white-space: nowrap;
+  font-size: 12px;
+  text-underline-offset: 4px;
+  transition: background 150ms;
+}
+.para-site .para-demo-toolbar button:hover {
+  background: #f0f0f0;
+}
+.para-site .para-demo-toolbar button:active {
+  background: #e4e4e4;
+}
+.para-site .para-feature-showcase button:focus-visible,
+.para-site .para-feature-showcase a:focus-visible {
+  outline: 2px solid #111;
+  outline-offset: 3px;
+}
+.para-site .para-editorial .para-demo-caption {
+  display: none;
+}
+.para-site .para-editorial .para-demo-error {
+  color: #111;
+  font-size: 14px;
+  margin: 0 24px 16px 0;
+}
+.para-site .para-feature--next {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 40px 40px 0;
+}
+.para-site .para-feature--next .para-feature-copy {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  column-gap: 32px;
+  padding: 0;
+}
+.para-site .para-feature--next .para-feature-copy > :not(img) {
+  grid-column: 1;
+}
+.para-site .para-feature--next .para-feature-icon {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  align-self: center;
+  justify-self: end;
+  margin: 0;
+}
+.para-site .para-feature--next .para-feature-summary {
+  max-width: 48ch;
+}
+.para-site .para-feature--next .para-feature-media {
+  width: 100%;
+  margin-top: 28px;
+}
+.para-site .para-feature--next .para-demo-toolbar {
+  padding-right: 0;
+}
+@media (min-width: 801px) and (max-width: 1150px) {
+  .para-site .para-feature-copy {
+    padding: 32px 24px 28px 32px;
+  }
+  .para-site .para-editorial .para-feature h2 {
+    font-size: 40px;
+  }
+  .para-site .para-editorial .para-feature-summary {
+    font-size: 16px;
+    line-height: 24px;
+  }
+}
+@media (max-width: 800px) {
+  .para-site .para-editorial .para-feature-showcase {
+    padding: 24px 24px 64px;
+  }
+  .para-site .para-feature {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+  .para-site .para-feature-copy {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 32px;
+    gap: 0 20px;
+    padding: 32px 32px 0;
+  }
+  .para-site .para-feature-copy > :not(img) {
+    grid-column: 1 / -1;
+  }
+  .para-site .para-feature-copy .para-feature-eyebrow {
+    grid-column: 1;
+    align-self: center;
+  }
+  .para-site .para-feature-icon {
+    grid-column: 2;
+    grid-row: 1;
+    width: 28px;
+    height: 28px;
+    margin: 0;
+    justify-self: end;
+    align-self: start;
+  }
+  .para-site .para-feature-media {
+    width: 100%;
+    margin-top: 28px;
+  }
+  .para-site .para-demo-toolbar {
+    padding-inline: 24px;
+  }
+  .para-site .para-editorial .para-demo-caption {
+    display: block;
+    color: #333;
+    font-size: 15px;
+    line-height: 23px;
+    margin: 0;
+    padding: 0 24px 24px;
+    max-width: 60ch;
+  }
+  .para-site .para-feature--next {
+    padding: 0;
+  }
+  .para-site .para-feature--next .para-feature-copy {
+    grid-template-columns: minmax(0, 1fr) 32px;
+    padding: 32px 32px 0;
+    column-gap: 20px;
+  }
+  .para-site .para-feature--next .para-feature-copy > :not(img) {
+    grid-column: 1 / -1;
+  }
+  .para-site .para-feature--next .para-feature-copy .para-feature-eyebrow {
+    grid-column: 1;
+  }
+  .para-site .para-feature--next .para-feature-icon {
+    grid-row: 1;
+    align-self: start;
+  }
+  .para-site .para-feature--next .para-demo-toolbar {
+    padding-inline: 24px;
+  }
+}
+@media (max-width: 500px) {
+  .para-site .para-editorial .para-feature-showcase {
+    padding: 16px 16px 48px;
+  }
+  .para-site .para-feature-column {
+    gap: 16px;
+  }
+  .para-site .para-feature {
+    border-radius: 20px;
+  }
+  .para-site .para-feature-copy,
+  .para-site .para-feature--next .para-feature-copy {
+    padding: 24px 24px 0;
+  }
+  .para-site .para-editorial .para-feature h2 {
+    font-size: 32px;
+    line-height: 34px;
+  }
+  .para-site .para-editorial .para-feature-summary {
+    font-size: 16px;
+    line-height: 23px;
+  }
+  .para-site .para-feature-media,
+  .para-site .para-feature--next .para-feature-media {
+    margin-top: 24px;
+  }
+}

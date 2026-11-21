@@ -39,11 +39,11 @@ it("student theme controls retain the cookie endpoint, pending state and router 
   let finish: (value: Response) => void = () => {};
   const response = new Promise<Response>((resolve) => { finish = resolve; });
   const fetchMock = vi.fn(() => response); vi.stubGlobal("fetch", fetchMock);
-  render(<ThemeToggle theme="light" labels={{ on: "Turn on dark mode", off: "Turn off" }} />);
+  render(<ThemeToggle theme="light" labels={{ on: "Turn on dark mode", off: "Turn off dark mode" }} />);
   await user.click(screen.getByRole("button", { name: "Turn on dark mode" }));
   expect(document.documentElement.dataset.theme).toBe("dark");
   expect(fetchMock).toHaveBeenCalledWith("/api/theme", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ theme: "dark" }) });
-  expect(screen.getByRole("button", { name: "Turn off" })).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Turn off dark mode" })).toBeDisabled();
   finish(new Response(null, { status: 200 }));
   await waitFor(() => expect(router.refresh).toHaveBeenCalledOnce());
 });

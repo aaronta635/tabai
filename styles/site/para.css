@@ -1683,3 +1683,16 @@
     margin-bottom: 20px;
   }
 }
+
+/* Very narrow phones (320px): logo + EN/VI + menu button need ~328px.
+   Shrink the logo and its padding only; every tap target keeps 44px+. */
+@media (max-width: 359px) {
+  .para-site .integrated-header .brand {
+    padding-inline: 8px;
+  }
+
+  .para-site .integrated-header .brand img {
+    width: 96px;
+    height: auto;
+  }
+}

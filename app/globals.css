@@ -3946,3 +3946,28 @@ body:has(.setup-wash) {
   width: 100%;
   min-height: 44px;
 }
+
+/* Social sign-in row: three 1fr columns can't shrink below each button's
+   min-content width (icon + label on one line), so at 320px Zalo stuck out of
+   the page. Let the columns shrink, and on narrow phones stack the icon above
+   the label so every button fits its column. */
+.auth-social {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.auth-social button {
+  min-width: 0;
+}
+.auth-social button > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 440px) {
+  .auth-social button {
+    flex-direction: column;
+    gap: 0.2rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.35rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+}

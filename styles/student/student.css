@@ -189,8 +189,8 @@
 .student-ui.student-ui .student-settings .student-settings-row p { margin:0; }
 .student-ui.student-ui .student-settings .student-destructive-zone { display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:24px; border-top:0; }
 .student-ui.student-ui .student-delete-copy { max-width:36rem; margin:0; text-wrap:pretty; line-height:1.6; }
-.student-ui.student-ui .student-delete-confirm { display:flex; align-items:center; gap:10px; min-height:44px; max-width:36rem; cursor:pointer; }
-.student-ui.student-ui .student-delete-confirm input { margin:0; }
+.student-ui.student-ui .student-delete-confirm { display:flex; align-items:flex-start; gap:10px; min-height:44px; padding-block:max(0px, calc((44px - 1lh) / 2)); max-width:36rem; cursor:pointer; }
+.student-ui.student-ui .student-delete-confirm input { font:inherit; line-height:inherit; margin:calc((1lh - 20px) / 2) 0 0; }
 .student-ui.student-ui .delete-take { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--para-app-color-danger-existing); border-radius:10px; background:transparent; color:var(--para-app-color-danger-existing); font-size:14px; transition:background-color 140ms ease-out; }
 .student-ui.student-ui .delete-take:hover:not(:disabled) { background:var(--para-app-field); }
 .student-ui.student-ui .group-card-title { font-family:var(--font-serif); font-size:22px; line-height:1.5; }

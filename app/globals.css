@@ -3893,18 +3893,25 @@ body:has(.setup-wash) {
 /* Mobile layout pass: 44px tap areas that keep the visual size and spacing.
    The negative block margin cancels the extra height, so the line box stays one line tall. */
 .tap-target {
-  display: inline-flex;
-  align-items: center;
-  min-width: 44px;
-  min-height: 44px;
-  margin-block: -12px;
-  margin-block: calc((1lh - 44px) / 2);
+  /* Invisible hit area: the link keeps its normal (wrapping) inline layout and
+     the ::after pseudo-element extends the tap area to at least 44px. */
+  position: relative;
+}
+.tap-target::after {
+  content: "";
+  position: absolute;
+  inset-block: -12px;
+  inset-block: min(-12px, calc((1em - 44px) / 2));
+  inset-inline: min(0px, calc((100% - 44px) / 2));
 }
 
 /* Delete-account confirmation: the whole label row is the 44px tap area. */
 .delete-confirm {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  /* Centre a single line in the 44px row; longer text wraps below it. */
+  padding-block: 10px;
+  padding-block: max(0px, calc((44px - 1lh) / 2));
   gap: 10px;
   min-height: 44px;
   cursor: pointer;
@@ -3914,6 +3921,11 @@ body:has(.setup-wash) {
   width: 20px;
   height: 20px;
   margin: 0;
+  font: inherit;
+  line-height: inherit;
+  /* Line the box up with the first line of the label text. */
+  margin-top: 2px;
+  margin-top: calc((1lh - 20px) / 2);
 }
 
 /* Curriculum shelf reorder arrows: 44px square tap area. */

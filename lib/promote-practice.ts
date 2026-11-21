@@ -64,7 +64,10 @@ export async function promotePracticeToTake(input: { studentId: string; submissi
     }
     return { error: "not_found" };
   }
-  await enqueueAnalyzeIfApproved(row.id);
+  const analyzeStillOpen = jobStatus === "pending" || jobStatus === "running";
+  if (!analyzeStillOpen) {
+    await enqueueAnalyzeIfApproved(row.id);
+  }
   revalidateStudentHotPath(input.studentId);
   return { ok: true, id: row.id, already: false, pieceCode: row.piece.code };
 }

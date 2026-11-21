@@ -69,6 +69,11 @@ function isFailed(state: string | undefined) {
   return (state ?? "").toUpperCase().includes("FAILED");
 }
 
+/**
+ * Per-request upload httpOptions replace SDK defaults (see `fetchUploadUrl` in @google/genai).
+ * Upload needs `apiVersion: ""` and resumable headers; a timeout-only override 404s.
+ * Rely on {@link withServiceWait} around the upload call for the deadline instead.
+ */
 export async function uploadGeminiFile(
   ai: GoogleGenAI,
   bytes: Buffer,
@@ -79,7 +84,7 @@ export async function uploadGeminiFile(
   const uploaded = await withServiceWait(
     ai.files.upload({
       file: blob,
-      config: { mimeType, displayName, httpOptions: { timeout: GEMINI_UPLOAD_WAIT_MS } },
+      config: { mimeType, displayName },
     }),
     "gemini upload",
     GEMINI_UPLOAD_WAIT_MS,

@@ -117,6 +117,22 @@ describe("promotePracticeToTake", () => {
       pieceCode: "song1",
     });
     expect(submission.updateMany).toHaveBeenCalled();
+    expect(enqueue).not.toHaveBeenCalled();
+  });
+
+  it("queues analyze when practice pitch already finished", async () => {
+    submission.findFirst.mockResolvedValueOnce({
+      id: "sub-1",
+      kind: "practice",
+      submittedAt: new Date("2026-11-20T00:00:00.000Z"),
+      piece: { code: "song1" },
+      jobs: [{ status: "done" }],
+    });
+    submission.updateMany.mockResolvedValueOnce({ count: 1 });
+    enqueue.mockResolvedValueOnce({ id: "job-take", status: "pending" });
+
+    await promotePracticeToTake({ studentId: "st-1", submissionId: "sub-1" });
+
     expect(enqueue).toHaveBeenCalledWith("sub-1");
   });
 });

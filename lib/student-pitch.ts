@@ -50,6 +50,8 @@ export function studentPitchCopy(t: {
     silent: t.practiceSilent,
     noNotes: t.practiceNoNotes,
     pitchError: t.practicePitchError,
+    visualFailed: t.practiceCouldNotJudge,
+    pitchOverlaySkipped: t.practicePitchError,
   };
 }
 

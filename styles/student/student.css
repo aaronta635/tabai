@@ -105,7 +105,8 @@
 .student-ui.student-ui :is(input,textarea)::placeholder { color:var(--para-app-muted); opacity:1; }
 .student-ui.student-ui [aria-invalid="true"] { border-color:var(--para-app-color-danger-existing); outline-color:var(--para-app-color-danger-existing); }
 .student-ui.student-ui .field-label { display:block; margin-bottom:6px; font-weight:500; }
-.student-ui.student-ui :is(input[type="checkbox"],input[type="radio"]) { accent-color:var(--para-app-accent); width:18px; height:18px; }
+/* Visually hidden inputs (chip pickers) keep .sr-only's 1px box; the 44px chip label is the tap area. */
+.student-ui.student-ui :is(input[type="checkbox"],input[type="radio"]):not(.sr-only) { accent-color:var(--para-app-accent); width:18px; height:18px; }
 .student-ui.student-ui .status-chip { display:inline-flex; align-items:center; background:var(--para-app-field); color:var(--para-app-text); border:1px solid var(--para-app-edge); border-radius:8px; font-family:inherit; font-size:12px; letter-spacing:0; text-transform:none; line-height:1.6; white-space:normal; padding:6px 10px; }
 .student-ui.student-ui .status-chip.is-quiet { background:transparent; }
 .student-ui.student-ui .studio-table { width:100%; table-layout:auto; font-size:14px; }
@@ -189,8 +190,8 @@
 .student-ui.student-ui .student-settings .student-settings-row p { margin:0; }
 .student-ui.student-ui .student-settings .student-destructive-zone { display:flex; flex-direction:column; align-items:flex-start; gap:12px; padding:24px; border-top:0; }
 .student-ui.student-ui .student-delete-copy { max-width:36rem; margin:0; text-wrap:pretty; line-height:1.6; }
-.student-ui.student-ui .student-delete-confirm { display:flex; align-items:flex-start; gap:10px; min-height:44px; padding-block:max(0px, calc((44px - 1lh) / 2)); max-width:36rem; cursor:pointer; }
-.student-ui.student-ui .student-delete-confirm input { font:inherit; line-height:inherit; margin:calc((1lh - 20px) / 2) 0 0; }
+.student-ui.student-ui .student-delete-confirm { display:flex; align-items:flex-start; gap:10px; min-height:44px; padding-block:10px; padding-block:max(0px, calc((44px - 1lh) / 2)); max-width:36rem; cursor:pointer; }
+.student-ui.student-ui .student-delete-confirm input { font:inherit; line-height:inherit; margin:2px 0 0; margin:calc((1lh - 20px) / 2) 0 0; }
 .student-ui.student-ui .delete-take { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:10px 14px; border:1px solid var(--para-app-color-danger-existing); border-radius:10px; background:transparent; color:var(--para-app-color-danger-existing); font-size:14px; transition:background-color 140ms ease-out; }
 .student-ui.student-ui .delete-take:hover:not(:disabled) { background:var(--para-app-field); }
 .student-ui.student-ui .group-card-title { font-family:var(--font-serif); font-size:22px; line-height:1.5; }

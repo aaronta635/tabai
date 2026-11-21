@@ -162,7 +162,7 @@ export function CurriculumBoard({
           }}
         >
           <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0 flex-1">
+            <div className="shelf-head-main min-w-0 flex-1">
               <ShelfTitle
                 stored={part.name}
                 onRename={async (name) => {

@@ -3891,10 +3891,9 @@ body:has(.setup-wash) {
 .take-recorder-actions button { min-height: 44px; }
 
 /* Mobile layout pass: 44px tap areas that keep the visual size and spacing.
-   The negative block margin cancels the extra height, so the line box stays one line tall. */
+   The link keeps its normal inline layout (titles may wrap); an invisible
+   ::after extends the hit area to at least 44px tall and 44px wide. */
 .tap-target {
-  /* Invisible hit area: the link keeps its normal (wrapping) inline layout and
-     the ::after pseudo-element extends the tap area to at least 44px. */
   position: relative;
 }
 .tap-target::after {
@@ -3969,5 +3968,14 @@ body:has(.setup-wash) {
     padding: 0.4rem 0.35rem;
     font-size: 0.85rem;
     line-height: 1.2;
+  }
+}
+
+/* Curriculum shelves on phones: the name field takes its own row and the
+   Assign / reorder controls wrap below it, so the 44px arrows never squeeze
+   the shelf name. */
+@media (max-width: 640px) {
+  .shelf-head-main {
+    flex: 1 1 100%;
   }
 }

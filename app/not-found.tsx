@@ -14,7 +14,7 @@ export default async function NotFound() {
   return (
     <SiteFrame locale={locale}>
       <main id="main">
-        <header className="page-hero page-hero-light surface-noise" aria-labelledby="page-title">
+        <header className="page-hero page-hero-light surface-noise not-found-hero" aria-labelledby="page-title">
           <div className="wrap page-hero-grid">
             <div className="page-hero-copy">
               <p className="eyebrow">{page.eyebrow}</p>

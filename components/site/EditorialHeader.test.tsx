@@ -28,3 +28,14 @@ it("points the free-trial CTA at the in-app signup", () => {
   render(<EditorialHeader />);
   expect(screen.getByRole("link", { name: /Try for free/ })).toHaveAttribute("href", "/en/signup");
 });
+
+it("keeps the visible VI code in the language links' accessible names", async () => {
+  const user = userEvent.setup();
+  render(<EditorialHeader />);
+  expect(screen.getByRole("link", { name: "VI Switch to Vietnamese" })).toHaveAttribute("href", "/vi");
+  await user.click(screen.getByRole("button", { name: "Menu" }));
+  const group = screen.getByRole("group", { name: "Language" });
+  const links = Array.from(group.querySelectorAll("a"));
+  expect(links.map((link) => link.textContent?.trim())).toEqual(["EN", "VI Switch to Vietnamese"]);
+  expect(links[0]).toHaveAttribute("aria-current", "true");
+});

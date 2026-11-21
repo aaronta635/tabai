@@ -108,10 +108,9 @@ export function EditorialHeader() {
             className="ed-nav-story ed-language ed-nav-inline"
             href={languageChoiceHref("vi", "/")}
             hrefLang="vi"
-            lang="vi"
-            aria-label={navigation.languageLabel}
           >
-            {navigation.languageShort}
+            <span lang="vi">{navigation.languageShort}</span>
+            <span className="sr-only"> {navigation.languageLabel}</span>
           </a>
           <EditorialCta />
           <button
@@ -146,11 +145,12 @@ export function EditorialHeader() {
             </Link>
           ))}
           <div className="ed-menu-language" role="group" aria-label={navigation.languageGroup}>
-            <a href={languageChoiceHref("en", "/")} hrefLang="en" lang="en" aria-current="true">
+            <a href={languageChoiceHref("en", "/")} hrefLang="en" aria-current="true">
               EN
             </a>
-            <a href={languageChoiceHref("vi", "/")} hrefLang="vi" lang="vi" aria-label={navigation.languageLabel}>
-              VI
+            <a href={languageChoiceHref("vi", "/")} hrefLang="vi">
+              <span lang="vi">VI</span>
+              <span className="sr-only"> {navigation.languageLabel}</span>
             </a>
           </div>
         </div>

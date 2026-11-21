@@ -121,12 +121,12 @@ export function Navigation({ locale }: { locale: Locale }) {
               key={code}
               href={languageChoiceHref(code, plainPath)}
               hrefLang={code}
-              lang={code}
               aria-current={code === locale ? "true" : undefined}
-              aria-label={code === locale ? undefined : dictionary.languageLabel}
               onClick={() => setOpen(false)}
             >
-              {code.toUpperCase()}
+              {/* The visible code stays in the accessible name; the hidden text says what it does. */}
+              <span lang={code}>{code.toUpperCase()}</span>
+              {code === locale ? null : <span className="sr-only"> {dictionary.languageLabel}</span>}
             </a>
           ))}
         </div>

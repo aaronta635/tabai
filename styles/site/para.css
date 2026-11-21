@@ -1673,3 +1673,13 @@
     color: var(--para-espresso);
   }
 }
+
+/* 404: the heading wraps to two lines on phones, so give the line under it room. */
+.para-site .not-found-hero .page-hero-copy h1 {
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .para-site .not-found-hero .page-hero-copy h1 {
+    margin-bottom: 20px;
+  }
+}

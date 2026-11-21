@@ -117,6 +117,8 @@ export default async function AdminSubmissionPage({ params }: { params: Promise<
               silent: t.teacher.analyzeSilent,
               noNotes: t.teacher.analyzeNoNotes,
               pitchError: t.teacher.analyzePitchError,
+              visualFailed: t.teacher.analyzeVisualFailed,
+              pitchOverlaySkipped: t.teacher.analyzePitchOverlaySkipped,
               timedOut: t.teacher.analyzeTimedOut,
             },
           }}

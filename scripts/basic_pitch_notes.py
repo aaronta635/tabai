@@ -23,8 +23,15 @@ def main() -> int:
     wav_path = sys.argv[1]
     try:
         from basic_pitch.inference import predict  # type: ignore
-    except ImportError:
-        print(json.dumps({"error": "basic-pitch not installed", "notes": []}))
+    except ImportError as exc:
+        print(
+            json.dumps(
+                {
+                    "error": f"basic-pitch not installed: {exc}",
+                    "notes": [],
+                }
+            )
+        )
         return 0
 
     try:

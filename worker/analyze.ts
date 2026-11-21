@@ -1,7 +1,7 @@
 import { mkdtemp, writeFile, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { Prisma } from "@prisma/client";
+import type { Prisma, SubmissionKind } from "@prisma/client";
 import { ANALYZE_PYTHON_WAIT_MS, COMPARE_PROMPT_VERSION, EXTRACT_TAKE_PROMPT_VERSION, PIPELINE_VERSION, PIPELINE_VERSION_SCORE, PITCH_OVERLAY_VERSION } from "../lib/constants";
 import { enqueueTrainIfIdle, getReadyPieceModel, sniffMime } from "../lib/catalog";
 import {
@@ -23,6 +23,7 @@ import { overlayPitchIssues, pitchNotesFromMetrics, type HeardPitchNote } from "
 import { usesGeminiVisual } from "../lib/practice";
 import {
   factVerdictsComplete,
+  heardExtractFromMetrics,
   parseCompareObservations,
   parseTrainExtract,
   type CompareObservations,
@@ -231,12 +232,298 @@ async function applyHeardPitchOverlay(input: {
   };
 }
 
-export async function runAnalyze(submissionId: string) {
-  const started = Date.now();
-  const submission = await prisma.submission.findUnique({
+type AnalyzeSubmission = NonNullable<Awaited<ReturnType<typeof loadAnalyzeSubmission>>>;
+
+async function loadAnalyzeSubmission(submissionId: string) {
+  return prisma.submission.findUnique({
     where: { id: submissionId },
     include: { student: true, media: true, piece: { include: { teacher: { select: { feedbackLocale: true } } } } },
   });
+}
+
+/** True when an in-flight practice pitch job should finish with Gemini after promotion. */
+export function needsGeminiCatchUpAfterPromotion(startedAsPractice: boolean, kindNow: SubmissionKind) {
+  return startedAsPractice && usesGeminiVisual(kindNow);
+}
+
+export type AnalyzeWriteState = {
+  observations: Prisma.InputJsonValue | undefined;
+  heardExtract: TrainExtract | null;
+  metrics: Prisma.InputJsonValue;
+  heardNotes: HeardPitchNote[];
+  pipelineVersion: string;
+  costCents: number;
+  confidence: number | null;
+};
+
+export type GeminiVisualPassResult = AnalyzeWriteState & {
+  visualOk: boolean;
+  visualError?: string;
+};
+
+export function formatGeminiVisualError(error: unknown) {
+  if (error instanceof Error) {
+    const raw = error.message.trim();
+    if (!raw || raw.startsWith("{")) return "Gemini could not analyze this video.";
+    if (raw.includes("404")) return "Gemini file upload failed.";
+    return raw.slice(0, 240);
+  }
+  return "Gemini could not analyze this video.";
+}
+
+export function geminiVisualComplete(metrics: Prisma.InputJsonValue, observations: Prisma.InputJsonValue | undefined) {
+  return heardExtractFromMetrics(metrics) != null && observations != null;
+}
+
+export function mergeGeminiVisualPassResult(base: AnalyzeWriteState, patch: GeminiVisualPassResult): AnalyzeWriteState {
+  if (!patch.visualOk) {
+    const metrics = {
+      ...(base.metrics as object),
+      ...(patch.visualError ? { gemini_visual_error: patch.visualError } : {}),
+    };
+    return {
+      ...base,
+      metrics,
+      costCents: base.costCents + patch.costCents,
+    };
+  }
+  return {
+    observations: patch.observations ?? base.observations,
+    heardExtract: patch.heardExtract ?? base.heardExtract,
+    metrics: patch.metrics,
+    heardNotes: patch.heardNotes,
+    pipelineVersion: patch.pipelineVersion,
+    costCents: patch.costCents,
+    confidence: patch.confidence ?? base.confidence,
+  };
+}
+
+async function tryApplyPracticePitchOverlay(input: {
+  submissionId: string;
+  pieceModel: Awaited<ReturnType<typeof getReadyPieceModel>>;
+  tutorialMediaId: string | null;
+  teacherLocale: "en" | "vi";
+  videoPath: string;
+  dir: string;
+  heardNotes: HeardPitchNote[];
+  metrics: Prisma.InputJsonValue;
+}): Promise<AnalyzeWriteState> {
+  const base: AnalyzeWriteState = {
+    observations: EMPTY_OBSERVATIONS as unknown as Prisma.InputJsonValue,
+    heardExtract: null,
+    metrics: input.metrics,
+    heardNotes: input.heardNotes,
+    pipelineVersion: PIPELINE_VERSION,
+    costCents: 0,
+    confidence: null,
+  };
+  try {
+    const overlaid = await applyHeardPitchOverlay({
+      submissionId: input.submissionId,
+      pieceModel: input.pieceModel,
+      tutorialMediaId: input.tutorialMediaId,
+      teacherLocale: input.teacherLocale,
+      videoPath: input.videoPath,
+      dir: input.dir,
+      heardNotes: input.heardNotes,
+      metrics: input.metrics,
+      observations: EMPTY_OBSERVATIONS,
+    });
+    return {
+      ...base,
+      heardNotes: overlaid.heardNotes,
+      metrics: overlaid.metrics,
+      observations: overlaid.observations as unknown as Prisma.InputJsonValue,
+      pipelineVersion: input.pieceModel ? PIPELINE_VERSION_SCORE : PIPELINE_VERSION,
+      confidence: overlaid.observations.confidence,
+    };
+  } catch (error) {
+    console.error(
+      "practice pitch overlay skipped",
+      input.submissionId,
+      error instanceof Error ? error.message : error,
+    );
+    return {
+      ...base,
+      metrics: {
+        ...(input.metrics as object),
+        pitch_overlay_skipped: true,
+        pitch_overlay_error: error instanceof Error ? error.message.slice(0, 240) : "pitch overlay failed",
+      },
+      observations: EMPTY_OBSERVATIONS as unknown as Prisma.InputJsonValue,
+      confidence: EMPTY_OBSERVATIONS.confidence,
+    };
+  }
+}
+
+async function runGeminiVisualPass(input: {
+  submission: AnalyzeSubmission;
+  submissionId: string;
+  bytes: Buffer;
+  videoPath: string;
+  dir: string;
+  pieceModel: Awaited<ReturnType<typeof getReadyPieceModel>>;
+  heardNotes: HeardPitchNote[];
+  metrics: Prisma.InputJsonValue;
+  pipelineVersion: string;
+  costCents: number;
+  skipPitchOverlay?: boolean;
+}): Promise<GeminiVisualPassResult> {
+  const base: GeminiVisualPassResult = {
+    observations: undefined,
+    heardExtract: null,
+    metrics: input.metrics,
+    heardNotes: input.heardNotes,
+    pipelineVersion: input.pipelineVersion,
+    costCents: input.costCents,
+    confidence: null,
+    visualOk: false,
+  };
+
+  const ai = geminiClient();
+  if (!ai) {
+    return { ...base, visualError: "Gemini is not configured." };
+  }
+
+  let heardNotes = input.heardNotes;
+  let metrics = input.metrics;
+  let pipelineVersion = input.pipelineVersion;
+  let costCents = input.costCents;
+  let observations: Prisma.InputJsonValue | undefined;
+  let heardExtract: TrainExtract | null = null;
+  let confidence: number | null = null;
+
+  const uploaded: string[] = [];
+  try {
+    const video = await uploadGeminiFile(
+      ai,
+      input.bytes,
+      sniffMime(input.bytes, "video/mp4"),
+      `${input.submission.piece.title}-take`,
+    );
+    uploaded.push(video.name);
+
+    try {
+      const heard = await extractHeardTake({
+        file: video,
+        pieceTitle: input.submission.piece.title,
+      });
+      if (heard) {
+        heardExtract = heard.extract;
+        metrics = { ...(metrics as object), heard_extract: heard.extract };
+        costCents += heard.costCents;
+        await prisma.event.create({
+          data: {
+            actorType: "system",
+            teacherId: input.submission.piece.teacherId,
+            actorId: input.submissionId,
+            name: "take.extract",
+            propsJson: {
+              promptVersion: EXTRACT_TAKE_PROMPT_VERSION,
+              geminiModel: heard.model,
+              ...heard.usage,
+              costCents: heard.costCents,
+            },
+          },
+        });
+      }
+    } catch (error) {
+      console.error(
+        "take extract skipped",
+        input.submissionId,
+        error instanceof Error ? error.message : error,
+      );
+    }
+
+    if (input.pieceModel) {
+      try {
+        const source = (input.pieceModel.sourceJson ?? null) as PieceModelSourceJson | null;
+        const compared = await compareTake({
+          file: video,
+          pieceTitle: input.submission.piece.title,
+          pieceNote: input.submission.piece.note,
+          metrics,
+          scoreJson: input.pieceModel.scoreJson,
+          tutorialCuesJson: input.pieceModel.tutorialCuesJson,
+          heardExtract,
+          sameAsTutorial: Boolean(
+            input.submission.piece.tutorialMediaId && input.submission.mediaId === input.submission.piece.tutorialMediaId,
+          ),
+          hasSheet: Boolean(source?.sheetMediaId || input.submission.piece.sheetMediaId),
+        });
+        if (compared) {
+          let observationsParsed = compared.observations;
+          if (pitchEnabled() && !input.skipPitchOverlay) {
+            const overlaid = await applyHeardPitchOverlay({
+              submissionId: input.submissionId,
+              pieceModel: input.pieceModel,
+              tutorialMediaId: input.submission.piece.tutorialMediaId,
+              teacherLocale: input.submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
+              videoPath: input.videoPath,
+              dir: input.dir,
+              heardNotes,
+              metrics,
+              observations: observationsParsed,
+            });
+            heardNotes = overlaid.heardNotes;
+            metrics = overlaid.metrics;
+            observationsParsed = overlaid.observations;
+          }
+          observations = observationsParsed as unknown as Prisma.InputJsonValue;
+          pipelineVersion = PIPELINE_VERSION_SCORE;
+          costCents += compared.costCents;
+          confidence = observationsParsed.confidence;
+          await prisma.event.create({
+            data: {
+              actorType: "system",
+              teacherId: input.submission.piece.teacherId,
+              actorId: input.submissionId,
+              name: "piece.compare",
+              propsJson: {
+                pieceModelId: input.pieceModel.id,
+                version: input.pieceModel.version,
+                promptVersion: COMPARE_PROMPT_VERSION,
+                geminiModel: compared.model,
+                ...compared.usage,
+                costCents: compared.costCents,
+                confidence,
+              },
+            },
+          });
+        }
+      } catch (error) {
+        console.error(
+          "score compare skipped",
+          input.submissionId,
+          error instanceof Error ? error.message : error,
+        );
+      }
+    }
+    if (observations == null && heardExtract == null) {
+      return { ...base, costCents, metrics, heardNotes, visualError: "Gemini returned no score compare." };
+    }
+    return {
+      observations,
+      heardExtract,
+      metrics,
+      heardNotes,
+      pipelineVersion,
+      costCents,
+      confidence,
+      visualOk: observations != null,
+    };
+  } catch (error) {
+    const visualError = formatGeminiVisualError(error);
+    console.error("gemini visual pass failed", input.submissionId, visualError);
+    return { ...base, visualError };
+  } finally {
+    await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
+  }
+}
+
+export async function runAnalyze(submissionId: string) {
+  const started = Date.now();
+  const submission = await loadAnalyzeSubmission(submissionId);
   if (!submission) throw new Error("submission not found");
   if (!submission.piece.demo && !submission.student.approvedAt) {
     throw new Error("student not approved — refusing analyze");
@@ -303,170 +590,111 @@ export async function runAnalyze(submissionId: string) {
       }
     }
 
-    let observations: Prisma.InputJsonValue | undefined;
-    let heardExtract: TrainExtract | null = null;
-    let pipelineVersion = PIPELINE_VERSION;
-    let costCents = 0;
-    let confidence: number | null = null;
-
     const pieceModel = await getReadyPieceModel(submission.pieceId);
     if (!pieceModel) {
       await enqueueTrainIfIdle(submission.pieceId);
     }
 
+    const startedAsPractice = submission.kind === "practice";
     const visual = usesGeminiVisual(submission.kind);
-    const ai = visual ? geminiClient() : null;
-    if (ai) {
-      const uploaded: string[] = [];
-      try {
-        const video = await uploadGeminiFile(
-          ai,
-          bytes,
-          sniffMime(bytes, "video/mp4"),
-          `${submission.piece.title}-take`,
-        );
-        uploaded.push(video.name);
+    const teacherLocale = submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi";
 
-        try {
-          const heard = await extractHeardTake({
-            file: video,
-            pieceTitle: submission.piece.title,
-          });
-          if (heard) {
-            heardExtract = heard.extract;
-            metrics = { ...(metrics as object), heard_extract: heard.extract };
-            costCents += heard.costCents;
-            await prisma.event.create({
-              data: {
-                actorType: "system",
-                teacherId: submission.piece.teacherId,
-                actorId: submissionId,
-                name: "take.extract",
-                propsJson: {
-                  promptVersion: EXTRACT_TAKE_PROMPT_VERSION,
-                  geminiModel: heard.model,
-                  ...heard.usage,
-                  costCents: heard.costCents,
-                },
-              },
-            });
-          }
-        } catch (error) {
-          console.error(
-            "take extract skipped",
-            submissionId,
-            error instanceof Error ? error.message : error,
-          );
-        }
+    let writeState: AnalyzeWriteState = {
+      observations: undefined,
+      heardExtract: null,
+      metrics,
+      heardNotes,
+      pipelineVersion: PIPELINE_VERSION,
+      costCents: 0,
+      confidence: null,
+    };
 
-        if (pieceModel) {
-          try {
-            const source = (pieceModel.sourceJson ?? null) as PieceModelSourceJson | null;
-            const compared = await compareTake({
-              file: video,
-              pieceTitle: submission.piece.title,
-              pieceNote: submission.piece.note,
-              metrics,
-              scoreJson: pieceModel.scoreJson,
-              tutorialCuesJson: pieceModel.tutorialCuesJson,
-              heardExtract,
-              sameAsTutorial: Boolean(
-                submission.piece.tutorialMediaId && submission.mediaId === submission.piece.tutorialMediaId,
-              ),
-              hasSheet: Boolean(source?.sheetMediaId || submission.piece.sheetMediaId),
-            });
-            if (compared) {
-              let observationsParsed = compared.observations;
-              if (pitchEnabled()) {
-                const overlaid = await applyHeardPitchOverlay({
-                  submissionId,
-                  pieceModel,
-                  tutorialMediaId: submission.piece.tutorialMediaId,
-                  teacherLocale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
-                  videoPath,
-                  dir,
-                  heardNotes,
-                  metrics,
-                  observations: observationsParsed,
-                });
-                heardNotes = overlaid.heardNotes;
-                metrics = overlaid.metrics;
-                observationsParsed = overlaid.observations;
-              }
-              observations = observationsParsed as unknown as Prisma.InputJsonValue;
-              pipelineVersion = PIPELINE_VERSION_SCORE;
-              costCents += compared.costCents;
-              confidence = observationsParsed.confidence;
-              await prisma.event.create({
-                data: {
-                  actorType: "system",
-                  teacherId: submission.piece.teacherId,
-                  actorId: submissionId,
-                  name: "piece.compare",
-                  propsJson: {
-                    pieceModelId: pieceModel.id,
-                    version: pieceModel.version,
-                    promptVersion: COMPARE_PROMPT_VERSION,
-                    geminiModel: compared.model,
-                    ...compared.usage,
-                    costCents: compared.costCents,
-                    confidence,
-                  },
-                },
-              });
-            }
-          } catch (error) {
-            console.error(
-              "score compare skipped",
-              submissionId,
-              error instanceof Error ? error.message : error,
-            );
-          }
-        }
-      } finally {
-        await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
-      }
-    } else if (!visual) {
-      const overlaid = await applyHeardPitchOverlay({
+    if (visual) {
+      const gemini = await runGeminiVisualPass({
+        submission,
+        submissionId,
+        bytes,
+        videoPath,
+        dir,
+        pieceModel,
+        heardNotes: writeState.heardNotes,
+        metrics: writeState.metrics,
+        pipelineVersion: writeState.pipelineVersion,
+        costCents: writeState.costCents,
+      });
+      writeState = mergeGeminiVisualPassResult(writeState, gemini);
+    } else {
+      const practice = await tryApplyPracticePitchOverlay({
         submissionId,
         pieceModel,
         tutorialMediaId: submission.piece.tutorialMediaId,
-        teacherLocale: submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi",
+        teacherLocale,
         videoPath,
         dir,
-        heardNotes,
-        metrics,
-        observations: EMPTY_OBSERVATIONS,
+        heardNotes: writeState.heardNotes,
+        metrics: writeState.metrics,
       });
-      heardNotes = overlaid.heardNotes;
-      metrics = overlaid.metrics;
-      observations = overlaid.observations as unknown as Prisma.InputJsonValue;
-      if (pieceModel) pipelineVersion = PIPELINE_VERSION_SCORE;
-      confidence = overlaid.observations.confidence;
+      writeState = { ...writeState, ...practice };
     }
+
+    const refreshKind = async () =>
+      prisma.submission.findUnique({
+        where: { id: submissionId },
+        select: { kind: true, status: true },
+      });
+
+    const applyPromotionGeminiCatchUp = async (state: AnalyzeWriteState) => {
+      const kindNow = await refreshKind();
+      if (!kindNow || !needsGeminiCatchUpAfterPromotion(startedAsPractice, kindNow.kind)) return state;
+      if (geminiVisualComplete(state.metrics, state.observations)) return state;
+      const prior = (state.metrics as { gemini_visual_error?: unknown }).gemini_visual_error;
+      if (typeof prior === "string") return state;
+      const gemini = await runGeminiVisualPass({
+        submission,
+        submissionId,
+        bytes,
+        videoPath,
+        dir,
+        pieceModel,
+        heardNotes: state.heardNotes,
+        metrics: state.metrics,
+        pipelineVersion: state.pipelineVersion,
+        costCents: state.costCents,
+        skipPitchOverlay: true,
+      });
+      return mergeGeminiVisualPassResult(state, gemini);
+    };
+
+    writeState = await applyPromotionGeminiCatchUp(writeState);
+    writeState = await applyPromotionGeminiCatchUp(writeState);
+
+    let kindNow = await refreshKind();
 
     await prisma.analysis.create({
       data: {
         submissionId,
-        pipelineVersion,
-        metricsJson: metrics,
-        observationsJson: observations,
-        costCents,
+        pipelineVersion: writeState.pipelineVersion,
+        metricsJson: writeState.metrics,
+        observationsJson: writeState.observations,
+        costCents: writeState.costCents,
         latencyMs: Date.now() - started,
       },
     });
 
-    if (confidence != null) {
+    if (writeState.confidence != null) {
       await prisma.submission.update({
         where: { id: submissionId },
-        data: { confidence },
+        data: { confidence: writeState.confidence },
       });
     }
 
-    if (submission.kind === "practice") return;
-    if (!observations) return;
-    if (!isClaimableStatus(submission.status)) return;
-    if (!factVerdictsComplete(parseCompareObservations(observations))) return;
+    kindNow = await refreshKind();
+    if (!kindNow) return;
+
+    if (kindNow.kind === "practice") return;
+    if (!writeState.observations) return;
+    if (!isClaimableStatus(kindNow.status)) return;
+    if (!factVerdictsComplete(parseCompareObservations(writeState.observations))) return;
     await enqueueJob("draft", { submissionId }, submissionId);
   } finally {
     await rm(dir, { recursive: true, force: true });

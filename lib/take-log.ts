@@ -30,6 +30,8 @@ export type TakeLogCopy = {
   silent: string;
   noNotes: string;
   pitchError: string;
+  visualFailed: string;
+  pitchOverlaySkipped: string;
   timedOut?: string;
 };
 
@@ -41,6 +43,18 @@ function metricsRow(metrics: unknown): Record<string, unknown> | null {
 export function takeSilenceRatio(metrics: unknown): number | null {
   const ratio = metricsRow(metrics)?.silence_ratio;
   return typeof ratio === "number" && Number.isFinite(ratio) ? ratio : null;
+}
+
+export function geminiVisualErrorFromMetrics(metrics: unknown): string | null {
+  const error = metricsRow(metrics)?.gemini_visual_error;
+  return typeof error === "string" && error.length > 0 ? error : null;
+}
+
+export function pitchOverlaySkippedFromMetrics(metrics: unknown): string | null {
+  const skipped = metricsRow(metrics)?.pitch_overlay_skipped;
+  if (skipped !== true) return null;
+  const error = metricsRow(metrics)?.pitch_overlay_error;
+  return typeof error === "string" && error.length > 0 ? error : "pitch overlay skipped";
 }
 
 function hasAnalysis(heard: TrainExtract | null, metrics: unknown) {
@@ -78,6 +92,7 @@ export function takeLogKind({
   if (silence !== null && silence >= SILENT_RATIO) return "silent";
   const notes = pitchNotesFromMetrics(metrics);
   const chords = heard ? chordsFromScore(heard) : [];
+  if (pitchOverlaySkippedFromMetrics(metrics)) return "pitch_error";
   if (notes.length === 0 && pitchErrorFromMetrics(metrics)) return "pitch_error";
   if (notes.length === 0 && chords.length === 0) return "no_notes";
   return "ready";
@@ -125,11 +140,23 @@ export function takeLogView({
       return { kind, line: copy.silent.replaceAll("{pct}", String(pct)), detail: null, open: false };
     }
     case "pitch_error":
-      return { kind, line: copy.pitchError, detail: pitchErrorFromMetrics(metrics), open: false };
+      return {
+        kind,
+        line: pitchOverlaySkippedFromMetrics(metrics) ? copy.pitchOverlaySkipped : copy.pitchError,
+        detail: pitchOverlaySkippedFromMetrics(metrics) ?? pitchErrorFromMetrics(metrics),
+        open: false,
+      };
     case "no_notes":
       return { kind, line: copy.noNotes, detail: null, open: false };
-    case "ready":
-      return { kind, line: "", detail: null, open: false };
+    case "ready": {
+      const visualError = geminiVisualErrorFromMetrics(metrics);
+      return {
+        kind,
+        line: visualError ? copy.visualFailed : "",
+        detail: visualError,
+        open: false,
+      };
+    }
     default: {
       const never: never = kind;
       return never;

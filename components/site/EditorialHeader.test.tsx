@@ -39,3 +39,22 @@ it("keeps the visible VI code in the language links' accessible names", async ()
   expect(links.map((link) => link.textContent?.trim())).toEqual(["EN", "VI Switch to Vietnamese"]);
   expect(links[0]).toHaveAttribute("aria-current", "true");
 });
+
+it("builds the teacher-signup CTA target for each locale", async () => {
+  const { teacherSignupHref } = await import("@/lib/site/signup-href");
+  expect(teacherSignupHref("en")).toBe("/en/signup/teacher");
+  expect(teacherSignupHref("vi")).toBe("/vi/signup/teacher");
+});
+
+it("renders the Vietnamese editorial header with a /vi teacher-signup CTA and an EN switch", async () => {
+  const user = userEvent.setup();
+  render(<EditorialHeader locale="vi" />);
+  expect(screen.getByRole("link", { name: /Dùng thử miễn phí/ })).toHaveAttribute("href", "/vi/signup/teacher");
+  expect(screen.getByRole("link", { name: "Cách hoạt động" })).toHaveAttribute("href", "#how-it-works");
+  expect(screen.getByRole("link", { name: "EN Chuyển sang tiếng Anh" })).toHaveAttribute("href", "/en");
+  await user.click(screen.getByRole("button", { name: "Trình đơn" }));
+  const group = screen.getByRole("group", { name: "Ngôn ngữ" });
+  const links = Array.from(group.querySelectorAll("a"));
+  expect(links.map((link) => link.textContent?.trim())).toEqual(["EN Chuyển sang tiếng Anh", "VI"]);
+  expect(links[1]).toHaveAttribute("aria-current", "true");
+});

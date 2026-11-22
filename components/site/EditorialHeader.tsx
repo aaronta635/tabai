@@ -3,13 +3,9 @@ import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ParaIcon } from "@/components/site/ParaIcon";
 import { content, homeHref, languageChoiceHref, localePath, type Locale } from "@/lib/site/content";
-import { authPath } from "@/lib/return-path";
+import { teacherSignupHref } from "@/lib/site/signup-href";
 import "@/styles/site/editorial-home.css";
 
-/** "Try for free" opens teacher signup (/en/signup/teacher, /vi/signup/teacher). */
-export function teacherSignupHref(locale: Locale) {
-  return localePath(locale, authPath("signup", "tutor"));
-}
 /** Matches the CSS breakpoint where the inline links give way to the menu. */
 const MENU_QUERY = "(max-width: 760px)";
 

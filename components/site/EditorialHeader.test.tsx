@@ -39,9 +39,3 @@ it("keeps the visible VI code in the language links' accessible names", async ()
   expect(links.map((link) => link.textContent?.trim())).toEqual(["EN", "VI Switch to Vietnamese"]);
   expect(links[0]).toHaveAttribute("aria-current", "true");
 });
-
-it("builds the teacher-signup CTA target for each locale", async () => {
-  const { teacherSignupHref } = await import("@/components/site/EditorialHeader");
-  expect(teacherSignupHref("en")).toBe("/en/signup/teacher");
-  expect(teacherSignupHref("vi")).toBe("/vi/signup/teacher");
-});

@@ -162,7 +162,7 @@ export function CurriculumBoard({
           }}
         >
           <div className="mb-2 flex flex-wrap items-start justify-between gap-3">
-            <div className="min-w-0 flex-1">
+            <div className="shelf-head-main min-w-0 flex-1">
               <ShelfTitle
                 stored={part.name}
                 onRename={async (name) => {
@@ -190,12 +190,12 @@ export function CurriculumBoard({
             </div>
             <div className="flex flex-wrap items-center gap-1.5">
               <AssignDialog partId={part.id} classes={classes} students={students} />
-              <button type="button" className="icon-btn" aria-label={t("moveUp")} disabled={index === 0} onClick={() => shift(part.id, "up")}>
+              <button type="button" className="icon-btn reorder-btn" aria-label={t("moveUp")} disabled={index === 0} onClick={() => shift(part.id, "up")}>
                 ↑
               </button>
               <button
                 type="button"
-                className="icon-btn"
+                className="icon-btn reorder-btn"
                 aria-label={t("moveDown")}
                 disabled={index === shelves.length - 1}
                 onClick={() => shift(part.id, "down")}
@@ -241,7 +241,7 @@ export function CurriculumBoard({
                       }}
                     >
                       <td>
-                        <Link href={`/teacher/curriculum/${piece.id}`} className="font-semibold">
+                        <Link href={`/teacher/curriculum/${piece.id}`} className="tap-target font-semibold">
                           {piece.title}
                         </Link>
                         <p className="text-xs text-ink-soft">{stat?.className ?? files}</p>

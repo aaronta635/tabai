@@ -73,7 +73,7 @@ export default async function PiecePage({ params }: { params: Promise<{ id: stri
 
   return (
     <div className="teacher-piece piece-edit space-y-5">
-      <Link href="/teacher/curriculum" className="font-ui text-sm text-ink-soft hover:text-ink">
+      <Link href="/teacher/curriculum" className="tap-target font-ui text-sm text-ink-soft hover:text-ink">
         ← {t.teacher.navCurriculum}
       </Link>
       <StudioTitle

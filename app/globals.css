@@ -3889,3 +3889,92 @@ body:has(.setup-wash) {
 .take-recorder-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .take-recorder-actions .btn,
 .take-recorder-actions button { min-height: 44px; }
+
+/* Mobile layout pass: 44px tap areas that keep the visual size and spacing.
+   The link keeps its normal inline layout (titles may wrap); an invisible
+   ::after extends the hit area to at least 44px tall and 44px wide. */
+.tap-target {
+  position: relative;
+}
+.tap-target::after {
+  content: "";
+  position: absolute;
+  inset-block: -12px;
+  inset-block: min(-12px, calc((1em - 44px) / 2));
+  inset-inline: min(0px, calc((100% - 44px) / 2));
+}
+
+/* Delete-account confirmation: the whole label row is the 44px tap area. */
+.delete-confirm {
+  display: flex;
+  align-items: flex-start;
+  /* Centre a single line in the 44px row; longer text wraps below it. */
+  padding-block: 10px;
+  padding-block: max(0px, calc((44px - 1lh) / 2));
+  gap: 10px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.delete-confirm input[type="checkbox"] {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  font: inherit;
+  line-height: inherit;
+  /* Line the box up with the first line of the label text. */
+  margin-top: 2px;
+  margin-top: calc((1lh - 20px) / 2);
+}
+
+/* Curriculum shelf reorder arrows: 44px square tap area. */
+.icon-btn.reorder-btn {
+  height: 2.75rem;
+  width: 2.75rem;
+}
+
+/* Avatar picker: the native file field fits narrow screens instead of forcing sideways scroll. */
+.setup-photo {
+  grid-template-columns: minmax(0, 1fr);
+}
+.setup-photo > .setup-block {
+  justify-self: stretch;
+  max-width: 100%;
+}
+.setup-photo input[type="file"] {
+  width: 100%;
+  min-height: 44px;
+}
+
+/* Social sign-in row on narrow phones: three 1fr columns can't shrink below
+   each button's min-content width (icon + label on one line), so at 320px Zalo
+   stuck out of the page. At 440px and below, let the columns shrink and stack
+   the icon above the label so every button fits its column. Above 440px the
+   row renders exactly as before. */
+@media (max-width: 440px) {
+  .auth-social {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .auth-social button {
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-height: 2.75rem;
+    padding: 0.4rem 0.35rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+  }
+  .auth-social button > span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Curriculum shelves on phones: the name field takes its own row and the
+   Assign / reorder controls wrap below it, so the 44px arrows never squeeze
+   the shelf name. */
+@media (max-width: 640px) {
+  .shelf-head-main {
+    flex: 1 1 100%;
+  }
+}

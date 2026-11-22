@@ -57,3 +57,19 @@
 
 .teacher-ui.teacher-ui .add-trigger i { display:inline-flex; align-items:center; justify-content:center; background:var(--para-app-accent); color:var(--para-app-on-accent); border-radius:50%; width:24px; height:24px; }
 .teacher-ui.teacher-ui .add-trigger i svg { width:16px; height:16px; flex-basis:16px; }
+
+/* Curriculum tables: headers break between words only (no "Su/b/mi/ssi/on/s"). */
+.teacher-ui.teacher-ui .shelf-drop .studio-table th { overflow-wrap:normal; word-break:normal; hyphens:manual; }
+/* On phones each piece row becomes two lines: title, submissions and due on
+   top, the move / assign / delete controls on their own full-width line, so
+   nothing is squeezed to one letter per line and nothing scrolls sideways. */
+@media(max-width:640px) {
+ .teacher-ui.teacher-ui .shelf-drop .studio-table,
+ .teacher-ui.teacher-ui .shelf-drop .studio-table :is(thead,tbody) { display:block; width:100%; }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table tr { display:grid; grid-template-columns:minmax(0,1fr) 6rem 4.5rem; border-bottom:1px solid var(--para-app-edge); }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table tbody tr:last-child { border-bottom:0; }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table :is(th,td) { border-bottom:0; min-width:0; }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table td:first-child { overflow-wrap:break-word; }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table th:last-child { display:none; }
+ .teacher-ui.teacher-ui .shelf-drop .studio-table td:last-child { grid-column:1 / -1; padding-top:0; }
+}

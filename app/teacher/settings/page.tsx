@@ -34,8 +34,8 @@ export default async function SettingsPage() {
       <form action={deleteTeacherAccountAction} className="teacher-danger studio-panel space-y-3 pb-4">
         <h2>{t.teacher.deleteAccount}</h2>
         <p className="text-sm leading-relaxed">{t.teacher.deleteAccountBody}</p>
-        <label className="flex items-start gap-2 text-sm">
-          <input type="checkbox" name="confirm" value="yes" required className="mt-1" />
+        <label className="delete-confirm text-sm">
+          <input type="checkbox" name="confirm" value="yes" required />
           <span>{t.teacher.deleteAccountConfirm}</span>
         </label>
         <button type="submit" className="btn">

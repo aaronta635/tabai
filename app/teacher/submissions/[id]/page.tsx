@@ -38,7 +38,7 @@ export default async function SubmissionDetailPage({ params }: { params: Promise
 
   return (
     <div>
-      <Link href="/teacher/submissions" className="text-sm text-ink-soft">
+      <Link href="/teacher/submissions" className="tap-target text-sm text-ink-soft">
         ← {t.teacher.navSubmissions}
       </Link>
       <StudioTitle title={row.student.name} meta={row.piece.title} />

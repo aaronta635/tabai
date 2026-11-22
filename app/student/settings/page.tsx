@@ -30,7 +30,7 @@ export default async function StudentSettingsPage() {
         <h2 className="font-ui">{t.student.deleteAccount}</h2>
         <p className="student-delete-copy">{t.student.deleteAccountBody}</p>
         <p className="student-delete-copy">{t.student.deleteAccountKept}</p>
-        <label className="student-delete-confirm">
+        <label className="student-delete-confirm delete-confirm">
           <input type="checkbox" name="confirm" value="yes" required />
           <span>{t.student.deleteAccountConfirm}</span>
         </label>

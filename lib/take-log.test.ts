@@ -81,12 +81,12 @@ describe("take log", () => {
     const metrics = {
       ...audible,
       pitch_notes: [note],
-      gemini_visual_error: "Gemini file upload failed.",
+      gemini_visual_error_code: "upload_failed",
     };
     expect(takeLogView({ job: job("done"), heard, metrics, copy })).toMatchObject({
       kind: "ready",
       line: "Visual failed",
-      detail: "Gemini file upload failed.",
+      detail: null,
     });
   });
 

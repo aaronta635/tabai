@@ -74,6 +74,16 @@ function isFailed(state: string | undefined) {
  * Upload needs `apiVersion: ""` and resumable headers; a timeout-only override 404s.
  * Rely on {@link withServiceWait} around the upload call for the deadline instead.
  */
+/** If {@link withServiceWait} rejects first, delete a late upload so student video does not sit in Gemini for 48h. */
+export async function discardLateGeminiUpload(ai: GoogleGenAI, uploadWork: Promise<{ name?: string }>) {
+  try {
+    const uploaded = await uploadWork;
+    if (uploaded.name) await deleteGeminiFile(ai, uploaded.name);
+  } catch {
+    // upload failed or was already discarded
+  }
+}
+
 export async function uploadGeminiFile(
   ai: GoogleGenAI,
   bytes: Buffer,
@@ -81,14 +91,17 @@ export async function uploadGeminiFile(
   displayName: string,
 ): Promise<GeminiFileRef> {
   const blob = new Blob([new Uint8Array(bytes)], { type: mimeType });
-  const uploaded = await withServiceWait(
-    ai.files.upload({
-      file: blob,
-      config: { mimeType, displayName },
-    }),
-    "gemini upload",
-    GEMINI_UPLOAD_WAIT_MS,
-  );
+  const uploadWork = ai.files.upload({
+    file: blob,
+    config: { mimeType, displayName },
+  });
+  let uploaded;
+  try {
+    uploaded = await withServiceWait(uploadWork, "gemini upload", GEMINI_UPLOAD_WAIT_MS);
+  } catch (error) {
+    void discardLateGeminiUpload(ai, uploadWork);
+    throw error;
+  }
   const name = uploaded.name;
   if (!name) throw new Error("Gemini file upload returned no name");
 
@@ -103,11 +116,7 @@ export async function uploadGeminiFile(
       throw new Error(`Gemini file processing failed (${displayName})`);
     }
     await sleep(Math.min(2000, remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS)));
-    file = await withServiceWait(
-      ai.files.get({ name, config: { httpOptions: { timeout: GEMINI_FILE_GET_WAIT_MS } } }),
-      "gemini file status",
-      GEMINI_FILE_GET_WAIT_MS,
-    );
+    file = await withServiceWait(ai.files.get({ name }), "gemini file status", GEMINI_FILE_GET_WAIT_MS);
   }
   throw new Error(`Gemini file processing timed out (${displayName})`);
 }

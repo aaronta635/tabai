@@ -16,6 +16,13 @@ import {
   uploadGeminiFile,
   type GeminiFileRef,
 } from "../lib/gemini";
+import {
+  classifyGeminiVisualError,
+  geminiVisualComplete,
+  GEMINI_VISUAL_ERROR_CODES,
+  logGeminiVisualFailure,
+  type GeminiVisualErrorCode,
+} from "../lib/gemini-visual";
 import { enqueueJob } from "../lib/jobs";
 import { isClaimableStatus } from "../lib/forms";
 import { prisma } from "../lib/prisma";
@@ -258,42 +265,40 @@ export type AnalyzeWriteState = {
 
 export type GeminiVisualPassResult = AnalyzeWriteState & {
   visualOk: boolean;
-  visualError?: string;
+  visualErrorCode?: GeminiVisualErrorCode;
+  costDelta: number;
+  /** Set when this pass performed a new Gemini upload (reuse for catch-up in the same job). */
+  geminiFile?: GeminiFileRef | null;
 };
 
-export function formatGeminiVisualError(error: unknown) {
-  if (error instanceof Error) {
-    const raw = error.message.trim();
-    if (!raw || raw.startsWith("{")) return "Gemini could not analyze this video.";
-    if (raw.includes("404")) return "Gemini file upload failed.";
-    return raw.slice(0, 240);
-  }
-  return "Gemini could not analyze this video.";
-}
-
-export function geminiVisualComplete(metrics: Prisma.InputJsonValue, observations: Prisma.InputJsonValue | undefined) {
-  return heardExtractFromMetrics(metrics) != null && observations != null;
-}
+export { geminiVisualComplete };
 
 export function mergeGeminiVisualPassResult(base: AnalyzeWriteState, patch: GeminiVisualPassResult): AnalyzeWriteState {
+  const metrics = {
+    ...(base.metrics as object),
+    ...(patch.metrics as object),
+    ...(patch.visualErrorCode ? { gemini_visual_error_code: patch.visualErrorCode } : {}),
+  };
+  const costCents = base.costCents + patch.costDelta;
+
   if (!patch.visualOk) {
-    const metrics = {
-      ...(base.metrics as object),
-      ...(patch.visualError ? { gemini_visual_error: patch.visualError } : {}),
-    };
     return {
-      ...base,
+      observations: patch.observations ?? base.observations,
+      heardExtract: patch.heardExtract ?? base.heardExtract,
       metrics,
-      costCents: base.costCents + patch.costCents,
+      heardNotes: patch.heardNotes.length > 0 ? patch.heardNotes : base.heardNotes,
+      pipelineVersion: patch.heardExtract ? patch.pipelineVersion : base.pipelineVersion,
+      costCents,
+      confidence: patch.confidence ?? base.confidence,
     };
   }
   return {
     observations: patch.observations ?? base.observations,
     heardExtract: patch.heardExtract ?? base.heardExtract,
-    metrics: patch.metrics,
+    metrics,
     heardNotes: patch.heardNotes,
     pipelineVersion: patch.pipelineVersion,
-    costCents: patch.costCents,
+    costCents,
     confidence: patch.confidence ?? base.confidence,
   };
 }
@@ -348,7 +353,6 @@ async function tryApplyPracticePitchOverlay(input: {
       metrics: {
         ...(input.metrics as object),
         pitch_overlay_skipped: true,
-        pitch_overlay_error: error instanceof Error ? error.message.slice(0, 240) : "pitch overlay failed",
       },
       observations: EMPTY_OBSERVATIONS as unknown as Prisma.InputJsonValue,
       confidence: EMPTY_OBSERVATIONS.confidence,
@@ -368,40 +372,53 @@ async function runGeminiVisualPass(input: {
   pipelineVersion: string;
   costCents: number;
   skipPitchOverlay?: boolean;
+  existingFile?: GeminiFileRef | null;
 }): Promise<GeminiVisualPassResult> {
-  const base: GeminiVisualPassResult = {
-    observations: undefined,
-    heardExtract: null,
-    metrics: input.metrics,
-    heardNotes: input.heardNotes,
-    pipelineVersion: input.pipelineVersion,
+  const makeResult = (
+    partial: Partial<GeminiVisualPassResult> & Pick<GeminiVisualPassResult, "visualOk" | "costDelta">,
+  ): GeminiVisualPassResult => ({
+    observations: partial.observations,
+    heardExtract: partial.heardExtract ?? null,
+    metrics: partial.metrics ?? input.metrics,
+    heardNotes: partial.heardNotes ?? input.heardNotes,
+    pipelineVersion: partial.pipelineVersion ?? input.pipelineVersion,
     costCents: input.costCents,
-    confidence: null,
-    visualOk: false,
-  };
+    confidence: partial.confidence ?? null,
+    visualOk: partial.visualOk,
+    visualErrorCode: partial.visualErrorCode,
+    costDelta: partial.costDelta,
+    geminiFile: partial.geminiFile,
+  });
 
   const ai = geminiClient();
   if (!ai) {
-    return { ...base, visualError: "Gemini is not configured." };
+    return makeResult({
+      visualOk: false,
+      costDelta: 0,
+      visualErrorCode: GEMINI_VISUAL_ERROR_CODES.not_configured,
+    });
   }
 
   let heardNotes = input.heardNotes;
   let metrics = input.metrics;
   let pipelineVersion = input.pipelineVersion;
-  let costCents = input.costCents;
+  let costDelta = 0;
   let observations: Prisma.InputJsonValue | undefined;
   let heardExtract: TrainExtract | null = null;
   let confidence: number | null = null;
 
   const uploaded: string[] = [];
+  const ownsUpload = !input.existingFile;
   try {
-    const video = await uploadGeminiFile(
-      ai,
-      input.bytes,
-      sniffMime(input.bytes, "video/mp4"),
-      `${input.submission.piece.title}-take`,
-    );
-    uploaded.push(video.name);
+    const video =
+      input.existingFile ??
+      (await uploadGeminiFile(
+        ai,
+        input.bytes,
+        sniffMime(input.bytes, "video/mp4"),
+        `${input.submission.piece.title}-take`,
+      ));
+    if (ownsUpload) uploaded.push(video.name);
 
     try {
       const heard = await extractHeardTake({
@@ -411,7 +428,7 @@ async function runGeminiVisualPass(input: {
       if (heard) {
         heardExtract = heard.extract;
         metrics = { ...(metrics as object), heard_extract: heard.extract };
-        costCents += heard.costCents;
+        costDelta += heard.costCents;
         await prisma.event.create({
           data: {
             actorType: "system",
@@ -471,7 +488,7 @@ async function runGeminiVisualPass(input: {
           }
           observations = observationsParsed as unknown as Prisma.InputJsonValue;
           pipelineVersion = PIPELINE_VERSION_SCORE;
-          costCents += compared.costCents;
+          costDelta += compared.costCents;
           confidence = observationsParsed.confidence;
           await prisma.event.create({
             data: {
@@ -499,25 +516,58 @@ async function runGeminiVisualPass(input: {
         );
       }
     }
-    if (observations == null && heardExtract == null) {
-      return { ...base, costCents, metrics, heardNotes, visualError: "Gemini returned no score compare." };
+    const pieceHasModel = Boolean(input.pieceModel);
+    const complete = geminiVisualComplete(metrics, observations, pieceHasModel);
+    if (!heardExtract && !observations) {
+      return makeResult({
+        metrics,
+        heardNotes,
+        visualOk: false,
+        costDelta,
+        visualErrorCode: GEMINI_VISUAL_ERROR_CODES.unavailable,
+      });
     }
-    return {
+    return makeResult({
       observations,
       heardExtract,
       metrics,
       heardNotes,
       pipelineVersion,
-      costCents,
       confidence,
-      visualOk: observations != null,
-    };
+      visualOk: complete,
+      costDelta,
+      visualErrorCode: complete ? undefined : GEMINI_VISUAL_ERROR_CODES.unavailable,
+      geminiFile: ownsUpload ? video : input.existingFile,
+    });
   } catch (error) {
-    const visualError = formatGeminiVisualError(error);
-    console.error("gemini visual pass failed", input.submissionId, visualError);
-    return { ...base, visualError };
+    logGeminiVisualFailure(input.submissionId, error);
+    const visualErrorCode = classifyGeminiVisualError(error);
+    if (heardExtract) {
+      const pieceHasModel = Boolean(input.pieceModel);
+      const partialComplete = geminiVisualComplete(metrics, observations, pieceHasModel);
+      return makeResult({
+        heardExtract,
+        metrics,
+        heardNotes,
+        observations,
+        pipelineVersion,
+        confidence,
+        visualOk: partialComplete,
+        costDelta,
+        visualErrorCode: partialComplete ? undefined : visualErrorCode,
+      });
+    }
+    return makeResult({
+      metrics,
+      heardNotes,
+      visualOk: false,
+      costDelta,
+      visualErrorCode,
+    });
   } finally {
-    await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
+    if (ownsUpload) {
+      await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
+    }
   }
 }
 
@@ -599,6 +649,8 @@ export async function runAnalyze(submissionId: string) {
     const visual = usesGeminiVisual(submission.kind);
     const teacherLocale = submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi";
 
+    let geminiVideoFile: GeminiFileRef | null = null;
+
     let writeState: AnalyzeWriteState = {
       observations: undefined,
       heardExtract: null,
@@ -621,7 +673,9 @@ export async function runAnalyze(submissionId: string) {
         metrics: writeState.metrics,
         pipelineVersion: writeState.pipelineVersion,
         costCents: writeState.costCents,
+        existingFile: geminiVideoFile,
       });
+      if (gemini.geminiFile) geminiVideoFile = gemini.geminiFile;
       writeState = mergeGeminiVisualPassResult(writeState, gemini);
     } else {
       const practice = await tryApplyPracticePitchOverlay({
@@ -646,8 +700,8 @@ export async function runAnalyze(submissionId: string) {
     const applyPromotionGeminiCatchUp = async (state: AnalyzeWriteState) => {
       const kindNow = await refreshKind();
       if (!kindNow || !needsGeminiCatchUpAfterPromotion(startedAsPractice, kindNow.kind)) return state;
-      if (geminiVisualComplete(state.metrics, state.observations)) return state;
-      const prior = (state.metrics as { gemini_visual_error?: unknown }).gemini_visual_error;
+      if (geminiVisualComplete(state.metrics, state.observations, Boolean(pieceModel))) return state;
+      const prior = (state.metrics as { gemini_visual_error_code?: unknown }).gemini_visual_error_code;
       if (typeof prior === "string") return state;
       const gemini = await runGeminiVisualPass({
         submission,
@@ -661,11 +715,12 @@ export async function runAnalyze(submissionId: string) {
         pipelineVersion: state.pipelineVersion,
         costCents: state.costCents,
         skipPitchOverlay: true,
+        existingFile: geminiVideoFile,
       });
+      if (gemini.geminiFile) geminiVideoFile = gemini.geminiFile;
       return mergeGeminiVisualPassResult(state, gemini);
     };
 
-    writeState = await applyPromotionGeminiCatchUp(writeState);
     writeState = await applyPromotionGeminiCatchUp(writeState);
 
     let kindNow = await refreshKind();

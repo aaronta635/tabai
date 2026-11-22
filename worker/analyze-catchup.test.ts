@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
+import { GEMINI_VISUAL_ERROR_CODES } from "@/lib/gemini-visual";
+import { PIPELINE_VERSION } from "@/lib/constants";
 
 const submission = vi.hoisted(() => ({ findUnique: vi.fn(), update: vi.fn() }));
 const media = vi.hoisted(() => ({ update: vi.fn() }));
@@ -71,9 +72,11 @@ const practiceSubmission = {
   media: { storagePath: "takes/x", durationS: 10 },
 };
 
+const takeSubmission = { ...practiceSubmission, kind: "take" as const };
+
 beforeEach(() => {
   vi.clearAllMocks();
-    pitchEnabled.mockReturnValue(true);
+  pitchEnabled.mockReturnValue(true);
   getReadyPieceModel.mockResolvedValue({
     id: "pm-1",
     scoreJson: { title: "T", sections: [] },
@@ -94,86 +97,135 @@ beforeEach(() => {
   geminiClient.mockReturnValue({ files: { delete: vi.fn() } });
 });
 
-describe("analyze promotion catch-up", () => {
-  it("merges Gemini failures without wiping practice pitch results", () => {
+describe("mergeGeminiVisualPassResult", () => {
+  it("does not double-count cost on failure", () => {
     const base = {
-      observations: { overallFit: 0.5, confidence: 0.5, positives: [], issues: [], nextPractice: "" },
+      observations: undefined,
       heardExtract: null,
-      metrics: { pitch_notes: [{ tStart: 0, tEnd: 1, midi: 60, name: "C4" }], duration_s: 12 },
-      heardNotes: [{ tStart: 0, tEnd: 1, midi: 60, name: "C4" }],
-      pipelineVersion: PIPELINE_VERSION_SCORE,
-      costCents: 0,
-      confidence: 0.5,
+      metrics: { duration_s: 12 },
+      heardNotes: [],
+      pipelineVersion: PIPELINE_VERSION,
+      costCents: 3,
+      confidence: null,
     };
     const failed = {
       ...base,
-      observations: undefined,
-      metrics: base.metrics,
       visualOk: false as const,
-      visualError: "Gemini file upload failed.",
+      costDelta: 0,
+      visualErrorCode: GEMINI_VISUAL_ERROR_CODES.upload_failed,
     };
-    const merged = mergeGeminiVisualPassResult(base, failed);
-    expect(merged.observations).toEqual(base.observations);
-    expect((merged.metrics as { gemini_visual_error?: string }).gemini_visual_error).toBe("Gemini file upload failed.");
+    expect(mergeGeminiVisualPassResult(base, failed).costCents).toBe(3);
   });
 
+  it("keeps heard_extract when compare is missing on an untrained piece", () => {
+    const extract = { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] };
+    const base = {
+      observations: undefined,
+      heardExtract: null,
+      metrics: { duration_s: 12 },
+      heardNotes: [],
+      pipelineVersion: PIPELINE_VERSION,
+      costCents: 0,
+      confidence: null,
+    };
+    const partial = {
+      observations: undefined,
+      heardExtract: extract,
+      metrics: { duration_s: 12, heard_extract: extract },
+      heardNotes: [],
+      pipelineVersion: PIPELINE_VERSION,
+      costCents: 0,
+      confidence: null,
+      visualOk: true as const,
+      costDelta: 2,
+    };
+    const merged = mergeGeminiVisualPassResult(base, partial);
+    expect(merged.heardExtract).toEqual(extract);
+    expect(merged.costCents).toBe(2);
+  });
+});
+
+describe("runAnalyze promotion catch-up", () => {
   it("runs catch-up and keeps pitch data when Gemini upload fails", async () => {
     submission.findUnique
       .mockResolvedValueOnce(practiceSubmission)
       .mockResolvedValue({ kind: "take", status: "received" });
-    uploadGeminiFile.mockRejectedValueOnce(new Error('{"error":{"code":404,"status":"Not Found"}}'));
+    uploadGeminiFile.mockRejectedValueOnce(new Error('{"error":{"code":404}}'));
 
     await runAnalyze("sub-1");
 
     expect(uploadGeminiFile).toHaveBeenCalledTimes(1);
-    expect(analysis.create).toHaveBeenCalled();
     const saved = analysis.create.mock.calls[0]?.[0]?.data;
-    expect((saved?.metricsJson as { gemini_visual_error?: string }).gemini_visual_error).toBe(
-      "Gemini could not analyze this video.",
+    expect((saved?.metricsJson as { gemini_visual_error_code?: string }).gemini_visual_error_code).toBe(
+      GEMINI_VISUAL_ERROR_CODES.upload_failed,
     );
     expect((saved?.metricsJson as { pitch_notes?: unknown[] }).pitch_notes).toHaveLength(1);
-    expect(saved?.observationsJson).toBeTruthy();
   });
 
-  it("records Gemini compare when catch-up succeeds", async () => {
+  it("uploads once during catch-up on a promoted clip", async () => {
     submission.findUnique
       .mockResolvedValueOnce(practiceSubmission)
       .mockResolvedValue({ kind: "take", status: "received" });
     uploadGeminiFile.mockResolvedValueOnce({ name: "files/x", uri: "https://x", mimeType: "video/mp4" });
-    vi.mocked(generateGeminiJson)
-      .mockResolvedValueOnce({
-        data: { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] },
-        usage: { inputTokens: 1, outputTokens: 1 },
-        model: "gemini-test",
-      })
-      .mockResolvedValueOnce({
-        data: {
-          overallFit: 0.8,
-          confidence: 0.8,
-          positives: ["Steady"],
-          issues: [],
-          nextPractice: "Again",
-        },
-        usage: { inputTokens: 1, outputTokens: 1 },
-        model: "gemini-test",
-      });
+    vi.mocked(generateGeminiJson).mockResolvedValueOnce({
+      data: { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] },
+      usage: { inputTokens: 1, outputTokens: 1 },
+      model: "gemini-test",
+    });
 
     await runAnalyze("sub-1");
 
-    expect(analysis.create).toHaveBeenCalled();
+    expect(uploadGeminiFile).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps heard_extract on an untrained piece take without compare observations", async () => {
+    getReadyPieceModel.mockResolvedValue(null);
+    submission.findUnique
+      .mockResolvedValueOnce(takeSubmission)
+      .mockResolvedValue({ kind: "take", status: "received" });
+    uploadGeminiFile.mockResolvedValueOnce({ name: "files/x", uri: "https://x", mimeType: "video/mp4" });
+    vi.mocked(generateGeminiJson).mockResolvedValueOnce({
+      data: { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] },
+      usage: { inputTokens: 1, outputTokens: 1 },
+      model: "gemini-test",
+    });
+
+    await runAnalyze("sub-1");
+
     const saved = analysis.create.mock.calls[0]?.[0]?.data;
     expect((saved?.metricsJson as { heard_extract?: unknown }).heard_extract).toBeTruthy();
-    expect(saved?.observationsJson).toMatchObject({ overallFit: 0.8 });
+    expect(saved?.observationsJson).toBeUndefined();
+  });
+
+  it("uploads once for a normal take on an untrained piece", async () => {
+    getReadyPieceModel.mockResolvedValue(null);
+    submission.findUnique
+      .mockResolvedValueOnce(takeSubmission)
+      .mockResolvedValue({ kind: "take", status: "received" });
+    uploadGeminiFile.mockResolvedValueOnce({ name: "files/x", uri: "https://x", mimeType: "video/mp4" });
+    vi.mocked(generateGeminiJson).mockResolvedValueOnce({
+      data: { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] },
+      usage: { inputTokens: 1, outputTokens: 1 },
+      model: "gemini-test",
+    });
+
+    await runAnalyze("sub-1");
+
+    expect(uploadGeminiFile).toHaveBeenCalledTimes(1);
   });
 });
 
 describe("needsGeminiCatchUpAfterPromotion", () => {
-  it("detects when Gemini is incomplete", () => {
+  it("detects when Gemini is incomplete for a trained piece", () => {
     expect(needsGeminiCatchUpAfterPromotion(true, "take")).toBe(true);
+    expect(
+      geminiVisualComplete({ heard_extract: { title: "T", sections: [] } }, null, false),
+    ).toBe(true);
     expect(
       geminiVisualComplete(
         { heard_extract: { title: "T", sections: [] } },
         { overallFit: 1, confidence: 1, positives: [], issues: [], nextPractice: "" },
+        true,
       ),
     ).toBe(true);
   });

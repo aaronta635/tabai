@@ -8,11 +8,15 @@ const job = vi.hoisted(() => ({
   create: vi.fn(),
 }));
 
+const getReadyPieceModel = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/prisma", () => ({ prisma: { submission, job } }));
+vi.mock("@/lib/catalog", () => ({ getReadyPieceModel }));
 
 import {
   enqueueAnalyzeIfApproved,
   enqueueDraftWhenReady,
+  enqueueGeminiFollowUpIfPromoted,
   enqueueTakesNeedingCompare,
   MAX_JOB_ATTEMPTS,
   pieceTrainKeepsFailing,
@@ -69,6 +73,54 @@ describe("trainKeepsFailing", () => {
       where: { type: "train_piece", payload: { path: ["pieceId"], equals: "piece-1" } },
       orderBy: { createdAt: "desc" },
     });
+  });
+});
+
+describe("enqueueGeminiFollowUpIfPromoted", () => {
+  it("queues exactly one follow-up when a promoted take lacks Gemini output", async () => {
+    submission.findUnique.mockResolvedValueOnce({
+      id: "sub-1",
+      kind: "take",
+      student: { approvedAt: new Date("2026-10-22") },
+      piece: { demo: false, id: "piece-1" },
+      analyses: [{ metricsJson: { pitch_notes: [] }, observationsJson: null }],
+    });
+    getReadyPieceModel.mockResolvedValueOnce({ id: "pm-1" });
+    job.findFirst.mockResolvedValueOnce(null);
+    job.create.mockResolvedValueOnce({ id: "job-follow", status: "pending" });
+
+    await expect(enqueueGeminiFollowUpIfPromoted("sub-1")).resolves.toMatchObject({ id: "job-follow" });
+    expect(job.create).toHaveBeenCalledTimes(1);
+  });
+
+  it("reuses an open analyze job instead of duplicating", async () => {
+    submission.findUnique.mockResolvedValueOnce({
+      id: "sub-1",
+      kind: "take",
+      student: { approvedAt: new Date("2026-10-22") },
+      piece: { demo: false, id: "piece-1" },
+      analyses: [{ metricsJson: { pitch_notes: [] }, observationsJson: null }],
+    });
+    getReadyPieceModel.mockResolvedValueOnce({ id: "pm-1" });
+    const open = { id: "job-open", status: "running" };
+    job.findFirst.mockResolvedValueOnce(open);
+
+    await expect(enqueueGeminiFollowUpIfPromoted("sub-1")).resolves.toEqual(open);
+    expect(job.create).not.toHaveBeenCalled();
+  });
+
+  it("skips when extract-only analysis is enough on an untrained piece", async () => {
+    submission.findUnique.mockResolvedValueOnce({
+      id: "sub-1",
+      kind: "take",
+      student: { approvedAt: new Date("2026-10-22") },
+      piece: { demo: false, id: "piece-1" },
+      analyses: [{ metricsJson: { heard_extract: { title: "T" } }, observationsJson: null }],
+    });
+    getReadyPieceModel.mockResolvedValueOnce(null);
+
+    await expect(enqueueGeminiFollowUpIfPromoted("sub-1")).resolves.toBeNull();
+    expect(job.findFirst).not.toHaveBeenCalled();
   });
 });
 

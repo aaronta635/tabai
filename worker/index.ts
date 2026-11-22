@@ -3,7 +3,14 @@ import { enqueueTrainForPiecesWithoutReadyModel } from "../lib/catalog";
 import { isPrismaConnectionError } from "../lib/db-errors";
 import { PITCH_OVERLAY_VERSION } from "../lib/constants";
 import { loadLocalEnv } from "../lib/load-env";
-import { claimNextJob, enqueueAllTakesNeedingCompare, failJob, finishJob, reclaimStaleJobs } from "../lib/jobs";
+import {
+  claimNextJob,
+  enqueueAllTakesNeedingCompare,
+  enqueueGeminiFollowUpIfPromoted,
+  failJob,
+  finishJob,
+  reclaimStaleJobs,
+} from "../lib/jobs";
 import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
 import { runAnalyze } from "./analyze";
@@ -16,6 +23,17 @@ process.env.WORKER_LOOP = "1";
 
 const POLL_MS = 2000;
 const RECONNECT_WAIT_MS = 5000;
+
+async function afterAnalyzeJob(job: { type: string; payload: unknown }) {
+  if (job.type !== "analyze") return;
+  const submissionId = (job.payload as { submissionId?: string }).submissionId;
+  if (!submissionId) return;
+  try {
+    await enqueueGeminiFollowUpIfPromoted(submissionId);
+  } catch (error) {
+    console.error("gemini follow-up enqueue", submissionId, error);
+  }
+}
 
 async function handle(job: { id: string; type: string; payload: unknown }) {
   const payload = job.payload as {
@@ -85,6 +103,7 @@ async function loop() {
         console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
         await handle(job);
         await finishJob(job.id);
+        await afterAnalyzeJob(job);
         console.log("job done", job.type, job.id);
       } catch (error) {
         const message = error instanceof Error ? error.message : "unknown";
@@ -93,6 +112,7 @@ async function loop() {
           await reconnectPrisma();
         }
         await failJob(job.id, message);
+        await afterAnalyzeJob(job);
       }
     } catch (error) {
       console.error("worker loop", error);
@@ -124,6 +144,7 @@ async function runPendingJobs() {
       console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
       await handle(job);
       await finishJob(job.id);
+      await afterAnalyzeJob(job);
       console.log("job done", job.type, job.id);
       jobs.push({ id: job.id, type: job.type, ok: true });
     } catch (error) {
@@ -131,6 +152,7 @@ async function runPendingJobs() {
       console.error("job failed", job.id, message);
       if (isPrismaConnectionError(error)) await reconnectPrisma();
       await failJob(job.id, message);
+      await afterAnalyzeJob(job);
       jobs.push({ id: job.id, type: job.type, ok: false });
     }
   }

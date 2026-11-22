@@ -3,16 +3,13 @@ import { Resend } from "resend";
 import { prisma } from "@/lib/prisma";
 import { formatDueLabel } from "@/lib/practice";
 import { productOrigin } from "@/lib/sites";
+import { deliverableAddress } from "@/lib/deliverable-email";
+
+export { deliverableAddress };
 
 const FROM = "PARA <info@paramuzic.com>";
 
 type MailLocale = "en" | "vi";
-
-export function deliverableAddress(email: string | null | undefined) {
-  const value = email?.trim() ?? "";
-  if (!value || value.toLowerCase().endsWith("@oauth.para.local")) return null;
-  return value;
-}
 
 function mailLocale(value: string | null | undefined): MailLocale {
   return value === "en" ? "en" : "vi";

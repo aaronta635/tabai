@@ -102,6 +102,28 @@
     "wrongRoleStudent": "This email is a student account. Sign in as a student.",
     "signOut": "Sign out"
   },
+  "zaloRecovery": {
+    "title": "Keep your PARA account",
+    "body": "You signed in with Zalo. Add an email and password or link Google so you can come back after Zalo sign-in goes away.",
+    "studentHint": "Under 18? A parent’s email is fine.",
+    "email": "Email",
+    "password": "New password",
+    "confirmPassword": "Type the password again",
+    "saveEmail": "Save email and password",
+    "linkGoogle": "Link Google",
+    "or": "or",
+    "dismiss": "Not now",
+    "checkEmail": "We sent a link to that email. Open it to finish, then come back here.",
+    "saved": "You can sign in with that email and password next time.",
+    "errors": {
+      "emailTaken": "That email already has a PARA account. Try another email or link Google.",
+      "weakPassword": "Pick a longer password — at least six characters.",
+      "invalidEmail": "That email does not look right. Check it and try again.",
+      "passwordMismatch": "Those two passwords do not match.",
+      "linkingDisabled": "Google linking is not on yet. Use email and password for now.",
+      "generic": "Something went wrong. Try again in a moment."
+    }
+  },
   "student": {
     "upload": "Upload video",
     "chooseFile": "Choose video",

@@ -7,7 +7,7 @@ type ScrollTriggerPlugin = typeof import("gsap/ScrollTrigger").ScrollTrigger;
 
 /**
  * A single scoped choreography; readable static HTML is always the fallback.
- * GSAP is imported inside the effect so only the English editorial home downloads it.
+ * GSAP is imported inside the effect so only the editorial home (/en and /vi) downloads it.
  */
 export function EditorialEffects() {
   useEffect(() => {

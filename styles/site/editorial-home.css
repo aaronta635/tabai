@@ -418,3 +418,41 @@ body:has(.para-editorial),
     inset: 65px 0 0;
   }
 }
+
+/* Vietnamese header on small phones: "Dùng thử miễn phí" is longer than
+   "Try for free", so tighten the logo, gaps and CTA padding to keep the logo,
+   CTA and menu button on one row (the menu panel opens below a one-row header).
+   Tap targets stay at least 44px. English is unchanged. */
+@media (max-width: 400px) {
+  html[lang="vi"] .para-site .ed-nav {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  html[lang="vi"] .para-site .ed-brand img {
+    width: 104px;
+  }
+  html[lang="vi"] .para-site .ed-nav-actions {
+    flex: none;
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  html[lang="vi"] .para-site .ed-header .ed-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 340px) {
+  html[lang="vi"] .para-site .ed-nav {
+    gap: 6px;
+  }
+  html[lang="vi"] .para-site .ed-brand img {
+    width: 92px;
+  }
+  html[lang="vi"] .para-site .ed-nav-actions {
+    gap: 4px;
+  }
+  html[lang="vi"] .para-site .ed-header .ed-button {
+    padding: 10px;
+    font-size: 12.5px;
+  }
+}

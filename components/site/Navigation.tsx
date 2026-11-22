@@ -71,8 +71,8 @@ export function Navigation({ locale }: { locale: Locale }) {
     links[(index + direction + links.length) % links.length]?.focus();
   }
 
-  // Only the English homepage uses the editorial header; every other route keeps this one.
-  if (locale === "en" && (pathname === "/en" || pathname === "/en/")) return <EditorialHeader />;
+  // The homepage (/en and /vi) uses the editorial header; every other route keeps this one.
+  if (pathname === `/${locale}` || pathname === `/${locale}/`) return <EditorialHeader locale={locale} />;
 
   const plainPath = pathname.replace(/^\/(?:en|vi)(?=\/|$)/, "") || "/";
 

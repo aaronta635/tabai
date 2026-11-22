@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import type { EditorialCopy } from "@/lib/site/editorial-copy";
 
 // All instances share an exclusive playback policy, including manual play.
 type Player = {
@@ -65,6 +66,7 @@ type Props = {
   poster: string;
   description: string;
   caption: string;
+  labels: EditorialCopy["demo"];
 };
 
 export function DemoVideo({
@@ -74,6 +76,7 @@ export function DemoVideo({
   poster,
   description,
   caption,
+  labels,
 }: Props) {
   const video = useRef<HTMLVideoElement>(null);
   const frame = useRef<HTMLDivElement>(null);
@@ -99,7 +102,7 @@ export function DemoVideo({
       await element.play();
     } catch (reason) {
       if (!(reason instanceof DOMException && reason.name === "AbortError")) {
-        setError("Playback paused. Select Play demo to try again.");
+        setError(labels.playbackPaused);
       }
     }
   }
@@ -152,7 +155,7 @@ export function DemoVideo({
           muted
           playsInline
           loop
-          aria-label={`${title} Example concept demo`}
+          aria-label={`${title} ${labels.videoLabelSuffix}`}
           aria-describedby={`demo-description-${id}`}
           onPlay={() => {
             players.forEach((_, other) => {
@@ -162,17 +165,17 @@ export function DemoVideo({
           }}
           onPause={() => setPlaying(false)}
           onError={() =>
-            setError("This demo could not load. Please try again.")
+            setError(labels.loadError)
           }
         />
       </div>
       <figcaption>
         <div className="para-demo-toolbar">
-          <span>Example · Concept demo</span>
+          <span>{labels.exampleLabel}</span>
           <button
             type="button"
             aria-controls={`demo-${id}`}
-            aria-label={`${playing ? "Pause demo" : "Play demo"}: ${title}`}
+            aria-label={`${playing ? labels.pause : labels.play}: ${title}`}
             onClick={() => {
               const element = video.current;
               if (!element) return;
@@ -186,7 +189,7 @@ export function DemoVideo({
               }
             }}
           >
-            {playing ? "Pause demo" : "Play demo"}
+            {playing ? labels.pause : labels.play}
           </button>
         </div>
         <p className="para-demo-caption">{caption}</p>
@@ -201,7 +204,7 @@ export function DemoVideo({
         <noscript>
           <style>{`.para-demo-toolbar button{display:none}`}</style>
           <a className="para-demo-fallback" href={src}>
-            Watch {title} demo
+            {[labels.watchPrefix, title, labels.watchSuffix].filter(Boolean).join(" ")}
           </a>
         </noscript>
       </figcaption>

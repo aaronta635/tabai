@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ParaIcon } from "@/components/site/ParaIcon";
 import { content, homeHref, languageChoiceHref, localePath, type Locale } from "@/lib/site/content";
 import { authPath } from "@/lib/return-path";
+import { editorialCopy } from "@/lib/site/editorial-copy";
 import "@/styles/site/editorial-home.css";
 
 /** "Try for free" opens teacher signup (/en/signup/teacher, /vi/signup/teacher). */
@@ -27,13 +28,15 @@ export function EditorialArrow() {
 export function EditorialCta({ locale = "en", onClick }: { locale?: Locale; onClick?: () => void }) {
   return (
     <a className="ed-button" href={teacherSignupHref(locale)} onClick={onClick}>
-      {content.en.conversion.button} <EditorialArrow />
+      {content[locale].conversion.button} <EditorialArrow />
     </a>
   );
 }
 
-export function EditorialHeader() {
-  const navigation = content.en.navigation;
+export function EditorialHeader({ locale = "en" }: { locale?: Locale }) {
+  const navigation = content[locale].navigation;
+  /** The other language: the header's language link switches to it. */
+  const other: Locale = locale === "en" ? "vi" : "en";
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
@@ -94,7 +97,7 @@ export function EditorialHeader() {
   return (
     <header className={open ? "ed-header ed-menu-open" : "ed-header"} onKeyDown={handleKeys}>
       <nav className="ed-wrap ed-nav" aria-label={navigation.label}>
-        <Link className="ed-brand" href={homeHref("en")} aria-label={navigation.homeLabel}>
+        <Link className="ed-brand" href={homeHref(locale)} aria-label={navigation.homeLabel}>
           <img
             src="/brand/para/homepage/para-horizontal-black.svg"
             alt="PARA"
@@ -104,18 +107,18 @@ export function EditorialHeader() {
         </Link>
         <div className="ed-nav-actions">
           <a className="ed-nav-story ed-nav-inline" href="#how-it-works">
-            How it works
+            {editorialCopy[locale].nav.howItWorks}
           </a>
           {/* Full navigation so the root layout re-renders with the new <html lang>. */}
           <a
             className="ed-nav-story ed-language ed-nav-inline"
-            href={languageChoiceHref("vi", "/")}
-            hrefLang="vi"
+            href={languageChoiceHref(other, "/")}
+            hrefLang={other}
           >
-            <span lang="vi">{navigation.languageShort}</span>
+            <span lang={other}>{navigation.languageShort}</span>
             <span className="sr-only"> {navigation.languageLabel}</span>
           </a>
-          <EditorialCta />
+          <EditorialCta locale={locale} />
           <button
             ref={toggle}
             type="button"
@@ -140,7 +143,7 @@ export function EditorialHeader() {
             <Link
               key={url}
               className="ed-menu-link"
-              href={localePath("en", url)}
+              href={localePath(locale, url)}
               prefetch={false}
               onClick={() => close(false)}
             >
@@ -148,13 +151,18 @@ export function EditorialHeader() {
             </Link>
           ))}
           <div className="ed-menu-language" role="group" aria-label={navigation.languageGroup}>
-            <a href={languageChoiceHref("en", "/")} hrefLang="en" aria-current="true">
-              EN
-            </a>
-            <a href={languageChoiceHref("vi", "/")} hrefLang="vi">
-              <span lang="vi">VI</span>
-              <span className="sr-only"> {navigation.languageLabel}</span>
-            </a>
+            {(["en", "vi"] as const).map((code) =>
+              code === locale ? (
+                <a key={code} href={languageChoiceHref(code, "/")} hrefLang={code} aria-current="true">
+                  <span lang={code}>{code.toUpperCase()}</span>
+                </a>
+              ) : (
+                <a key={code} href={languageChoiceHref(code, "/")} hrefLang={code}>
+                  <span lang={code}>{code.toUpperCase()}</span>
+                  <span className="sr-only"> {navigation.languageLabel}</span>
+                </a>
+              ),
+            )}
           </div>
         </div>
       </div>

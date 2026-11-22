@@ -60,13 +60,12 @@ export function registerFieldErrors(input: {
   name?: string | null;
   contactHandle?: string | null;
   ageBand?: unknown;
-  contactType?: unknown;
   consent?: unknown;
 }) {
   const name = requiredText(input.name);
   const contactHandle = requiredText(input.contactHandle);
   return {
-    missing: !name || !input.ageBand || !input.contactType || !contactHandle || !input.consent,
+    missing: !name || !input.ageBand || !contactHandle || !input.consent,
     name,
     contactHandle,
     fields: { name: !name, contactHandle: !contactHandle },

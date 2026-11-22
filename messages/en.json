@@ -161,7 +161,7 @@
     "tooBig": "Max 90 seconds or 60 MB.",
     "needFile": "Choose a video first.",
     "nameRequired": "Enter a name.",
-    "contactRequired": "Enter a Zalo number or Messenger link.",
+    "contactRequired": "Enter a phone number to continue.",
     "reference": "Teacher's tutorial",
     "sheet": "Score",
     "openSheet": "Open score",

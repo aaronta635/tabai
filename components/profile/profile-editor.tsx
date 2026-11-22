@@ -74,11 +74,13 @@ export function StudentProfileForm({
   skills,
   weaknesses,
   contactHandle,
+  phoneOptional,
 }: Shared & {
   ageBand: string;
   playing: string;
   work: string;
   contactHandle: string;
+  phoneOptional?: boolean;
 }) {
   const t = useTranslations("onboarding");
   const student = useTranslations("student");
@@ -142,7 +144,7 @@ export function StudentProfileForm({
       <label className="block">
         <span className="field-label">{t("phone")}</span>
         <input
-          required
+          required={!phoneOptional}
           name="contactHandle"
           type="tel"
           inputMode="tel"

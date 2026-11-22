@@ -22,6 +22,7 @@ import { bindStudentToClass } from "@/lib/lms";
 import { allowList, oneOf, SKILLS, TEACHING_SPAN, WEAKNESSES } from "@/lib/profile";
 import { prisma } from "@/lib/prisma";
 import { authPath, onboardingNext, signInPath } from "@/lib/return-path";
+import { getLocale } from "@/lib/i18n";
 import { claimPhone } from "@/lib/student-phone";
 
 function str(form: FormData, key: string) {
@@ -85,7 +86,8 @@ export async function saveStudentOnboarding(form: FormData) {
   const work = str(form, "work") as StudentAnswers["work"];
   const code = str(form, "code").toLowerCase();
   const contactType = str(form, "contactType") === "messenger" ? "messenger" : "zalo";
-  const phone = await claimPhone(str(form, "contactHandle"), student.id);
+  const locale = await getLocale();
+  const phone = await claimPhone(str(form, "contactHandle"), student.id, locale);
   if ("error" in phone) return { error: phone.error };
   if (str(form, "consent") !== "yes") return { error: "incomplete" };
   if (!["weeks", "months", "years"].includes(playing)) return { error: "incomplete" };
@@ -139,8 +141,18 @@ export async function updateStudentProfile(form: FormData) {
   const ageBand = str(form, "ageBand") === "under18" ? "under18" : "adult";
   const playing = oneOf(str(form, "playing"), ["weeks", "months", "years"] as const, "months");
   const work = oneOf(str(form, "work"), ["chords", "song", "exam"] as const, "song");
-  const phone = await claimPhone(str(form, "contactHandle"), student.id);
-  if ("error" in phone) return { error: phone.error };
+  const locale = await getLocale();
+  const rawPhone = str(form, "contactHandle");
+  let contactHandle = student.contactHandle;
+  let nextPhoneKey = student.phoneKey;
+  if (rawPhone) {
+    const phone = await claimPhone(rawPhone, student.id, locale);
+    if ("error" in phone) return { error: phone.error };
+    contactHandle = phone.contactHandle;
+    nextPhoneKey = phone.phoneKey;
+  } else if (student.contactType !== "messenger") {
+    return { error: "phone" as const };
+  }
   const previous =
     student.answersJson && typeof student.answersJson === "object" && !Array.isArray(student.answersJson)
       ? (student.answersJson as StudentAnswers)
@@ -159,8 +171,8 @@ export async function updateStudentProfile(form: FormData) {
       data: {
         name,
         ageBand,
-        contactHandle: phone.contactHandle,
-        phoneKey: phone.phoneKey,
+        contactHandle,
+        phoneKey: nextPhoneKey,
         answersJson: answers,
       },
     });

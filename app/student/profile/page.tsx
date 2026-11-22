@@ -47,7 +47,8 @@ export default async function StudentProfilePage() {
         work={answers.work === "chords" || answers.work === "exam" ? answers.work : "song"}
         skills={stringList(answers.skills, SKILLS)}
         weaknesses={stringList(answers.weaknesses, WEAKNESSES)}
-        contactHandle={phoneKey(student.contactHandle) ? student.contactHandle : ""}
+        contactHandle={phoneKey(student.contactHandle, locale) ? student.contactHandle : ""}
+        phoneOptional={student.contactType === "messenger"}
       />
 
       <section className="tile space-y-3">

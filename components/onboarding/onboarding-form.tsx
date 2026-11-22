@@ -352,7 +352,7 @@ export function StudentOnboardingForm({
     work !== "",
     true,
     true,
-    phoneKey(phone) !== null,
+    phoneKey(phone, locale) !== null,
     consent,
   ];
 

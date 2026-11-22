@@ -91,7 +91,6 @@ describe("registerFieldErrors", () => {
       name: "  ",
       contactHandle: "   ",
       ageBand: "adult",
-      contactType: "zalo",
       consent: true,
     });
     expect(result.missing).toBe(true);
@@ -103,7 +102,6 @@ describe("registerFieldErrors", () => {
       name: " An ",
       contactHandle: " 0909 ",
       ageBand: "adult",
-      contactType: "zalo",
       consent: true,
     });
     expect(result.missing).toBe(false);

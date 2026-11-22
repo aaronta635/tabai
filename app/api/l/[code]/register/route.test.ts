@@ -4,7 +4,15 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const db = vi.hoisted(() => ({
   pieceFind: vi.fn(),
   studentCreate: vi.fn(async () => ({ id: "new-stu", token: "tok" })),
-  studentUpdate: vi.fn(),
+  studentUpdate: vi.fn(async (args: { data: Record<string, unknown> }) => ({
+    id: "stu-m",
+    token: "tok",
+    ...args.data,
+  })),
+}));
+
+const auth = vi.hoisted(() => ({
+  studentForPiece: vi.fn(),
 }));
 
 vi.mock("@/lib/prisma", () => ({
@@ -15,11 +23,11 @@ vi.mock("@/lib/prisma", () => ({
 }));
 
 vi.mock("@/lib/auth", () => ({
-  studentForPiece: vi.fn(async () => ({ fromSession: false, student: null, otherClass: false })),
+  studentForPiece: auth.studentForPiece,
   newStudentToken: () => "tok",
   setStudentCookie: vi.fn(async () => {}),
   setStudentAccountCookies: vi.fn(async () => {}),
-  homeTeacherId: vi.fn(),
+  homeTeacherId: vi.fn((current: string | null, next: string) => next),
 }));
 
 vi.mock("@/lib/events", () => ({ logEvent: vi.fn(async () => {}) }));
@@ -41,6 +49,7 @@ describe("POST /api/l/[code]/register", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     db.pieceFind.mockResolvedValue({ teacherId: "t1", demo: false, archived: false });
+    auth.studentForPiece.mockResolvedValue({ fromSession: false, student: null, otherClass: false });
   });
 
   it("refuses a Messenger link instead of a phone number", async () => {
@@ -70,6 +79,40 @@ describe("POST /api/l/[code]/register", () => {
         contactType: "zalo",
         contactHandle: "0912 345 678",
         phoneKey: "84912345678",
+      }),
+    });
+  });
+
+  it("keeps a Messenger contact when an attached student re-registers without a phone", async () => {
+    auth.studentForPiece.mockResolvedValue({
+      fromSession: true,
+      otherClass: false,
+      student: {
+        id: "stu-m",
+        name: "Lan",
+        ageBand: "under18",
+        contactType: "messenger",
+        contactHandle: "https://m.me/para.child",
+        phoneKey: null,
+        teacherId: null,
+        stage: "exploring",
+        token: "tok",
+        onboardedAt: null,
+        authUserId: null,
+        publicOk: false,
+      },
+    });
+    const response = await POST(
+      post({ name: "Lan", ageBand: "under18", contactHandle: "", consent: true }),
+      { params: Promise.resolve({ code: "demo" }) },
+    );
+    expect(response.status).toBe(200);
+    expect(db.studentUpdate).toHaveBeenCalledWith({
+      where: { id: "stu-m" },
+      data: expect.objectContaining({
+        contactType: "messenger",
+        contactHandle: "https://m.me/para.child",
+        phoneKey: null,
       }),
     });
   });

@@ -80,6 +80,7 @@ describe("updateStudentProfile phone handling", () => {
       data: expect.objectContaining({
         contactHandle: "0912 345 678",
         phoneKey: "84912345678",
+        contactType: "zalo",
       }),
     });
   });

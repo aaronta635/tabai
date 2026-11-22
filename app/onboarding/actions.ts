@@ -145,11 +145,13 @@ export async function updateStudentProfile(form: FormData) {
   const rawPhone = str(form, "contactHandle");
   let contactHandle = student.contactHandle;
   let nextPhoneKey = student.phoneKey;
+  let contactType = student.contactType;
   if (rawPhone) {
     const phone = await claimPhone(rawPhone, student.id, locale);
     if ("error" in phone) return { error: phone.error };
     contactHandle = phone.contactHandle;
     nextPhoneKey = phone.phoneKey;
+    contactType = "zalo";
   } else if (student.contactType !== "messenger") {
     return { error: "phone" as const };
   }
@@ -172,6 +174,7 @@ export async function updateStudentProfile(form: FormData) {
         name,
         ageBand,
         contactHandle,
+        contactType,
         phoneKey: nextPhoneKey,
         answersJson: answers,
       },

@@ -24,6 +24,15 @@ describe("phoneKey", () => {
     expect(phoneKey("0912 345 678", "en")).toBe("84912345678");
   });
 
+  it("resolves shared local prefixes by page locale", () => {
+    expect(phoneKey("03 1234 5678", "vi")).toBe("84312345678");
+    expect(phoneKey("03 1234 5678", "en")).toBe("61312345678");
+    expect(phoneKey("07 1234 5678", "vi")).toBe("84712345678");
+    expect(phoneKey("07 1234 5678", "en")).toBe("61712345678");
+    expect(phoneKey("08 1234 5678", "vi")).toBe("84812345678");
+    expect(phoneKey("08 1234 5678", "en")).toBe("61812345678");
+  });
+
   it("does not map Australian locals to Vietnamese keys", () => {
     expect(phoneKey("0412 345 678", "vi")).toBe("61412345678");
     expect(phoneKey("0412 345 678", "en")).toBe("61412345678");

@@ -58,6 +58,14 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     if (nextPhone && (await phoneIsTaken(nextPhone, current.id))) {
       return NextResponse.json({ error: "phone_taken" }, { status: 409 });
     }
+    const contactData =
+      nextPhone && contactTrim
+        ? { contactType: "zalo" as const, contactHandle: contactTrim, phoneKey: nextPhone }
+        : {
+            contactType: current.contactType,
+            contactHandle: current.contactHandle,
+            phoneKey: current.phoneKey,
+          };
     const updated = await prisma.student.update({
       where: { id: current.id },
       data: {
@@ -65,9 +73,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
         stage: piece.demo ? current.stage : "in_class",
         name: nameTrim || current.name,
         ageBand: body.ageBand ?? current.ageBand,
-        contactType: "zalo",
-        contactHandle: contactTrim || current.contactHandle,
-        ...(nextPhone ? { phoneKey: nextPhone } : {}),
+        ...contactData,
         publicOk,
       },
     });

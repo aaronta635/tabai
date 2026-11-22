@@ -1,9 +1,12 @@
 import type { Locale } from "@/lib/locale-path";
 
-const VN_LEADING = new Set(["3", "5", "7", "8", "9"]);
+/** VN mobile leading digit after the local 0 (not AU two-digit area codes). */
+const VN_ONLY_SECOND = new Set(["5", "9"]);
+const VN_NATIONAL = new Set(["3", "5", "7", "8", "9"]);
+const AU_AREA_AFTER_ZERO = new Set(["02", "03", "07", "08"]);
 
 function vnNational(national: string) {
-  return national.length === 9 && VN_LEADING.has(national[0] ?? "");
+  return national.length === 9 && VN_NATIONAL.has(national[0] ?? "");
 }
 
 function auNational(national: string) {
@@ -18,6 +21,24 @@ function keyFrom(country: "84" | "61", national: string) {
 
 function defaultCountry(locale: Locale): "84" | "61" {
   return locale === "en" ? "61" : "84";
+}
+
+function ambiguousAuLocal(digits: string) {
+  return digits.length === 10 && digits.startsWith("0") && AU_AREA_AFTER_ZERO.has(digits.slice(0, 2));
+}
+
+function vnUnambiguousLocal(digits: string) {
+  return (
+    digits.length === 10 &&
+    digits.startsWith("0") &&
+    !digits.startsWith("04") &&
+    !ambiguousAuLocal(digits) &&
+    VN_ONLY_SECOND.has(digits[1] ?? "")
+  );
+}
+
+function vnUnambiguousNine(digits: string) {
+  return digits.length === 9 && VN_ONLY_SECOND.has(digits[0] ?? "");
 }
 
 /** Canonical digit key for uniqueness. Locale resolves ambiguous local numbers. */
@@ -43,7 +64,10 @@ export function phoneKey(raw: string, locale: Locale = "vi"): string | null {
     if (digits.startsWith("04")) {
       return keyFrom("61", digits.slice(1));
     }
-    if (VN_LEADING.has(digits[1] ?? "")) {
+    if (ambiguousAuLocal(digits)) {
+      return keyFrom(defaultCountry(locale), digits.slice(1));
+    }
+    if (vnUnambiguousLocal(digits)) {
       return keyFrom("84", digits.slice(1));
     }
     return keyFrom(defaultCountry(locale), digits.slice(1));
@@ -53,7 +77,7 @@ export function phoneKey(raw: string, locale: Locale = "vi"): string | null {
     if (digits.startsWith("4")) {
       return keyFrom("61", digits);
     }
-    if (VN_LEADING.has(digits[0] ?? "")) {
+    if (vnUnambiguousNine(digits)) {
       return keyFrom("84", digits);
     }
     return keyFrom(defaultCountry(locale), digits);

@@ -2,11 +2,14 @@
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ParaIcon } from "@/components/site/ParaIcon";
-import { content, homeHref, languageChoiceHref, localePath } from "@/lib/site/content";
+import { content, homeHref, languageChoiceHref, localePath, type Locale } from "@/lib/site/content";
+import { authPath } from "@/lib/return-path";
 import "@/styles/site/editorial-home.css";
 
-/** The editorial homepage is English-only; the CTA opens the in-app signup. */
-const SIGNUP_HREF = localePath("en", "/signup");
+/** "Try for free" opens teacher signup (/en/signup/teacher, /vi/signup/teacher). */
+export function teacherSignupHref(locale: Locale) {
+  return localePath(locale, authPath("signup", "tutor"));
+}
 /** Matches the CSS breakpoint where the inline links give way to the menu. */
 const MENU_QUERY = "(max-width: 760px)";
 
@@ -21,9 +24,9 @@ export function EditorialArrow() {
   );
 }
 
-export function EditorialCta({ onClick }: { onClick?: () => void }) {
+export function EditorialCta({ locale = "en", onClick }: { locale?: Locale; onClick?: () => void }) {
   return (
-    <a className="ed-button" href={SIGNUP_HREF} onClick={onClick}>
+    <a className="ed-button" href={teacherSignupHref(locale)} onClick={onClick}>
       {content.en.conversion.button} <EditorialArrow />
     </a>
   );

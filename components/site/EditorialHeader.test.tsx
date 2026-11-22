@@ -24,9 +24,9 @@ it("opens the phone menu with focus inside and closes it on Escape, returning fo
   expect(document.activeElement).toBe(toggle);
 });
 
-it("points the free-trial CTA at the in-app signup", () => {
+it("points the free-trial CTA at teacher signup", () => {
   render(<EditorialHeader />);
-  expect(screen.getByRole("link", { name: /Try for free/ })).toHaveAttribute("href", "/en/signup");
+  expect(screen.getByRole("link", { name: /Try for free/ })).toHaveAttribute("href", "/en/signup/teacher");
 });
 
 it("keeps the visible VI code in the language links' accessible names", async () => {
@@ -38,4 +38,10 @@ it("keeps the visible VI code in the language links' accessible names", async ()
   const links = Array.from(group.querySelectorAll("a"));
   expect(links.map((link) => link.textContent?.trim())).toEqual(["EN", "VI Switch to Vietnamese"]);
   expect(links[0]).toHaveAttribute("aria-current", "true");
+});
+
+it("builds the teacher-signup CTA target for each locale", async () => {
+  const { teacherSignupHref } = await import("@/components/site/EditorialHeader");
+  expect(teacherSignupHref("en")).toBe("/en/signup/teacher");
+  expect(teacherSignupHref("vi")).toBe("/vi/signup/teacher");
 });

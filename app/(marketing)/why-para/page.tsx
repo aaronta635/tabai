@@ -1,0 +1,9 @@
+import { redirect } from "next/navigation";
+import { getLocale } from "@/lib/i18n";
+import { localePath, type Locale } from "@/lib/site/content";
+
+/** /why-para is the readable alias; /why-howl0 stays the canonical address. */
+export default async function Page() {
+  const locale = (await getLocale()) as Locale;
+  redirect(localePath(locale, "/why-howl0"));
+}

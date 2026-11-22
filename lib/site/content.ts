@@ -24,6 +24,7 @@ export const content = {
       homeLabel: "PARA Music, home",
       menu: "Menu",
       close: "Close",
+      languageGroup: "Language",
       languageLabel: "Switch to Vietnamese",
       languageShort: "VI",
       items: [
@@ -314,6 +315,13 @@ export const content = {
         ["Delete your data", "/data-deletion"],
       ],
     },
+    notFound: {
+      metadataTitle: "Page not found",
+      eyebrow: "404",
+      title: "We couldn’t find that page.",
+      intro: "The link may be out of date or mistyped.",
+      home: "Back to the homepage",
+    },
     skip: "Skip to content",
   },
   vi: {
@@ -323,6 +331,7 @@ export const content = {
       homeLabel: "PARA Music, trang chủ",
       menu: "Trình đơn",
       close: "Đóng",
+      languageGroup: "Ngôn ngữ",
       languageLabel: "Chuyển sang tiếng Anh",
       languageShort: "EN",
       items: [
@@ -614,6 +623,13 @@ export const content = {
         ["Điều khoản", "/terms"],
         ["Xóa dữ liệu", "/data-deletion"],
       ],
+    },
+    notFound: {
+      metadataTitle: "Không tìm thấy trang",
+      eyebrow: "404",
+      title: "Không tìm thấy trang này.",
+      intro: "Đường link có thể đã cũ hoặc bị gõ sai.",
+      home: "Về trang chủ",
     },
     skip: "Bỏ qua để đến nội dung chính",
   },

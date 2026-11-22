@@ -1,0 +1,246 @@
+/* Ported from howl0-landing; selectors are scoped under .para-site so they outrank the
+   site frame's scoped element rules, as they outrank bare element rules in the design repo. */
+/* Shared panel proportions keep the opening and demos in one composition. */
+.para-site .para-editorial .ed-hero-stage {
+  background: var(--ed-surface);
+  padding: 48px 32px 0;
+}
+.para-site .ed-header .ed-nav {
+  width: min(100% - 64px, 1120px);
+}
+.para-site .para-editorial .ed-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  width: min(100%, 1120px);
+  min-height: 520px;
+  margin-inline: auto;
+  padding: 48px 40px;
+  border: 0;
+  border-radius: 28px;
+  background: #fff;
+  text-align: left;
+  isolation: isolate;
+}
+.para-site .ed-hero-copy {
+  max-width: 520px;
+  width: 100%;
+  min-width: 0;
+}
+.para-site .ed-hero h1 {
+  font-size: clamp(46px, 4.3vw, 56px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+  margin: 0 0 24px;
+}
+.para-site .ed-hero h1 > span {
+  display: block;
+  transform-origin: 50% 100%;
+}
+.para-site .ed-hero h1 .ed-focus-word {
+  position: relative;
+  display: inline-block;
+  font-style: normal;
+}
+.para-site .ed-focus-word::after {
+  content: "";
+  position: absolute;
+  left: 3%;
+  right: 0;
+  bottom: -5px;
+  height: 2px;
+  background: var(--ed-ink);
+  transform-origin: left;
+  transform: scaleX(var(--ed-line-progress, 1));
+  pointer-events: none;
+}
+.para-site .ed-hero-copy > p {
+  max-width: 410px;
+  margin: 0 0 24px;
+  font-size: 18px;
+  line-height: 1.6;
+  text-wrap: pretty;
+}
+.para-site .ed-hero-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+.para-site .ed-hero-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  isolation: isolate;
+}
+.para-site .ed-hero-art picture {
+  display: block;
+  width: min(100%, 380px);
+}
+.para-site .ed-hero-art img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.para-site .ed-belief {
+  text-align: center;
+  padding-block: 112px 96px;
+}
+.para-site .ed-belief h2 {
+  font-size: clamp(40px, 4.6vw, 64px);
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+  margin: 0;
+}
+.para-site .ed-belief-secondary {
+  color: var(--ed-muted);
+}
+.para-site .ed-belief .ed-signal-word {
+  position: relative;
+  display: inline-block;
+  font-style: normal;
+  transform-origin: 50% 70%;
+}
+.para-site .ed-signal-word::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(var(--ed-line-progress, 1));
+  transform-origin: left;
+  pointer-events: none;
+}
+.para-site .ed-belief-route {
+  display: block;
+  width: min(100%, 800px);
+  height: 72px;
+  margin: 28px auto -24px;
+  overflow: visible;
+  pointer-events: none;
+}
+.para-site .ed-belief-route path {
+  stroke: var(--ed-wave);
+  stroke-width: 1;
+}
+.para-site .ed-belief-route circle {
+  fill: var(--ed-ink);
+}
+.para-site .ed-close {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 64px 32px;
+  background: var(--ed-surface);
+  border-radius: 32px;
+  margin-bottom: 40px;
+  gap: 24px;
+}
+.para-site .ed-close h2 {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.035em;
+  margin: 0;
+}
+@media (max-width: 1150px) {
+  .para-site .para-editorial .ed-hero {
+    padding: 40px 32px;
+    min-height: 480px;
+    gap: 32px;
+  }
+  .para-site .ed-hero h1 {
+    font-size: 48px;
+  }
+  .para-site .ed-hero-art picture {
+    width: min(100%, 340px);
+  }
+}
+@media (max-width: 1000px) {
+  .para-site .para-editorial .ed-hero {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    gap: 28px;
+  }
+  .para-site .ed-hero-copy {
+    max-width: 640px;
+  }
+  .para-site .ed-hero-art picture {
+    width: min(100%, 260px);
+  }
+}
+@media (max-width: 800px) {
+  .para-site .para-editorial .ed-hero-stage {
+    padding: 32px 24px 0;
+  }
+  .para-site .ed-header .ed-nav {
+    width: calc(100% - 48px);
+  }
+  .para-site .para-editorial .ed-hero {
+    padding: 32px;
+  }
+  .para-site .ed-hero h1 {
+    font-size: clamp(40px, 5.8vw, 48px);
+  }
+}
+@media (max-width: 850px) {
+  .para-site .ed-belief {
+    padding-block: 88px 80px;
+  }
+}
+@media (max-width: 650px) {
+  .para-site .para-editorial .ed-hero {
+    gap: 28px;
+  }
+  .para-site .ed-hero h1 {
+    font-size: clamp(34px, 9vw, 42px);
+    margin-bottom: 20px;
+  }
+  .para-site .ed-hero-copy > p {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .para-site .ed-hero-art picture {
+    width: min(100%, 210px);
+  }
+  .para-site .ed-belief {
+    padding-block: 72px;
+  }
+  .para-site .ed-belief h2 {
+    font-size: clamp(33px, 8.2vw, 44px);
+  }
+  .para-site .ed-close {
+    padding: 40px 24px;
+    border-radius: 24px;
+  }
+}
+@media (max-width: 500px) {
+  .para-site .para-editorial .ed-hero {
+    padding: 24px;
+    border-radius: 20px;
+  }
+  .para-site .para-editorial .ed-hero-stage {
+    padding: 24px 16px 0;
+  }
+  .para-site .ed-header .ed-nav {
+    width: calc(100% - 32px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-site .ed-focus-word::after,
+  .para-site .ed-signal-word::after {
+    transform: none !important;
+  }
+  .para-site .ed-motion-word,
+  .para-site .ed-signal-word {
+    transform: none !important;
+  }
+  .para-site .ed-belief-route path {
+    stroke-dasharray: none !important;
+    stroke-dashoffset: 0 !important;
+  }
+}

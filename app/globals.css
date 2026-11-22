@@ -2111,7 +2111,10 @@ body:has(.auth-split) {
 
 .auth-forgot {
   align-self: flex-end;
-  margin-top: -0.15rem;
+  /* 44px tap height; the negative margin keeps the visual spacing it had. */
+  min-height: 44px;
+  margin-top: -0.75rem;
+  margin-bottom: -0.6rem;
   border: 0;
   background: none;
   color: #3B2F2A;
@@ -2152,6 +2155,10 @@ body:has(.auth-split) {
 
 .auth-switch a,
 .auth-switch button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  vertical-align: middle;
   border: 0;
   background: none;
   color: #3B2F2A;

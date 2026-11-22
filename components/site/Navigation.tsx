@@ -5,9 +5,11 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { BrandLogo } from "@/components/site/BrandLogo";
 import { ParaIcon } from "@/components/site/ParaIcon";
 import { ProductCta } from "@/components/site/ProductCta";
+import { EditorialHeader } from "@/components/site/EditorialHeader";
 import {
   content,
   homeHref,
+  languageChoiceHref,
   localePath,
   type Locale,
 } from "@/lib/site/content";
@@ -69,6 +71,11 @@ export function Navigation({ locale }: { locale: Locale }) {
     links[(index + direction + links.length) % links.length]?.focus();
   }
 
+  // Only the English homepage uses the editorial header; every other route keeps this one.
+  if (locale === "en" && (pathname === "/en" || pathname === "/en/")) return <EditorialHeader />;
+
+  const plainPath = pathname.replace(/^\/(?:en|vi)(?=\/|$)/, "") || "/";
+
   return (
     <header className="site-header integrated-header">
       <nav
@@ -106,6 +113,22 @@ export function Navigation({ locale }: { locale: Locale }) {
             className="nav-cta"
             onClick={() => setOpen(false)}
           />
+        </div>
+        {/* Full page loads let the root layout switch <html lang> and the locale cookie. */}
+        <div className="language-switch" role="group" aria-label={dictionary.languageGroup}>
+          {(["en", "vi"] as const).map((code) => (
+            <a
+              key={code}
+              href={languageChoiceHref(code, plainPath)}
+              hrefLang={code}
+              aria-current={code === locale ? "true" : undefined}
+              onClick={() => setOpen(false)}
+            >
+              {/* The visible code stays in the accessible name; the hidden text says what it does. */}
+              <span lang={code}>{code.toUpperCase()}</span>
+              {code === locale ? null : <span className="sr-only"> {dictionary.languageLabel}</span>}
+            </a>
+          ))}
         </div>
         <button
           ref={toggle}

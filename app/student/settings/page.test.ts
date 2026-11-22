@@ -22,6 +22,6 @@ it("retains main's account-deletion confirmation and action alongside student ap
   expect(confirm?.props).toMatchObject({ type: "checkbox", required: true, value: "yes" });
   expect(nodes.find(node => node.type === ThemeToggle)?.props).toMatchObject({
     theme: "light",
-    labels: { on: "Turn on dark mode", off: "Turn off" },
+    labels: { on: "Turn on dark mode", off: "Turn off dark mode" },
   });
 });

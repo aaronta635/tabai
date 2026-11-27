@@ -13,6 +13,8 @@ const copy: TakeLogCopy = {
   silent: "Silent {pct}%",
   noNotes: "No notes",
   pitchError: "Pitch error",
+  visualFailed: "Visual failed",
+  pitchOverlaySkipped: "Pitch overlay skipped",
 };
 
 const job = (status: AnalyzeJobView["status"], lastError: string | null = null): AnalyzeJobView => ({
@@ -71,6 +73,20 @@ describe("take log", () => {
       kind: "running",
       line: "Running 2",
       open: true,
+    });
+  });
+
+  it("surfaces a Gemini visual failure without raw json in the headline", () => {
+    const heard = chordHeard;
+    const metrics = {
+      ...audible,
+      pitch_notes: [note],
+      gemini_visual_error_code: "upload_failed",
+    };
+    expect(takeLogView({ job: job("done"), heard, metrics, copy })).toMatchObject({
+      kind: "ready",
+      line: "Visual failed",
+      detail: null,
     });
   });
 

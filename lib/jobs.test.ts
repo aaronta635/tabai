@@ -8,7 +8,10 @@ const job = vi.hoisted(() => ({
   create: vi.fn(),
 }));
 
+const getReadyPieceModel = vi.hoisted(() => vi.fn());
+
 vi.mock("@/lib/prisma", () => ({ prisma: { submission, job } }));
+vi.mock("@/lib/catalog", () => ({ getReadyPieceModel }));
 
 import {
   enqueueAnalyzeIfApproved,

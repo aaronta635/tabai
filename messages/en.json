@@ -486,6 +486,8 @@
     "analyzeDoneEmpty": "Analysis finished, and it did not write a chart.",
     "analyzeTimedOut": "Analysis is taking too long. Refresh, or mark from the video.",
     "analyzePitchError": "Analyzed, but the pitch detector failed. Details below.",
+    "analyzeVisualFailed": "Pitch data is saved, but Gemini could not finish video analysis.",
+    "analyzePitchOverlaySkipped": "Pitch feedback could not be written for this take.",
     "analyzeNoNotes": "Analyzed. There is sound, but no chords or notes were detected. Play more clearly, or check that it is the right piece.",
     "analyzeSilent": "Analyzed, but this take is silent or too quiet ({pct}% silence). Record again closer to the microphone.",
     "modelDesk": "Sit and compare",

@@ -3,6 +3,7 @@ import { PITCH_OVERLAY_VERSION } from "@/lib/constants";
 import { bestChord, chordsInText, firstChordInText, pcName, pitchClass } from "@/lib/chord-tones";
 import { notePositionLabel, type LocaleLabel } from "@/lib/fretboard";
 import { tempoCue } from "@/lib/tempo-cue";
+import { isPitchErrorCode, pitchErrorCodeFromMetrics } from "@/lib/pitch-error";
 import {
   midiFromNote,
   type CompareIssue,
@@ -34,6 +35,7 @@ export function pitchNotesFromMetrics(metrics: unknown): HeardPitchNote[] {
 }
 
 export function pitchErrorFromMetrics(metrics: unknown): string | null {
+  if (pitchErrorCodeFromMetrics(metrics)) return null;
   if (!metrics || typeof metrics !== "object" || Array.isArray(metrics)) return null;
   const error = (metrics as { pitch_error?: unknown }).pitch_error;
   return typeof error === "string" && error.trim() ? error : null;
@@ -46,8 +48,10 @@ export function needsPitchOverlay(metrics: unknown) {
   const row = metrics as {
     pitch_notes?: unknown;
     pitch_error?: unknown;
+    pitch_error_code?: unknown;
     pitch_overlay_version?: unknown;
   };
+  if (isPitchErrorCode(row.pitch_error_code) && row.pitch_error_code === "not_installed") return true;
   if (typeof row.pitch_error === "string" && /not installed/i.test(row.pitch_error)) return true;
   if (!Array.isArray(row.pitch_notes)) return true;
   return row.pitch_overlay_version !== PITCH_OVERLAY_VERSION;

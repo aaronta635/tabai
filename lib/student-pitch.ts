@@ -40,6 +40,7 @@ export function studentPitchCopy(t: {
   practiceSilent: string;
   practiceNoNotes: string;
   practicePitchError: string;
+  practiceCouldNotJudge: string;
 }): TakeLogCopy {
   return {
     pending: t.practiceQueued,
@@ -50,6 +51,8 @@ export function studentPitchCopy(t: {
     silent: t.practiceSilent,
     noNotes: t.practiceNoNotes,
     pitchError: t.practicePitchError,
+    visualFailed: t.practiceCouldNotJudge,
+    pitchOverlaySkipped: t.practicePitchError,
   };
 }
 

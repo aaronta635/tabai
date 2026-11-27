@@ -1,5 +1,5 @@
 import type { SubmissionKind } from "@prisma/client";
-import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
+import { enqueueGeminiFollowUpIfPromoted } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { revalidateStudentHotPath } from "@/lib/student-cache";
 import { pitchCheckTimedOut } from "@/lib/student-pitch";
@@ -50,11 +50,21 @@ export async function promotePracticeToTake(input: { studentId: string; submissi
   ) {
     return { error: "analyze_open" };
   }
-  await prisma.submission.update({
-    where: { id: row.id },
+  const promoted = await prisma.submission.updateMany({
+    where: { id: row.id, studentId: input.studentId, kind: "practice" },
     data: { kind: "take", submittedAt: new Date() },
   });
-  await enqueueAnalyzeIfApproved(row.id);
+  if (promoted.count === 0) {
+    const current = await prisma.submission.findFirst({
+      where: { id: row.id, studentId: input.studentId },
+      select: { kind: true, piece: { select: { code: true } } },
+    });
+    if (current && kindAlreadySent(current.kind)) {
+      return { ok: true, id: row.id, already: true, pieceCode: current.piece.code };
+    }
+    return { error: "not_found" };
+  }
+  await enqueueGeminiFollowUpIfPromoted(row.id, { fromPromotion: true });
   revalidateStudentHotPath(input.studentId);
   return { ok: true, id: row.id, already: false, pieceCode: row.piece.code };
 }

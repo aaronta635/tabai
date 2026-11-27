@@ -2,6 +2,7 @@ import { isOpenAnalyze, type AnalyzeJobView } from "@/lib/analyze-status";
 import { ANALYZE_WAIT_MS } from "@/lib/constants";
 import { pitchErrorFromMetrics, pitchNotesFromMetrics } from "@/lib/pitch-overlay";
 import { chordsFromScore, type TrainExtract } from "@/lib/score-model";
+import { geminiVisualErrorCodeFromMetrics, pitchOverlaySkippedInMetrics } from "@/lib/gemini-visual";
 import { serviceWaitTimedOut } from "@/lib/service-wait";
 
 /** A take is treated as silent when at least this share of it is below the noise floor. */
@@ -30,6 +31,8 @@ export type TakeLogCopy = {
   silent: string;
   noNotes: string;
   pitchError: string;
+  visualFailed: string;
+  pitchOverlaySkipped: string;
   timedOut?: string;
 };
 
@@ -41,6 +44,14 @@ function metricsRow(metrics: unknown): Record<string, unknown> | null {
 export function takeSilenceRatio(metrics: unknown): number | null {
   const ratio = metricsRow(metrics)?.silence_ratio;
   return typeof ratio === "number" && Number.isFinite(ratio) ? ratio : null;
+}
+
+export function metricsShowGeminiVisualFailure(metrics: unknown) {
+  return geminiVisualErrorCodeFromMetrics(metrics) != null;
+}
+
+export function metricsShowPitchOverlaySkipped(metrics: unknown) {
+  return pitchOverlaySkippedInMetrics(metrics);
 }
 
 function hasAnalysis(heard: TrainExtract | null, metrics: unknown) {
@@ -78,6 +89,7 @@ export function takeLogKind({
   if (silence !== null && silence >= SILENT_RATIO) return "silent";
   const notes = pitchNotesFromMetrics(metrics);
   const chords = heard ? chordsFromScore(heard) : [];
+  if (metricsShowPitchOverlaySkipped(metrics)) return "pitch_error";
   if (notes.length === 0 && pitchErrorFromMetrics(metrics)) return "pitch_error";
   if (notes.length === 0 && chords.length === 0) return "no_notes";
   return "ready";
@@ -125,11 +137,23 @@ export function takeLogView({
       return { kind, line: copy.silent.replaceAll("{pct}", String(pct)), detail: null, open: false };
     }
     case "pitch_error":
-      return { kind, line: copy.pitchError, detail: pitchErrorFromMetrics(metrics), open: false };
+      return {
+        kind,
+        line: metricsShowPitchOverlaySkipped(metrics) ? copy.pitchOverlaySkipped : copy.pitchError,
+        detail: metricsShowPitchOverlaySkipped(metrics) ? null : pitchErrorFromMetrics(metrics),
+        open: false,
+      };
     case "no_notes":
       return { kind, line: copy.noNotes, detail: null, open: false };
-    case "ready":
-      return { kind, line: "", detail: null, open: false };
+    case "ready": {
+      const visualFailed = metricsShowGeminiVisualFailure(metrics);
+      return {
+        kind,
+        line: visualFailed ? copy.visualFailed : "",
+        detail: null,
+        open: false,
+      };
+    }
     default: {
       const never: never = kind;
       return never;

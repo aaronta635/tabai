@@ -11,6 +11,7 @@ const copy = studentPitchCopy({
   practiceSilent: "Silent {pct}",
   practiceNoNotes: "No notes",
   practicePitchError: "Pitch error",
+  practiceCouldNotJudge: "Could not judge",
 });
 
 describe("pitchCheckTimedOut", () => {

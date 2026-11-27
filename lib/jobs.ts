@@ -41,6 +41,13 @@ export async function enqueueTrainPiece(pieceId: string) {
   return enqueueJob("train_piece", { pieceId });
 }
 
+export {
+  enqueueGeminiFollowUpIfPromoted,
+  PROMOTE_GEMINI_FOLLOW_UP,
+  promoteGeminiFollowUpEligible,
+  type GeminiFollowUpContext,
+} from "@/lib/jobs-promote-followup";
+
 export async function enqueueAnalyzeIfApproved(submissionId: string) {
   const submission = await prisma.submission.findUnique({
     where: { id: submissionId },

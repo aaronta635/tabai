@@ -486,6 +486,8 @@
     "analyzeDoneEmpty": "Phân tích đã xong, nhưng không có biểu đồ.",
     "analyzeTimedOut": "Phân tích đang quá lâu. Tải lại trang, hoặc đánh dấu từ video.",
     "analyzePitchError": "Đã phân tích, nhưng bộ dò cao độ bị lỗi. Chi tiết bên dưới.",
+    "analyzeVisualFailed": "Dữ liệu cao độ đã lưu, nhưng Gemini không hoàn tất phân tích video.",
+    "analyzePitchOverlaySkipped": "Không ghi được phản hồi cao độ cho bản thu này.",
     "analyzeNoNotes": "Đã phân tích. Có âm thanh, nhưng không nhận ra hợp âm hay nốt nào. Hãy chơi rõ hơn hoặc kiểm tra lại bài.",
     "analyzeSilent": "Đã phân tích, nhưng bản thu im lặng hoặc quá nhỏ ({pct}% im lặng). Hãy thu lại, đặt đàn hoặc micro gần hơn.",
     "modelDesk": "Đối chiếu bản thu",

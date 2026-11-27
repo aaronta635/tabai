@@ -126,21 +126,9 @@
   box-shadow: 0 0 0 4px var(--para-ivory);
 }
 @media (hover: hover) {
-  .para-site a.product-cta:hover .product-cta-material {
-    transform: translateY(-2px);
-  }
   .para-site a.product-cta:hover .product-cta-gradient {
     background-position: 90% 50%;
   }
-  .para-site a.product-cta:hover > .para-icon {
-    transform: translateX(3px);
-  }
-}
-.para-site a.product-cta:active .product-cta-material {
-  transform: translateY(1px) scale(0.985);
-}
-.para-site a.product-cta:active > .para-icon {
-  transform: translateX(1px);
 }
 .para-site .studio-home .product-invitation {
   display: flex;

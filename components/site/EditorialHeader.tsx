@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { ParaIcon } from "@/components/site/ParaIcon";
+import { ArrowRight } from "lucide-react";
+import { ParaIcon, SITE_ICON_STROKE } from "@/components/site/ParaIcon";
 import { content, homeHref, languageChoiceHref, localePath, type Locale } from "@/lib/site/content";
 import { teacherSignupHref } from "@/lib/site/signup-href";
 import { editorialCopy } from "@/lib/site/editorial-copy";
@@ -12,11 +13,13 @@ const MENU_QUERY = "(max-width: 760px)";
 
 export function EditorialArrow() {
   return (
-    <img
-      src="/brand/para/homepage/arrow-right.svg"
-      alt=""
+    <ArrowRight
+      className="ed-arrow"
       width={20}
       height={20}
+      strokeWidth={SITE_ICON_STROKE}
+      aria-hidden="true"
+      focusable="false"
     />
   );
 }

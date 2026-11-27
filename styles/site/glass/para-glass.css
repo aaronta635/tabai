@@ -158,7 +158,6 @@
 }
 .para-site .para-glass--interactive:active:not(:disabled):not([aria-disabled="true"]) {
   --para-glass-current-alpha: var(--para-glass-pressed-alpha);
-  transform: translateY(1px);
 }
 .para-site .para-glass:focus-visible {
   outline: var(--para-glass-focus-width) solid var(--para-glass-focus-ink);

@@ -1,0 +1,250 @@
+/* PARA app redesign, phase 0: button, field and card. Needs redesign-tokens.css.
+   Scoped under `.para-rd`; no live screen imports this file yet.
+   Buttons never move: hover and press change colour only. There is no transform, scale,
+   translate or position animation anywhere in this file. */
+
+.para-rd .rd-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Button ---------- */
+.para-rd .rd-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rd-space-2);
+  min-height: var(--rd-tap);
+  max-width: 100%;
+  padding: 10px var(--rd-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--rd-radius-control);
+  font: inherit;
+  font-size: var(--rd-text-md);
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: center;
+  text-decoration: none;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition-property: background-color, border-color, color;
+  transition-duration: 120ms;
+  transition-timing-function: linear;
+}
+.para-rd .rd-button--block {
+  display: flex;
+  width: 100%;
+}
+.para-rd .rd-button:focus-visible {
+  outline: 2px solid var(--rd-focus);
+  outline-offset: 2px;
+}
+
+.para-rd .rd-button--primary {
+  background: var(--rd-ink);
+  color: var(--rd-on-ink);
+}
+.para-rd .rd-button--primary:hover {
+  background: var(--rd-button-hover);
+}
+.para-rd .rd-button--primary:active {
+  background: var(--rd-button-pressed);
+}
+
+.para-rd .rd-button--secondary {
+  background: var(--rd-canvas);
+  border-color: var(--rd-ink);
+  color: var(--rd-ink);
+}
+.para-rd .rd-button--secondary:hover {
+  background: var(--rd-surface);
+}
+.para-rd .rd-button--secondary:active {
+  background: var(--rd-line);
+}
+
+.para-rd .rd-button--ghost {
+  background: transparent;
+  color: var(--rd-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.para-rd .rd-button--ghost:hover {
+  background: var(--rd-surface);
+}
+.para-rd .rd-button--ghost:active {
+  background: var(--rd-line);
+}
+
+.para-rd .rd-button:disabled,
+.para-rd .rd-button[aria-disabled="true"]:not([aria-busy="true"]) {
+  cursor: not-allowed;
+  background: var(--rd-disabled-bg);
+  border-color: transparent;
+  color: var(--rd-disabled-text);
+}
+.para-rd .rd-button--ghost:disabled,
+.para-rd .rd-button--ghost[aria-disabled="true"]:not([aria-busy="true"]) {
+  background: transparent;
+}
+
+/* Loading keeps its colours and the label in place (hidden), so the button keeps its exact size. */
+.para-rd .rd-button[aria-busy="true"] {
+  cursor: progress;
+}
+.para-rd .rd-button--primary[aria-busy="true"] {
+  background: var(--rd-button-hover);
+}
+.para-rd .rd-button__label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rd-space-2);
+}
+.para-rd .rd-button[aria-busy="true"] .rd-button__label {
+  visibility: hidden;
+}
+.para-rd .rd-button__busy {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* The loading icon pulses in opacity only, and stays still when the device asks for less motion. */
+.para-rd .rd-button__busy .rd-icon {
+  animation: rd-pulse 1s linear infinite alternate;
+}
+@keyframes rd-pulse {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.35;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .para-rd .rd-button,
+  .para-rd .rd-field__input {
+    transition: none;
+  }
+  .para-rd .rd-button__busy .rd-icon {
+    animation: none;
+  }
+}
+
+/* ---------- Field ---------- */
+.para-rd .rd-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rd-space-2);
+  min-width: 0;
+}
+.para-rd .rd-field__label {
+  font-size: var(--rd-text-md);
+  font-weight: 600;
+  line-height: var(--rd-leading);
+  overflow-wrap: anywhere;
+}
+.para-rd .rd-field__optional {
+  font-weight: 400;
+  color: var(--rd-muted);
+}
+.para-rd .rd-field__input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: var(--rd-tap);
+  padding: 10px var(--rd-space-3);
+  border: 1px solid var(--rd-field-border);
+  border-radius: var(--rd-radius-control);
+  background: var(--rd-canvas);
+  color: var(--rd-ink);
+  font: inherit;
+  font-size: var(--rd-text-md);
+  line-height: var(--rd-leading);
+  transition-property: border-color, background-color;
+  transition-duration: 120ms;
+}
+.para-rd .rd-field__input::placeholder {
+  color: var(--rd-muted);
+}
+.para-rd .rd-field__input:focus-visible {
+  outline: 2px solid var(--rd-focus);
+  outline-offset: 2px;
+}
+.para-rd .rd-field__input:disabled {
+  background: var(--rd-surface);
+  color: var(--rd-muted);
+  cursor: not-allowed;
+}
+.para-rd .rd-field__input[aria-invalid="true"] {
+  border-color: var(--rd-error);
+  border-width: 2px;
+  padding: 9px 11px;
+}
+.para-rd .rd-field__hint {
+  margin: 0;
+  font-size: var(--rd-text-sm);
+  color: var(--rd-muted);
+  line-height: var(--rd-leading);
+}
+.para-rd .rd-field__error {
+  margin: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rd-space-2);
+  font-size: var(--rd-text-sm);
+  font-weight: 600;
+  color: var(--rd-error);
+  line-height: var(--rd-leading);
+}
+.para-rd .rd-field__error .rd-icon {
+  margin-top: 1px;
+}
+
+/* ---------- Card ---------- */
+.para-rd .rd-card {
+  box-sizing: border-box;
+  min-width: 0;
+  padding: var(--rd-space-4) var(--rd-space-5);
+  border-radius: var(--rd-radius-card);
+  background: var(--rd-surface);
+  color: var(--rd-ink);
+}
+/* Selected: sand tint + 3px sand bar + bold ink text + a tick. Never sand alone, never sand text. */
+.para-rd .rd-card--selected {
+  background: var(--rd-sand-tint);
+  box-shadow: inset var(--rd-sand-bar) 0 0 var(--rd-sand);
+  font-weight: 700;
+  color: var(--rd-ink);
+}
+.para-rd .rd-card__selected-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rd-space-1);
+  margin: 0 0 var(--rd-space-2);
+  font-size: var(--rd-text-sm);
+  font-weight: 700;
+  color: var(--rd-ink);
+}
+.para-rd .rd-card__title {
+  margin: 0 0 var(--rd-space-1);
+  font-size: var(--rd-text-lg);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.para-rd .rd-card__body {
+  color: var(--rd-muted);
+  font-weight: 400;
+}
+.para-rd .rd-card--selected .rd-card__body {
+  color: var(--rd-ink);
+}

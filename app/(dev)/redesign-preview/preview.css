@@ -1,0 +1,98 @@
+/* Layout for the internal redesign preview page only. */
+.para-rd.rd-preview {
+  min-height: 100vh;
+  padding: var(--rd-space-6) 0 var(--rd-space-7);
+}
+.para-rd .rd-preview__wrap {
+  width: min(100% - 32px, 1120px);
+  margin-inline: auto;
+}
+.para-rd .rd-preview__eyebrow {
+  margin: 0;
+  font-size: var(--rd-text-sm);
+  color: var(--rd-muted);
+}
+.para-rd .rd-preview__title {
+  margin: var(--rd-space-1) 0 var(--rd-space-2);
+  font-size: var(--rd-text-xl);
+  line-height: 1.2;
+}
+.para-rd .rd-preview__intro,
+.para-rd .rd-preview__note {
+  margin: 0 0 var(--rd-space-4);
+  color: var(--rd-muted);
+}
+.para-rd .rd-preview__langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rd-space-4);
+}
+.para-rd .rd-preview__langs a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--rd-tap);
+  color: var(--rd-ink);
+}
+.para-rd .rd-preview__langs a[aria-current="page"] {
+  font-weight: 700;
+}
+.para-rd .rd-preview__section {
+  margin-top: var(--rd-space-7);
+  padding-top: var(--rd-space-5);
+  border-top: 1px solid var(--rd-line);
+}
+.para-rd .rd-preview__section h2 {
+  margin: 0 0 var(--rd-space-2);
+  font-size: var(--rd-text-lg);
+}
+.para-rd .rd-preview__label {
+  margin: 0;
+  font-size: var(--rd-text-sm);
+  font-weight: 600;
+  color: var(--rd-muted);
+}
+.para-rd .rd-preview__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: var(--rd-space-5);
+  align-items: start;
+}
+.para-rd .rd-preview__stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--rd-space-3);
+}
+.para-rd .rd-preview__narrow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rd-space-3);
+  max-width: 343px;
+  margin-top: var(--rd-space-5);
+}
+.para-rd .rd-preview__icons,
+.para-rd .rd-preview__swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--rd-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.para-rd .rd-preview__icons li,
+.para-rd .rd-preview__swatches li {
+  display: flex;
+  align-items: center;
+  gap: var(--rd-space-2);
+  min-height: var(--rd-tap);
+  font-size: var(--rd-text-sm);
+}
+.para-rd .rd-preview__swatches li {
+  flex-wrap: wrap;
+}
+.para-rd .rd-preview__swatch {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--rd-line);
+  border-radius: 6px;
+}

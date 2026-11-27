@@ -6,7 +6,7 @@
   },
   "theme": {
     "on": "Turn on dark mode",
-    "off": "Turn off",
+    "off": "Turn off dark mode",
     "appearance": "Appearance",
     "language": "Language"
   },

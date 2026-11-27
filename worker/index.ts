@@ -13,7 +13,9 @@ import {
 } from "../lib/jobs";
 import { reconnectPrisma } from "../lib/prisma";
 import type { PieceModelSourceJson } from "../lib/score-model";
+import { PROMOTE_GEMINI_FOLLOW_UP } from "../lib/jobs-promote-followup";
 import { runAnalyze } from "./analyze";
+import { stampAnalyzeJobStartedAsPractice, type AnalyzeJobPayload } from "./analyze-job-origin";
 import { runDraft } from "./draft";
 import { listenHealthz } from "./healthz";
 import { runTrainPiece } from "./train";
@@ -24,12 +26,16 @@ process.env.WORKER_LOOP = "1";
 const POLL_MS = 2000;
 const RECONNECT_WAIT_MS = 5000;
 
-async function afterAnalyzeJob(job: { type: string; payload: unknown }) {
+async function afterSuccessfulAnalyzeJob(job: { type: string; payload: unknown }) {
   if (job.type !== "analyze") return;
-  const submissionId = (job.payload as { submissionId?: string }).submissionId;
+  const payload = job.payload as AnalyzeJobPayload;
+  const submissionId = payload.submissionId;
   if (!submissionId) return;
   try {
-    await enqueueGeminiFollowUpIfPromoted(submissionId);
+    await enqueueGeminiFollowUpIfPromoted(submissionId, {
+      finishingStartedAsPractice: payload.startedAsPractice === true,
+      finishingWasPromoteFollowUp: payload[PROMOTE_GEMINI_FOLLOW_UP] === true,
+    });
   } catch (error) {
     console.error("gemini follow-up enqueue", submissionId, error);
   }
@@ -99,11 +105,12 @@ async function loop() {
         continue;
       }
       try {
-        const payload = (job.payload ?? {}) as { submissionId?: string; pieceId?: string };
+        const jobForRun = await stampAnalyzeJobStartedAsPractice(job);
+        const payload = (jobForRun.payload ?? {}) as { submissionId?: string; pieceId?: string };
         console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
-        await handle(job);
+        await handle(jobForRun);
         await finishJob(job.id);
-        await afterAnalyzeJob(job);
+        await afterSuccessfulAnalyzeJob(jobForRun);
         console.log("job done", job.type, job.id);
       } catch (error) {
         const message = error instanceof Error ? error.message : "unknown";
@@ -112,7 +119,6 @@ async function loop() {
           await reconnectPrisma();
         }
         await failJob(job.id, message);
-        await afterAnalyzeJob(job);
       }
     } catch (error) {
       console.error("worker loop", error);
@@ -139,12 +145,13 @@ async function runPendingJobs() {
   while (Date.now() - started < RUN_WINDOW_MS && jobs.length < 4) {
     const job = await claimNextJob();
     if (!job) break;
-    const payload = (job.payload ?? {}) as { submissionId?: string; pieceId?: string };
+    const jobForRun = await stampAnalyzeJobStartedAsPractice(job);
+    const payload = (jobForRun.payload ?? {}) as { submissionId?: string; pieceId?: string };
     try {
       console.log("job start", job.type, job.id, payload.submissionId ?? payload.pieceId ?? "");
-      await handle(job);
+      await handle(jobForRun);
       await finishJob(job.id);
-      await afterAnalyzeJob(job);
+      await afterSuccessfulAnalyzeJob(jobForRun);
       console.log("job done", job.type, job.id);
       jobs.push({ id: job.id, type: job.type, ok: true });
     } catch (error) {
@@ -152,7 +159,6 @@ async function runPendingJobs() {
       console.error("job failed", job.id, message);
       if (isPrismaConnectionError(error)) await reconnectPrisma();
       await failJob(job.id, message);
-      await afterAnalyzeJob(job);
       jobs.push({ id: job.id, type: job.type, ok: false });
     }
   }

@@ -199,14 +199,14 @@ export async function runTrainPiece(pieceId: string, extras?: Partial<PieceModel
           ...cuesJson,
           pitch_notes: pitched.notes,
           pitch_backend: "basic-pitch",
-          ...(pitched.error ? { pitch_error: pitched.error } : {}),
+          ...(pitched.errorCode ? { pitch_error_code: pitched.errorCode } : {}),
         };
       } catch (error) {
         cuesJson = {
           ...cuesJson,
           pitch_notes: [],
           pitch_backend: "basic-pitch",
-          pitch_error: error instanceof Error ? error.message : "pitch failed",
+          pitch_error_code: "worker_failed",
         };
       } finally {
         await rm(dir, { recursive: true, force: true });

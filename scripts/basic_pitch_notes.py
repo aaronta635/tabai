@@ -24,14 +24,8 @@ def main() -> int:
     try:
         from basic_pitch.inference import predict  # type: ignore
     except ImportError as exc:
-        print(
-            json.dumps(
-                {
-                    "error": f"basic-pitch not installed: {exc}",
-                    "notes": [],
-                }
-            )
-        )
+        print(json.dumps({"error_code": "not_installed", "notes": []}))
+        print(f"basic-pitch not installed: {exc}", file=sys.stderr)
         return 0
 
     try:
@@ -39,7 +33,8 @@ def main() -> int:
         with redirect_stdout(sink), redirect_stderr(sink):
             _model_output, _midi, note_events = predict(wav_path)
     except Exception as exc:  # noqa: BLE001 — return JSON so the worker can keep compare
-        print(json.dumps({"error": str(exc), "notes": []}))
+        print(json.dumps({"error_code": "extract_failed", "notes": []}))
+        print(str(exc), file=sys.stderr)
         return 0
 
     notes = []

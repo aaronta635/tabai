@@ -1,5 +1,6 @@
 import type { MouseEventHandler } from "react";
-import { content, localePath, type Locale } from "@/lib/site/content";
+import { content, type Locale } from "@/lib/site/content";
+import { teacherSignupHref } from "@/lib/site/signup-href";
 import { ParaIcon } from "@/components/site/ParaIcon";
 
 /** The anchor is stationary; only its decorative material responds to input. */
@@ -20,7 +21,7 @@ export function ProductCta({
 }) {
   return (
     <a
-      href={localePath(locale, "/signup")}
+      href={teacherSignupHref(locale)}
       className={`product-cta ${className}`}
       data-size={size}
       data-tone={tone}

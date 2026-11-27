@@ -3,10 +3,7 @@ import { wakeCloudWorker } from "@/lib/cloud-worker";
 import { PIPELINE_VERSION_SCORE } from "@/lib/constants";
 import { analyzeAllowed } from "@/lib/demo-piece";
 import { CLAIMABLE_SUBMISSION_STATUSES } from "@/lib/forms";
-import { getReadyPieceModel } from "@/lib/catalog";
-import { savedAnalysisLacksGeminiVisual } from "@/lib/gemini-visual";
 import { prisma } from "@/lib/prisma";
-import { usesGeminiVisual } from "@/lib/practice";
 import { needsPitchOverlay } from "@/lib/pitch-overlay";
 import {
   draftCoversFactVerdicts,
@@ -44,47 +41,12 @@ export async function enqueueTrainPiece(pieceId: string) {
   return enqueueJob("train_piece", { pieceId });
 }
 
-/**
- * After an analyze job ends, queue one follow-up when a promoted take still lacks Gemini visual output.
- */
-export async function enqueueGeminiFollowUpIfPromoted(submissionId: string) {
-  const submission = await prisma.submission.findUnique({
-    where: { id: submissionId },
-    include: {
-      student: true,
-      piece: { select: { demo: true, id: true } },
-      analyses: {
-        orderBy: { createdAt: "desc" },
-        take: 1,
-        select: { metricsJson: true, observationsJson: true },
-      },
-    },
-  });
-  if (!submission) return null;
-  if (!usesGeminiVisual(submission.kind)) return null;
-  if (!analyzeAllowed(submission.piece.demo, submission.student.approvedAt)) return null;
-
-  const pieceModel = await getReadyPieceModel(submission.piece.id);
-  const latest = submission.analyses[0];
-  if (
-    latest &&
-    !savedAnalysisLacksGeminiVisual(
-      submission.kind,
-      latest.metricsJson,
-      latest.observationsJson,
-      Boolean(pieceModel),
-    )
-  ) {
-    return null;
-  }
-
-  const open = await prisma.job.findFirst({
-    where: { type: "analyze", submissionId, status: { in: ["pending", "running"] } },
-    select: { id: true, status: true },
-  });
-  if (open) return open;
-  return enqueueJob("analyze", { submissionId }, submissionId);
-}
+export {
+  enqueueGeminiFollowUpIfPromoted,
+  PROMOTE_GEMINI_FOLLOW_UP,
+  promoteGeminiFollowUpEligible,
+  type GeminiFollowUpContext,
+} from "@/lib/jobs-promote-followup";
 
 export async function enqueueAnalyzeIfApproved(submissionId: string) {
   const submission = await prisma.submission.findUnique({

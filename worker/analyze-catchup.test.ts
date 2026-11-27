@@ -86,7 +86,10 @@ beforeEach(() => {
   });
   downloadMedia.mockResolvedValue(Buffer.from("video"));
   runPython.mockResolvedValue(JSON.stringify({ duration_s: 12, silence_ratio: 0.1 }));
-  extractPitchFromWav.mockResolvedValue({ notes: [{ tStart: 0, tEnd: 1, midi: 60, name: "C4" }], error: null });
+  extractPitchFromWav.mockResolvedValue({
+    notes: [{ tStart: 0, tEnd: 1, midi: 55, name: "G3" }],
+    errorCode: undefined,
+  });
   writeVideoWav.mockReturnValue(undefined);
   uploadMedia.mockResolvedValue(undefined);
   media.update.mockResolvedValue(undefined);
@@ -118,7 +121,10 @@ describe("mergeGeminiVisualPassResult", () => {
   });
 
   it("keeps heard_extract when compare is missing on an untrained piece", () => {
-    const extract = { title: "Song", sections: [{ name: "A", chords: [], melodyNotes: [] }] };
+    const extract = {
+      title: "Song",
+      sections: [{ name: "A", startBar: 1, endBar: 1, chords: ["G"], melodyNotes: ["G"] }],
+    };
     const base = {
       observations: undefined,
       heardExtract: null,
@@ -128,7 +134,7 @@ describe("mergeGeminiVisualPassResult", () => {
       costCents: 0,
       confidence: null,
     };
-    const partial = {
+    const partial: Parameters<typeof mergeGeminiVisualPassResult>[1] = {
       observations: undefined,
       heardExtract: extract,
       metrics: { duration_s: 12, heard_extract: extract },
@@ -136,7 +142,7 @@ describe("mergeGeminiVisualPassResult", () => {
       pipelineVersion: PIPELINE_VERSION,
       costCents: 0,
       confidence: null,
-      visualOk: true as const,
+      visualOk: true,
       costDelta: 2,
     };
     const merged = mergeGeminiVisualPassResult(base, partial);
@@ -160,6 +166,37 @@ describe("runAnalyze promotion catch-up", () => {
       GEMINI_VISUAL_ERROR_CODES.upload_failed,
     );
     expect((saved?.metricsJson as { pitch_notes?: unknown[] }).pitch_notes).toHaveLength(1);
+  });
+
+  it("catch-up on a promoted clip includes pitch overlay issues", async () => {
+    submission.findUnique
+      .mockResolvedValueOnce(practiceSubmission)
+      .mockResolvedValue({ kind: "take", status: "received" });
+    uploadGeminiFile.mockResolvedValue({ name: "files/x", uri: "https://x", mimeType: "video/mp4" });
+    vi.mocked(generateGeminiJson)
+      .mockResolvedValueOnce({
+        data: { title: "Song", sections: [{ name: "A", chords: ["G"], melodyNotes: ["G"] }] },
+        usage: { inputTokens: 1, outputTokens: 1 },
+        model: "gemini-test",
+      })
+      .mockResolvedValueOnce({
+        data: {
+          overallFit: 0.5,
+          confidence: 0.5,
+          positives: [],
+          issues: [],
+          nextPractice: "again",
+        },
+        usage: { inputTokens: 1, outputTokens: 1 },
+        model: "gemini-test",
+      });
+
+    await runAnalyze("sub-1");
+
+    expect(vi.mocked(generateGeminiJson)).toHaveBeenCalledTimes(2);
+    const saved = analysis.create.mock.calls[0]?.[0]?.data;
+    expect((saved?.metricsJson as { pitch_overlay_version?: string }).pitch_overlay_version).toBeTruthy();
+    expect(saved?.observationsJson).toBeTruthy();
   });
 
   it("uploads once during catch-up on a promoted clip", async () => {

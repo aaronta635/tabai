@@ -105,20 +105,25 @@ export async function uploadGeminiFile(
   const name = uploaded.name;
   if (!name) throw new Error("Gemini file upload returned no name");
 
-  let file = uploaded;
-  const started = Date.now();
-  while (remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS) > 0) {
-    if (isActive(file.state)) {
-      if (!file.uri) throw new Error("Gemini file is active but missing uri");
-      return { name, uri: file.uri, mimeType: file.mimeType || mimeType };
+  try {
+    let file = uploaded;
+    const started = Date.now();
+    while (remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS) > 0) {
+      if (isActive(file.state)) {
+        if (!file.uri) throw new Error("Gemini file is active but missing uri");
+        return { name, uri: file.uri, mimeType: file.mimeType || mimeType };
+      }
+      if (isFailed(file.state)) {
+        throw new Error(`Gemini file processing failed (${displayName})`);
+      }
+      await sleep(Math.min(2000, remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS)));
+      file = await withServiceWait(ai.files.get({ name }), "gemini file status", GEMINI_FILE_GET_WAIT_MS);
     }
-    if (isFailed(file.state)) {
-      throw new Error(`Gemini file processing failed (${displayName})`);
-    }
-    await sleep(Math.min(2000, remainingServiceWaitMs(started, GEMINI_FILE_READY_WAIT_MS)));
-    file = await withServiceWait(ai.files.get({ name }), "gemini file status", GEMINI_FILE_GET_WAIT_MS);
+    throw new Error(`Gemini file processing timed out (${displayName})`);
+  } catch (error) {
+    await deleteGeminiFile(ai, name);
+    throw error;
   }
-  throw new Error(`Gemini file processing timed out (${displayName})`);
 }
 
 export async function deleteGeminiFile(ai: GoogleGenAI, name: string) {

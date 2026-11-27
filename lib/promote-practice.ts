@@ -1,5 +1,5 @@
 import type { SubmissionKind } from "@prisma/client";
-import { enqueueAnalyzeIfApproved } from "@/lib/jobs";
+import { enqueueGeminiFollowUpIfPromoted } from "@/lib/jobs";
 import { prisma } from "@/lib/prisma";
 import { revalidateStudentHotPath } from "@/lib/student-cache";
 import { pitchCheckTimedOut } from "@/lib/student-pitch";
@@ -64,10 +64,7 @@ export async function promotePracticeToTake(input: { studentId: string; submissi
     }
     return { error: "not_found" };
   }
-  const analyzeStillOpen = jobStatus === "pending" || jobStatus === "running";
-  if (!analyzeStillOpen) {
-    await enqueueAnalyzeIfApproved(row.id);
-  }
+  await enqueueGeminiFollowUpIfPromoted(row.id, { fromPromotion: true });
   revalidateStudentHotPath(input.studentId);
   return { ok: true, id: row.id, already: false, pieceCode: row.piece.code };
 }

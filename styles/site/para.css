@@ -18,35 +18,6 @@
 @import "./performance-reel.css";
 @import "./hero-session.css";
 
-@font-face {
-  font-family: "Plus Jakarta Sans";
-  font-style: normal;
-  font-weight: 200 800;
-  font-display: swap;
-  src: url("/brand/para/resources/PlusJakartaSans[wght].woff2") format("woff2");
-}
-@font-face {
-  font-family: "Be Vietnam Pro";
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url("/brand/para/resources/BeVietnamPro-Regular.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Be Vietnam Pro";
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url("/brand/para/resources/BeVietnamPro-Medium.woff2") format("woff2");
-}
-@font-face {
-  font-family: "Be Vietnam Pro";
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url("/brand/para/resources/BeVietnamPro-SemiBold.woff2") format("woff2");
-}
-
 .para-site {
   color-scheme: light;
   --header-height: 88px;
@@ -155,9 +126,7 @@
   flex: none;
   width: 20px;
   height: 20px;
-  background-color: currentColor;
-  -webkit-mask: var(--icon-url) center / contain no-repeat;
-  mask: var(--icon-url) center / contain no-repeat;
+  color: inherit;
 }
 .para-site .music-icon {
   width: 32px;
@@ -304,8 +273,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 40px;
-  min-height: 40px;
+  min-width: 44px;
+  min-height: 44px;
   padding: 0 8px;
   border-radius: 8px;
   color: inherit;
@@ -892,7 +861,19 @@
 .para-site .footer-legal {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 20px;
+  gap: 0 20px;
+}
+/* Footer links keep their look but get a 44px tap height. */
+.para-site .footer-legal a,
+.para-site .footer-bottom a,
+.para-site .footer-main a[aria-label] {
+  display: inline-flex;
+  align-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+.para-site .footer-bottom {
+  row-gap: 0;
 }
 .para-site .footer-legal a:hover,
 .para-site .footer-bottom a:hover {
@@ -1196,12 +1177,6 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 24px;
-}
-.para-site .text-link .para-icon {
-  transition: transform 160ms ease;
-}
-.para-site .text-link:hover .para-icon {
-  transform: translateX(3px);
 }
 
 @media (max-width: 1100px) {
@@ -1659,5 +1634,28 @@
   .para-site .final-scene .studio-entry .button-primary {
     background: var(--para-ivory);
     color: var(--para-espresso);
+  }
+}
+
+/* 404: the heading wraps to two lines on phones, so give the line under it room. */
+.para-site .not-found-hero .page-hero-copy h1 {
+  margin-bottom: 16px;
+}
+@media (max-width: 600px) {
+  .para-site .not-found-hero .page-hero-copy h1 {
+    margin-bottom: 20px;
+  }
+}
+
+/* Very narrow phones (320px): logo + EN/VI + menu button need ~328px.
+   Shrink the logo and its padding only; every tap target keeps 44px+. */
+@media (max-width: 359px) {
+  .para-site .integrated-header .brand {
+    padding-inline: 8px;
+  }
+
+  .para-site .integrated-header .brand img {
+    width: 96px;
+    height: auto;
   }
 }

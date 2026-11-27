@@ -3,6 +3,7 @@ import { JetBrains_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import { I18nProvider, getLocale } from "@/lib/i18n";
 import { getTheme } from "@/lib/theme";
+import { content, type Locale } from "@/lib/site/content";
 import "./globals.css";
 
 const mono = JetBrains_Mono({
@@ -29,10 +30,13 @@ const body = localFont({
   variable: "--font-inter",
 });
 
-export const metadata: Metadata = {
-  title: "PARA — feedback for online guitar teachers",
-  description: "One link for the group. Students send a take. PARA lines it up with your score and tutorial.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = (await getLocale()) as Locale;
+  return {
+    title: content[locale].metadata.title,
+    description: content[locale].metadata.description,
+  };
+}
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const locale = await getLocale();

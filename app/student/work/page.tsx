@@ -71,7 +71,7 @@ export default async function StudentWorkPage() {
                   {rows.map((row) => (
                     <tr key={row.id}>
                       <td>
-                        <Link href={`/student/work/${row.piece!.code}`} className="font-semibold">
+                        <Link href={`/student/work/${row.piece!.code}`} className="tap-target font-semibold">
                           {row.piece!.title}
                         </Link>
                         {row.goal ? <p className="text-xs text-ink-soft">{row.goal}</p> : null}
@@ -80,7 +80,7 @@ export default async function StudentWorkPage() {
                         {duePhrase(row.dueAt, locale, t.student.due) ?? ""}
                       </td>
                       <td>
-                        <Link href={`/student/work/${row.piece!.code}`} className="btn">
+                        <Link href={`/student/work/${row.piece!.code}`} className="btn table-btn">
                           {t.student.submitPiece}
                         </Link>
                       </td>

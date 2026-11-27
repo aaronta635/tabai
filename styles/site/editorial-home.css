@@ -1,0 +1,448 @@
+/* Ported from howl0-landing; selectors are scoped under .para-site so they outrank the
+   site frame's scoped element rules, as they outrank bare element rules in the design repo. */
+/* English homepage only. Theme tokens never alter shared or locale routes. */
+html:has(.para-editorial) {
+  --ed-canvas: #fff;
+  --ed-surface: #f5f5f7;
+  --ed-ink: #111;
+  --ed-muted: #626267;
+  --ed-line: #dedee2;
+  --ed-wave: #c4c4ca;
+  --ed-focus: #38383c;
+  --ed-selection: rgb(17 17 17 / 4%);
+  --ed-button-hover: #333;
+  --ed-button-pressed: #000;
+  --ed-icon-filter: invert(1);
+  --ed-repeat-filter: none;
+  background: var(--ed-canvas);
+  color-scheme: light;
+  scroll-padding-top: 88px;
+  scroll-behavior: smooth;
+}
+body:has(.para-editorial),
+.para-site .para-editorial,
+.para-site .ed-header {
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+}
+.para-site .para-editorial,
+.para-site .ed-header {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+.para-site .para-editorial > section,
+.para-site .para-editorial > footer {
+  background-image: none;
+}
+.para-site .ed-wrap {
+  width: min(100% - 80px, 1200px);
+  margin-inline: auto;
+}
+.para-site .ed-header {
+  position: sticky;
+  top: 0;
+  z-index: 60;
+  border-bottom: 1px solid var(--ed-line);
+}
+.para-site .ed-nav {
+  min-height: 68px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 28px;
+}
+.para-site .ed-brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  min-height: 44px;
+}
+.para-site .ed-brand img {
+  display: block;
+  width: 140px;
+  height: auto;
+}
+.para-site .ed-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  font-size: 14px;
+}
+.para-site .ed-nav-story {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+}
+.para-site .ed-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  min-height: 48px;
+  padding: 12px 22px;
+  background: var(--ed-ink);
+  border: 1px solid var(--ed-ink);
+  border-radius: 999px;
+  color: var(--ed-canvas);
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition:
+    background 150ms,
+    border-color 150ms;
+  text-decoration: none;
+}
+.para-site .ed-button .ed-arrow {
+  flex: none;
+}
+.para-site .ed-button:hover {
+  background: var(--ed-button-hover);
+  border-color: var(--ed-button-hover);
+}
+.para-site .ed-button:active {
+  background: var(--ed-button-pressed);
+  border-color: var(--ed-button-pressed);
+}
+.para-site .ed-header a:focus-visible,
+.para-site .para-editorial a:focus-visible,
+.para-site .para-editorial button:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 5px;
+}
+.para-site .ed-nav-story:hover,
+.para-site .ed-footer a:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.para-site .para-editorial h1,
+.para-site .para-editorial h2,
+.para-site .para-editorial h3 {
+  font-family: var(--font-display);
+  color: var(--ed-ink);
+  font-weight: 600;
+  text-wrap: balance;
+}
+.para-site .para-editorial p {
+  color: var(--ed-muted);
+  font-size: 18px;
+  line-height: 1.65;
+}
+.para-site .para-editorial .ed-label {
+  font-size: 12px;
+  line-height: 1.6;
+  letter-spacing: 0.025em;
+  font-weight: 500;
+  color: var(--ed-muted);
+  margin: 0;
+}
+.para-site .ed-motion-word {
+  display: inline-block;
+}
+.para-site .ed-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border-top: 1px solid var(--ed-line);
+  padding-block: 24px 32px;
+  font-size: 12px;
+  color: var(--ed-muted);
+}
+.para-site .ed-footer a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+@media (max-width: 850px) {
+  .para-site .ed-wrap {
+    width: calc(100% - 48px);
+  }
+}
+@media (max-width: 500px) {
+  .para-site .ed-nav {
+    min-height: 64px;
+    gap: 18px;
+  }
+  .para-site .ed-brand img {
+    width: 128px;
+  }
+  .para-site .ed-nav-actions {
+    gap: 14px;
+    font-size: 13px;
+  }
+  .para-site .ed-header .ed-button {
+    padding: 10px 14px;
+    min-height: 44px;
+    gap: 0;
+  }
+  .para-site .ed-header .ed-button .ed-arrow {
+    display: none;
+  }
+}
+@media (max-width: 370px) {
+  .para-site .ed-nav {
+    flex-wrap: wrap;
+    gap: 0 16px;
+    padding-block: 10px;
+  }
+  .para-site .ed-nav-actions {
+    flex: 1;
+    justify-content: flex-end;
+    flex-wrap: wrap-reverse;
+    gap: 0 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.para-editorial) {
+    scroll-behavior: auto;
+  }
+  .para-site .para-editorial *,
+  .para-site .para-editorial *::before,
+  .para-site .para-editorial *::after,
+  .para-site .ed-header * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* tabai: footer keeps the legal links the shared footer would show. */
+.para-site .ed-footer-links a {
+  min-width: 44px;
+}
+.para-site .ed-footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 20px;
+}
+@media (max-width: 500px) {
+  .para-site .ed-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+/* tabai: the site frame paints its own surface; keep the editorial home light-only. */
+.para-site:has(.para-editorial) {
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+  color-scheme: light;
+}
+.para-site .ed-nav-story {
+  white-space: nowrap;
+}
+/* tabai: class-code entry and studio links, in the editorial palette. */
+.para-site .ed-close .studio-entry-block {
+  display: grid;
+  gap: 12px;
+  width: min(100%, 440px);
+  margin-top: 8px;
+  text-align: left;
+}
+.para-site .ed-close .form-note,
+.para-site .ed-close .site-field label {
+  margin: 0;
+  color: var(--ed-muted);
+  font-size: 14px;
+}
+.para-site .ed-close .site-field label {
+  display: block;
+  margin-bottom: 6px;
+}
+.para-site .ed-close .studio-entry {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 10px;
+}
+.para-site .ed-close .site-field {
+  flex: 1 1 200px;
+  margin: 0;
+}
+.para-site .ed-close .site-field input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 14px;
+  border: 1px solid var(--ed-line);
+  border-radius: 12px;
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+  font: 400 16px/1.4 var(--font-body);
+}
+.para-site .ed-close .site-field input:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 2px;
+}
+.para-site .ed-close .studio-entry .button-primary {
+  min-height: 48px;
+  padding: 10px 22px;
+  border: 1px solid var(--ed-ink);
+  border-radius: 999px;
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: none;
+}
+.para-site .ed-close .studio-entry .button-primary:hover {
+  background: var(--ed-selection);
+}
+.para-site .ed-close .studio-entry-block .hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin: 0;
+  font-size: 14px;
+}
+.para-site .ed-close .studio-entry-block .text-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--ed-ink);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+/* The site frame stacks and centres .hero-actions on phones; keep these as a left-aligned row. */
+.para-site .ed-close .studio-entry-block .hero-actions {
+  flex-direction: row;
+  align-items: center;
+  margin-top: 0;
+}
+.para-site .ed-close .studio-entry-block .hero-actions > * {
+  width: auto;
+  flex: none;
+  justify-content: flex-start;
+}
+/* tabai: header tap targets are at least 44x44. */
+.para-site .ed-language {
+  justify-content: center;
+  min-width: 44px;
+}
+.para-site .ed-brand {
+  min-height: 44px;
+}
+/* tabai: on narrow screens the inline links move into an accessible menu. */
+.para-site .ed-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin-right: -10px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ed-ink);
+  cursor: pointer;
+}
+.para-site .ed-menu-toggle .para-icon {
+  width: 24px;
+  height: 24px;
+}
+.para-site .ed-menu-toggle:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 2px;
+}
+.para-site .ed-menu[hidden] {
+  display: none;
+}
+.para-site .ed-menu {
+  position: fixed;
+  inset: 69px 0 0;
+  z-index: 59;
+  overflow-y: auto;
+  background: var(--ed-canvas);
+  color: var(--ed-ink);
+}
+.para-site .ed-menu-inner {
+  display: flex;
+  flex-direction: column;
+  padding-block: 12px 32px;
+}
+.para-site .ed-menu-link {
+  display: flex;
+  align-items: center;
+  min-height: 52px;
+  border-bottom: 1px solid var(--ed-line);
+  font-size: 18px;
+}
+.para-site .ed-menu-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+.para-site .ed-menu-language {
+  display: flex;
+  gap: 8px;
+  margin-top: 20px;
+}
+.para-site .ed-menu-language a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--ed-line);
+  border-radius: 999px;
+  font-size: 14px;
+}
+.para-site .ed-menu-language a[aria-current="true"] {
+  border-color: var(--ed-ink);
+  font-weight: 600;
+}
+.para-site .ed-menu a:focus-visible {
+  outline: 2px solid var(--ed-ink);
+  outline-offset: 2px;
+}
+@media (max-width: 760px) {
+  .para-site .ed-nav-inline {
+    display: none;
+  }
+  .para-site .ed-menu-toggle {
+    display: inline-flex;
+  }
+}
+@media (max-width: 500px) {
+  .para-site .ed-menu {
+    inset: 65px 0 0;
+  }
+}
+
+/* Vietnamese header on small phones: "Dùng thử miễn phí" is longer than
+   "Try for free", so tighten the logo, gaps and CTA padding to keep the logo,
+   CTA and menu button on one row (the menu panel opens below a one-row header).
+   Tap targets stay at least 44px. English is unchanged. */
+@media (max-width: 400px) {
+  html[lang="vi"] .para-site .ed-nav {
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  html[lang="vi"] .para-site .ed-brand img {
+    width: 104px;
+  }
+  html[lang="vi"] .para-site .ed-nav-actions {
+    flex: none;
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+  html[lang="vi"] .para-site .ed-header .ed-button {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+@media (max-width: 340px) {
+  html[lang="vi"] .para-site .ed-nav {
+    gap: 6px;
+  }
+  html[lang="vi"] .para-site .ed-brand img {
+    width: 92px;
+  }
+  html[lang="vi"] .para-site .ed-nav-actions {
+    gap: 4px;
+  }
+  html[lang="vi"] .para-site .ed-header .ed-button {
+    padding: 10px;
+    font-size: 12.5px;
+  }
+}

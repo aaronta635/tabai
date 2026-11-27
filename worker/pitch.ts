@@ -1,6 +1,11 @@
 import { spawn, spawnSync } from "node:child_process";
 import { join } from "node:path";
 import { FFMPEG_WAIT_MS, PITCH_OVERLAY_VERSION, PITCH_PYTHON_WAIT_MS } from "../lib/constants";
+import {
+  classifyBasicPitchScriptError,
+  isPitchErrorCode,
+  type PitchErrorCode,
+} from "../lib/pitch-error";
 import type { HeardPitchNote } from "../lib/pitch-overlay";
 
 export function pitchEnabled() {
@@ -24,7 +29,7 @@ export function parsePitchStdout(raw: string) {
     .map((line) => line.trim())
     .filter((line) => line.startsWith("{"));
   const json = lines[lines.length - 1] ?? raw.trim();
-  return JSON.parse(json) as { notes?: HeardPitchNote[]; error?: string };
+  return JSON.parse(json) as { notes?: HeardPitchNote[]; error?: string; error_code?: string };
 }
 
 export function runPython(script: string, args: string[], binary: string, ms: number) {
@@ -63,10 +68,15 @@ export async function extractPitchFromWav(wavPath: string) {
   );
   const parsed = parsePitchStdout(raw);
   const notes = Array.isArray(parsed.notes) ? parsed.notes : [];
+  const errorCode: PitchErrorCode | undefined = isPitchErrorCode(parsed.error_code)
+    ? parsed.error_code
+    : parsed.error
+      ? classifyBasicPitchScriptError(parsed.error)
+      : undefined;
   return {
     notes,
-    error: parsed.error,
-    pitch_overlay_version: parsed.error ? undefined : PITCH_OVERLAY_VERSION,
+    errorCode,
+    pitch_overlay_version: errorCode ? undefined : PITCH_OVERLAY_VERSION,
   };
 }
 

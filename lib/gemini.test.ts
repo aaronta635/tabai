@@ -1,6 +1,6 @@
 import type { GoogleGenAI } from "@google/genai";
 import { describe, expect, it, vi } from "vitest";
-import { deleteGeminiFile, discardLateGeminiUpload, uploadGeminiFile } from "@/lib/gemini";
+import { discardLateGeminiUpload, uploadGeminiFile } from "@/lib/gemini";
 
 vi.mock("@/lib/service-wait", () => ({
   withServiceWait: vi.fn(async (work: Promise<unknown>) => work),
@@ -25,6 +25,24 @@ describe("uploadGeminiFile", () => {
     });
     const config = upload.mock.calls[0]?.[0]?.config as { httpOptions?: unknown } | undefined;
     expect(config?.httpOptions).toBeUndefined();
+  });
+
+  it("deletes the upload when processing fails or times out", async () => {
+    const del = vi.fn().mockResolvedValue(undefined);
+    const upload = vi.fn().mockResolvedValue({
+      name: "files/bad",
+      mimeType: "video/mp4",
+      state: "PROCESSING",
+    });
+    const get = vi
+      .fn()
+      .mockResolvedValueOnce({ name: "files/bad", mimeType: "video/mp4", state: "FAILED" });
+    const ai = { files: { upload, get, delete: del } } as unknown as GoogleGenAI;
+
+    await expect(uploadGeminiFile(ai, Buffer.from("abc"), "video/mp4", "clip")).rejects.toThrow(
+      /processing failed/i,
+    );
+    expect(del).toHaveBeenCalledWith({ name: "files/bad" });
   });
 });
 

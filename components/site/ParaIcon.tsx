@@ -1,6 +1,28 @@
-import type { CSSProperties } from "react";
+import {
+  ArrowRight,
+  ClipboardList,
+  Eye,
+  Menu,
+  MessageCircle,
+  TriangleAlert,
+  X,
+  type LucideIcon,
+} from "lucide-react";
 
-/** Render supplied SVG geometry in the surrounding accessible text colour. */
+/** Website icons: an open, thin, rounded line set (Lucide), drawn in the surrounding text colour. */
+const icons: Record<string, LucideIcon> = {
+  "arrow-right": ArrowRight,
+  alert: TriangleAlert,
+  assignment: ClipboardList,
+  close: X,
+  comment: MessageCircle,
+  menu: Menu,
+  review: Eye,
+};
+
+/** Thin strokes keep the icons light next to the device's own font. */
+export const SITE_ICON_STROKE = 1.5;
+
 export function ParaIcon({
   name,
   music = false,
@@ -8,15 +30,14 @@ export function ParaIcon({
   name: string;
   music?: boolean;
 }) {
-  // Application icons stay solid/currentColor, even when next to music copy.
-  const asset =
-    name === "arrow-right" ? "forward" : name === "alert" ? "warning" : name;
-  const path = `/brand/para/resources/para-ui-${asset}-24-solid.svg`;
+  const Icon = icons[name] ?? ArrowRight;
   return (
-    <span
+    <Icon
       className={`para-icon ${music ? "music-icon" : ""}`}
-      style={{ "--icon-url": `url("${path}")` } as CSSProperties}
+      strokeWidth={SITE_ICON_STROKE}
+      absoluteStrokeWidth={false}
       aria-hidden="true"
+      focusable="false"
     />
   );
 }

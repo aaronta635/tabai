@@ -23,7 +23,9 @@ import {
   logGeminiVisualFailure,
   type GeminiVisualErrorCode,
 } from "../lib/gemini-visual";
+import { classifyAnalyzePythonError } from "../lib/analyze-metrics-error";
 import { enqueueJob } from "../lib/jobs";
+import { classifyPitchPythonError } from "../lib/pitch-error";
 import { isClaimableStatus } from "../lib/forms";
 import { prisma } from "../lib/prisma";
 import { overlayPitchIssues, pitchNotesFromMetrics, type HeardPitchNote } from "../lib/pitch-overlay";
@@ -221,14 +223,21 @@ async function applyHeardPitchOverlay(input: {
     silence_ratio?: unknown;
     duration_s?: unknown;
     pitch_error?: unknown;
+    pitch_error_code?: unknown;
     tempo_bpm?: unknown;
   };
+  const pitchError =
+    typeof metricRow.pitch_error_code === "string"
+      ? metricRow.pitch_error_code
+      : typeof metricRow.pitch_error === "string"
+        ? metricRow.pitch_error
+        : null;
   const score = (input.pieceModel?.scoreJson ?? null) as ScoreJson | null;
   return {
     observations: overlayPitchIssues(input.observations, heardNotes, score, cues, tutorialNotes, {
       silenceRatio: typeof metricRow.silence_ratio === "number" ? metricRow.silence_ratio : null,
       durationS: typeof metricRow.duration_s === "number" ? metricRow.duration_s : null,
-      pitchError: typeof metricRow.pitch_error === "string" ? metricRow.pitch_error : null,
+      pitchError,
       locale: input.teacherLocale,
       takeBpm: typeof metricRow.tempo_bpm === "number" ? metricRow.tempo_bpm : null,
       referenceBpm: typeof score?.tempoBpm === "number" ? score.tempoBpm : null,
@@ -407,8 +416,8 @@ async function runGeminiVisualPass(input: {
   let heardExtract: TrainExtract | null = null;
   let confidence: number | null = null;
 
-  const uploaded: string[] = [];
   const ownsUpload = !input.existingFile;
+  let videoRef: GeminiFileRef | null = input.existingFile ?? null;
   try {
     const video =
       input.existingFile ??
@@ -418,7 +427,7 @@ async function runGeminiVisualPass(input: {
         sniffMime(input.bytes, "video/mp4"),
         `${input.submission.piece.title}-take`,
       ));
-    if (ownsUpload) uploaded.push(video.name);
+    videoRef = video;
 
     try {
       const heard = await extractHeardTake({
@@ -537,7 +546,7 @@ async function runGeminiVisualPass(input: {
       visualOk: complete,
       costDelta,
       visualErrorCode: complete ? undefined : GEMINI_VISUAL_ERROR_CODES.unavailable,
-      geminiFile: ownsUpload ? video : input.existingFile,
+      geminiFile: videoRef,
     });
   } catch (error) {
     logGeminiVisualFailure(input.submissionId, error);
@@ -555,6 +564,7 @@ async function runGeminiVisualPass(input: {
         visualOk: partialComplete,
         costDelta,
         visualErrorCode: partialComplete ? undefined : visualErrorCode,
+        geminiFile: videoRef,
       });
     }
     return makeResult({
@@ -563,11 +573,8 @@ async function runGeminiVisualPass(input: {
       visualOk: false,
       costDelta,
       visualErrorCode,
+      geminiFile: videoRef,
     });
-  } finally {
-    if (ownsUpload) {
-      await Promise.all(uploaded.map((name) => deleteGeminiFile(ai, name)));
-    }
   }
 }
 
@@ -581,6 +588,7 @@ export async function runAnalyze(submissionId: string) {
 
   const dir = await mkdtemp(join(tmpdir(), "analyze-"));
   const videoPath = join(dir, "take.bin");
+  let geminiVideoFile: GeminiFileRef | null = null;
   try {
     const bytes = await downloadMedia(submission.media.storagePath);
     await writeFile(videoPath, bytes);
@@ -590,9 +598,10 @@ export async function runAnalyze(submissionId: string) {
       const raw = await runPython(join(process.cwd(), "scripts/analyze.py"), [videoPath], "python3", ANALYZE_PYTHON_WAIT_MS);
       metrics = JSON.parse(raw) as Prisma.InputJsonValue;
     } catch (error) {
+      console.error("analyze.py failed", submissionId, error instanceof Error ? error.message : error);
       metrics = {
         skipped: true,
-        error: error instanceof Error ? error.message : "analyze failed",
+        audio_metrics_error_code: classifyAnalyzePythonError(error),
       };
     }
 
@@ -625,17 +634,18 @@ export async function runAnalyze(submissionId: string) {
           ...(metrics as object),
           pitch_notes: heardNotes,
           pitch_backend: "basic-pitch",
-          ...(pitched.error
-            ? { pitch_error: pitched.error }
+          ...(pitched.errorCode
+            ? { pitch_error_code: pitched.errorCode }
             : { pitch_overlay_version: PITCH_OVERLAY_VERSION }),
         };
       } catch (error) {
+        console.error("pitch extract failed", submissionId, error instanceof Error ? error.message : error);
         heardNotes = [];
         metrics = {
           ...(metrics as object),
           pitch_notes: heardNotes,
           pitch_backend: "basic-pitch",
-          pitch_error: error instanceof Error ? error.message : "pitch failed",
+          pitch_error_code: classifyPitchPythonError(error),
         };
       }
     }
@@ -648,8 +658,6 @@ export async function runAnalyze(submissionId: string) {
     const startedAsPractice = submission.kind === "practice";
     const visual = usesGeminiVisual(submission.kind);
     const teacherLocale = submission.piece.teacher.feedbackLocale === "en" ? "en" : "vi";
-
-    let geminiVideoFile: GeminiFileRef | null = null;
 
     let writeState: AnalyzeWriteState = {
       observations: undefined,
@@ -714,7 +722,6 @@ export async function runAnalyze(submissionId: string) {
         metrics: state.metrics,
         pipelineVersion: state.pipelineVersion,
         costCents: state.costCents,
-        skipPitchOverlay: true,
         existingFile: geminiVideoFile,
       });
       if (gemini.geminiFile) geminiVideoFile = gemini.geminiFile;
@@ -752,6 +759,10 @@ export async function runAnalyze(submissionId: string) {
     if (!factVerdictsComplete(parseCompareObservations(writeState.observations))) return;
     await enqueueJob("draft", { submissionId }, submissionId);
   } finally {
+    const ai = geminiClient();
+    if (ai && geminiVideoFile?.name) {
+      await deleteGeminiFile(ai, geminiVideoFile.name);
+    }
     await rm(dir, { recursive: true, force: true });
   }
 }

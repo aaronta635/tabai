@@ -282,6 +282,29 @@ export type GeminiVisualPassResult = AnalyzeWriteState & {
 
 export { geminiVisualComplete };
 
+/** Tracks one Gemini Files upload per analyze job; delete exactly once at job end. */
+export function createGeminiJobUploadTracker() {
+  let name: string | null = null;
+  let deleted = false;
+  return {
+    track(file: GeminiFileRef) {
+      if (!name) name = file.name;
+    },
+    get pendingName() {
+      return name;
+    },
+    get wasDeleted() {
+      return deleted;
+    },
+    async deleteOnce(ai: ReturnType<typeof geminiClient>) {
+      if (!ai || !name || deleted) return;
+      console.info("gemini file delete", name);
+      await deleteGeminiFile(ai, name);
+      deleted = true;
+    },
+  };
+}
+
 export function mergeGeminiVisualPassResult(base: AnalyzeWriteState, patch: GeminiVisualPassResult): AnalyzeWriteState {
   const metrics = {
     ...(base.metrics as object),
@@ -382,6 +405,7 @@ async function runGeminiVisualPass(input: {
   costCents: number;
   skipPitchOverlay?: boolean;
   existingFile?: GeminiFileRef | null;
+  trackGeminiUpload?: (file: GeminiFileRef) => void;
 }): Promise<GeminiVisualPassResult> {
   const makeResult = (
     partial: Partial<GeminiVisualPassResult> & Pick<GeminiVisualPassResult, "visualOk" | "costDelta">,
@@ -428,6 +452,7 @@ async function runGeminiVisualPass(input: {
         `${input.submission.piece.title}-take`,
       ));
     videoRef = video;
+    if (ownsUpload) input.trackGeminiUpload?.(video);
 
     try {
       const heard = await extractHeardTake({
@@ -534,6 +559,7 @@ async function runGeminiVisualPass(input: {
         visualOk: false,
         costDelta,
         visualErrorCode: GEMINI_VISUAL_ERROR_CODES.unavailable,
+        geminiFile: videoRef,
       });
     }
     return makeResult({
@@ -588,7 +614,12 @@ export async function runAnalyze(submissionId: string) {
 
   const dir = await mkdtemp(join(tmpdir(), "analyze-"));
   const videoPath = join(dir, "take.bin");
+  const geminiUpload = createGeminiJobUploadTracker();
   let geminiVideoFile: GeminiFileRef | null = null;
+  const trackGeminiUpload = (file: GeminiFileRef) => {
+    geminiUpload.track(file);
+    geminiVideoFile = file;
+  };
   try {
     const bytes = await downloadMedia(submission.media.storagePath);
     await writeFile(videoPath, bytes);
@@ -682,8 +713,8 @@ export async function runAnalyze(submissionId: string) {
         pipelineVersion: writeState.pipelineVersion,
         costCents: writeState.costCents,
         existingFile: geminiVideoFile,
+        trackGeminiUpload,
       });
-      if (gemini.geminiFile) geminiVideoFile = gemini.geminiFile;
       writeState = mergeGeminiVisualPassResult(writeState, gemini);
     } else {
       const practice = await tryApplyPracticePitchOverlay({
@@ -723,8 +754,8 @@ export async function runAnalyze(submissionId: string) {
         pipelineVersion: state.pipelineVersion,
         costCents: state.costCents,
         existingFile: geminiVideoFile,
+        trackGeminiUpload,
       });
-      if (gemini.geminiFile) geminiVideoFile = gemini.geminiFile;
       return mergeGeminiVisualPassResult(state, gemini);
     };
 
@@ -759,10 +790,7 @@ export async function runAnalyze(submissionId: string) {
     if (!factVerdictsComplete(parseCompareObservations(writeState.observations))) return;
     await enqueueJob("draft", { submissionId }, submissionId);
   } finally {
-    const ai = geminiClient();
-    if (ai && geminiVideoFile?.name) {
-      await deleteGeminiFile(ai, geminiVideoFile.name);
-    }
+    await geminiUpload.deleteOnce(geminiClient());
     await rm(dir, { recursive: true, force: true });
   }
 }

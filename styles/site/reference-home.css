@@ -36,24 +36,9 @@
 }
 .para-site .ed-hero h1 > span {
   display: block;
-  transform-origin: 50% 100%;
 }
 .para-site .ed-hero h1 .ed-focus-word {
-  position: relative;
-  display: inline-block;
   font-style: normal;
-}
-.para-site .ed-focus-word::after {
-  content: "";
-  position: absolute;
-  left: 3%;
-  right: 0;
-  bottom: -5px;
-  height: 2px;
-  background: var(--ed-ink);
-  transform-origin: left;
-  transform: scaleX(var(--ed-line-progress, 1));
-  pointer-events: none;
 }
 .para-site .ed-hero-copy > p {
   max-width: 410px;
@@ -98,22 +83,7 @@
   color: var(--ed-muted);
 }
 .para-site .ed-belief .ed-signal-word {
-  position: relative;
-  display: inline-block;
   font-style: normal;
-  transform-origin: 50% 70%;
-}
-.para-site .ed-signal-word::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -4px;
-  height: 2px;
-  background: currentColor;
-  transform: scaleX(var(--ed-line-progress, 1));
-  transform-origin: left;
-  pointer-events: none;
 }
 .para-site .ed-belief-route {
   display: block;
@@ -231,14 +201,6 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .para-site .ed-focus-word::after,
-  .para-site .ed-signal-word::after {
-    transform: none !important;
-  }
-  .para-site .ed-motion-word,
-  .para-site .ed-signal-word {
-    transform: none !important;
-  }
   .para-site .ed-belief-route path {
     stroke-dasharray: none !important;
     stroke-dashoffset: 0 !important;

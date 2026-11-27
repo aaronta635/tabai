@@ -27,7 +27,7 @@ body:has(.para-editorial),
 }
 .para-site .para-editorial,
 .para-site .ed-header {
-  font-family: "Be Vietnam Pro", Arial, sans-serif;
+  font-family: var(--font-body);
   font-weight: 400;
 }
 .para-site .para-editorial > section,
@@ -93,25 +93,16 @@ body:has(.para-editorial),
     border-color 150ms;
   text-decoration: none;
 }
-.para-site .ed-button img {
-  filter: var(--ed-icon-filter);
+.para-site .ed-button .ed-arrow {
   flex: none;
-  transition: transform 160ms ease-out;
 }
 .para-site .ed-button:hover {
   background: var(--ed-button-hover);
   border-color: var(--ed-button-hover);
 }
-.para-site .ed-button:hover img,
-.para-site .ed-button:focus-visible img {
-  transform: translateX(3px);
-}
 .para-site .ed-button:active {
   background: var(--ed-button-pressed);
   border-color: var(--ed-button-pressed);
-}
-.para-site .ed-button:active img {
-  transform: translateX(1px);
 }
 .para-site .ed-header a:focus-visible,
 .para-site .para-editorial a:focus-visible,
@@ -127,7 +118,7 @@ body:has(.para-editorial),
 .para-site .para-editorial h1,
 .para-site .para-editorial h2,
 .para-site .para-editorial h3 {
-  font-family: "Plus Jakarta Sans", Arial, sans-serif;
+  font-family: var(--font-display);
   color: var(--ed-ink);
   font-weight: 600;
   text-wrap: balance;
@@ -147,7 +138,6 @@ body:has(.para-editorial),
 }
 .para-site .ed-motion-word {
   display: inline-block;
-  transform-origin: 50% 100%;
 }
 .para-site .ed-footer {
   display: flex;
@@ -186,7 +176,7 @@ body:has(.para-editorial),
     min-height: 44px;
     gap: 0;
   }
-  .para-site .ed-header .ed-button img {
+  .para-site .ed-header .ed-button .ed-arrow {
     display: none;
   }
 }
@@ -276,7 +266,7 @@ body:has(.para-editorial),
   border-radius: 12px;
   background: var(--ed-canvas);
   color: var(--ed-ink);
-  font: 400 16px/1.4 "Be Vietnam Pro", Arial, sans-serif;
+  font: 400 16px/1.4 var(--font-body);
 }
 .para-site .ed-close .site-field input:focus-visible {
   outline: 2px solid var(--ed-ink);

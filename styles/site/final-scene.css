@@ -187,12 +187,6 @@
 .para-site .final-action .para-icon {
   width: 24px;
   height: 24px;
-  transition: transform 180ms ease;
-}
-@media (hover: hover) {
-  .para-site .final-action:hover .para-icon {
-    transform: translateX(3px);
-  }
 }
 .para-site .final-utilities {
   margin-inline: var(--ending-gutter);

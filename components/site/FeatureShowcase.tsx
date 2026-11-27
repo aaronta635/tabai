@@ -1,10 +1,12 @@
+import { MessageCircle, Repeat, Upload } from "lucide-react";
 import { DemoVideo } from "@/components/site/DemoVideo";
+import { SITE_ICON_STROKE } from "@/components/site/ParaIcon";
 import { EditorialMotionText } from "@/components/site/EditorialMotionText";
 import type { Locale } from "@/lib/site/content";
 import { editorialCopy } from "@/lib/site/editorial-copy";
 import "@/styles/site/feature-showcase.css";
 
-const icons = { take: "upload", feedback: "comment", next: "repeat" } as const;
+const icons = { take: Upload, feedback: MessageCircle, next: Repeat } as const;
 const files = {
   take: "para-your-take-macos",
   feedback: "para-your-teachers-note-macos",
@@ -23,6 +25,7 @@ export function FeatureShowcase({ locale = "en" }: { locale?: Locale }) {
         {copy.showcase.demos.map((demo) => {
           const [first, ...rest] = demo.titleLines;
           const title = demo.titleLines.join(" ");
+          const Icon = icons[demo.id];
           return (
             <article
               key={demo.id}
@@ -43,12 +46,13 @@ export function FeatureShowcase({ locale = "en" }: { locale?: Locale }) {
                   ) : null}
                 </h2>
                 <p className="para-feature-summary">{demo.copy}</p>
-                <img
+                <Icon
                   className="para-feature-icon"
-                  src={`/brand/para/homepage/${icons[demo.id]}.svg`}
-                  alt=""
                   width={40}
                   height={40}
+                  strokeWidth={SITE_ICON_STROKE}
+                  aria-hidden="true"
+                  focusable="false"
                 />
               </div>
               <DemoVideo

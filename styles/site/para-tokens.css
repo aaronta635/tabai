@@ -58,8 +58,14 @@
   --radius-control: 8px;
   --radius-panel: 12px;
   --radius-round: 999px;
-  --font-display: "Plus Jakarta Sans", "Be Vietnam Pro", sans-serif;
-  --font-body: "Be Vietnam Pro", system-ui, sans-serif;
+  /* Website type uses the device's own font (SF Pro on Apple devices); app screens keep theirs. */
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  --font-display: var(--font-system);
+  --font-body: var(--font-system);
+  /* Shared rules from the root stylesheet read these; inside the website they resolve to the device font. */
+  --font-ui: var(--font-system);
+  --font-serif: var(--font-system);
+  --font-inter: var(--font-system);
   --container-max: 1240px;
   --gutter: 24px;
   --ease-phrase: cubic-bezier(0.22, 0.61, 0.36, 1);

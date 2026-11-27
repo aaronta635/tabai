@@ -25,7 +25,7 @@ export function GroupCard({
     <article className="group-card">
       <div className="group-card-top">
         <div className="min-w-0">
-          <Link href={href} className="group-card-title">
+          <Link href={href} className="group-card-title tap-target">
             {title}
           </Link>
           {meta ? <p className="group-card-meta">{meta}</p> : null}

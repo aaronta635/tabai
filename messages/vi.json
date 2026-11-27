@@ -102,6 +102,28 @@
     "wrongRoleStudent": "Email này được dùng cho tài khoản học viên. Hãy chọn đăng nhập dành cho học viên.",
     "signOut": "Đăng xuất"
   },
+  "zaloRecovery": {
+    "title": "Giữ tài khoản PARA của bạn",
+    "body": "Bạn đang đăng nhập bằng Zalo. Hãy thêm email và mật khẩu, hoặc liên kết Google, để sau này vẫn vào được PARA khi đăng nhập Zalo không còn.",
+    "studentHint": "Dưới 18 tuổi? Dùng email của ba mẹ cũng được.",
+    "email": "Email",
+    "password": "Mật khẩu mới",
+    "confirmPassword": "Gõ lại mật khẩu",
+    "saveEmail": "Lưu email và mật khẩu",
+    "linkGoogle": "Liên kết Google",
+    "or": "hoặc",
+    "dismiss": "Để sau",
+    "checkEmail": "PARA đã gửi một đường dẫn tới email đó. Mở đường dẫn để hoàn tất, rồi quay lại đây.",
+    "saved": "Lần sau bạn có thể đăng nhập bằng email và mật khẩu này.",
+    "errors": {
+      "emailTaken": "Email này đã có tài khoản PARA. Thử email khác hoặc liên kết Google.",
+      "weakPassword": "Hãy chọn mật khẩu dài hơn — ít nhất sáu ký tự.",
+      "invalidEmail": "Email này có vẻ chưa đúng. Kiểm tra lại rồi thử lại.",
+      "passwordMismatch": "Hai mật khẩu chưa khớp.",
+      "linkingDisabled": "Liên kết Google chưa bật. Hãy dùng email và mật khẩu.",
+      "generic": "Có lỗi xảy ra. Thử lại sau nhé."
+    }
+  },
   "student": {
     "upload": "Tải video lên",
     "chooseFile": "Chọn video",

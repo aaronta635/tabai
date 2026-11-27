@@ -1,7 +1,7 @@
 import "@/styles/student/student.css";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { readStudentSession, studioOnboarded } from "@/lib/auth";
+import { readStudentSession, studioOnboarded, zaloRecoveryPrompt } from "@/lib/auth";
 import { RETURN_PATH_HEADER, signInPath, studioReturn } from "@/lib/return-path";
 import { getLocale } from "@/lib/i18n";
 import { signedMediaUrl } from "@/lib/media-view";
@@ -24,12 +24,14 @@ export default async function StudentLayout({ children }: { children: React.Reac
     select: { avatarUrl: true, tourSeenAt: true },
   });
   const avatarSrc = await signedMediaUrl(portrait?.avatarUrl ?? null);
+  const zaloRecovery = await zaloRecoveryPrompt();
   return (
     <StudentAppShell
       studentName={session.name}
       avatarSrc={avatarSrc}
       locale={locale === "en" ? "en" : "vi"}
       tourSeen={portrait?.tourSeenAt != null}
+      zaloRecovery={zaloRecovery?.role === "student"}
     >
       {children}
     </StudentAppShell>

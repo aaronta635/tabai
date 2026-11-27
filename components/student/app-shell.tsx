@@ -1,6 +1,7 @@
 "use client";
 
 import { logoutAccount } from "@/app/onboarding/actions";
+import { ZaloRecoveryCard, type ZaloRecoveryLabels } from "@/components/account/zalo-recovery-card";
 import { StudioShell } from "@/components/studio-shell";
 import { useStudioMessages } from "@/components/studio/use-studio-messages";
 
@@ -9,15 +10,18 @@ export function StudentAppShell({
   avatarSrc,
   locale,
   tourSeen,
+  zaloRecovery = false,
   children,
 }: {
   studentName: string;
   avatarSrc?: string | null;
   locale: "en" | "vi";
   tourSeen: boolean;
+  zaloRecovery?: boolean;
   children: React.ReactNode;
 }) {
   const t = useStudioMessages(locale);
+  const recovery: ZaloRecoveryLabels = t.zaloRecovery;
   return (
     <StudioShell
       variant="student"
@@ -65,6 +69,7 @@ export function StudentAppShell({
         themeOff: t.theme.off,
       }}
     >
+      <ZaloRecoveryCard role="student" showInitially={zaloRecovery} labels={recovery} />
       {children}
     </StudioShell>
   );

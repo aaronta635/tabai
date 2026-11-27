@@ -24,6 +24,7 @@ import { prisma } from "@/lib/prisma";
 import { newReportToken } from "@/lib/report";
 import { inviteTokenFromReturn } from "@/lib/return-path";
 import { createServerSupabase } from "@/lib/supabase/server";
+import { needsZaloAccountRecovery } from "@/lib/zalo-account-recovery";
 
 export const TEACHER_SESSION_VERSION = 2;
 
@@ -295,7 +296,7 @@ export const readTeacherSession = cache(async function readTeacherSession(): Pro
 
 export const readStudentSession = cache(async function readStudentSession(): Promise<StudioSession | null> {
   const jwt = await readStudentPayload();
-  const user = await supabaseUser();
+  const user = await readSupabaseUser();
   if (user) {
     if (jwtMatchesAuthUser(jwt, user.id) && jwt) {
       return resolveStudentStudioSession({ authUserId: user.id, jwt, authStudent: null });
@@ -351,7 +352,7 @@ export async function getStudentFromCookie() {
   return { id: session.id, name: session.name };
 }
 
-const supabaseUser = cache(async function supabaseUser() {
+export const readSupabaseUser = cache(async function readSupabaseUser() {
   try {
     const supabase = await createServerSupabase();
     const { data } = await supabase.auth.getSession();
@@ -361,12 +362,21 @@ const supabaseUser = cache(async function supabaseUser() {
   }
 });
 
+/** Studio prompt when the signed-in account still only has a Zalo placeholder email. */
+export async function zaloRecoveryPrompt(): Promise<{ role: "student" | "teacher" } | null> {
+  const user = await readSupabaseUser();
+  if (!needsZaloAccountRecovery(user)) return null;
+  if (await readStudentSession()) return { role: "student" };
+  if (await readTeacherSession()) return { role: "teacher" };
+  return null;
+}
+
 export const requireTeacher = cache(async function requireTeacher() {
   const session = await readTeacherSession();
   if (session) {
     return prisma.teacher.findUnique({ where: { id: session.id } });
   }
-  const user = await supabaseUser();
+  const user = await readSupabaseUser();
   if (!user) return null;
   const teacher = await findTeacherByAuth(user.id);
   if (!teacher) return null;
@@ -412,7 +422,7 @@ export async function bindAuthSession(
   requested?: AccountRole | null,
   next?: string | null,
 ): Promise<BindAuthResult | null> {
-  const user = await supabaseUser();
+  const user = await readSupabaseUser();
   if (!user) return null;
 
   const teacher = await findTeacherByAuth(user.id);
@@ -503,7 +513,7 @@ export async function studentForPiece(teacherId: string, options?: { demo?: bool
       return { student: inClass ? account : null, otherClass: !inClass, fromSession: true as const };
     }
   }
-  if (await supabaseUser()) {
+  if (await readSupabaseUser()) {
     return { student: null, otherClass: false, fromSession: true as const };
   }
   const token = await getStudentTokenFromCookie();

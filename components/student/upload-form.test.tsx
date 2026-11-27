@@ -35,10 +35,10 @@ describe("StudentUpload", () => {
 
   it("asks for a video before profile fields", async () => {
     const user = userEvent.setup();
-    renderWithIntl(<StudentUpload code="song1" needsProfile />, ["student"]);
+    renderWithIntl(<StudentUpload code="song1" needsProfile />, ["student", "onboarding"]);
 
     await user.type(screen.getByRole("textbox", { name: "Name" }), "An");
-    await user.type(screen.getByPlaceholderText("Zalo number"), "0909");
+    await user.type(screen.getByPlaceholderText("0912 345 678"), "0909");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     expect(await screen.findByText("Choose a video first.")).toBeInTheDocument();
@@ -46,16 +46,16 @@ describe("StudentUpload", () => {
 
   it("flags whitespace name and contact after a file is chosen", async () => {
     const user = userEvent.setup();
-    renderWithIntl(<StudentUpload code="song1" needsProfile />, ["student"]);
+    renderWithIntl(<StudentUpload code="song1" needsProfile />, ["student", "onboarding"]);
 
     const file = new File(["video"], "take.webm", { type: "video/webm" });
     await user.upload(screen.getByLabelText("Choose video"), file);
     await user.type(screen.getByRole("textbox", { name: "Name" }), "   ");
-    await user.type(screen.getByPlaceholderText("Zalo number"), "   ");
+    await user.type(screen.getByPlaceholderText("0912 345 678"), "   ");
     await user.click(screen.getByRole("button", { name: "Send" }));
 
     expect(await screen.findByText("Enter a name.")).toBeInTheDocument();
-    expect(screen.getByText("Enter a Zalo number or Messenger link.")).toBeInTheDocument();
+    expect(screen.getByText("Enter a phone number to continue.")).toBeInTheDocument();
   });
 
   it("shows the piece brief and waits for a video before sending", () => {

@@ -78,7 +78,6 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
   const onboarding = useTranslations("onboarding");
   const fieldId = useId();
   const [ageBand, setAgeBand] = useState<"under18" | "adult">("adult");
-  const [contactType, setContactType] = useState<"zalo" | "messenger">("zalo");
   const [busy, setBusy] = useState(false);
   const [phase, setPhase] = useState<SendPhase>("sign");
   const [done, setDone] = useState(false);
@@ -141,7 +140,6 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
             body: JSON.stringify({
               name: nameRaw.trim(),
               ageBand,
-              contactType,
               contactHandle: contactRaw.trim(),
               publicOk: ageBand === "adult" && data.get("publicOk") === "on",
               consent: true,
@@ -334,37 +332,21 @@ export function StudentUpload({ code, needsProfile, clipUrl, desk, variant }: Pr
               </label>
             </div>
           </fieldset>
-          <fieldset className="text-sm">
-            <legend>{t("contact")}</legend>
-            <div className="mt-2 flex gap-3">
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={contactType === "zalo"}
-                  onChange={() => setContactType("zalo")}
-                />
-                Zalo
-              </label>
-              <label className="flex items-center gap-2">
-                <input
-                  type="radio"
-                  checked={contactType === "messenger"}
-                  onChange={() => setContactType("messenger")}
-                />
-                Messenger
-              </label>
-            </div>
+          <label className="block text-sm">
+            {onboarding("phone")}
             <input
               required
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
               name="contactHandle"
-              aria-label={variant ? t("contact") : undefined}
               aria-invalid={variant && fieldError.contactHandle ? true : undefined}
               aria-describedby={variant && fieldError.contactHandle ? `${fieldId}-contact` : undefined}
-              placeholder={contactType === "zalo" ? t("zalo") : t("messenger")}
-              className="mt-2 w-full rounded-xl border border-ink/15 bg-white px-3 py-3"
+              placeholder={onboarding("phonePlaceholder")}
+              className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-3"
             />
             {fieldError.contactHandle ? <p id={variant ? `${fieldId}-contact` : undefined} className="mt-1 text-sm text-danger">{fieldError.contactHandle}</p> : null}
-          </fieldset>
+          </label>
           <p className="text-sm leading-relaxed text-ink-soft">{t("consent")}</p>
           <p className="text-sm text-ink-soft">{t("under18Line")}</p>
           {ageBand === "adult" ? (

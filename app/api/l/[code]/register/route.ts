@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { CONSENT_VERSION } from "@/lib/constants";
+import { CONSENT_VERSION, LOCALE_COOKIE } from "@/lib/constants";
 import {
   homeTeacherId,
   newStudentToken,
@@ -10,12 +10,18 @@ import {
 import { shouldAttachTeacher } from "@/lib/demo-piece";
 import { logEvent } from "@/lib/events";
 import { registerFieldErrors } from "@/lib/forms";
+import { LOCALE_HEADER, localeFrom } from "@/lib/locale-path";
 import { phoneKey } from "@/lib/phone";
 import { prisma } from "@/lib/prisma";
 import { newReportToken } from "@/lib/report";
 import { phoneIsTaken } from "@/lib/student-phone";
 
+function requestLocale(request: NextRequest) {
+  return localeFrom(request.headers.get(LOCALE_HEADER), request.cookies.get(LOCALE_COOKIE)?.value);
+}
+
 export async function POST(request: NextRequest, context: { params: Promise<{ code: string }> }) {
+  const locale = requestLocale(request);
   const { code } = await context.params;
   const piece = await prisma.piece.findUnique({ where: { code } });
   if (!piece || piece.archived) {
@@ -25,7 +31,6 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
   const body = (await request.json()) as {
     name?: string;
     ageBand?: "under18" | "adult";
-    contactType?: "zalo" | "messenger";
     contactHandle?: string;
     publicOk?: boolean;
     consent?: boolean;
@@ -43,10 +48,24 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     const current = bound.student;
     const publicOk =
       (body.ageBand ?? current.ageBand) === "under18" ? false : body.publicOk ?? current.publicOk;
-    const nextPhone = contactTrim ? phoneKey(contactTrim) : null;
+    const nextPhone = contactTrim ? phoneKey(contactTrim, locale) : null;
+    if (contactTrim && !nextPhone) {
+      return NextResponse.json(
+        { error: "missing fields", fields: { contactHandle: true } },
+        { status: 400 },
+      );
+    }
     if (nextPhone && (await phoneIsTaken(nextPhone, current.id))) {
       return NextResponse.json({ error: "phone_taken" }, { status: 409 });
     }
+    const contactData =
+      nextPhone && contactTrim
+        ? { contactType: "zalo" as const, contactHandle: contactTrim, phoneKey: nextPhone }
+        : {
+            contactType: current.contactType,
+            contactHandle: current.contactHandle,
+            phoneKey: current.phoneKey,
+          };
     const updated = await prisma.student.update({
       where: { id: current.id },
       data: {
@@ -54,9 +73,7 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
         stage: piece.demo ? current.stage : "in_class",
         name: nameTrim || current.name,
         ageBand: body.ageBand ?? current.ageBand,
-        contactType: body.contactType ?? current.contactType,
-        contactHandle: contactTrim || current.contactHandle,
-        ...(nextPhone ? { phoneKey: nextPhone } : {}),
+        ...contactData,
         publicOk,
       },
     });
@@ -85,7 +102,6 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     name: body.name,
     contactHandle: body.contactHandle,
     ageBand: body.ageBand,
-    contactType: body.contactType,
     consent: body.consent,
   });
   if (parsed.missing) {
@@ -98,12 +114,17 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
     );
   }
   const ageBand = body.ageBand!;
-  const contactType = body.contactType!;
 
   const publicOk = ageBand === "under18" ? false : Boolean(body.publicOk);
   const token = newStudentToken();
-  const nextPhone = phoneKey(parsed.contactHandle);
-  if (nextPhone && (await phoneIsTaken(nextPhone))) {
+  const nextPhone = phoneKey(parsed.contactHandle, locale);
+  if (!nextPhone) {
+    return NextResponse.json(
+      { error: "missing fields", fields: { contactHandle: true } },
+      { status: 400 },
+    );
+  }
+  if (await phoneIsTaken(nextPhone)) {
     return NextResponse.json({ error: "phone_taken" }, { status: 409 });
   }
   const student = await prisma.student.create({
@@ -111,9 +132,9 @@ export async function POST(request: NextRequest, context: { params: Promise<{ co
       teacherId: shouldAttachTeacher(piece.demo, null) ? piece.teacherId : null,
       name: parsed.name,
       ageBand,
-      contactType,
+      contactType: "zalo",
       contactHandle: parsed.contactHandle,
-      ...(nextPhone ? { phoneKey: nextPhone } : {}),
+      phoneKey: nextPhone,
       token,
       reportToken: newReportToken(),
       consentAt: new Date(),

@@ -1,0 +1,74 @@
+/* PARA app redesign, phase 0: shared colour, type and size tokens.
+   Light mode only. Everything is scoped under `.para-rd`, so nothing changes until a screen
+   opts in by adding that class (planned from 7 Dec). No live screen imports this file yet.
+   Colour values come from the editorial homepage (styles/site/editorial-home.css). */
+.para-rd {
+  /* Surfaces and text */
+  --rd-canvas: #ffffff; /* page background (--ed-canvas) */
+  --rd-surface: #f5f5f7; /* cards, soft fields (--ed-surface) */
+  --rd-ink: #111111; /* main text, main button (--ed-ink) */
+  --rd-muted: #626267; /* second text, 6.0:1 on white (--ed-muted) */
+  --rd-line: #dedee2; /* lines and dividers only, never a field border (--ed-line) */
+  --rd-field-border: #8e8e93; /* field border, 3.3:1 on white (new) */
+  --rd-focus: #38383c; /* focus ring (--ed-focus) */
+  --rd-on-ink: #ffffff; /* text on the main button */
+
+  /* Main button states: hover and press change colour only */
+  --rd-button-hover: #333333; /* (--ed-button-hover) */
+  --rd-button-pressed: #000000; /* (--ed-button-pressed) */
+  --rd-disabled-bg: #dedee2;
+  --rd-disabled-text: #626267; /* 4.6:1 on --rd-disabled-bg */
+
+  /* Feedback */
+  --rd-error: #b42318; /* error text, icon and field border, 6.6:1 on white */
+  --rd-error-tint: #fef3f2;
+
+  /* Sand accent. Rules (from the plan):
+     - --rd-sand (#D6B98C) is for fills only: the selected bar, badge/chip backgrounds, progress fill,
+       new-feedback dot, pitch marks. Never as text on white (1.9:1), never on main buttons,
+       field borders or the focus ring.
+     - Text on sand or sand tint stays --rd-ink (#111).
+     - --rd-sand-text (#8B5E34, 5.6:1) is the only sand colour allowed for words.
+     - A state never relies on sand alone: pair it with bold text, a tick or the bar. */
+  --rd-sand: #d6b98c;
+  --rd-sand-tint: #f6efe3; /* badge / selected background (new) */
+  --rd-sand-text: #8b5e34;
+
+  /* Type: the device's own font, same value as the homepage --font-system
+     (styles/site/para-tokens.css). Copied, not referenced, because that token lives under
+     `.para-site`, which app screens do not use. No webfont downloads. */
+  --rd-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+  --rd-text-sm: 14px; /* smallest size allowed, even for long Vietnamese labels */
+  --rd-text-md: 16px; /* body and fields (16px also stops iOS zooming into fields) */
+  --rd-text-lg: 20px;
+  --rd-text-xl: 28px;
+  --rd-leading: 1.45; /* roomy enough for stacked Vietnamese accents */
+
+  /* Sizes */
+  --rd-tap: 44px; /* minimum height of every button, link and field */
+  --rd-radius-control: 10px;
+  --rd-radius-card: 14px;
+  --rd-space-1: 4px;
+  --rd-space-2: 8px;
+  --rd-space-3: 12px;
+  --rd-space-4: 16px;
+  --rd-space-5: 24px;
+  --rd-space-6: 32px;
+  --rd-space-7: 48px;
+  --rd-sand-bar: 3px;
+  --rd-icon-stroke: 1.75;
+
+  color-scheme: light;
+  background: var(--rd-canvas);
+  color: var(--rd-ink);
+  font-family: var(--rd-font);
+  font-size: var(--rd-text-md);
+  line-height: var(--rd-leading);
+  -webkit-font-smoothing: antialiased;
+}
+
+.para-rd .rd-icon {
+  flex: none;
+  display: inline-block;
+  vertical-align: middle;
+}
